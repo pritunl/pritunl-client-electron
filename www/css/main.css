@@ -114,3 +114,39 @@ body {
 }
 
 
+.profile {
+  color: #fff;
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  width: 100%;
+}
+.profile + .profile {
+  border-top: 1px solid #242a30;
+}
+.profile .logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  background-color: #5f1616;
+  background-color: #195e29;
+  background-color: #472579;
+  font-size: 27px;
+}
+.profile .info {
+  flex: 1;
+  margin: 0 10px 10px 10px;
+}
+.profile .info .label {
+  margin-top: 10px;
+  margin-bottom: 1px;
+  font-size: 13px;
+  color: #515356;
+  text-transform: uppercase;
+}
+.profile .settings {
+  padding: 7px 13px 0 13px;
+  font-size: 24px;
+}
