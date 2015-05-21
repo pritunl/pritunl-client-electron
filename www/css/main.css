@@ -139,6 +139,8 @@ body {
 .profile .info {
   flex: 1;
   margin: 11px 0 11px 11px;
+  white-space: nowrap;
+  overflow: hidden;
 }
 .profile .info .label {
   margin-top: 10px;
