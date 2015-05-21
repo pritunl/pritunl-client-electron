@@ -115,6 +115,7 @@ body {
 
 
 .profile {
+  position: relative;
   color: #fff;
   display: flex;
   flex-direction: row;
@@ -152,4 +153,17 @@ body {
 .profile .settings {
   padding: 7px 13px 0 13px;
   font-size: 24px;
+}
+.profile .menu {
+  position: absolute;
+  right: 0;
+}
+.profile .menu .item {
+  color: #fff;
+  width: 98px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  display: none;
 }
