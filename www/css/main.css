@@ -1,0 +1,115 @@
+html {
+  height: 100%;
+}
+body {
+  font-family: 'Ubuntu', sans-serif;
+  -webkit-app-region: drag;
+  background-color: #14171a;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+::-webkit-scrollbar {
+  width: 15px;
+  background: #171a1d;
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 0;
+  background: #364351;
+}
+
+.btn {
+  cursor: pointer;
+}
+.btn.btn-success {
+  background-color: #5cb85c;
+}
+.btn.btn-success:hover {
+  background-color: #449d44;
+}
+.btn.btn-info {
+  background-color: #5bc0de;
+}
+.btn.btn-info:hover {
+  background-color: #31b0d5;
+}
+.btn.btn-warning {
+  background-color: #f0ad4e;
+}
+.btn.btn-warning:hover {
+  background-color: #ec971f;
+}
+.btn.btn-danger {
+  background-color: #d9534f;
+}
+.btn.btn-danger:hover {
+  background-color: #c9302c;
+}
+
+
+.header {
+  background-color: #1c2126;
+  position: relative;
+  padding-bottom: 13px;
+}
+.header .btns {
+  display: inline-block;
+  margin: 17px 0 0 12px;
+}
+.header .btns .btn {
+  display: inline-block;
+  border-radius: 50%;
+  width: 12px;
+  height: 12px;
+  margin: 1px;
+}
+.header .btns .close {
+  background-color: #d9534f;
+}
+.header.btns .close:hover {
+  background-color: #c9302c;
+}
+.header .btns .minimize {
+  background-color: #f0ad4e;
+}
+.header .btns .minimize:hover {
+  background-color: #ec971f;
+}
+.header .btns .maximize {
+  background-color: #5cb85c;
+}
+.header .btns .maximize:hover {
+  background-color: #449d44;
+}
+.header .logo {
+  color: #fff;
+  display: inline-block;
+  font-family: 'Fredoka One', cursive;
+  position: absolute;
+  top: 8px;
+  right: 14px;
+  font-size: 24px;
+}
+
+
+
+.profiles {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.profiles .list {
+  overflow-y: auto;
+  height: 100%;
+  flex: 1;
+}
+.profiles .btns .btn {
+  padding: 18px;
+  text-align: center;
+  font-size: 22px;
+  color: #fff;
+}
+
+
