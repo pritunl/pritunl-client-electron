@@ -155,13 +155,26 @@ body {
 .profile .info .label:first-child {
   margin-top: 0;
 }
-.profile .settings {
+.profile .open-menu {
   padding: 7px 13px 0 13px;
   font-size: 24px;
+}
+.profile .open-menu i {
+  cursor: pointer;
 }
 .profile .menu {
   position: absolute;
   right: 0;
+  display: none;
+}
+.profile .menu-backdrop {
+  background-color: rgba(0, 0, 0, 0.65);
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: none;
 }
 .profile .menu .item {
   color: #fff;
@@ -170,5 +183,4 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  display: none;
 }
