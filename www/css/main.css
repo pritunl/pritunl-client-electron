@@ -137,7 +137,7 @@ body {
 }
 .profile .info {
   flex: 1;
-  margin: 0 10px 10px 10px;
+  margin: 11px 0 11px 11px;
 }
 .profile .info .label {
   margin-top: 10px;
@@ -145,6 +145,9 @@ body {
   font-size: 13px;
   color: #515356;
   text-transform: uppercase;
+}
+.profile .info .label:first-child {
+  margin-top: 0;
 }
 .profile .settings {
   padding: 7px 13px 0 13px;
