@@ -56,7 +56,7 @@ body {
 }
 .header .btns {
   display: inline-block;
-  margin: 17px 0 0 12px;
+  margin: 14px 0 0 12px;
 }
 .header .btns .btn {
   -webkit-app-region: no-drag;
@@ -64,7 +64,7 @@ body {
   border-radius: 50%;
   width: 12px;
   height: 12px;
-  margin: 1px;
+  margin: 0 2px;
 }
 .header .btns .close {
   background-color: #d9534f;
