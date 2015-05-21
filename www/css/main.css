@@ -3,7 +3,6 @@ html {
 }
 body {
   font-family: 'Ubuntu', sans-serif;
-  -webkit-app-region: drag;
   background-color: #14171a;
   margin: 0;
   display: flex;
@@ -50,6 +49,7 @@ body {
 
 
 .header {
+  -webkit-app-region: drag;
   background-color: #1c2126;
   position: relative;
   padding-bottom: 13px;
@@ -59,6 +59,7 @@ body {
   margin: 17px 0 0 12px;
 }
 .header .btns .btn {
+  -webkit-app-region: no-drag;
   display: inline-block;
   border-radius: 50%;
   width: 12px;
