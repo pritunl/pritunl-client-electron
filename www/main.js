@@ -1,40 +1,62 @@
-var app = require('app');  // Module to control application life.
-var BrowserWindow = require('browser-window');  // Module to create native browser window.
+var app = require('app');
+var BrowserWindow = require('browser-window');
+var Tray = require('tray');
+var Menu = require('menu');
 
-// Report crashes to our server.
+// TODO
 require('crash-reporter').start();
 
-// Keep a global reference of the window object, if you don't, the window will
-// be closed automatically when the javascript object is GCed.
-var mainWindow = null;
+var main = null
+var tray = null;
 
-// Quit when all windows are closed.
 app.on('window-all-closed', function() {
   if (process.platform != 'darwin') {
     app.quit();
   }
 });
 
-// This method will be called when Electron has done everything
-// initialization and ready for creating browser windows.
-app.on('ready', function() {
-  // Create the browser window.
-  mainWindow = new BrowserWindow({
+var openMainWin = function() {
+  if (main) {
+    return;
+  }
+
+  main = new BrowserWindow({
+    icon: 'www/img/logo.png',
     //frame: false,
     width: 400,
     height: 550
   });
 
-  mainWindow.openDevTools();
+  main.openDevTools();
 
-  // and load the index.html of the app.
-  mainWindow.loadUrl('file://' + __dirname + '/index.html');
+  main.loadUrl('file://' + __dirname + '/index.html');
 
-  // Emitted when the window is closed.
-  mainWindow.on('closed', function() {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
-    mainWindow = null;
+  main.on('closed', function() {
+    main = null;
   });
+};
+
+app.on('ready', function() {
+  tray = new Tray('www/img/tray-connected.png');
+  tray.on('clicked', function() {
+    openMainWin();
+  });
+
+  if (process.platform === 'linux') {
+    var menu = Menu.buildFromTemplate([
+      {
+        label: 'Settings',
+        click: function() {
+          openMainWin();
+        }
+      },
+      {
+        label: 'Exit',
+        click: function() {
+          app.quit();
+        }
+      }
+    ]);
+    tray.setContextMenu(menu);
+  }
 });
