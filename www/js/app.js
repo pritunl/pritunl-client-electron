@@ -2,6 +2,8 @@ var $ = require('jquery');
 
 $(document).on('dblclick mousedown', '.no-select, .btn', false);
 
+$('.header .close').click(window.close);
+
 $('.profile .open-menu i, .profile .menu-backdrop').click(function(evt) {
   var $profile = $(evt.currentTarget).parent();
   if (!$profile.hasClass('profile')) {
