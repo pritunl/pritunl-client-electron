@@ -37,6 +37,8 @@ var openMainWin = function() {
 };
 
 app.on('ready', function() {
+  openMainWin();
+
   tray = new Tray('www/img/tray-connected.png');
   tray.on('clicked', function() {
     openMainWin();
