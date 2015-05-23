@@ -2,6 +2,9 @@
   "name": "pritunl",
   "version": "0.1.0",
   "main": "www/main.js",
+  "dependencies": {
+    "jquery": "^2.1.4"
+  },
   "devDependencies": {
     "grunt": "^0.4.5",
     "grunt-electron-installer": "^0.33.0"
