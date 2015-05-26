@@ -41,12 +41,20 @@ $('.profile .open-menu i, .profile .menu-backdrop').click(function(evt) {
   if (!$profile.hasClass('profile')) {
     $profile = $profile.parent();
   }
-
-  $profile.find('.menu').animate({width: 'toggle'}, 100);
-  $profile.find('.menu-backdrop').animate({width: 'toggle'}, 50);
+  toggleMenu($profile);
 });
 
 $('.profile .menu .connect').click(function(evt) {
   var profile = new Profile('test');
   profile.connect();
+});
+
+$('.profile .menu .edit-config').click(function(evt) {
+  var $profile = $(evt.currentTarget).parent().parent();
+  openConfig($profile);
+});
+
+$('.profile .config .btns .cancel').click(function(evt) {
+  var $profile = $(evt.currentTarget).parent().parent().parent();
+  closeConfig($profile);
 });
