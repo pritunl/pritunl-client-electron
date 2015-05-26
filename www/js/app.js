@@ -1,6 +1,6 @@
-var childProcess = require('child_process');
 var remote = require('remote');
 var $ = require('jquery');
+var Profile = require('./js/profile.js');
 
 $(document).on('dblclick mousedown', '.no-select, .btn', false);
 
@@ -26,4 +26,9 @@ $('.profile .open-menu i, .profile .menu-backdrop').click(function(evt) {
 
   $profile.find('.menu').animate({width: 'toggle'}, 100);
   $profile.find('.menu-backdrop').animate({width: 'toggle'}, 50);
+});
+
+$('.profile .menu .connect').click(function(evt) {
+  var profile = new Profile('test');
+  profile.connect();
 });
