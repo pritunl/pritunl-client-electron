@@ -211,7 +211,6 @@ body {
 .profile .config .editor {
   width: 100%;
   height: 260px;
-  transition: height 125ms linear;
   margin: 0;
 }
 .profile .config .btn {
