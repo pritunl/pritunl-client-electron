@@ -18,6 +18,24 @@ $('.header .minimize').click(function() {
   remote.getCurrentWindow().minimize();
 });
 
+var toggleMenu = function($profile) {
+  $profile.find('.menu').animate({width: 'toggle'}, 100);
+  $profile.find('.menu-backdrop').fadeToggle(75);
+};
+var openConfig = function($profile) {
+  $profile.find('.config').fadeIn(50);
+  setTimeout(function() {
+    $profile.addClass('editing');
+    toggleMenu($profile);
+  }, 55);
+};
+var closeConfig = function($profile) {
+  $profile.removeClass('editing');
+  setTimeout(function() {
+    $profile.find('.config').fadeOut(50);
+  }, 130);
+};
+
 $('.profile .open-menu i, .profile .menu-backdrop').click(function(evt) {
   var $profile = $(evt.currentTarget).parent();
   if (!$profile.hasClass('profile')) {
