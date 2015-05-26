@@ -24,8 +24,13 @@ var openMainWin = function() {
     icon: 'www/img/logo.png',
     //frame: false,
     width: 400,
-    height: 550
+    height: 580,
+    'min-width': 280,
+    'min-height': 225,
+    'max-width': 600,
+    'max-height': 780
   });
+  main.maximizedPrev = null;
 
   main.openDevTools();
 
