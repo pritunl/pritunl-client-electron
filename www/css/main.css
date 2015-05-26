@@ -49,6 +49,12 @@ body {
 .btn.btn-danger:hover {
   background-color: #c9302c;
 }
+.btn.btn-action {
+  background-color: #5229b5;
+}
+.btn.btn-action:hover {
+  background-color: #3b1c84;
+}
 
 
 .header {
