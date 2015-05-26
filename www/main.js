@@ -6,7 +6,7 @@ var Menu = require('menu');
 // TODO
 require('crash-reporter').start();
 
-var main = null
+var main = null;
 var tray = null;
 
 app.on('window-all-closed', function() {
