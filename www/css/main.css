@@ -222,3 +222,12 @@ body {
   font-size: 20px;
   padding: 14px;
 }
+
+.profile .config ::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+  background: #042b4d;
+}
+.profile .config ::-webkit-scrollbar-thumb {
+  background: #1b6bb0;
+}
