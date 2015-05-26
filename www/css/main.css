@@ -147,12 +147,12 @@ body {
 }
 .profile .info {
   flex: 1;
-  margin: 11px 0 11px 11px;
+  margin: 14px 0 14px 14px;
   white-space: nowrap;
   overflow: hidden;
 }
 .profile .info .label {
-  margin-top: 10px;
+  margin-top: 15px;
   margin-bottom: 1px;
   font-size: 13px;
   color: #515356;
@@ -184,8 +184,8 @@ body {
 }
 .profile .menu .item {
   color: #fff;
-  width: 98px;
-  height: 46px;
+  width: 104px;
+  height: 41px;
   display: flex;
   align-items: center;
   justify-content: center;
