@@ -8,10 +8,14 @@ $('.header .close').click(function() {
   remote.getCurrentWindow().close();
 });
 $('.header .maximize').click(function() {
-  if (remote.getCurrentWindow().isMaximized()) {
-    remote.getCurrentWindow().unmaximize();
+  var win = remote.getCurrentWindow();
+
+  if (!win.maximizedPrev) {
+    win.maximizedPrev = win.getSize();
+    win.setSize(600, 780);
   } else {
-    remote.getCurrentWindow().maximize();
+    win.setSize(win.maximizedPrev[0], win.maximizedPrev[1]);
+    win.maximizedPrev = null;
   }
 });
 $('.header .minimize').click(function() {
