@@ -85,24 +85,6 @@ body {
   height: 12px;
   margin: 0 2px;
 }
-.header .btns .close {
-  background-color: #d9534f;
-}
-.header.btns .close:hover {
-  background-color: #c9302c;
-}
-.header .btns .minimize {
-  background-color: #f0ad4e;
-}
-.header .btns .minimize:hover {
-  background-color: #ec971f;
-}
-.header .btns .maximize {
-  background-color: #5cb85c;
-}
-.header .btns .maximize:hover {
-  background-color: #449d44;
-}
 .header .logo {
   color: #fff;
   display: inline-block;
