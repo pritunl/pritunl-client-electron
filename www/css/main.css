@@ -29,6 +29,12 @@ body {
 .btn:active {
   box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
 }
+.btn.btn-default {
+  background-color: #575757;
+}
+.btn.btn-default:hover {
+  background-color: #414141;
+}
 .btn.btn-success {
   background-color: #5cb85c;
 }
