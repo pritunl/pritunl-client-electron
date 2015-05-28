@@ -1,4 +1,7 @@
 var childProcess = require('child_process');
+var remote = require('remote');
+var app = remote.require('app');
+var fs = remote.require('fs');
 
 var Profile = function Profile(path) {
   this.path = path;
