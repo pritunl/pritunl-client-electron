@@ -211,6 +211,11 @@ body {
   top: 0;
   bottom: 0;
   display: none;
+  opacity: 0;
+  transition: opacity 50ms ease;
+}
+.profile.editing .config {
+  opacity: 0;
 }
 .profile .config .editor {
   width: 100%;
