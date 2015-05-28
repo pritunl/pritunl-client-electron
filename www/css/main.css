@@ -145,7 +145,7 @@ body {
 }
 .profile .info {
   flex: 1;
-  margin: 14px 0 14px 14px;
+  margin: 14px 0 13px 14px;
   white-space: nowrap;
   overflow: hidden;
 }
