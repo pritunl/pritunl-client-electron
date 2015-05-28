@@ -59,4 +59,39 @@ Profile.prototype.connect = function() {
   });
 };
 
+var getProfiles = function(callback) {
+  var root = app.getPath('userData') + '/profiles';
+
+  fs.exists(root, function(exists) {
+    if (!exists) {
+      callback(null, []);
+      return;
+    }
+
+    fs.readdir(root, function(err, paths) {
+
+      if (err) {
+        callback(err, null);
+        return
+      }
+      paths = paths || [];
+
+      var i;
+      var path;
+      var pathSplit;
+      var profile;
+      for (i = 0; i < paths.length; i++) {
+        path = paths[i];
+        pathSplit = path.split('.');
+
+        if (pathSplit[pathSplit.length - 1] !== 'conf') {
+          continue;
+        }
+
+        profile = new Profile(root + '/' + path.substr(0, path.length - 5));
+      }
+    });
+  });
+};
+
 module.exports = Profile;
