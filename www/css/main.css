@@ -182,12 +182,28 @@ body {
 }
 .profile .menu .item {
   color: #fff;
-  width: 104px;
-  height: 41px;
+  width: 101px;
+  height: 34px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
+
+.profile .logs {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: none;
+}
+.profile .logs .btn {
+  width: 50%;
+  display: inline-block;
+  font-size: 16px;
+  padding: 6px;
+}
+
 .profile .config {
   position: absolute;
   left: 0;
