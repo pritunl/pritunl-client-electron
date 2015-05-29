@@ -118,4 +118,7 @@ var getProfiles = function(callback) {
   });
 };
 
-module.exports = Profile;
+module.exports = {
+  Profile: Profile,
+  getProfiles: getProfiles
+};
