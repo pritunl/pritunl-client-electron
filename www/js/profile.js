@@ -33,7 +33,7 @@ Profile.prototype.load = function() {
     var confData;
     try {
       confData = JSON.parse(data);
-    } catch {
+    } catch(err) {
       confData = {};
     }
 
