@@ -46,7 +46,7 @@ Profile.prototype.load = function() {
   }.bind(this));
 
   fs.readFile(this.ovpnPath, function(err, data) {
-    this.data = data;
+    this.data = data.toString();
   }.bind(this));
 };
 
