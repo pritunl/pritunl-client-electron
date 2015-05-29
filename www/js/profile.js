@@ -40,15 +40,15 @@ Profile.prototype.load = function() {
     this.name = confData.name || null;
     this.organizationId = confData.organizationId || null;
     this.organization = confData.organization || null;
-    this.serverId = confData.serverId || null;
+    this.serverId = confData.server_id || null;
     this.server = confData.server || null;
-    this.userId = confData.userId || null;
+    this.userId = confData.user_id || null;
     this.user = confData.user || null;
     this.autostart = confData.autostart || null;
-    this.syncHosts = confData.syncHosts || [];
-    this.syncHash = confData.syncHash || null;
-    this.syncSecret = confData.syncSecret || null;
-    this.syncToken = confData.syncToken || null;
+    this.syncHosts = confData.sync_hosts || [];
+    this.syncHash = confData.sync_hash || null;
+    this.syncSecret = confData.sync_secret || null;
+    this.syncToken = confData.sync_token || null;
   }.bind(this));
 
   Profile.prototype.export = function() {
