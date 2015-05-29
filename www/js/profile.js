@@ -51,6 +51,27 @@ Profile.prototype.load = function() {
     this.syncToken = confData.syncToken || null;
   }.bind(this));
 
+  Profile.prototype.export = function() {
+    return {
+      logo: 'E',
+      uptime: '23 hours 12 seconds',
+      serverAddr: 'east4.pritunl.com',
+      clientAddr: '172.16.65.12',
+      name: this.name || '',
+      orgId: this.orgId || '',
+      organization: this.organization || '',
+      serverId: this.serverId || '',
+      server: this.server || '',
+      userId: this.userId || '',
+      user: this.user || '',
+      autostart: this.autostart || '',
+      syncHosts: this.syncHosts|| [],
+      syncHash: this.syncHash || '',
+      syncSecret: this.syncSecret || '',
+      syncToken: this.syncToken || ''
+    }
+  };
+
   fs.readFile(this.ovpnPath, function(err, data) {
     if (!data) {
       this.data = null;
