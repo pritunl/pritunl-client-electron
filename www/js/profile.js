@@ -23,13 +23,19 @@ var Profile = function Profile(path) {
   this.syncHash = null;
   this.syncSecret = null;
   this.syncToken = null;
+  this.logs = null;
 
   this.load();
 };
 
 Profile.prototype.load = function() {
   fs.readFile(this.confPath, function(err, data) {
-    var confData = JSON.parse(data);
+    var confData;
+    try {
+      confData = JSON.parse(data);
+    } catch {
+      confData = {};
+    }
 
     this.name = confData.name || null;
     this.org_id = confData.org_id || null;
