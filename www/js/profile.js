@@ -44,6 +44,10 @@ Profile.prototype.load = function() {
     this.syncSecret = confData.syncSecret || null;
     this.syncToken = confData.syncToken || null;
   }.bind(this));
+
+  fs.readFile(this.ovpnPath, function(err, data) {
+    this.data = data;
+  }.bind(this));
 };
 
 Profile.prototype.connect = function() {
