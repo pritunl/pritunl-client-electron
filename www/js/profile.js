@@ -12,7 +12,7 @@ var Profile = function Profile(path) {
   this.proc = null;
   this.data = null;
   this.name = null;
-  this.orgId = null;
+  this.organizationId = null;
   this.organization = null;
   this.serverId = null;
   this.server = null;
@@ -38,7 +38,7 @@ Profile.prototype.load = function() {
     }
 
     this.name = confData.name || null;
-    this.orgId = confData.orgId || null;
+    this.organizationId = confData.organizationId || null;
     this.organization = confData.organization || null;
     this.serverId = confData.serverId || null;
     this.server = confData.server || null;
@@ -58,7 +58,7 @@ Profile.prototype.load = function() {
       serverAddr: 'east4.pritunl.com',
       clientAddr: '172.16.65.12',
       name: this.name || '',
-      orgId: this.orgId || '',
+      organizationId: this.organizationId || '',
       organization: this.organization || '',
       serverId: this.serverId || '',
       server: this.server || '',
