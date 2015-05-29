@@ -52,7 +52,19 @@ Profile.prototype.load = function() {
   }.bind(this));
 
   fs.readFile(this.ovpnPath, function(err, data) {
-    this.data = data.toString();
+    if (!data) {
+      this.data = null;
+    } else {
+      this.data = data.toString();
+    }
+  }.bind(this));
+
+  fs.readFile(this.logPath, function(err, data) {
+    if (!data) {
+      this.logs = null;
+    } else {
+      this.logs = data.toString();
+    }
   }.bind(this));
 };
 
@@ -82,7 +94,6 @@ var getProfiles = function(callback) {
     }
 
     fs.readdir(root, function(err, paths) {
-
       if (err) {
         callback(err, null);
         return
