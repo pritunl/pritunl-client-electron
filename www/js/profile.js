@@ -1,7 +1,75 @@
 var childProcess = require('child_process');
+var crypto = require('crypto');
 var remote = require('remote');
 var app = remote.require('app');
 var fs = remote.require('fs');
+
+var colors = {
+  'A': '#ff8a80',
+  'B': '#ff5252',
+  'C': '#ff1744',
+  'D': '#d50000',
+  'E': '#ff80ab',
+  'F': '#ff4081',
+  'G': '#f50057',
+  'H': '#c51162',
+  'I': '#ea80fc',
+  'J': '#e040fb',
+  'K': '#d500f9',
+  'L': '#aa00ff',
+  'M': '#b388ff',
+  'N': '#7c4dff',
+  'O': '#651fff',
+  'P': '#6200ea',
+  'Q': '#8c9eff',
+  'R': '#536dfe',
+  'S': '#3d5afe',
+  'T': '#304ffe',
+  'U': '#82b1ff',
+  'V': '#448aff',
+  'W': '#2979ff',
+  'X': '#2962ff',
+  'Y': '#80d8ff',
+  'Z': '#40c4ff',
+  'a': '#00b0ff',
+  'b': '#0091ea',
+  'c': '#84ffff',
+  'd': '#18ffff',
+  'e': '#00e5ff',
+  'f': '#00b8d4',
+  'g': '#a7ffeb',
+  'h': '#64ffda',
+  'i': '#1de9b6',
+  'j': '#00bfa5',
+  'k': '#b9f6ca',
+  'l': '#69f0ae',
+  'm': '#00e676',
+  'n': '#00c853',
+  'o': '#ccff90',
+  'p': '#b2ff59',
+  'q': '#76ff03',
+  'r': '#64dd17',
+  's': '#ffff8d',
+  't': '#ffff00',
+  'u': '#ffea00',
+  'v': '#ffd600',
+  'w': '#ffd180',
+  'x': '#ffab40',
+  'y': '#ff9100',
+  'z': '#ff6d00',
+  '0': '#ff9e80',
+  '1': '#ff6e40',
+  '2': '#ff3d00',
+  '3': '#dd2c00',
+  '4': '#d7ccc8',
+  '5': '#bcaaa4',
+  '6': '#8d6e63',
+  '7': '#5d4037',
+  '8': '#cfd8dc',
+  '9': '#b0bec5',
+  '+': '#78909c',
+  '/': '#37474f',
+};
 
 var Profile = function Profile(path) {
   this.path = path;
@@ -75,8 +143,13 @@ Profile.prototype.load = function() {
       }
     }
 
+    var hash = crypto.createHash('md5');
+    hash.update(name);
+    hash = hash.digest('base64');
+
     return {
       logo: logo,
+      logoColor: colors[hash.substr(0, 1)],
       uptime: '23 hours 12 seconds',
       serverAddr: 'east4.pritunl.com',
       clientAddr: '172.16.65.12',
