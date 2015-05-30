@@ -28,7 +28,29 @@ var closeConfig = function($profile) {
 };
 
 var renderProfile = function(prfl) {
-  $('.profiles .list').append(Mustache.render(template, prfl.export()));
+  var $profile = $(Mustache.render(template, prfl.export()));
+
+  $profile.find('.open-menu i, .menu-backdrop').click(function(evt) {
+    if (!$profile.hasClass('profile')) {
+      $profile = $profile.parent();
+    }
+    toggleMenu($profile);
+  });
+
+  $profile.find('.menu .connect').click(function() {
+    var profile = new Profile('test');
+    profile.connect();
+  });
+
+  $profile.find('.menu .edit-config').click(function() {
+    openConfig($profile);
+  });
+
+  $profile.find('.menu .config .btns .cancel').click(function() {
+    closeConfig($profile);
+  });
+
+  $('.profiles .list').append($profile);
 };
 
 var renderProfiles = function() {
