@@ -46,6 +46,7 @@ var closeConfig = function($profile) {
 };
 
 var renderProfile = function(prfl) {
+  var editor;
   var $profile = $(Mustache.render(template, prfl.export()));
 
   $profile.find('.open-menu i, .menu-backdrop').click(function(evt) {
@@ -61,10 +62,30 @@ var renderProfile = function(prfl) {
   });
 
   $profile.find('.menu .edit-config').click(function() {
-    openConfig($profile);
+    editor = openConfig(prfl, $profile);
   });
 
-  $profile.find('.menu .config .btns .cancel').click(function() {
+  $profile.find('.config .btns .save').click(function() {
+    if (!editor) {
+      return;
+    }
+    var data = editor.getSession().getValue();
+    editor.destroy();
+    editor = null;
+
+    prfl.data = data;
+    prfl.saveData(function(err) {
+      closeConfig($profile);
+    });
+  });
+
+  $profile.find('.config .btns .cancel').click(function() {
+    if (!editor) {
+      return;
+    }
+    editor.destroy();
+    editor = null;
+
     closeConfig($profile);
   });
 
