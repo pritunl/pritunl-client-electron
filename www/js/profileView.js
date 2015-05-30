@@ -13,17 +13,35 @@ var toggleMenu = function($profile) {
   $profile.find('.menu').animate({width: 'toggle'}, 100);
   $profile.find('.menu-backdrop').fadeToggle(75);
 };
-var openConfig = function($profile) {
+
+var openConfig = function(prfl, $profile) {
+  var $editor = $profile.find('.config .editor');
+
+  var editor = ace.edit($editor[0]);
+  editor.setTheme('ace/theme/cobalt');
+  editor.setFontSize(12);
+  editor.setShowPrintMargin(false);
+  editor.setShowFoldWidgets(false);
+  editor.getSession().setMode('ace/mode/text');
+  editor.getSession().setValue(prfl.data);
+
   $profile.find('.config').fadeIn(50);
   setTimeout(function() {
     $profile.addClass('editing');
     toggleMenu($profile);
   }, 55);
+
+  return editor;
 };
 var closeConfig = function($profile) {
   $profile.removeClass('editing');
   setTimeout(function() {
     $profile.find('.config').fadeOut(50);
+    setTimeout(function() {
+      var $editor = $profile.find('.config .editor');
+      $editor.empty();
+      $editor.attr('class', 'editor');
+    }, 55);
   }, 130);
 };
 
