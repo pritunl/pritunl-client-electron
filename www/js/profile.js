@@ -220,7 +220,7 @@ var getProfiles = function(callback) {
       var i;
       var path;
       var pathSplit;
-      var profile;
+      var profiles = [];
       for (i = 0; i < paths.length; i++) {
         path = paths[i];
         pathSplit = path.split('.');
@@ -229,8 +229,12 @@ var getProfiles = function(callback) {
           continue;
         }
 
-        profile = new Profile(root + '/' + path.substr(0, path.length - 5));
+        path = root + '/' + path.substr(0, path.length - 5);
+
+        profiles.push(new Profile(path));
       }
+
+      callback(err, profiles);
     });
   });
 };
