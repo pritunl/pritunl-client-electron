@@ -142,6 +142,7 @@ body {
   background-color: #195e29;
   background-color: #472579;
   font-size: 27px;
+  text-transform: uppercase;
 }
 .profile .info {
   flex: 1;
