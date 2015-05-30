@@ -52,12 +52,35 @@ Profile.prototype.load = function() {
   }.bind(this));
 
   Profile.prototype.export = function() {
+    var logo;
+    var name = this.name;
+
+    if (!name) {
+      if (this.user) {
+        name = this.user;
+        if (this.organization) {
+          name += '@' + this.organization;
+        }
+
+        if (this.server) {
+          name += ' (' + this.server + ')';
+          logo = this.server.substr(0, 1);
+        }
+      } else if (this.server) {
+        name = this.server;
+        logo = this.server.substr(0, 1);
+      } else {
+        name = 'Unknown Profile';
+        logo = 'U';
+      }
+    }
+
     return {
-      logo: 'E',
+      logo: logo,
       uptime: '23 hours 12 seconds',
       serverAddr: 'east4.pritunl.com',
       clientAddr: '172.16.65.12',
-      name: this.name || '',
+      name: name,
       organizationId: this.organizationId || '',
       organization: this.organization || '',
       serverId: this.serverId || '',
