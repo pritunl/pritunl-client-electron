@@ -213,7 +213,7 @@ body {
   transition: opacity 50ms ease;
 }
 .profile.editing .config {
-  opacity: 0;
+  opacity: 1;
 }
 .profile .config .editor {
   width: 100%;
