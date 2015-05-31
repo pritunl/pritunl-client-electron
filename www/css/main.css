@@ -126,7 +126,8 @@ body {
   transition: height 125ms linear;
   overflow: hidden;
 }
-.profile.editing {
+.profile.editing-logs,
+.profile.editing-config {
   height: 312px;
 }
 .profile + .profile {
@@ -216,8 +217,8 @@ body {
   opacity: 0;
   transition: opacity 50ms ease;
 }
-.profile.editing .logs,
-.profile.editing .config {
+.profile.editing-logs .logs,
+.profile.editing-config .config {
   opacity: 1;
 }
 .profile .logs .editor,
