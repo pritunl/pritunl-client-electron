@@ -35,6 +35,7 @@ var openConfig = function(prfl, $profile) {
 };
 var closeConfig = function($profile) {
   $profile.removeClass('editing');
+
   setTimeout(function() {
     $profile.find('.config').fadeOut(50);
     setTimeout(function() {
