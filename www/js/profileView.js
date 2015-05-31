@@ -77,8 +77,7 @@ var renderProfile = function(prfl) {
   });
 
   $profile.find('.menu .connect').click(function() {
-    var profile = new Profile('test');
-    profile.connect();
+    prfl.connect();
   });
 
   $profile.find('.menu .edit-config').click(function() {
