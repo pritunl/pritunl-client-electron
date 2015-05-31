@@ -126,7 +126,9 @@ body {
   transition: height 125ms linear;
   overflow: hidden;
 }
-.profile.editing-logs,
+.profile.editing-logs {
+  height: 342px;
+}
 .profile.editing-config {
   height: 312px;
 }
@@ -191,21 +193,6 @@ body {
   height: 37px;
 }
 
-.profile .logs {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  display: none;
-}
-.profile .logs .btn {
-  width: 50%;
-  display: inline-block;
-  font-size: 16px;
-  padding: 6px;
-}
-
 .profile .logs,
 .profile .config {
   position: absolute;
@@ -213,12 +200,13 @@ body {
   right: 0;
   top: 0;
   bottom: 0;
-  display: none;
   opacity: 0;
-  transition: opacity 50ms ease;
+  visibility: hidden;
+  transition: opacity 125ms linear;
 }
 .profile.editing-logs .logs,
 .profile.editing-config .config {
+  visibility: visible;
   opacity: 1;
 }
 .profile .logs .editor,
@@ -226,6 +214,9 @@ body {
   width: 100%;
   height: 260px;
   margin: 0;
+}
+.profile .logs .editor {
+  height: 290px;
 }
 .profile .logs .btn,
 .profile .config .btn {
