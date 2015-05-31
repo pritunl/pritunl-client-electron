@@ -14,16 +14,14 @@ var toggleMenu = function($profile) {
   $profile.find('.menu-backdrop').fadeToggle(75);
 };
 
-var openConfig = function(prfl, $profile) {
-  var $editor = $profile.find('.config .editor');
-
+var openEditor = function($editor, data) {
   var editor = ace.edit($editor[0]);
   editor.setTheme('ace/theme/cobalt');
   editor.setFontSize(12);
   editor.setShowPrintMargin(false);
   editor.setShowFoldWidgets(false);
   editor.getSession().setMode('ace/mode/text');
-  editor.getSession().setValue(prfl.data);
+  editor.getSession().setValue(data);
 
   $profile.find('.config').fadeIn(50);
   setTimeout(function() {
@@ -33,17 +31,29 @@ var openConfig = function(prfl, $profile) {
 
   return editor;
 };
-var closeConfig = function($profile) {
-  $profile.removeClass('editing');
-
+var closeEditor = function($editor) {
   setTimeout(function() {
     $profile.find('.config').fadeOut(50);
     setTimeout(function() {
-      var $editor = $profile.find('.config .editor');
       $editor.empty();
       $editor.attr('class', 'editor');
     }, 55);
   }, 130);
+};
+var destroyEditor = function(editor) {
+  var data = editor.getSession().getValue();
+  editor.destroy();
+
+  return data;
+};
+
+var openConfig = function(prfl, $profile) {
+  var $editor = $profile.find('.config .editor');
+  return openEditor($editor, prfl.data);
+};
+var closeConfig = function($profile) {
+  var $editor = $profile.find('.config .editor');
+  return closeEditor($editor);
 };
 
 var renderProfile = function(prfl) {
@@ -70,11 +80,9 @@ var renderProfile = function(prfl) {
     if (!editor) {
       return;
     }
-    var data = editor.getSession().getValue();
-    editor.destroy();
+    prfl.data = destroyEditor(editor);
     editor = null;
 
-    prfl.data = data;
     prfl.saveData(function(err) {
       closeConfig($profile);
     });
@@ -84,7 +92,7 @@ var renderProfile = function(prfl) {
     if (!editor) {
       return;
     }
-    editor.destroy();
+    destroyEditor(editor);
     editor = null;
 
     closeConfig($profile);
