@@ -189,6 +189,10 @@ Profile.prototype.saveData = function(callback) {
   fs.writeFile(this.ovpnPath, this.data, callback);
 };
 
+Profile.prototype.saveLog = function(callback) {
+  fs.writeFile(this.logPath, this.logs, callback);
+};
+
 Profile.prototype.connect = function() {
   this.proc = childProcess.spawn('echo', ['-n', 'connect']);
 
