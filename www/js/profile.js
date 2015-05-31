@@ -91,7 +91,7 @@ var Profile = function Profile(path) {
   this.syncHash = null;
   this.syncSecret = null;
   this.syncToken = null;
-  this.logs = null;
+  this.log = null;
 
   this.load();
 };
@@ -178,9 +178,9 @@ Profile.prototype.load = function() {
 
   fs.readFile(this.logPath, function(err, data) {
     if (!data) {
-      this.logs = null;
+      this.log = null;
     } else {
-      this.logs = data.toString();
+      this.log = data.toString();
     }
   }.bind(this));
 };
@@ -190,7 +190,7 @@ Profile.prototype.saveData = function(callback) {
 };
 
 Profile.prototype.saveLog = function(callback) {
-  fs.writeFile(this.logPath, this.logs, callback);
+  fs.writeFile(this.logPath, this.log, callback);
 };
 
 Profile.prototype.connect = function() {
