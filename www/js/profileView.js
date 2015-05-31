@@ -14,7 +14,7 @@ var toggleMenu = function($profile) {
   $profile.find('.menu-backdrop').fadeToggle(75);
 };
 
-var openEditor = function($editor, data) {
+var openEditor = function($profile, $editor, data) {
   var editor = ace.edit($editor[0]);
   editor.setTheme('ace/theme/cobalt');
   editor.setFontSize(12);
@@ -31,7 +31,7 @@ var openEditor = function($editor, data) {
 
   return editor;
 };
-var closeEditor = function($editor) {
+var closeEditor = function($profile, $editor) {
   setTimeout(function() {
     $profile.find('.config').fadeOut(50);
     setTimeout(function() {
@@ -49,11 +49,20 @@ var destroyEditor = function(editor) {
 
 var openConfig = function(prfl, $profile) {
   var $editor = $profile.find('.config .editor');
-  return openEditor($editor, prfl.data);
+  return openEditor($profile, $editor, prfl.data);
 };
 var closeConfig = function($profile) {
   var $editor = $profile.find('.config .editor');
-  return closeEditor($editor);
+  return closeEditor($profile, $editor);
+};
+
+var openLog = function(prfl, $profile) {
+  var $editor = $profile.find('.logs .editor');
+  return openEditor($profile, $editor, prfl.log);
+};
+var closeLog = function($profile) {
+  var $editor = $profile.find('.logs .editor');
+  return closeEditor($profile, $editor);
 };
 
 var renderProfile = function(prfl) {
@@ -76,6 +85,10 @@ var renderProfile = function(prfl) {
     editor = openConfig(prfl, $profile);
   });
 
+  $profile.find('.menu .view-logs').click(function() {
+    editor = openLog(prfl, $profile);
+  });
+
   $profile.find('.config .btns .save').click(function() {
     if (!editor) {
       return;
@@ -96,6 +109,26 @@ var renderProfile = function(prfl) {
     editor = null;
 
     closeConfig($profile);
+  });
+
+  $profile.find('.logs .btns .close').click(function() {
+    if (!editor) {
+      return;
+    }
+    destroyEditor(editor);
+    editor = null;
+
+    closeLog($profile);
+  });
+
+  $profile.find('.logs .btns .clear').click(function() {
+    if (!editor) {
+      return;
+    }
+    editor.getSession().setValue('');
+    prfl.logs = '';
+    prfl.saveData(function(err) {
+    });
   });
 
   $('.profiles .list').append($profile);
