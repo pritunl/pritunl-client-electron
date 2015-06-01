@@ -10,7 +10,7 @@ var template = fs.readFileSync('www/templates/profile.html').toString();
 $(document).on('dblclick mousedown', '.no-select, .btn', false);
 
 var toggleMenu = function($profile) {
-  $profile.find('.menu').animate({width: 'toggle'}, 100);
+  $profile.find('.menu').toggleClass('show');
   $profile.find('.menu-backdrop').fadeToggle(75);
 };
 

@@ -171,10 +171,12 @@ body {
   position: absolute;
   right: 0;
   width: 0;
+  visibility: hidden;
   transition: width 125ms linear;
 }
 .profile .menu.show {
   width: 101px;
+  visibility: visible;
 }
 .profile .menu-backdrop {
   background-color: rgba(0, 0, 0, .65);
