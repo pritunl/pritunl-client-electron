@@ -124,8 +124,8 @@ var renderProfile = function(prfl) {
       return;
     }
     editor.getSession().setValue('');
-    prfl.logs = '';
-    prfl.saveData(function(err) {
+    prfl.log = '';
+    prfl.saveLog(function(err) {
     });
   });
 
