@@ -14,7 +14,7 @@ var toggleMenu = function($profile) {
   $profile.find('.menu-backdrop').fadeToggle(75);
 };
 
-var openEditor = function($profile, $editor, data) {
+var openEditor = function($profile, $editor, data, typ) {
   var editor = ace.edit($editor[0]);
   editor.setTheme('ace/theme/cobalt');
   editor.setFontSize(12);
@@ -23,17 +23,16 @@ var openEditor = function($profile, $editor, data) {
   editor.getSession().setMode('ace/mode/text');
   editor.getSession().setValue(data);
 
-  $profile.find('.config').fadeIn(50);
+  $profile.addClass('editing-' + typ);
   setTimeout(function() {
-    $profile.addClass('editing');
     toggleMenu($profile);
   }, 55);
 
   return editor;
 };
-var closeEditor = function($profile, $editor) {
+var closeEditor = function($profile, $editor, typ) {
+  $profile.removeClass('editing-' + typ);
   setTimeout(function() {
-    $profile.find('.config').fadeOut(50);
     setTimeout(function() {
       $editor.empty();
       $editor.attr('class', 'editor');
@@ -49,20 +48,20 @@ var destroyEditor = function(editor) {
 
 var openConfig = function(prfl, $profile) {
   var $editor = $profile.find('.config .editor');
-  return openEditor($profile, $editor, prfl.data);
+  return openEditor($profile, $editor, prfl.data, 'config');
 };
 var closeConfig = function($profile) {
   var $editor = $profile.find('.config .editor');
-  return closeEditor($profile, $editor);
+  return closeEditor($profile, $editor, 'config');
 };
 
 var openLog = function(prfl, $profile) {
   var $editor = $profile.find('.logs .editor');
-  return openEditor($profile, $editor, prfl.log);
+  return openEditor($profile, $editor, prfl.log, 'logs');
 };
 var closeLog = function($profile) {
   var $editor = $profile.find('.logs .editor');
-  return closeEditor($profile, $editor);
+  return closeEditor($profile, $editor, 'logs');
 };
 
 var renderProfile = function(prfl) {
