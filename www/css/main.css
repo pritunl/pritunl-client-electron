@@ -171,7 +171,7 @@ body {
   position: absolute;
   right: 0;
   width: 0;
-  transition: width 125ms linear;
+  transition: width 100ms ease;
 }
 .profile .menu.show {
   width: 101px;
