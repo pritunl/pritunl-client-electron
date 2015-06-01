@@ -170,7 +170,11 @@ body {
 .profile .menu {
   position: absolute;
   right: 0;
-  display: none;
+  width: 0;
+  transition: width 125ms linear;
+}
+.profile .menu.show {
+  width: 101px;
 }
 .profile .menu-backdrop {
   background-color: rgba(0, 0, 0, .65);
