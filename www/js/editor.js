@@ -20,9 +20,9 @@ Editor.prototype.destroy = function() {
 };
 
 Editor.prototype.get = function() {
-  return editor.getSession().getValue();
+  return this.editor.getSession().getValue();
 };
 
 Editor.prototype.set = function(data) {
-  return editor.getSession().setValue(data);
+  return this.editor.getSession().setValue(data);
 };
