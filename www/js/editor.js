@@ -3,14 +3,13 @@ var Editor = function Editor($container) {
   this.$container = $container;
 };
 
-Editor.prototype.create = function(data) {
+Editor.prototype.create = function() {
   this.editor = ace.edit(this.$container[0]);
   this.editor.setTheme('ace/theme/cobalt');
   this.editor.setFontSize(12);
   this.editor.setShowPrintMargin(false);
   this.editor.setShowFoldWidgets(false);
   this.editor.getSession().setMode('ace/mode/text');
-  this.editor.getSession().setValue(data);
 };
 
 Editor.prototype.destroy = function() {
@@ -25,4 +24,8 @@ Editor.prototype.get = function() {
 
 Editor.prototype.set = function(data) {
   return this.editor.getSession().setValue(data);
+};
+
+module.exports = {
+  Editor: Editor
 };
