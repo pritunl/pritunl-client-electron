@@ -133,3 +133,5 @@ var renderProfiles = function() {
     }
   });
 };
+
+renderProfiles();
