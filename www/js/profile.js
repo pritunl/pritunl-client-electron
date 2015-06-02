@@ -68,7 +68,7 @@ var colors = {
   '8': '#cfd8dc',
   '9': '#b0bec5',
   '+': '#78909c',
-  '/': '#37474f',
+  '/': '#37474f'
 };
 
 var Profile = function Profile(path) {
