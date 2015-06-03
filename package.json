@@ -12,6 +12,7 @@
     "grunt": "^0.4.5",
     "grunt-electron-installer": "^0.33.0",
     "rimraf": "^2.3.3",
+    "rcedit": "^0.3.0",
     "shelljs": "^0.4.0"
   },
   "scripts": {
