@@ -1,4 +1,5 @@
 var app = require('app');
+var path = require('path');
 var BrowserWindow = require('browser-window');
 var Tray = require('tray');
 var Menu = require('menu');
@@ -34,7 +35,7 @@ var openMainWin = function() {
 
   main.openDevTools();
 
-  main.loadUrl('file://' + __dirname + '/index.html');
+  main.loadUrl('file://' + path.join(__dirname, 'index.html'));
 
   main.on('closed', function() {
     main = null;
