@@ -19,7 +19,7 @@ var openMainWin = function() {
   }
 
   main = new BrowserWindow({
-    icon: 'www/img/logo.png',
+    icon: path.join(__dirname, 'img', 'logo.png'),
     frame: false,
     width: 400,
     height: 580,
@@ -42,7 +42,7 @@ var openMainWin = function() {
 app.on('ready', function() {
   openMainWin();
 
-  tray = new Tray('www/img/tray-connected.png');
+  tray = new Tray(path.join(__dirname, 'img', 'tray-connected.png'));
   tray.on('clicked', function() {
     openMainWin();
   });

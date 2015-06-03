@@ -1,12 +1,14 @@
 var remote = require('remote');
 var fs = require('fs');
+var path = require('path');
 var $ = require('jquery');
 var Mustache = require('mustache');
 var profile = require('./profile.js');
 var editor = require('./editor.js');
 var ace = require('./ace/ace.js');
 
-var template = fs.readFileSync('www/templates/profile.html').toString();
+var template = fs.readFileSync(
+  path.join(__dirname, '..', 'templates', 'profile.html')).toString();
 
 $(document).on('dblclick mousedown', '.no-select, .btn', false);
 
