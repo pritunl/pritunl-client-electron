@@ -22,7 +22,7 @@ var openMainWin = function() {
 
   main = new BrowserWindow({
     icon: 'www/img/logo.png',
-    //frame: false,
+    frame: false,
     width: 400,
     height: 580,
     'min-width': 280,
