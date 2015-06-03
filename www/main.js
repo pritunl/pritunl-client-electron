@@ -4,9 +4,6 @@ var BrowserWindow = require('browser-window');
 var Tray = require('tray');
 var Menu = require('menu');
 
-// TODO
-require('crash-reporter').start();
-
 var main = null;
 var tray = null;
 
