@@ -6,13 +6,11 @@ var sh = require('shelljs');
 
 var appVersion = pkgjson.version;
 var appName = pkgjson.name;
-var electronPackager = path.join(
-  '.', 'node_modules', '.bin', 'electron-packager');
+var electronPackager = path.join('node_modules', '.bin', 'electron-packager');
 var electronVersion = '0.26.0';
-var icon = 'static/Icon.icns';
+var icon = path.join('www', 'img', 'logo.png');
 
 if (process.argv[2] === '--all') {
-  // build for all platforms
   var archs = ['ia32', 'x64'];
   var platforms = ['linux', 'win32', 'darwin'];
 
@@ -22,16 +20,14 @@ if (process.argv[2] === '--all') {
     })
   })
 } else {
-  // build for current platform only
   pack(os.platform(), os.arch());
 }
 
 function pack (plat, arch) {
-  var outputPath = path.join('.', 'pkg', appVersion, plat, arch);
+  var outputPath = path.join('pkg', appVersion, plat, arch);
 
-  sh.exec(path.join('.', 'node_modules', '.bin', 'rimraf') + ' ' + outputPath);
+  sh.exec(path.join('node_modules', '.bin', 'rimraf') + ' ' + outputPath);
 
-  // there is no darwin ia32 electron
   if (plat === 'darwin' && arch === 'ia32') {
     return;
   }
@@ -41,7 +37,7 @@ function pack (plat, arch) {
     ' --arch=' + arch +
     ' --version=' + electronVersion +
     ' --app-version' + appVersion +
-    ' --icon=' + icon +
+    // TODO ' --icon=' + icon +
     ' --out=' + outputPath +
     ' --prune' +
     ' --ignore=pkg';
