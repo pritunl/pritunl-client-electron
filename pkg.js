@@ -6,7 +6,8 @@ var sh = require('shelljs');
 
 var appVersion = pkgjson.version;
 var appName = pkgjson.name;
-var electronPackager = './node_modules/.bin/electron-packager';
+var electronPackager = path.join(
+  '.', 'node_modules', '.bin', 'electron-packager');
 var electronVersion = '0.26.0';
 var icon = 'static/Icon.icns';
 
@@ -28,7 +29,7 @@ if (process.argv[2] === '--all') {
 function pack (plat, arch) {
   var outputPath = path.join('.', 'pkg', appVersion, plat, arch);
 
-  sh.exec('./node_modules/.bin/rimraf ' + outputPath);
+  sh.exec(path.join('.', 'node_modules', '.bin', 'rimraf') + ' ' + outputPath);
 
   // there is no darwin ia32 electron
   if (plat === 'darwin' && arch === 'ia32') {
