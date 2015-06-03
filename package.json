@@ -11,5 +11,10 @@
     "electron-prebuilt": "^0.25.1",
     "grunt": "^0.4.5",
     "grunt-electron-installer": "^0.33.0"
+  },
+  "scripts": {
+    "package": "node pkg.js",
+    "package-all": "node pkg.js --all",
+    "start": "electron ."
   }
 }
