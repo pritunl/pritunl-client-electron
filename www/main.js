@@ -47,7 +47,7 @@ app.on('ready', function() {
       }
     },
     {
-      label: 'Open Dveloper Tools',
+      label: 'Open Developer Tools',
       click: function() {
         main.openDevTools();
       }
