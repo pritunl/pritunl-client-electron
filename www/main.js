@@ -34,7 +34,7 @@ var openMainWin = function() {
 app.on('ready', function() {
   openMainWin();
 
-  tray = new Tray(path.join(__dirname, 'img', 'tray-connected.png'));
+  tray = new Tray(path.join(__dirname, 'img', 'tray_connected_win.png'));
   tray.on('clicked', function() {
     openMainWin();
   });
