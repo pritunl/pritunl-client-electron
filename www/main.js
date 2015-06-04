@@ -47,21 +47,19 @@ app.on('ready', function() {
     openMainWin();
   });
 
-  if (process.platform === 'linux') {
-    var menu = Menu.buildFromTemplate([
-      {
-        label: 'Settings',
-        click: function() {
-          openMainWin();
-        }
-      },
-      {
-        label: 'Exit',
-        click: function() {
-          app.quit();
-        }
+  var menu = Menu.buildFromTemplate([
+    {
+      label: 'Settings',
+      click: function() {
+        openMainWin();
       }
-    ]);
-    tray.setContextMenu(menu);
-  }
+    },
+    {
+      label: 'Exit',
+      click: function() {
+        app.quit();
+      }
+    }
+  ]);
+  tray.setContextMenu(menu);
 });
