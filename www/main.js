@@ -24,8 +24,6 @@ var openMainWin = function() {
   });
   main.maximizedPrev = null;
 
-  main.openDevTools();
-
   main.loadUrl('file://' + path.join(__dirname, 'index.html'));
 
   main.on('closed', function() {
