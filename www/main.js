@@ -49,6 +49,12 @@ app.on('ready', function() {
       }
     },
     {
+      label: 'Open Dveloper Tools',
+      click: function() {
+        main.openDevTools();
+      }
+    },
+    {
       label: 'Exit',
       click: function() {
         app.quit();
