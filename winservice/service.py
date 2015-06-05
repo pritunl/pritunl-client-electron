@@ -2,12 +2,15 @@ import sys
 import os
 import subprocess
 import threading
+import time
 
 import win32serviceutil
 import win32service
 import win32event
 import win32api
 import servicemanager
+
+ROOT_DIR = os.path.dirname(os.path.realpath(__file__))
 
 class Service(win32serviceutil.ServiceFramework):
     _svc_name_ = 'unknown'
@@ -113,9 +116,45 @@ class Pritunl(Service):
                 pass
 
             if not self.tap_adap_avail - self.tap_adap_used:
-                self.add_tap_adapter()
+                self.add_tap_adap()
+
+        except Exception, err:
+            self.log_error('Init tap adapter exception: %s' % err)
+            self.SvcStop()
+
         finally:
             self.tap_adap_lock.release()
+
+    def add_tap_adap(self):
+        tuntap_dir = os.path.join(ROOT_DIR, 'tuntap')
+        devcon_path = os.path.join(tuntap_dir, 'devcon.exe')
+        subprocess.check_output([devcon_path, 'install',
+            'OemWin2k.inf', 'tap0901'], cwd=tuntap_dir,
+            creationflags=0x08000000)
+        self.tap_adap_avail += 1
+
+    def clear_tap_adap(self):
+        tuntap_dir = os.path.join(ROOT_DIR, 'tuntap')
+        devcon_path = os.path.join(tuntap_dir, 'devcon.exe')
+        subprocess.check_output([devcon_path, 'remove', 'tap0901'],
+            cwd=tuntap_dir, creationflags=0x08000000)
+        self.reset_networking()
+
+    def reset_networking(self):
+        for command in (
+            ['route', '-f'],
+            ['ipconfig', '/release'],
+            ['ipconfig', '/renew'],
+            ['arp', '-d', '*'],
+            ['nbtstat', '-R'],
+            ['nbtstat', '-RR'],
+            ['ipconfig', '/flushdns'],
+            ['nbtstat', '/registerdns'],
+        ):
+            try:
+                subprocess.check_output(command, creationflags=0x08000000)
+            except:
+                pass
 
     def start(self):
         self.init_tap_adap()
