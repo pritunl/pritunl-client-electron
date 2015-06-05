@@ -159,6 +159,9 @@ class Pritunl(Service):
     def start(self):
         self.init_tap_adap()
 
+        while True:
+            time.sleep(1)
+
     def stop(self):
         self.runflag=False
 
