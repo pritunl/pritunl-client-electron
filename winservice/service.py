@@ -10,8 +10,6 @@ import win32event
 import win32api
 import servicemanager
 
-ROOT_DIR = os.path.dirname(os.path.realpath(__file__))
-
 class Service(win32serviceutil.ServiceFramework):
     _svc_name_ = 'unknown'
     _svc_display_name_ = 'Unknown service'
