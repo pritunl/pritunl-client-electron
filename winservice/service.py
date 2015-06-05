@@ -89,56 +89,34 @@ class Pritunl(Service):
         self.tap_adap_avail = 0
         self.tap_adap_lock = threading.Lock()
 
-    def init_tap_adap(self):
+    def update_tap_adap(self):
         self.tap_adap_lock.acquire()
         try:
-            try:
-                ipconfig = subprocess.check_output(['ipconfig', '/all'],
-                    creationflags=0x08000000)
-                self.tap_adap_used = 0
-                self.tap_adap_avail = 0
-                tap_adapter = False
-                tap_disconnected = False
-                for line in ipconfig.split('\n'):
-                    line = line.strip()
-                    if line == '':
-                        if tap_adapter:
-                            self.tap_adap_avail += 1
-                            if not tap_disconnected:
-                                self.tap_adap_used += 1
-                        tap_adapter = False
-                        tap_disconnected = False
-                    elif 'TAP-Windows Adapter V9' in line:
-                        tap_adapter = True
-                    elif 'Media disconnected' in line:
-                        tap_disconnected = True
-            except (WindowsError, subprocess.CalledProcessError):
-                pass
+            ipconfig = subprocess.check_output(['ipconfig', '/all'],
+                creationflags=0x08000000)
+            self.tap_adap_used = 0
+            self.tap_adap_avail = 0
+            tap_adapter = False
+            tap_disconnected = False
+            for line in ipconfig.split('\n'):
+                line = line.strip()
+                if line == '':
+                    if tap_adapter:
+                        self.tap_adap_avail += 1
+                        if not tap_disconnected:
+                            self.tap_adap_used += 1
+                    tap_adapter = False
+                    tap_disconnected = False
+                elif 'TAP-Windows Adapter V9' in line:
+                    tap_adapter = True
+                elif 'Media disconnected' in line:
+                    tap_disconnected = True
 
-            if not self.tap_adap_avail - self.tap_adap_used:
-                self.add_tap_adap()
-
-        except Exception, err:
-            self.log_error('Init tap adapter exception: %s' % err)
-            self.SvcStop()
+        except (WindowsError, subprocess.CalledProcessError):
+            self.log_warn('Failed to get tap adapter info')
 
         finally:
             self.tap_adap_lock.release()
-
-    def add_tap_adap(self):
-        tuntap_dir = os.path.join(ROOT_DIR, 'tuntap')
-        devcon_path = os.path.join(tuntap_dir, 'devcon.exe')
-        subprocess.check_output([devcon_path, 'install',
-            'OemWin2k.inf', 'tap0901'], cwd=tuntap_dir,
-            creationflags=0x08000000)
-        self.tap_adap_avail += 1
-
-    def clear_tap_adap(self):
-        tuntap_dir = os.path.join(ROOT_DIR, 'tuntap')
-        devcon_path = os.path.join(tuntap_dir, 'devcon.exe')
-        subprocess.check_output([devcon_path, 'remove', 'tap0901'],
-            cwd=tuntap_dir, creationflags=0x08000000)
-        self.reset_networking()
 
     def reset_networking(self):
         for command in (
@@ -154,10 +132,13 @@ class Pritunl(Service):
             try:
                 subprocess.check_output(command, creationflags=0x08000000)
             except:
-                pass
+                self.log_warn('Reset networking cmd error: %s' % command)
 
     def start(self):
-        self.init_tap_adap()
+        self.update_tap_adap()
+
+        self.log_info('Current tap adapters: %s/%s' % (
+            self.tap_adap_used, self.tap_adap_avail))
 
         while True:
             time.sleep(1)
