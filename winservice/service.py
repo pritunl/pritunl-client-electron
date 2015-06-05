@@ -1,6 +1,7 @@
 import sys
 import os
 import subprocess
+import threading
 
 import win32serviceutil
 import win32service
@@ -83,30 +84,38 @@ class Pritunl(Service):
         Service.__init__(self, *args)
         self.tap_adap_used = 0
         self.tap_adap_avail = 0
+        self.tap_adap_lock = threading.Lock()
 
     def init_tap_adap(self):
+        self.tap_adap_lock.acquire()
         try:
-            ipconfig = subprocess.check_output(['ipconfig', '/all'],
-                creationflags=0x08000000)
-            self.tap_adap_used = 0
-            self.tap_adap_avail = 0
-            tap_adapter = False
-            tap_disconnected = False
-            for line in ipconfig.split('\n'):
-                line = line.strip()
-                if line == '':
-                    if tap_adapter:
-                        self.tap_adap_avail += 1
-                        if not tap_disconnected:
-                            self.tap_adap_used += 1
-                    tap_adapter = False
-                    tap_disconnected = False
-                elif 'TAP-Windows Adapter V9' in line:
-                    tap_adapter = True
-                elif 'Media disconnected' in line:
-                    tap_disconnected = True
-        except (WindowsError, subprocess.CalledProcessError):
-            pass
+            try:
+                ipconfig = subprocess.check_output(['ipconfig', '/all'],
+                    creationflags=0x08000000)
+                self.tap_adap_used = 0
+                self.tap_adap_avail = 0
+                tap_adapter = False
+                tap_disconnected = False
+                for line in ipconfig.split('\n'):
+                    line = line.strip()
+                    if line == '':
+                        if tap_adapter:
+                            self.tap_adap_avail += 1
+                            if not tap_disconnected:
+                                self.tap_adap_used += 1
+                        tap_adapter = False
+                        tap_disconnected = False
+                    elif 'TAP-Windows Adapter V9' in line:
+                        tap_adapter = True
+                    elif 'Media disconnected' in line:
+                        tap_disconnected = True
+            except (WindowsError, subprocess.CalledProcessError):
+                pass
+
+            if not self.tap_adap_avail - self.tap_adap_used:
+                self.add_tap_adapter()
+        finally:
+            self.tap_adap_lock.release()
 
     def start(self):
         self.init_tap_adap()
