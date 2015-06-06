@@ -214,8 +214,6 @@ body {
   font-family: 'Ubuntu', sans-serif;
   background-color: #14171a;
   margin: 0;
-  display: flex;
-  flex-direction: column;
   height: 100%;
 }
 
@@ -301,16 +299,8 @@ body {
 }
 
 
-
-.profiles {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
 .profiles .list {
   overflow-y: auto;
-  height: 100%;
-  flex: 1;
 }
 .profiles .btns .btn {
   padding: 18px;
