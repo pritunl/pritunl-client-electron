@@ -1,6 +1,7 @@
-<div class="profile">
-  <div class="logo" style="background-color: {{logoColor}};">{{logo}}</div>
-  <div class="info">
+<div class="profile" flex layout horizontal>
+  <div class="logo" layout vertical center
+    style="background-color: {{logoColor}};">{{logo}}</div>
+  <div class="info" flex>
     <div class="label">Name</div>
     <div class="name">{{name}}</div>
     <div class="label">Online For</div>
@@ -15,12 +16,18 @@
   </div>
   <div class="menu-backdrop"></div>
   <div class="menu">
-    <div class="connect item btn btn-success">Connect</div>
-    <div class="rename item btn btn-info">Rename</div>
-    <div class="delete item btn btn-danger">Delete</div>
-    <div class="autostart item btn btn-warning">Autostart</div>
-    <div class="view-logs item btn btn-action">View Logs</div>
-    <div class="edit-config item btn btn-default">Edit Config</div>
+    <div class="connect item btn btn-success"
+      layout vertical center>Connect</div>
+    <div class="rename item btn btn-info"
+      layout vertical center>Rename</div>
+    <div class="delete item btn btn-danger"
+      layout vertical center>Delete</div>
+    <div class="autostart item btn btn-warning"
+      layout vertical center>Autostart</div>
+    <div class="view-logs item btn btn-action"
+      layout vertical center>View Logs</div>
+    <div class="edit-config item btn btn-default"
+      layout vertical center>Edit Config</div>
   </div>
   <div class="config">
     <pre class="editor"></pre>
