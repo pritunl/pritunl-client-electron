@@ -7,6 +7,8 @@ var Menu = require('menu');
 var main = null;
 var tray = null;
 
+app.on('window-all-closed', function() {});
+
 var openMainWin = function() {
   if (main) {
     return;
