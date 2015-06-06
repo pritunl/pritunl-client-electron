@@ -147,6 +147,9 @@ class Pritunl(Service):
             'process': None,
         })
 
+        if data['process']:
+            return data
+
         log_path = path[:-4] + 'log'
 
         args = [OPENVPN_PATH, '--config', path]
