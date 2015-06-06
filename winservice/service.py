@@ -77,6 +77,14 @@ def instart(cls, stay_alive=True):
 
     win32serviceutil.StartService(cls._svc_name_)
 
+OPENVPN_PATH = 'openvpn.exe'
+CONNECT_TIMEOUT = 30
+CONNECTING = 'connecting'
+CONNECTED = 'connected'
+RECONNECTING = 'reconnecting'
+DISCONNECTED = 'disconnected'
+AUTH_ERROR = 'auth_error'
+
 class Pritunl(Service):
     _svc_name_ = 'pritunl'
     _svc_display_name_ = 'Pritunl OpenVPN Client Service'
@@ -86,6 +94,7 @@ class Pritunl(Service):
         self.tap_adap_used = 0
         self.tap_adap_avail = 0
         self.tap_adap_lock = threading.Lock()
+        self.connections = {}
 
     def update_tap_adap(self):
         self.tap_adap_lock.acquire()
@@ -131,6 +140,71 @@ class Pritunl(Service):
                 subprocess.check_output(command, creationflags=0x08000000)
             except:
                 self.log_warn('Reset networking cmd error: %s' % command)
+
+    def start_profile(self, id, path, passwd=None):
+        data = self.connections.get(id, {
+            'status': CONNECTING,
+            'process': None,
+        })
+
+        log_path = path[:-4] + 'log'
+
+        args = [OPENVPN_PATH, '--config', path]
+
+        if passwd:
+            passwd_path = path[:-4] + 'passwd'
+
+            with open(self.passwd_path, 'w') as passwd_file:
+                os.chmod(passwd_path, 0600)
+                passwd_file.write('pritunl_client\n')
+                passwd_file.write('%s\n' % passwd)
+
+            args.append('--auth-user-pass')
+            args.append(passwd_path)
+
+        process = subprocess.Popen(args,
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            creationflags=0x08000000)
+        data['process'] = process
+
+        def poll_thread():
+            with open(log_path, 'w') as _:
+                pass
+
+            while True:
+                line = process.stdout.readline()
+                if not line:
+                    if process.poll() is not None:
+                        break
+                    else:
+                        continue
+
+                with open(self.log_path, 'a') as log_file:
+                    log_file.write(line)
+
+                if 'Initialization Sequence Completed' in line:
+                    data['status'] = CONNECTED
+                elif 'Inactivity timeout' in line:
+                    data['status'] = RECONNECTING
+                elif 'AUTH_FAILED' in line or 'auth-failure' in line:
+                    data['status'] = AUTH_ERROR
+
+            try:
+                if os.path.exists(self.passwd_path):
+                    os.remove(self.passwd_path)
+            except:
+                pass
+
+            try:
+                del self.connections[id]
+            except KeyError:
+                pass
+
+        thread = threading.Thread(target=poll_thread)
+        thread.daemon = True
+        thread.start()
+
+        return data
 
     def start(self):
         self.update_tap_adap()
