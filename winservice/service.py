@@ -194,7 +194,8 @@ class Pritunl(Service):
                 elif 'AUTH_FAILED' in line or 'auth-failure' in line:
                     data['status'] = AUTH_ERROR
 
-                start_event.set()
+                if not start_event.is_set():
+                    start_event.set()
 
             try:
                 if os.path.exists(self.passwd_path):
