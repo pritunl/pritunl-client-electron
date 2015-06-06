@@ -210,7 +210,7 @@ Profile.prototype.connect = function() {
 };
 
 var getProfiles = function(callback) {
-  var root = app.getPath('userData') + '/profiles';
+  var root = path.join(app.getPath('userData'), 'profiles');
 
   fs.exists(root, function(exists) {
     if (!exists) {
