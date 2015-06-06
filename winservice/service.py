@@ -216,6 +216,14 @@ class Pritunl(Service):
 
         return data
 
+    def stop_profile(self, id):
+        data = self.connections.get(id)
+
+        if not data or not data['process']:
+            return
+
+        data['process'].terminate()
+
     def start(self):
         self.update_tap_adap()
 
