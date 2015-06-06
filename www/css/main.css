@@ -270,6 +270,9 @@ body {
 }
 
 
+.app {
+  height: 100%;
+}
 .header {
   -webkit-app-region: drag;
   background-color: #1c2126;
