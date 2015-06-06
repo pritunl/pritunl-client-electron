@@ -150,6 +150,8 @@ class Pritunl(Service):
         if data['process']:
             return data
 
+        start_event = threading.Event()
+
         log_path = path[:-4] + 'log'
 
         args = [OPENVPN_PATH, '--config', path]
@@ -192,6 +194,8 @@ class Pritunl(Service):
                 elif 'AUTH_FAILED' in line or 'auth-failure' in line:
                     data['status'] = AUTH_ERROR
 
+                start_event.set()
+
             try:
                 if os.path.exists(self.passwd_path):
                     os.remove(self.passwd_path)
@@ -206,6 +210,8 @@ class Pritunl(Service):
         thread = threading.Thread(target=poll_thread)
         thread.daemon = True
         thread.start()
+
+        start_event.wait(CONNECT_TIMEOUT)
 
         return data
 
