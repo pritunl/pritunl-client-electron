@@ -317,10 +317,6 @@ body {
   height: 207px;
   position: relative;
   color: #fff;
-  display: flex;
-  flex-direction: row;
-  flex: 1;
-  width: 100%;
   transition: height 125ms linear;
   overflow: hidden;
 }
@@ -334,8 +330,6 @@ body {
   border-top: 1px solid #242a30;
 }
 .profile .logo {
-  display: flex;
-  align-items: center;
   justify-content: center;
   width: 50px;
   height: 50px;
@@ -343,7 +337,6 @@ body {
   text-transform: uppercase;
 }
 .profile .info {
-  flex: 1;
   margin: 15px 0 15px 15px;
   white-space: nowrap;
   overflow: hidden;
@@ -389,8 +382,6 @@ body {
   color: #fff;
   width: 101px;
   height: 34px;
-  display: flex;
-  align-items: center;
   justify-content: center;
 }
 .profile .menu .item.connect {
