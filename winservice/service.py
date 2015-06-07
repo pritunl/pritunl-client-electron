@@ -77,7 +77,9 @@ def instart(cls, stay_alive=True):
 
     win32serviceutil.StartService(cls._svc_name_)
 
-OPENVPN_PATH = 'openvpn.exe'
+ROOT_DIR = os.path.dirname(os.path.realpath(__file__))
+OPENVPN_PATH = os.path.normpath(os.path.join(
+    ROOT_DIR, '..', 'openvpn', 'openvpn.exe'))
 CONNECT_TIMEOUT = 30
 CONNECTING = 'connecting'
 CONNECTED = 'connected'
