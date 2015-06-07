@@ -203,6 +203,8 @@ class Pritunl(Service):
             args.append('--auth-user-pass')
             args.append(passwd_path)
 
+        self.log_info(' '.join(args))
+
         process = subprocess.Popen(args,
             stdout=subprocess.PIPE, stderr=subprocess.PIPE,
             creationflags=0x08000000)
