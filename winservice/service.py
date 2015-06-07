@@ -2,7 +2,7 @@ import sys
 import os
 import subprocess
 import threading
-import time
+import flask
 
 import win32serviceutil
 import win32service
@@ -86,6 +86,27 @@ CONNECTED = 'connected'
 RECONNECTING = 'reconnecting'
 DISCONNECTED = 'disconnected'
 AUTH_ERROR = 'auth_error'
+
+def init_server(serv):
+    app = flask.Flask('pritunl')
+
+    @app.route('/start', methods=['POST'])
+    def start_post():
+        id = flask.request.form.get('id')
+        path = flask.request.form.get('path')
+        passwd = flask.request.form.get('passwd')
+
+        serv.log_info('%s - %s - %s' % (id, path, passwd))
+
+        try:
+            data = serv.start_profile(id, path, passwd)
+        except Exception, err:
+            serv.log_error('Start exception: %s' % err)
+            raise
+
+        serv.log_info('%s' % data)
+
+    app.run()
 
 class Pritunl(Service):
     _svc_name_ = 'pritunl'
