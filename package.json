@@ -4,7 +4,8 @@
   "main": "www/main.js",
   "dependencies": {
     "jquery": "^2.1.4",
-    "mustache": "^2.0.0"
+    "mustache": "^2.0.0",
+    "request": "^2.57.0"
   },
   "devDependencies": {
     "electron-packager": "^4.0.2",
