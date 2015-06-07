@@ -2,6 +2,7 @@ import sys
 import os
 import subprocess
 import threading
+import json
 import flask
 
 import win32serviceutil
@@ -86,6 +87,18 @@ CONNECTED = 'connected'
 RECONNECTING = 'reconnecting'
 DISCONNECTED = 'disconnected'
 AUTH_ERROR = 'auth_error'
+
+def jsonify(data=None, status_code=None):
+    if not isinstance(data, basestring):
+        data = json.dumps(data, default=lambda x: str(x))
+    response = flask.Response(response=data, mimetype='application/json')
+    response.headers.add('Cache-Control',
+        'no-cache, no-store, must-revalidate')
+    response.headers.add('Pragma', 'no-cache')
+    response.headers.add('Expires', 0)
+    if status_code is not None:
+        response.status_code = status_code
+    return response
 
 def init_server(serv):
     app = flask.Flask('pritunl')
