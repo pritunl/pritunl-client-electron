@@ -137,7 +137,7 @@ def init_server(serv):
     def status_get():
         return jsonify(serv.connections)
 
-    app.run()
+    app.run(host='127.0.0.1', port=9770)
 
 class Pritunl(Service):
     _svc_name_ = 'pritunl'
