@@ -294,8 +294,7 @@ class Pritunl(Service):
         self.log_info('Current tap adapters: %s/%s' % (
             self.tap_adap_used, self.tap_adap_avail))
 
-        while True:
-            time.sleep(1)
+        init_server(self)
 
     def stop(self):
         self.runflag=False
