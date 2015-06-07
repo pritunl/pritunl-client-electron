@@ -209,40 +209,44 @@ class Pritunl(Service):
         data['process'] = process
 
         def poll_thread():
-            with open(log_path, 'w') as _:
-                pass
+            try:
+                with open(log_path, 'w') as _:
+                    pass
 
-            while True:
-                line = process.stdout.readline()
-                if not line:
-                    if process.poll() is not None:
-                        break
+                while True:
+                    line = process.stdout.readline()
+                    if not line:
+                        if process.poll() is not None:
+                            break
+                        else:
+                            continue
+
+                    with open(log_path, 'a') as log_file:
+                        log_file.write(line)
+
+                    if 'Initialization Sequence Completed' in line:
+                        data['status'] = CONNECTED
+                    elif 'Inactivity timeout' in line:
+                        data['status'] = RECONNECTING
+                    elif 'AUTH_FAILED' in line or 'auth-failure' in line:
+                        data['status'] = AUTH_ERROR
                     else:
                         continue
 
-                with open(self.log_path, 'a') as log_file:
-                    log_file.write(line)
+                    if not start_event.is_set():
+                        start_event.set()
 
-                if 'Initialization Sequence Completed' in line:
-                    data['status'] = CONNECTED
-                elif 'Inactivity timeout' in line:
-                    data['status'] = RECONNECTING
-                elif 'AUTH_FAILED' in line or 'auth-failure' in line:
-                    data['status'] = AUTH_ERROR
+                try:
+                    if os.path.exists(self.passwd_path):
+                        os.remove(self.passwd_path)
+                except:
+                    pass
 
-                if not start_event.is_set():
-                    start_event.set()
-
-            try:
-                if os.path.exists(self.passwd_path):
-                    os.remove(self.passwd_path)
-            except:
-                pass
-
-            try:
-                del self.connections[id]
-            except KeyError:
-                pass
+            finally:
+                try:
+                    del self.connections[id]
+                except KeyError:
+                    pass
 
         thread = threading.Thread(target=poll_thread)
         thread.daemon = True
