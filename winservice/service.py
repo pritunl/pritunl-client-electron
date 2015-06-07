@@ -119,6 +119,24 @@ def init_server(serv):
 
         serv.log_info('%s' % data)
 
+        return jsonify(data)
+
+    @app.route('/stop', methods=['POST'])
+    def stop_post():
+        id = flask.request.form.get('id')
+
+        try:
+            data = serv.stop_profile(id)
+        except Exception, err:
+            serv.log_error('Stop exception: %s' % err)
+            raise
+
+        return jsonify({})
+
+    @app.route('/status', methods=['GET'])
+    def status_get():
+        return jsonify(serv.connections)
+
     app.run()
 
 class Pritunl(Service):
