@@ -86,6 +86,10 @@ var renderProfile = function(prfl) {
       return;
     }
 
+    if (conn['status'] !== 'connected') {
+      return;
+    }
+
     var timestamp = conn['timestamp'];
     if (!timestamp) {
       return;
@@ -95,8 +99,6 @@ var renderProfile = function(prfl) {
     var units;
     var unitStr;
     var uptimeItems = [];
-
-    uptime += 89900;
 
     if (uptime > 86400) {
       units = Math.floor(uptime / 86400);
