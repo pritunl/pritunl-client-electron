@@ -7,7 +7,7 @@ var Menu = require('menu');
 var main = null;
 var tray = null;
 
-app.on('window-all-closed', function() {});
+// app.on('window-all-closed', function() {}); TODO
 
 var openMainWin = function() {
   if (main) {
@@ -35,6 +35,7 @@ var openMainWin = function() {
 
 app.on('ready', function() {
   openMainWin();
+  main.openDevTools(); // TODO
 
   tray = new Tray(path.join(__dirname, 'img', 'tray_connected_win.png'));
   tray.on('clicked', function() {
