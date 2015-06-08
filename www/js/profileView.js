@@ -4,6 +4,7 @@ var path = require('path');
 var $ = require('jquery');
 var Mustache = require('mustache');
 var profile = require('./profile.js');
+var service = require('./service.js');
 var editor = require('./editor.js');
 var ace = require('./ace/ace.js');
 
@@ -61,10 +62,23 @@ var renderProfile = function(prfl) {
   var edtr;
   var $profile = $(Mustache.render(template, prfl.export()));
 
-  $profile.find('.open-menu i, .menu-backdrop').click(function(evt) {
-    if (!$profile.hasClass('profile')) {
-      $profile = $profile.parent();
+  prfl.onUpdate = function() {
+    var data = prfl.export();
+    $profile.find('.info .name').text(data.name);
+    $profile.find('.info .uptime').text(data.uptime);
+    $profile.find('.info .server-addr').text(data.serverAddr);
+    $profile.find('.info .client-addr').text(data.clientAddr);
+
+    if (data.uptime != 'Disconnected') {
+      $profile.find('.menu .connect').hide();
+      $profile.find('.menu .disconnect').css('display', 'flex');
+    } else {
+      $profile.find('.menu .disconnect').hide();
+      $profile.find('.menu .connect').css('display', 'flex');
     }
+  };
+
+  $profile.find('.open-menu i, .menu-backdrop, .menu .item').click(function(evt) {
     toggleMenu($profile);
   });
 
