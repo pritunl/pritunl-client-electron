@@ -252,7 +252,7 @@ class Pritunl(Service):
                             continue
 
                     with open(log_path, 'a') as log_file:
-                        log_file.write(line)
+                        log_file.write(line.rstrip('\n'))
 
                     if 'Initialization Sequence Completed' in line:
                         data['status'] = CONNECTED
