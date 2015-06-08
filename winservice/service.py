@@ -213,12 +213,13 @@ class Pritunl(Service):
 
         start_event = threading.Event()
 
-        log_path = path[:-4] + 'log'
+        conf_path = path + '.ovpn'
+        log_path = path + '.log'
 
-        args = [OPENVPN_PATH, '--config', path]
+        args = [OPENVPN_PATH, '--config', conf_path]
 
         if passwd:
-            passwd_path = path[:-4] + 'passwd'
+            passwd_path = path + '.passwd'
 
             with open(self.passwd_path, 'w') as passwd_file:
                 os.chmod(passwd_path, 0600)
