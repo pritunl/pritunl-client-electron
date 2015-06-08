@@ -226,22 +226,14 @@ Profile.prototype.saveLog = function(callback) {
 };
 
 Profile.prototype.connect = function() {
-  this.proc = childProcess.spawn('echo', ['-n', 'connect']);
-
-  this.proc.stdout.on('data', function (data) {
-    console.log('stdout: ' + data.toString('utf8'));
-  });
-
-  this.proc.stderr.on('data', function (data) {
-    console.log('stderr: ' + data);
-  });
-
-  this.proc.on('close', function (code) {
-    console.log('close: ' + code);
-  });
+  this.service.start(this);
 };
 
-var getProfiles = function(callback) {
+Profile.prototype.disconnect = function() {
+  this.service.stop(this);
+};
+
+var getProfiles = function(serv, callback) {
   var root = path.join(app.getPath('userData'), 'profiles');
 
   fs.exists(root, function(exists) {
