@@ -260,11 +260,15 @@ class Pritunl(Service):
                         data['status'] = RECONNECTING
                     elif 'AUTH_FAILED' in line or 'auth-failure' in line:
                         data['status'] = AUTH_ERROR
-                    else:
-                        continue
-
-                    if not start_event.is_set():
-                        start_event.set()
+                    elif 'link remote:' in line:
+                        s_index = line.rfind(']') + 1
+                        e_index = line.rfind(':')
+                        data['server_addr'] = line[s_index:e_index]
+                    elif 'network/local/netmask' in line:
+                        e_index = line.rfind('/')
+                        line = line[:e_index]
+                        s_index = line.rfind('/') + 1
+                        data['client_addr'] = line[s_index:]
 
                 try:
                     if os.path.exists(self.passwd_path):
