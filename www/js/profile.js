@@ -165,8 +165,7 @@ Profile.prototype.load = function() {
       var status = conn['status'];
 
       if (status === 'connected') {
-        uptime = status['timestamp'];
-        uptime = 'Connected'; // TODO
+        uptime = null;
       } else if (status === 'connecting') {
         uptime = 'Connecting';
       } else if (status === 'reconnecting') {
