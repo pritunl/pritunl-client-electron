@@ -1,4 +1,3 @@
-var childProcess = require('child_process');
 var crypto = require('crypto');
 var remote = require('remote');
 var path = require('path');
