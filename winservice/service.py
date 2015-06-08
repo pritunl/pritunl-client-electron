@@ -283,7 +283,7 @@ class Pritunl(Service):
         start_event.wait(CONNECT_TIMEOUT)
 
         if data['status'] == CONNECTING:
-            self.stop(id)
+            self.stop_profile(id)
             data['status'] = DISCONNECTED
 
         return data
