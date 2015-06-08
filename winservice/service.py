@@ -148,6 +148,7 @@ class Pritunl(Service):
         self.tap_adap_used = 0
         self.tap_adap_avail = 0
         self.tap_adap_lock = threading.Lock()
+        self.data_lock = threading.Lock()
         self.connections = {}
 
     def update_tap_adap(self):
@@ -196,13 +197,19 @@ class Pritunl(Service):
                 self.log_warn('Reset networking cmd error: %s' % command)
 
     def start_profile(self, id, path, passwd=None):
-        data = self.connections.get(id, {
-            'status': CONNECTING,
-            'process': None,
-        })
+        self.data_lock.acquire()
+        try:
+            data = self.connections.get(id)
+            if data:
+                return
 
-        if data['process']:
-            return data
+            data = {
+                'status': CONNECTING,
+                'process': None,
+            }
+            self.connections[id] = data
+        finally:
+            self.data_lock.release()
 
         start_event = threading.Event()
 
