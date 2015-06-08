@@ -384,8 +384,12 @@ body {
   height: 34px;
   justify-content: center;
 }
-.profile .menu .item.connect {
+.profile .menu .item.connect,
+.profile .menu .item.disconnect {
   height: 37px;
+}
+.profile .menu .item.disconnect {
+  display: none;
 }
 
 .profile .logs,
