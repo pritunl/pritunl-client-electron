@@ -302,6 +302,23 @@ body {
 }
 
 
+.errors .error {
+  padding: 10px;
+  background-color: #830202;
+  color: #fff4f4;
+  cursor: pointer;
+}
+.errors .error:hover {
+  background-color: #ab0d0d;
+}
+.errors .error:active {
+  background-color: #8e0909;
+}
+.errors .error + .error {
+  border-top: 1px solid #c22525;
+}
+
+
 .profiles .list {
   overflow-y: auto;
 }
