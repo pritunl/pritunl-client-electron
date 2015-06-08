@@ -263,7 +263,7 @@ var getProfiles = function(serv, callback) {
 
         path = root + '/' + path.substr(0, path.length - 5);
 
-        profiles.push(new Profile(path));
+        profiles.push(new Profile(serv, path));
       }
 
       callback(err, profiles);
