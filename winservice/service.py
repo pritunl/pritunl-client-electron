@@ -215,8 +215,6 @@ class Pritunl(Service):
         finally:
             self.data_lock.release()
 
-        start_event = threading.Event()
-
         conf_path = path + '.ovpn'
         log_path = path + '.log'
 
@@ -283,12 +281,6 @@ class Pritunl(Service):
         thread = threading.Thread(target=poll_thread)
         thread.daemon = True
         thread.start()
-
-        start_event.wait(CONNECT_TIMEOUT)
-
-        if data['status'] == CONNECTING:
-            self.stop_profile(id)
-            data['status'] = DISCONNECTED
 
         return data
 
