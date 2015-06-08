@@ -65,7 +65,9 @@ var renderProfile = function(prfl) {
   prfl.onUpdate = function() {
     var data = prfl.export();
     $profile.find('.info .name').text(data.name);
-    $profile.find('.info .uptime').text(data.uptime);
+    if (data.uptime) {
+      $profile.find('.info .uptime').text(data.uptime);
+    }
     $profile.find('.info .server-addr').text(data.serverAddr);
     $profile.find('.info .client-addr').text(data.clientAddr);
 
