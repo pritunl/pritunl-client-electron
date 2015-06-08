@@ -218,6 +218,24 @@ var renderProfiles = function() {
     for (i = 0; i < profiles.length; i++) {
       renderProfile(profiles[i]);
     }
+
+    serv.onUpdate = function() {
+      for (i = 0; i < profiles.length; i++) {
+        profiles[i].onUpdate();
+      }
+    };
+
+    setInterval(function() {
+      serv.update();
+    }, 250);
+
+    setInterval(function() {
+      var curTime = Math.floor((new Date).getTime() / 1000);
+
+      for (i = 0; i < profiles.length; i++) {
+        profiles[i].onUptime(curTime);
+      }
+    }, 1000);
   });
 };
 
