@@ -297,6 +297,8 @@ class Pritunl(Service):
                 except KeyError:
                     pass
 
+                # TODO Reset networking
+
         thread = threading.Thread(target=poll_thread)
         thread.daemon = True
         thread.start()
