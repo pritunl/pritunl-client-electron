@@ -86,6 +86,10 @@ var renderProfile = function(prfl) {
     prfl.connect();
   });
 
+  $profile.find('.menu .disconnect').click(function() {
+    prfl.disconnect();
+  });
+
   $profile.find('.menu .edit-config').click(function() {
     edtr = openConfig(prfl, $profile);
   });
