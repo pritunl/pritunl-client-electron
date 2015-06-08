@@ -210,6 +210,7 @@ class Pritunl(Service):
                 'server_addr': None,
                 'client_addr': None,
                 'process': None,
+                'stop': False,
             }
             self.connections[id] = data
         finally:
@@ -236,7 +237,21 @@ class Pritunl(Service):
         process = subprocess.Popen(args,
             stdout=subprocess.PIPE, stderr=subprocess.PIPE,
             creationflags=0x08000000)
-        data['process'] = process
+
+        self.data_lock.acquire()
+        try:
+            stop = data['stop']
+            data['process'] = process
+        finally:
+            self.data_lock.release()
+
+        if stop:
+            process.terminate()
+            try:
+                del self.connections[id]
+            except KeyError:
+                pass
+            return
 
         def poll_thread():
             try:
