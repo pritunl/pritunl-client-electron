@@ -72,11 +72,15 @@ var colors = {
   '/': '#37474f'
 };
 
-var Profile = function Profile(path) {
-  this.path = path;
-  this.confPath = path + '.conf';
-  this.ovpnPath = path + '.ovpn';
-  this.logPath = path + '.log';
+var Profile = function Profile(serv, pth) {
+  this.service = serv;
+  this.onUpdate = null;
+
+  this.id = path.basename(pth);
+  this.path = pth;
+  this.confPath = pth + '.conf';
+  this.ovpnPath = pth + '.ovpn';
+  this.logPath = pth + '.log';
   this.state = 'disconnected';
   this.proc = null;
   this.data = null;
