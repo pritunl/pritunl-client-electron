@@ -147,8 +147,12 @@ var renderProfile = function(prfl) {
 };
 
 var renderProfiles = function() {
-  profile.getProfiles(function(err, profiles) {
-    for (var i = 0; i < profiles.length; i++) {
+  var serv = new service.Service();
+
+  profile.getProfiles(serv, function(err, profiles) {
+    var i;
+
+    for (i = 0; i < profiles.length; i++) {
       renderProfile(profiles[i]);
     }
   });
