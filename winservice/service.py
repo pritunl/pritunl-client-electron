@@ -305,11 +305,18 @@ class Pritunl(Service):
 
     def stop_profile(self, id):
         data = self.connections.get(id)
-
-        if not data or not data['process']:
+        if not data:
             return
 
-        data['process'].terminate()
+        self.data_lock.acquire()
+        try:
+            data['stop'] = True
+            process = data['process']
+        finally:
+            self.data_lock.release()
+
+        if process:
+            process.terminate()
 
     def start(self):
         self.update_tap_adap()
