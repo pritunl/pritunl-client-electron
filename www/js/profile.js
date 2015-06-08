@@ -152,12 +152,39 @@ Profile.prototype.load = function() {
     hash.update(name);
     hash = hash.digest('base64');
 
+    var conn = this.service.connections[this.id];
+    var uptime;
+    var serverAddr;
+    var clientAddr;
+
+    if (!conn) {
+      uptime = 'Disconnected';
+      serverAddr = '-';
+      clientAddr = '-';
+    } else {
+      var status = conn['status'];
+
+      if (status === 'connected') {
+        uptime = status['timestamp'];
+        uptime = 'Connected'; // TODO
+      } else if (status === 'connecting') {
+        uptime = 'Connecting';
+      } else if (status === 'reconnecting') {
+        uptime = 'Reconnecting';
+      } else {
+        uptime = 'Disconnected';
+      }
+
+      serverAddr = conn['server_addr'] || '-';
+      clientAddr = conn['client_addr'] || '-';
+    }
+
     return {
       logo: logo,
       logoColor: colors[hash.substr(0, 1)],
-      uptime: '23 hours 12 seconds',
-      serverAddr: 'east4.pritunl.com',
-      clientAddr: '172.16.65.12',
+      uptime: uptime,
+      serverAddr: serverAddr,
+      clientAddr: clientAddr,
       name: name,
       organizationId: this.organizationId || '',
       organization: this.organization || '',
