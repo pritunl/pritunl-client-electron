@@ -4,6 +4,7 @@ import subprocess
 import threading
 import json
 import flask
+import time
 
 import win32serviceutil
 import win32service
@@ -205,6 +206,9 @@ class Pritunl(Service):
 
             data = {
                 'status': CONNECTING,
+                'timestamp': int(time.time()),
+                'server_addr': None,
+                'client_addr': None,
                 'process': None,
             }
             self.connections[id] = data
