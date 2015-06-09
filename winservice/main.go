@@ -1,9 +1,11 @@
 package main
 
 import (
+	"github.com/dropbox/godropbox/errors"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"net/http"
+	"os/exec"
 	"time"
 )
 
@@ -85,6 +87,22 @@ func commGet(c *gin.Context) {
 			}
 		}
 	}
+}
+
+type CommandError struct {
+	errors.DropboxError
+}
+
+func updateAdapters() (output []byte, err error) {
+	output, err = exec.Command("ipconfig", "/all").Output()
+	if err != nil {
+		err = &CommandError{
+			errors.Wrap(err, "Update tuntap adapters failed"),
+		}
+		return
+	}
+
+	return
 }
 
 func main() {
