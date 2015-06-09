@@ -5,15 +5,11 @@ import (
 	"github.com/dropbox/godropbox/errors"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
+	"github.com/pritunl/pritunl-client-electron/winservice/event"
 	"net/http"
 	"os/exec"
 	"time"
 )
-
-type Event struct {
-	Type string      `json:"type"`
-	Data interface{} `json:"data"`
-}
 
 const (
 	Connecting   = "connecting"
@@ -26,7 +22,6 @@ const (
 )
 
 var (
-	events   = make(chan *Event)
 	upgrader = websocket.Upgrader{
 		HandshakeTimeout: 30 * time.Second,
 		ReadBufferSize:   1024,
@@ -68,7 +63,7 @@ func commGet(c *gin.Context) {
 
 	for {
 		select {
-		case evt, ok := <-events:
+		case evt, ok := <-event.Events:
 			if !ok {
 				conn.WriteControl(websocket.CloseMessage, []byte{},
 					time.Now().Add(writeTimeout))
