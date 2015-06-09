@@ -9,7 +9,7 @@ import (
 func testGet(c *gin.Context) {
 	output, err := utils.UpdateAdapters()
 	if err != nil {
-		c.Fail(500, err)
+		c.AbortWithError(500, err)
 		return
 	}
 
