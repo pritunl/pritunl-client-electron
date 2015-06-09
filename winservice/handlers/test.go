@@ -7,11 +7,11 @@ import (
 )
 
 func testGet(c *gin.Context) {
-	output, err := utils.UpdateAdapters()
+	adapAvial, adapTotal, err := utils.UpdateAdapters()
 	if err != nil {
 		c.AbortWithError(500, err)
 		return
 	}
 
-	c.String(200, fmt.Sprintf("%s", output))
+	c.String(200, fmt.Sprintf("%d/%d", adapAvial, adapTotal))
 }
