@@ -5,6 +5,7 @@ import (
 )
 
 func Register(engine *gin.Engine) {
-	engine.GET("/test", testGet)
 	engine.GET("/events", eventsGet)
+
+	engine.GET("/test", testGet)
 }
