@@ -3,6 +3,7 @@ package utils
 import (
 	"github.com/dropbox/godropbox/errors"
 	"os/exec"
+	"strings"
 )
 
 func UpdateAdapters() (adapUsed int, adapTotal int, err error) {
