@@ -3,9 +3,9 @@ package utils
 import (
 	"github.com/dropbox/godropbox/errors"
 	"os/exec"
-	"strings"
-	"runtime"
 	"path/filepath"
+	"runtime"
+	"strings"
 )
 
 func GetTempDir() (pth string) {
