@@ -28,7 +28,7 @@ func UpdateAdapters() (adapUsed int, adapTotal int, err error) {
 	output, err := exec.Command("ipconfig", "/all").Output()
 	if err != nil {
 		err = &CommandError{
-			errors.Wrap(err, "Update tuntap adapters failed"),
+			errors.Wrap(err, "utils: Update tuntap adapters failed"),
 		}
 		return
 	}
