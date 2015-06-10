@@ -12,8 +12,9 @@ import (
 )
 
 type Profile struct {
-	Id   string
-	Data string
+	Id       string
+	Data     string
+	Password string
 }
 
 func (p *Profile) write() (pth string, err error) {
