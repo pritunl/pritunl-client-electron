@@ -70,7 +70,7 @@ func (p *Profile) Start() (err error) {
 				}
 
 				err = &ExecError{
-					errors.Wrap(err, "profile: Failed to read stderr"),
+					errors.Wrap(err, "profile: Failed to read stdout"),
 				}
 				panic(err)
 			}
@@ -88,7 +88,7 @@ func (p *Profile) Start() (err error) {
 				}
 
 				err = &ExecError{
-					errors.Wrap(err, "profile: Failed to read stdout"),
+					errors.Wrap(err, "profile: Failed to read stderr"),
 				}
 				panic(err)
 			}
