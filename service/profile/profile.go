@@ -18,7 +18,12 @@ type Profile struct {
 }
 
 func (p *Profile) write() (pth string, err error) {
-	pth = filepath.Join(utils.GetTempDir(), p.Id)
+	rootDir, err := utils.GetTempDir()
+	if err != nil {
+		return
+	}
+
+	pth = filepath.Join(rootDir, p.Id)
 
 	err = ioutil.WriteFile(pth, []byte(p.Data), os.FileMode(0600))
 	if err != nil {
