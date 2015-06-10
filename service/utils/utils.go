@@ -9,6 +9,15 @@ import (
 	"os"
 )
 
+func GetRootDir() (pth string) {
+	pth, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	if err != nil {
+		panic(err)
+	}
+
+	return
+}
+
 func GetTempDir() (pth string, err error) {
 	if runtime.GOOS == "windows" {
 		pth = filepath.Join("C:", "ProgramData", "Pritunl")
