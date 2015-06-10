@@ -59,7 +59,14 @@ func (p *Profile) Start() (err error) {
 		for {
 			line, _, err := out.ReadLine()
 			if err != nil {
-				return
+				if err == io.EOF {
+					return
+				}
+
+				err = &ExecError{
+					errors.Wrap(err, "profile: Failed to read stderr"),
+				}
+				panic(err)
 			}
 			println(string(line))
 		}
@@ -70,7 +77,14 @@ func (p *Profile) Start() (err error) {
 		for {
 			line, _, err := out.ReadLine()
 			if err != nil {
-				return
+				if err == io.EOF {
+					return
+				}
+
+				err = &ExecError{
+					errors.Wrap(err, "profile: Failed to read stdout"),
+				}
+				panic(err)
 			}
 			println(string(line))
 		}
