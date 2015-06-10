@@ -6,13 +6,22 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
+	"os"
 )
 
-func GetTempDir() (pth string) {
+func GetTempDir() (pth string, err error) {
 	if runtime.GOOS == "windows" {
 		pth = filepath.Join("C:", "ProgramData", "Pritunl")
 	} else {
 		pth = filepath.Join(string(filepath.Separator), "tmp", "pritunl")
+	}
+
+	err = os.MkdirAll(pth, 0700)
+	if err != nil {
+		err = &IoError{
+			errors.Wrap(err, "utils: Failed to create temp directory"),
+		}
+		return
 	}
 
 	return

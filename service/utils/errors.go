@@ -7,3 +7,7 @@ import (
 type CommandError struct {
 	errors.DropboxError
 }
+
+type IoError struct {
+	errors.DropboxError
+}
