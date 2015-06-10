@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/pritunl/pritunl-client-electron/winservice/handlers"
+	"github.com/pritunl/pritunl-client-electron/service/handlers"
 )
 
 const (

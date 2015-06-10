@@ -3,7 +3,7 @@ package handlers
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
-	"github.com/pritunl/pritunl-client-electron/winservice/event"
+	"github.com/pritunl/pritunl-client-electron/service/event"
 	"net/http"
 	"time"
 )
