@@ -5,7 +5,18 @@ import (
 	"os/exec"
 	"strings"
 	"runtime"
+	"path/filepath"
 )
+
+func GetTempDir() (pth string) {
+	if runtime.GOOS == "windows" {
+		pth = filepath.Join("C:", "ProgramData", "Pritunl")
+	} else {
+		pth = filepath.Join(string(filepath.Separator), "tmp", "pritunl")
+	}
+
+	return
+}
 
 func UpdateAdapters() (adapUsed int, adapTotal int, err error) {
 	if runtime.GOOS == "linux" {
