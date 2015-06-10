@@ -4,9 +4,16 @@ import (
 	"github.com/dropbox/godropbox/errors"
 	"os/exec"
 	"strings"
+	"runtime"
 )
 
 func UpdateAdapters() (adapUsed int, adapTotal int, err error) {
+	if runtime.GOOS == "linux" {
+		adapUsed = 0
+		adapTotal = 100
+		return
+	}
+
 	output, err := exec.Command("ipconfig", "/all").Output()
 	if err != nil {
 		err = &CommandError{
