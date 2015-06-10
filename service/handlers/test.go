@@ -3,7 +3,7 @@ package handlers
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/pritunl/pritunl-client-electron/winservice/utils"
+	"github.com/pritunl/pritunl-client-electron/service/utils"
 )
 
 func testGet(c *gin.Context) {
