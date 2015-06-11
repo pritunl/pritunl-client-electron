@@ -18,8 +18,12 @@ type Event struct {
 func (e *Event) Init() {
 	e.Id = utils.Uuid()
 	for listInf := range listeners.Iter() {
+		list := listInf.(*Listener)
+
 		go func() {
-			list := listInf.(*Listener)
+			defer func() {
+				recover()
+			}()
 			list.stream <- e
 		}()
 	}
