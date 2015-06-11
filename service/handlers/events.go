@@ -38,11 +38,14 @@ func eventsGet(c *gin.Context) {
 		return
 	})
 
+	list := event.NewListener()
+
 	ticker := time.NewTicker(pingInterval)
 
 	defer func() {
 		ticker.Stop()
 		conn.Close()
+		list.Close()
 	}()
 
 	go func() {
@@ -56,7 +59,7 @@ func eventsGet(c *gin.Context) {
 
 	for {
 		select {
-		case evt, ok := <-event.Events:
+		case evt, ok := <-list.Listen():
 			if !ok {
 				conn.WriteControl(websocket.CloseMessage, []byte{},
 					time.Now().Add(writeTimeout))
