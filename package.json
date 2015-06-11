@@ -5,7 +5,8 @@
   "dependencies": {
     "jquery": "^2.1.4",
     "mustache": "^2.1.1",
-    "request": "^2.57.0"
+    "request": "^2.57.0",
+    "ws": "^0.7.2"
   },
   "devDependencies": {
     "electron-packager": "^4.1.2",
