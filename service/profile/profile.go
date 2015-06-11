@@ -3,6 +3,7 @@ package profile
 import (
 	"bufio"
 	"github.com/dropbox/godropbox/errors"
+	"github.com/pritunl/pritunl-client-electron/service/event"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
 	"io"
 	"io/ioutil"
@@ -10,6 +11,11 @@ import (
 	"os/exec"
 	"path/filepath"
 )
+
+type OutputData struct {
+	ProfileId string `json:"profile_id"`
+	Output    string `json:"output"`
+}
 
 type Profile struct {
 	Id       string
@@ -32,6 +38,19 @@ func (p *Profile) write() (pth string, err error) {
 		}
 		return
 	}
+
+	return
+}
+
+func (p *Profile) pushOutput(output string) {
+	evt := &event.Event{
+		Type: "output",
+		Data: &OutputData{
+			ProfileId: p.Id,
+			Output:    output,
+		},
+	}
+	evt.Init()
 
 	return
 }
@@ -74,7 +93,7 @@ func (p *Profile) Start() (err error) {
 				}
 				panic(err)
 			}
-			println(string(line))
+			p.pushOutput(string(line))
 		}
 	}()
 
@@ -92,7 +111,7 @@ func (p *Profile) Start() (err error) {
 				}
 				panic(err)
 			}
-			println(string(line))
+			p.pushOutput(string(line))
 		}
 	}()
 
