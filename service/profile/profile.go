@@ -18,9 +18,12 @@ type OutputData struct {
 }
 
 type Profile struct {
-	Id       string
-	Data     string
-	Password string
+	Id         string
+	Data       string
+	Password   string
+	Status     string
+	ServerAddr string
+	ClientAddr string
 }
 
 func (p *Profile) write() (pth string, err error) {
