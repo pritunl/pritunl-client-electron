@@ -1,5 +1,9 @@
 package event
 
+import (
+	"github.com/pritunl/pritunl-client-electron/service/utils"
+)
+
 var (
 	events = make(chan *Event)
 )
@@ -11,5 +15,6 @@ type Event struct {
 }
 
 func (e *Event) Init() {
+	e.Id = utils.Uuid()
 	events <- e
 }
