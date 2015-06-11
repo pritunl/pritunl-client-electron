@@ -1,12 +1,13 @@
 package event
 
 import (
+	"github.com/dropbox/godropbox/container/set"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
 )
 
 var (
 	events = make(chan *Event, 1024)
-	listeners = []*Listener{}
+	listeners = set.NewSet()
 )
 
 type Event struct {
