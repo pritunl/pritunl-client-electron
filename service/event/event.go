@@ -5,7 +5,8 @@ import (
 )
 
 var (
-	events = make(chan *Event)
+	events = make(chan *Event, 1024)
+	listeners = []*Listener{}
 )
 
 type Event struct {
