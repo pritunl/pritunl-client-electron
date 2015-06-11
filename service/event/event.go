@@ -6,7 +6,6 @@ import (
 )
 
 var (
-	events = make(chan *Event, 1024)
 	listeners = set.NewSet()
 )
 
@@ -18,5 +17,10 @@ type Event struct {
 
 func (e *Event) Init() {
 	e.Id = utils.Uuid()
-	events <- e
+	for listInf := range listeners.Iter() {
+		go func() {
+			list := listInf.(*Listener)
+			list.stream <- e
+		}()
+	}
 }
