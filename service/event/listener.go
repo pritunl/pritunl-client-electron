@@ -9,6 +9,10 @@ func (l *Listener) Listen() (stream chan *Event) {
 	return
 }
 
+func (l *Listener) Close() {
+	close(l.stream)
+}
+
 func NewListener() (list *Listener) {
 	list = &Listener{}
 	list.stream = make(chan *Event)
