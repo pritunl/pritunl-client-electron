@@ -10,6 +10,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 )
 
 type OutputData struct {
@@ -58,6 +59,63 @@ func (p *Profile) pushOutput(output string) {
 	return
 }
 
+func (p *Profile) parseLine(line string) {
+	p.pushOutput(string(line))
+
+	if strings.Contains(line, "Initialization Sequence Completed") {
+		evt := event.Event{
+			Type: "connected",
+			Data: p.Id,
+		}
+		evt.Init()
+	} else if strings.Contains(line, "Inactivity timeout") {
+		evt := event.Event{
+			Type: "reconnecting",
+			Data: p.Id,
+		}
+		evt.Init()
+	} else if strings.Contains(line, "AUTH_FAILED") || strings.Contains(
+		line, "auth-failure") {
+
+		evt := event.Event{
+			Type: "auth_error",
+			Data: p.Id,
+		}
+		evt.Init()
+	} else if strings.Contains(line, "AUTH_FAILED") || strings.Contains(
+		line, "auth-failure") {
+
+		evt := event.Event{
+			Type: "auth_error",
+			Data: p.Id,
+		}
+		evt.Init()
+	} else if strings.Contains(line, "link remote:") {
+		sIndex := strings.LastIndex(line, "]") + 1
+		eIndex := strings.LastIndex(line, ":")
+
+		p.ServerAddr = line[sIndex:eIndex]
+
+		evt := event.Event{
+			Type: "server_addr",
+			Data: p.ServerAddr,
+		}
+		evt.Init()
+	} else if strings.Contains(line, "network/local/netmask") {
+		eIndex := strings.LastIndex(line, "/")
+		line = line[:eIndex]
+		sIndex := strings.LastIndex(line, "/") + 1
+
+		p.ClientAddr = line[sIndex:]
+
+		evt := event.Event{
+			Type: "client_addr",
+			Data: p.ClientAddr,
+		}
+		evt.Init()
+	}
+}
+
 func (p *Profile) Start() (err error) {
 	confPath, err := p.write()
 	if err != nil {
@@ -96,7 +154,7 @@ func (p *Profile) Start() (err error) {
 				}
 				panic(err)
 			}
-			p.pushOutput(string(line))
+			p.parseLine(string(line))
 		}
 	}()
 
@@ -114,7 +172,7 @@ func (p *Profile) Start() (err error) {
 				}
 				panic(err)
 			}
-			p.pushOutput(string(line))
+			p.parseLine(string(line))
 		}
 	}()
 
