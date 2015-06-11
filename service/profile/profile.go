@@ -180,6 +180,8 @@ func (p *Profile) Start() (err error) {
 	}
 
 	p.Status = "disconnected"
+	p.ClientAddr = ""
+	p.ServerAddr = ""
 	p.update()
 
 	return
