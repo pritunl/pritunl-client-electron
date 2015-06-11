@@ -4,17 +4,17 @@
   "main": "www/main.js",
   "dependencies": {
     "jquery": "^2.1.4",
-    "mustache": "^2.0.0",
+    "mustache": "^2.1.1",
     "request": "^2.57.0"
   },
   "devDependencies": {
-    "electron-packager": "^4.0.2",
-    "electron-prebuilt": "^0.25.1",
+    "electron-packager": "^4.1.2",
+    "electron-prebuilt": "^0.27.3",
     "grunt": "^0.4.5",
     "grunt-electron-installer": "^0.33.0",
-    "rimraf": "^2.3.3",
+    "rimraf": "^2.4.0",
     "rcedit": "^0.3.0",
-    "shelljs": "^0.4.0"
+    "shelljs": "^0.5.1"
   },
   "scripts": {
     "package": "node pkg.js",
