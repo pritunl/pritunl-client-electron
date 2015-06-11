@@ -3,6 +3,7 @@ var path = require('path');
 var BrowserWindow = require('browser-window');
 var Tray = require('tray');
 var Menu = require('menu');
+var events = require('./js/events.js');
 
 var main = null;
 var tray = null;
@@ -63,4 +64,6 @@ app.on('ready', function() {
     }
   ]);
   tray.setContextMenu(menu);
+
+  events.init();
 });
