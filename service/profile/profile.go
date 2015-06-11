@@ -19,12 +19,12 @@ type OutputData struct {
 }
 
 type Profile struct {
-	Id         string
-	Data       string
-	Password   string
-	Status     string
-	ServerAddr string
-	ClientAddr string
+	Id         string `json:"id"`
+	Data       string `json:"-"`
+	Password   string `json:"-"`
+	Status     string `json:"status"`
+	ServerAddr string `json:"server_addr"`
+	ClientAddr string `json:"client_addr"`
 }
 
 func (p *Profile) write() (pth string, err error) {
