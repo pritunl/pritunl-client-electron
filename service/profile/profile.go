@@ -106,6 +106,9 @@ func (p *Profile) Start() (err error) {
 		return
 	}
 
+	p.Status = "connecting"
+	p.update()
+
 	cmd := exec.Command(getOpenvpnPath(), "--config", confPath)
 
 	stdout, err := cmd.StdoutPipe()
@@ -175,6 +178,9 @@ func (p *Profile) Start() (err error) {
 		}
 		return
 	}
+
+	p.Status = "disconnected"
+	p.update()
 
 	return
 }
