@@ -4,9 +4,9 @@ type Listener struct {
 	stream chan *Event
 }
 
-func (l *Listener) Listen() (stream chan *Event) {
+func (l *Listener) Listen() chan *Event {
 	listeners.Add(l)
-	return
+	return l.stream
 }
 
 func (l *Listener) Close() {
