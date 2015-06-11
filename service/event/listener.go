@@ -10,6 +10,7 @@ func (l *Listener) Listen() chan *Event {
 }
 
 func (l *Listener) Close() {
+	listeners.Remove(l)
 	close(l.stream)
 }
 
