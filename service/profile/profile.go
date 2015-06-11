@@ -46,6 +46,14 @@ func (p *Profile) write() (pth string, err error) {
 	return
 }
 
+func (p *Profile) update() {
+	evt := event.Event{
+		Type: "update",
+		Data: p,
+	}
+	evt.Init()
+}
+
 func (p *Profile) pushOutput(output string) {
 	evt := &event.Event{
 		Type: "output",
@@ -63,31 +71,17 @@ func (p *Profile) parseLine(line string) {
 	p.pushOutput(string(line))
 
 	if strings.Contains(line, "Initialization Sequence Completed") {
-		evt := event.Event{
-			Type: "connected",
-			Data: p.Id,
-		}
-		evt.Init()
+		p.Status = "connected"
+		p.update()
 	} else if strings.Contains(line, "Inactivity timeout") {
-		evt := event.Event{
-			Type: "reconnecting",
-			Data: p.Id,
-		}
-		evt.Init()
+		p.Status = "reconnecting"
+		p.update()
 	} else if strings.Contains(line, "AUTH_FAILED") || strings.Contains(
 		line, "auth-failure") {
 
 		evt := event.Event{
-			Type: "auth_error",
-			Data: p.Id,
-		}
-		evt.Init()
-	} else if strings.Contains(line, "AUTH_FAILED") || strings.Contains(
-		line, "auth-failure") {
-
-		evt := event.Event{
-			Type: "auth_error",
-			Data: p.Id,
+			Type: "auto_error",
+			Data: p,
 		}
 		evt.Init()
 	} else if strings.Contains(line, "link remote:") {
@@ -95,24 +89,14 @@ func (p *Profile) parseLine(line string) {
 		eIndex := strings.LastIndex(line, ":")
 
 		p.ServerAddr = line[sIndex:eIndex]
-
-		evt := event.Event{
-			Type: "server_addr",
-			Data: p.ServerAddr,
-		}
-		evt.Init()
+		p.update()
 	} else if strings.Contains(line, "network/local/netmask") {
 		eIndex := strings.LastIndex(line, "/")
 		line = line[:eIndex]
 		sIndex := strings.LastIndex(line, "/") + 1
 
 		p.ClientAddr = line[sIndex:]
-
-		evt := event.Event{
-			Type: "client_addr",
-			Data: p.ClientAddr,
-		}
-		evt.Init()
+		p.update()
 	}
 }
 
