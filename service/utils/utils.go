@@ -1,13 +1,31 @@
 package utils
 
 import (
+	"crypto/rand"
+	"encoding/hex"
 	"github.com/dropbox/godropbox/errors"
+	"os"
 	"os/exec"
 	"path/filepath"
 	"runtime"
 	"strings"
-	"os"
 )
+
+func Uuid() (id string) {
+	idByte := make([]byte, 16)
+
+	_, err := rand.Read(idByte)
+	if err != nil {
+		err = &IoError{
+			errors.Wrap(err, "utils: Failed to get random data"),
+		}
+		panic(err)
+	}
+
+	id = hex.EncodeToString(idByte[:])
+
+	return
+}
 
 func GetRootDir() (pth string) {
 	pth, err := filepath.Abs(filepath.Dir(os.Args[0]))
