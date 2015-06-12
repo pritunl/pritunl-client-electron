@@ -108,7 +108,7 @@ Profile.prototype.load = function() {
       confData = {};
     }
 
-    this.status = 'Disconnected';
+    this.status = 'disconnected';
     this.serverAddr = null;
     this.clientAddr = null;
     this.name = confData.name || null;
@@ -144,6 +144,7 @@ Profile.prototype.load = function() {
 
 Profile.prototype.import = function(data) {
   this.status = data['status'];
+  this.timestamp = data['timestamp'];
   this.serverAddr = data['server_addr'];
   this.clientAddr = data['client_addr'];
 };
@@ -176,38 +177,23 @@ Profile.prototype.export = function() {
   hash.update(name);
   hash = hash.digest('base64');
 
-  var conn = this.service.connections[this.id];
   var uptime;
-  var serverAddr;
-  var clientAddr;
-
-  if (!conn) {
-    uptime = 'Disconnected';
-    serverAddr = '-';
-    clientAddr = '-';
+  if (this.status === 'connected') {
+    uptime = null;
+  } else if (this.status === 'connecting') {
+    uptime = 'Connecting';
+  } else if (this.status === 'reconnecting') {
+    uptime = 'Reconnecting';
   } else {
-    var status = conn['status'];
-
-    if (status === 'connected') {
-      uptime = null;
-    } else if (status === 'connecting') {
-      uptime = 'Connecting';
-    } else if (status === 'reconnecting') {
-      uptime = 'Reconnecting';
-    } else {
-      uptime = 'Disconnected';
-    }
-
-    serverAddr = conn['server_addr'] || '-';
-    clientAddr = conn['client_addr'] || '-';
+    uptime = 'Disconnected';
   }
 
   return {
     logo: logo,
     logoColor: colors[hash.substr(0, 1)],
     uptime: uptime,
-    serverAddr: serverAddr,
-    clientAddr: clientAddr,
+    serverAddr: this.serverAddr,
+    clientAddr: this.clientAddr,
     name: name,
     organizationId: this.organizationId || '',
     organization: this.organization || '',
