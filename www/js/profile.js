@@ -209,6 +209,14 @@ Profile.prototype.export = function() {
   }
 };
 
+Profile.prototype.pushOutput = function(output) {
+  if (this.log) {
+    this.log += '\n';
+  }
+  this.log += output;
+  this.onOutput(output);
+};
+
 Profile.prototype.getUptime = function(curTime) {
   if (!this.timestamp || this.status !== 'connected') {
     return;
