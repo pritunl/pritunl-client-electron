@@ -101,11 +101,11 @@ var Profile = function Profile(serv, pth) {
 };
 
 Profile.prototype.load = function() {
-  fs.readFile(this.confPath, function(err, data) {
+  fs.readFile(this.confPath, function (err, data) {
     var confData;
     try {
       confData = JSON.parse(data);
-    } catch(err) {
+    } catch (err) {
       confData = {};
     }
 
@@ -123,81 +123,6 @@ Profile.prototype.load = function() {
     this.syncToken = confData.sync_token || null;
   }.bind(this));
 
-  Profile.prototype.export = function() {
-    var logo;
-    var name = this.name;
-
-    if (!name) {
-      if (this.user) {
-        name = this.user;
-        if (this.organization) {
-          name += '@' + this.organization;
-        }
-
-        if (this.server) {
-          name += ' (' + this.server + ')';
-          logo = this.server.substr(0, 1);
-        }
-      } else if (this.server) {
-        name = this.server;
-        logo = this.server.substr(0, 1);
-      } else {
-        name = 'Unknown Profile';
-        logo = 'U';
-      }
-    }
-
-    var hash = crypto.createHash('md5');
-    hash.update(name);
-    hash = hash.digest('base64');
-
-    var conn = this.service.connections[this.id];
-    var uptime;
-    var serverAddr;
-    var clientAddr;
-
-    if (!conn) {
-      uptime = 'Disconnected';
-      serverAddr = '-';
-      clientAddr = '-';
-    } else {
-      var status = conn['status'];
-
-      if (status === 'connected') {
-        uptime = null;
-      } else if (status === 'connecting') {
-        uptime = 'Connecting';
-      } else if (status === 'reconnecting') {
-        uptime = 'Reconnecting';
-      } else {
-        uptime = 'Disconnected';
-      }
-
-      serverAddr = conn['server_addr'] || '-';
-      clientAddr = conn['client_addr'] || '-';
-    }
-
-    return {
-      logo: logo,
-      logoColor: colors[hash.substr(0, 1)],
-      uptime: uptime,
-      serverAddr: serverAddr,
-      clientAddr: clientAddr,
-      name: name,
-      organizationId: this.organizationId || '',
-      organization: this.organization || '',
-      serverId: this.serverId || '',
-      server: this.server || '',
-      userId: this.userId || '',
-      user: this.user || '',
-      autostart: this.autostart || '',
-      syncHosts: this.syncHosts|| [],
-      syncHash: this.syncHash || '',
-      syncSecret: this.syncSecret || '',
-      syncToken: this.syncToken || ''
-    }
-  };
-
   fs.readFile(this.ovpnPath, function(err, data) {
     if (!data) {
       this.data = null;
@@ -213,6 +138,81 @@ Profile.prototype.load = function() {
       this.log = data.toString();
     }
   }.bind(this));
+};
+
+Profile.prototype.export = function() {
+  var logo;
+  var name = this.name;
+
+  if (!name) {
+    if (this.user) {
+      name = this.user;
+      if (this.organization) {
+        name += '@' + this.organization;
+      }
+
+      if (this.server) {
+        name += ' (' + this.server + ')';
+        logo = this.server.substr(0, 1);
+      }
+    } else if (this.server) {
+      name = this.server;
+      logo = this.server.substr(0, 1);
+    } else {
+      name = 'Unknown Profile';
+      logo = 'U';
+    }
+  }
+
+  var hash = crypto.createHash('md5');
+  hash.update(name);
+  hash = hash.digest('base64');
+
+  var conn = this.service.connections[this.id];
+  var uptime;
+  var serverAddr;
+  var clientAddr;
+
+  if (!conn) {
+    uptime = 'Disconnected';
+    serverAddr = '-';
+    clientAddr = '-';
+  } else {
+    var status = conn['status'];
+
+    if (status === 'connected') {
+      uptime = null;
+    } else if (status === 'connecting') {
+      uptime = 'Connecting';
+    } else if (status === 'reconnecting') {
+      uptime = 'Reconnecting';
+    } else {
+      uptime = 'Disconnected';
+    }
+
+    serverAddr = conn['server_addr'] || '-';
+    clientAddr = conn['client_addr'] || '-';
+  }
+
+  return {
+    logo: logo,
+    logoColor: colors[hash.substr(0, 1)],
+    uptime: uptime,
+    serverAddr: serverAddr,
+    clientAddr: clientAddr,
+    name: name,
+    organizationId: this.organizationId || '',
+    organization: this.organization || '',
+    serverId: this.serverId || '',
+    server: this.server || '',
+    userId: this.userId || '',
+    user: this.user || '',
+    autostart: this.autostart || '',
+    syncHosts: this.syncHosts|| [],
+    syncHash: this.syncHash || '',
+    syncSecret: this.syncSecret || '',
+    syncToken: this.syncToken || ''
+  }
 };
 
 Profile.prototype.saveData = function(callback) {
