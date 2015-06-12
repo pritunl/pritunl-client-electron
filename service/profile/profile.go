@@ -103,13 +103,21 @@ func (p *Profile) parseLine(line string) {
 }
 
 func (p *Profile) Start() (err error) {
+	p.Status = "connecting"
+	p.Timestamp = time.Now().Unix()
+	defer func() {
+		p.Status = "disconnected"
+		p.Timestamp = 0
+		p.ClientAddr = ""
+		p.ServerAddr = ""
+		p.update()
+	}()
+
 	confPath, err := p.write()
 	if err != nil {
 		return
 	}
 
-	p.Status = "connecting"
-	p.Timestamp = time.Now().Unix()
 	p.update()
 
 	cmd := exec.Command(getOpenvpnPath(), "--config", confPath)
@@ -181,12 +189,6 @@ func (p *Profile) Start() (err error) {
 		}
 		return
 	}
-
-	p.Status = "disconnected"
-	p.Timestamp = 0
-	p.ClientAddr = ""
-	p.ServerAddr = ""
-	p.update()
 
 	return
 }
