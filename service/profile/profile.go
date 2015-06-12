@@ -11,6 +11,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"time"
 )
 
 type OutputData struct {
@@ -23,6 +24,7 @@ type Profile struct {
 	Data       string `json:"-"`
 	Password   string `json:"-"`
 	Status     string `json:"status"`
+	Timestamp  int64  `json:"timestamp"`
 	ServerAddr string `json:"server_addr"`
 	ClientAddr string `json:"client_addr"`
 }
@@ -107,6 +109,7 @@ func (p *Profile) Start() (err error) {
 	}
 
 	p.Status = "connecting"
+	p.Timestamp = time.Now().Unix()
 	p.update()
 
 	cmd := exec.Command(getOpenvpnPath(), "--config", confPath)
