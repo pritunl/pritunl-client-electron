@@ -80,7 +80,6 @@ var Profile = function Profile(serv, pth) {
   this.confPath = pth + '.conf';
   this.ovpnPath = pth + '.ovpn';
   this.logPath = pth + '.log';
-  this.state = 'disconnected';
   this.proc = null;
   this.data = null;
   this.name = null;
