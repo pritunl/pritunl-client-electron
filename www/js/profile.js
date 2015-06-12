@@ -177,21 +177,21 @@ Profile.prototype.export = function() {
   hash.update(name);
   hash = hash.digest('base64');
 
-  var uptime;
+  var status;
   if (this.status === 'connected') {
-    uptime = null;
+    status = null;
   } else if (this.status === 'connecting') {
-    uptime = 'Connecting';
+    status = 'Connecting';
   } else if (this.status === 'reconnecting') {
-    uptime = 'Reconnecting';
+    status = 'Reconnecting';
   } else {
-    uptime = 'Disconnected';
+    status = 'Disconnected';
   }
 
   return {
     logo: logo,
     logoColor: colors[hash.substr(0, 1)],
-    uptime: uptime,
+    status: status,
     serverAddr: this.serverAddr,
     clientAddr: this.clientAddr,
     name: name,
