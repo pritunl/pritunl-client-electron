@@ -140,9 +140,10 @@ var renderProfile = function(prfl) {
     $profile.find('.info .uptime').text(uptimeItems.join(' '));
   };
 
-  $profile.find('.open-menu i, .menu-backdrop, .menu .item').click(function(evt) {
-    toggleMenu($profile);
-  });
+  $profile.find('.open-menu i, .menu-backdrop, .menu .item').click(
+    function(evt) {
+      toggleMenu($profile);
+    });
 
   $profile.find('.menu .connect').click(function() {
     prfl.connect();
