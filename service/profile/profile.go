@@ -19,8 +19,8 @@ var (
 )
 
 type OutputData struct {
-	ProfileId string `json:"profile_id"`
-	Output    string `json:"output"`
+	Id     string `json:"id"`
+	Output string `json:"output"`
 }
 
 type Profile struct {
@@ -64,8 +64,8 @@ func (p *Profile) pushOutput(output string) {
 	evt := &event.Event{
 		Type: "output",
 		Data: &OutputData{
-			ProfileId: p.Id,
-			Output:    output,
+			Id:     p.Id,
+			Output: output,
 		},
 	}
 	evt.Init()
