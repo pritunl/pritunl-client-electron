@@ -183,6 +183,7 @@ func (p *Profile) Start() (err error) {
 	}
 
 	p.Status = "disconnected"
+	p.Timestamp = 0
 	p.ClientAddr = ""
 	p.ServerAddr = ""
 	p.update()
