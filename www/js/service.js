@@ -9,8 +9,7 @@ Service.prototype.update = function() {
   request.get({
     url: 'http://localhost:9770/status'
   }, function(err, resp, body) {
-    this.connections = JSON.parse(body);
-    this.onUpdate();
+    this.onUpdate(JSON.parse(body));
   }.bind(this));
 };
 
