@@ -223,6 +223,57 @@ Profile.prototype.export = function() {
   }
 };
 
+Profile.prototype.getUptime = function(curTime) {
+  if (!this.timestamp || this.status !== 'connected') {
+    return;
+  }
+
+  var uptime = curTime - this.timestamp;
+  var units;
+  var unitStr;
+  var uptimeItems = [];
+
+  if (uptime > 86400) {
+    units = Math.floor(uptime / 86400);
+    uptime -= units * 86400;
+    unitStr = units + ' day';
+    if (units > 1) {
+      unitStr += 's';
+    }
+    uptimeItems.push(unitStr);
+  }
+
+  if (uptime > 3600) {
+    units = Math.floor(uptime / 3600);
+    uptime -= units * 3600;
+    unitStr = units + ' hour';
+    if (units > 1) {
+      unitStr += 's';
+    }
+    uptimeItems.push(unitStr);
+  }
+
+  if (uptime > 60) {
+    units = Math.floor(uptime / 60);
+    uptime -= units * 60;
+    unitStr = units + ' min';
+    if (units > 1) {
+      unitStr += 's';
+    }
+    uptimeItems.push(unitStr);
+  }
+
+  if (uptime) {
+    unitStr = uptime + ' sec';
+    if (uptime > 1) {
+      unitStr += 's';
+    }
+    uptimeItems.push(unitStr);
+  }
+
+  return uptimeItems.join(' ');
+};
+
 Profile.prototype.saveData = function(callback) {
   fs.writeFile(this.ovpnPath, this.data, callback);
 };
