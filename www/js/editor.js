@@ -26,6 +26,11 @@ Editor.prototype.set = function(data) {
   return this.editor.getSession().setValue(data);
 };
 
+Editor.prototype.push = function(data) {
+  var doc = this.editor.getSession().getDocument();
+  doc.insertLines(doc.getLength() - 1, [data]);
+};
+
 module.exports = {
   Editor: Editor
 };
