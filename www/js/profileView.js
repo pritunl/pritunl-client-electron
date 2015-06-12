@@ -71,7 +71,7 @@ var renderProfile = function(prfl) {
     $profile.find('.info .server-addr').text(data.serverAddr);
     $profile.find('.info .client-addr').text(data.clientAddr);
 
-    if (data.uptime != 'Disconnected') {
+    if (prfl.status !== 'disconnected') {
       $profile.find('.menu .connect').hide();
       $profile.find('.menu .disconnect').css('display', 'flex');
     } else {
