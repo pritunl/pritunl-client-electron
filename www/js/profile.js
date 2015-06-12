@@ -179,7 +179,7 @@ Profile.prototype.export = function() {
 
   var status;
   if (this.status === 'connected') {
-    status = null;
+    status = this.getUptime();
   } else if (this.status === 'connecting') {
     status = 'Connecting';
   } else if (this.status === 'reconnecting') {
@@ -213,6 +213,8 @@ Profile.prototype.getUptime = function(curTime) {
   if (!this.timestamp || this.status !== 'connected') {
     return;
   }
+
+  curTime = curTime || Math.floor((new Date).getTime() / 1000);
 
   var uptime = curTime - this.timestamp;
   var units;
