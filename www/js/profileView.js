@@ -1,4 +1,3 @@
-var remote = require('remote');
 var fs = require('fs');
 var path = require('path');
 var $ = require('jquery');
