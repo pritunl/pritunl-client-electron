@@ -35,6 +35,10 @@ var openMainWin = function() {
 };
 
 app.on('ready', function() {
+  events.subscribe(function(evt) {
+    console.log('event:', evt);
+  });
+
   openMainWin();
   main.openDevTools(); // TODO
 
@@ -64,6 +68,4 @@ app.on('ready', function() {
     }
   ]);
   tray.setContextMenu(menu);
-
-  events.init();
 });
