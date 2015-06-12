@@ -146,6 +146,7 @@ Profile.prototype.import = function(data) {
   this.timestamp = data['timestamp'];
   this.serverAddr = data['server_addr'];
   this.clientAddr = data['client_addr'];
+  this.onUpdate();
 };
 
 Profile.prototype.export = function() {
