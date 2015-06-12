@@ -18,7 +18,8 @@ var toggleMenu = function($profile) {
   $profile.find('.menu-backdrop').fadeToggle(75);
 };
 
-var openEditor = function($profile, $editor, data, typ) {
+var openEditor = function($profile, data, typ) {
+  var $editor = $profile.find('.' + typ + ' .editor');
   var edtr = new editor.Editor($editor);
   edtr.create();
   edtr.set(data);
@@ -30,7 +31,8 @@ var openEditor = function($profile, $editor, data, typ) {
 
   return edtr;
 };
-var closeEditor = function($profile, $editor, typ) {
+var closeEditor = function($profile, typ) {
+  var $editor = $profile.find('.' + typ + ' .editor');
   $profile.removeClass('editing-' + typ);
   setTimeout(function() {
     setTimeout(function() {
@@ -40,34 +42,15 @@ var closeEditor = function($profile, $editor, typ) {
   }, 130);
 };
 
-var openConfig = function(prfl, $profile) {
-  var $editor = $profile.find('.config .editor');
-  return openEditor($profile, $editor, prfl.data, 'config');
-};
-var closeConfig = function($profile) {
-  var $editor = $profile.find('.config .editor');
-  return closeEditor($profile, $editor, 'config');
-};
-
-var openLog = function(prfl, $profile) {
-  var $editor = $profile.find('.logs .editor');
-  return openEditor($profile, $editor, prfl.log, 'logs');
-};
-var closeLog = function($profile) {
-  var $editor = $profile.find('.logs .editor');
-  return closeEditor($profile, $editor, 'logs');
-};
-
 var renderProfile = function(prfl) {
   var edtr;
+  var edtrType;
   var $profile = $(Mustache.render(template, prfl.export()));
 
   prfl.onUpdate = function() {
     var data = prfl.export();
     $profile.find('.info .name').text(data.name);
-    if (data.status) {
-      $profile.find('.info .uptime').text(data.status);
-    }
+    $profile.find('.info .uptime').text(data.status);
     $profile.find('.info .server-addr').text(data.serverAddr);
     $profile.find('.info .client-addr').text(data.clientAddr);
 
@@ -89,6 +72,13 @@ var renderProfile = function(prfl) {
     $profile.find('.info .uptime').text(uptime);
   };
 
+  prfl.onOutput = function(output) {
+    if (edtrType !== 'logs') {
+      return;
+    }
+    edtr.push(output);
+  };
+
   $profile.find('.open-menu i, .menu-backdrop, .menu .item').click(function() {
     toggleMenu($profile);
   });
@@ -102,11 +92,13 @@ var renderProfile = function(prfl) {
   });
 
   $profile.find('.menu .edit-config').click(function() {
-    edtr = openConfig(prfl, $profile);
+    edtr = openEditor($profile, prfl.data, 'config');
+    edtrType = 'config';
   });
 
   $profile.find('.menu .view-logs').click(function() {
-    edtr = openLog(prfl, $profile);
+    edtr = openEditor($profile, prfl.log, 'logs');
+    edtrType = 'logs';
   });
 
   $profile.find('.config .btns .save').click(function() {
@@ -130,7 +122,7 @@ var renderProfile = function(prfl) {
     edtr.destroy();
     edtr = null;
 
-    closeConfig($profile);
+    closeEditor($profile, 'config');
   });
 
   $profile.find('.logs .btns .close').click(function() {
@@ -140,7 +132,7 @@ var renderProfile = function(prfl) {
     edtr.destroy();
     edtr = null;
 
-    closeLog($profile);
+    closeEditor($profile, 'logs');
   });
 
   $profile.find('.logs .btns .clear').click(function() {
@@ -179,14 +171,17 @@ var renderProfiles = function() {
     };
 
     events.subscribe(function(evt) {
-      if (evt.type !== 'update') {
-        return;
-      }
+      var prfl;
 
-      for (i = 0; i < profiles.length; i++) {
-        var prfl = profilesId[profiles[i].id];
+      if (evt.type === 'update') {
+        var prfl = profilesId[evt.data.id];
         if (prfl) {
           prfl.import(evt.data);
+        }
+      } else if (evt.type === 'output') {
+        var prfl = profilesId[evt.data.id];
+        if (prfl) {
+          prfl.pushOutput(evt.data.output);
         }
       }
     });
