@@ -4,7 +4,7 @@ var utils = require('./utils.js');
 var connected = false;
 var socketId = null;
 
-var connect = function() {
+var connect = function(callback) {
   if (connected) {
     return;
   }
@@ -35,7 +35,7 @@ var connect = function() {
 
     socket.on('message', function(data, flags) {
       data = JSON.parse(data);
-      console.log(data);
+      callback(data);
     });
   } catch(err) {
     if (id === socketId) {
@@ -44,14 +44,14 @@ var connect = function() {
   }
 };
 
-var init = function() {
-  connect();
+var subscribe = function(callback) {
+  connect(callback);
 
   setInterval(function() {
-    connect();
+    connect(callback);
   }, 5000);
 };
 
 module.exports = {
-  init: init
+  subscribe: subscribe
 };
