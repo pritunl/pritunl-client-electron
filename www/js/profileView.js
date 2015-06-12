@@ -6,6 +6,7 @@ var profile = require('./profile.js');
 var service = require('./service.js');
 var editor = require('./editor.js');
 var ace = require('./ace/ace.js');
+var events = require('./events.js');
 
 var template = fs.readFileSync(
   path.join(__dirname, '..', 'templates', 'profile.html')).toString();
@@ -226,6 +227,10 @@ var renderProfiles = function() {
     };
 
     setInterval(function() {
+      events.subscribe(function(evt) {
+        console.log('event:', evt);
+      });
+
       var curTime = Math.floor((new Date).getTime() / 1000);
 
       for (i = 0; i < profiles.length; i++) {
