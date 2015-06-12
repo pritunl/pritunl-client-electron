@@ -81,70 +81,17 @@ var renderProfile = function(prfl) {
   };
 
   prfl.onUptime = function(curTime) {
-    var conn = prfl.service.connections[prfl.id];
-    if (!conn) {
+    var uptime = prfl.getUptime(curTime);
+    if (!uptime) {
       return;
     }
 
-    if (conn['status'] !== 'connected') {
-      return;
-    }
-
-    var timestamp = conn['timestamp'];
-    if (!timestamp) {
-      return;
-    }
-
-    var uptime = curTime - timestamp;
-    var units;
-    var unitStr;
-    var uptimeItems = [];
-
-    if (uptime > 86400) {
-      units = Math.floor(uptime / 86400);
-      uptime -= units * 86400;
-      unitStr = units + ' day';
-      if (units > 1) {
-        unitStr += 's';
-      }
-      uptimeItems.push(unitStr);
-    }
-
-    if (uptime > 3600) {
-      units = Math.floor(uptime / 3600);
-      uptime -= units * 3600;
-      unitStr = units + ' hour';
-      if (units > 1) {
-        unitStr += 's';
-      }
-      uptimeItems.push(unitStr);
-    }
-
-    if (uptime > 60) {
-      units = Math.floor(uptime / 60);
-      uptime -= units * 60;
-      unitStr = units + ' min';
-      if (units > 1) {
-        unitStr += 's';
-      }
-      uptimeItems.push(unitStr);
-    }
-
-    if (uptime) {
-      unitStr = uptime + ' sec';
-      if (uptime > 1) {
-        unitStr += 's';
-      }
-      uptimeItems.push(unitStr);
-    }
-
-    $profile.find('.info .uptime').text(uptimeItems.join(' '));
+    $profile.find('.info .uptime').text(uptime);
   };
 
-  $profile.find('.open-menu i, .menu-backdrop, .menu .item').click(
-    function(evt) {
-      toggleMenu($profile);
-    });
+  $profile.find('.open-menu i, .menu-backdrop, .menu .item').click(function() {
+    toggleMenu($profile);
+  });
 
   $profile.find('.menu .connect').click(function() {
     prfl.connect();
