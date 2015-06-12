@@ -162,28 +162,44 @@ var renderProfiles = function() {
 
   profile.getProfiles(serv, function(err, profiles) {
     var i;
+    var profilesId = {};
 
     for (i = 0; i < profiles.length; i++) {
+      profilesId[profiles[i].id] = profiles[i];
       renderProfile(profiles[i]);
     }
 
-    serv.onUpdate = function() {
-      for (i = 0; i < profiles.length; i++) {
-        profiles[i].onUpdate();
+    serv.onUpdate = function(data) {
+      for (var id in data) {
+        var prfl = profilesId[id];
+        if (prfl) {
+          prfl.import(data[id]);
+        }
       }
     };
 
-    setInterval(function() {
-      events.subscribe(function(evt) {
-        console.log('event:', evt);
-      });
+    events.subscribe(function(evt) {
+      if (evt.type !== 'update') {
+        return;
+      }
 
+      for (i = 0; i < profiles.length; i++) {
+        var prfl = profilesId[profiles[i].id];
+        if (prfl) {
+          prfl.import(evt.data);
+        }
+      }
+    });
+
+    setInterval(function() {
       var curTime = Math.floor((new Date).getTime() / 1000);
 
       for (i = 0; i < profiles.length; i++) {
         profiles[i].onUptime(curTime);
       }
     }, 1000);
+
+    serv.update();
   });
 };
 
