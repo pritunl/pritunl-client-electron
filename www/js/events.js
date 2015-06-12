@@ -33,7 +33,7 @@ var connect = function(callback) {
       }
     });
 
-    socket.on('message', function(data, flags) {
+    socket.on('message', function(data) {
       data = JSON.parse(data);
       callback(data);
     });
