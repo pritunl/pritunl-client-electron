@@ -14,6 +14,10 @@ import (
 	"time"
 )
 
+var (
+	Profiles = map[string]*Profile{}
+)
+
 type OutputData struct {
 	ProfileId string `json:"profile_id"`
 	Output    string `json:"output"`
@@ -105,12 +109,17 @@ func (p *Profile) parseLine(line string) {
 func (p *Profile) Start() (err error) {
 	p.Status = "connecting"
 	p.Timestamp = time.Now().Unix()
+
+	Profiles[p.Id] = p
+
 	defer func() {
 		p.Status = "disconnected"
 		p.Timestamp = 0
 		p.ClientAddr = ""
 		p.ServerAddr = ""
 		p.update()
+
+		delete(Profiles, p.Id)
 	}()
 
 	confPath, err := p.write()
