@@ -108,6 +108,9 @@ Profile.prototype.load = function() {
       confData = {};
     }
 
+    this.status = 'Disconnected';
+    this.serverAddr = null;
+    this.clientAddr = null;
     this.name = confData.name || null;
     this.organizationId = confData.organizationId || null;
     this.organization = confData.organization || null;
@@ -137,6 +140,12 @@ Profile.prototype.load = function() {
       this.log = data.toString();
     }
   }.bind(this));
+};
+
+Profile.prototype.import = function(data) {
+  this.status = data['status'];
+  this.serverAddr = data['server_addr'];
+  this.clientAddr = data['client_addr'];
 };
 
 Profile.prototype.export = function() {
