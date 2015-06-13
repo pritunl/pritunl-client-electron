@@ -1,8 +1,8 @@
 var crypto = require('crypto');
 var remote = require('remote');
 var path = require('path');
+var fs = require('fs');
 var app = remote.require('app');
-var fs = remote.require('fs');
 
 var colors = {
   'A': '#ff8a80',
