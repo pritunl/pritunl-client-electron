@@ -1,5 +1,4 @@
 var $ = require('jquery');
-var Mustache = require('mustache');
 
 var append = function(typ, msg) {
   var $alerts = $('.alerts');
