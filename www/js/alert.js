@@ -15,6 +15,14 @@ var append = function(typ, msg) {
   $alerts.append($alert)
 };
 
+var info = function(msg) {
+  append('info', msg);
+};
+
+var warning = function(msg) {
+  append('warning', msg);
+};
+
 var error = function(msg) {
   append('error', msg);
 };
