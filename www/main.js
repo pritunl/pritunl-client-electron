@@ -1,5 +1,6 @@
 var app = require('app');
 var path = require('path');
+var fs = require('fs');
 var BrowserWindow = require('browser-window');
 var Tray = require('tray');
 var Menu = require('menu');
@@ -36,7 +37,18 @@ var openMainWin = function() {
 
 app.on('ready', function() {
   events.subscribe(function(evt) {
-    console.log('event:', evt);
+    if (evt.type !== 'output') {
+      return;
+    }
+
+    var pth = path.join(app.getPath('userData'), 'profiles',
+      evt.data.id + '.log');
+
+    fs.appendFile(pth, evt.data.output + '\n', function(err) {
+      if (err) {
+        // TODO Error
+      }
+    });
   });
 
   openMainWin();
