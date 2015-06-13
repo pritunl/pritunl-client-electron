@@ -1,7 +1,7 @@
 var crypto = require('crypto');
 var remote = require('remote');
 var path = require('path');
-var fs = require('fs');
+var fs = remote.require('fs');
 var app = remote.require('app');
 
 var colors = {
