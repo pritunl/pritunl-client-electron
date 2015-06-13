@@ -1,7 +1,6 @@
 var request = require('request');
 
 var Service = function Service() {
-  this.connections = {};
   this.onUpdate = null;
 };
 
