@@ -302,19 +302,19 @@ body {
 }
 
 
-.errors .error {
+.alerts .error {
   padding: 10px;
   background-color: #830202;
   color: #fff4f4;
   cursor: pointer;
 }
-.errors .error:hover {
+.alerts .error:hover {
   background-color: #ab0d0d;
 }
-.errors .error:active {
+.alerts .error:active {
   background-color: #8e0909;
 }
-.errors .error + .error {
+.alerts .error + .error {
   border-top: 1px solid #c22525;
 }
 
