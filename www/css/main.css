@@ -304,7 +304,7 @@ body {
 
 .alerts .info {
   padding: 10px;
-  background-color: #337AB7;
+  background-color: #337ab7;
   color: #fff4f4;
   cursor: pointer;
 }
@@ -312,7 +312,7 @@ body {
   background-color: #286090;
 }
 .alerts .info:active {
-  background-color: #337AB7;
+  background-color: #337ab7;
 }
 .alerts .info + .info {
   border-top: 1px solid #c22525;
@@ -320,15 +320,15 @@ body {
 
 .alerts .warning {
   padding: 10px;
-  background-color: #F0AD4E;
+  background-color: #f0ad4e;
   color: #fff4f4;
   cursor: pointer;
 }
 .alerts .warning:hover {
-  background-color: #EC971F;
+  background-color: #ec971f;
 }
 .alerts .warning:active {
-  background-color: #F0AD4E;
+  background-color: #f0ad4e;
 }
 .alerts .warning + .warning {
   border-top: 1px solid #c22525;
