@@ -5,22 +5,40 @@ import (
 	"github.com/pritunl/pritunl-client-electron/service/profile"
 )
 
-func startPost(c *gin.Context) {
-	id := c.PostForm("id")
-	data := c.PostForm("data")
+type profileData struct {
+	Id   string `json:"id"`
+	Data string `json:"data"`
+}
 
-	go func() {
-		prfl := &profile.Profile{
-			Id:   id,
-			Data: data,
-		}
+func profilePost(c *gin.Context) {
+	data := &profileData{}
+	c.Bind(data)
 
-		err := prfl.Start()
+	prfl := &profile.Profile{
+		Id:   data.Id,
+		Data: data.Data,
+	}
+
+	err := prfl.Start()
+	if err != nil {
+		c.AbortWithError(500, err)
+		return
+	}
+
+	c.JSON(200, nil)
+}
+
+func profileDel(c *gin.Context) {
+	data := &profileData{}
+	c.Bind(data)
+
+	if prfl, ok := profile.Profiles[data.Id]; ok {
+		err := prfl.Stop()
 		if err != nil {
-			// TODO
-			panic(err)
+			c.AbortWithError(500, err)
+			return
 		}
-	}()
+	}
 
 	c.JSON(200, nil)
 }

@@ -7,6 +7,8 @@ import (
 func Register(engine *gin.Engine) {
 	engine.GET("/events", eventsGet)
 	engine.GET("/status", statusGet)
+	engine.POST("/profile", profilePost)
+	engine.DELETE("/profile", profileDel)
 
 	engine.GET("/test", testGet)
 	engine.GET("/test2", test2Get)
