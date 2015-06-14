@@ -9,7 +9,14 @@ var append = function(typ, msg) {
   }
 
   var $alert = $('<div class="' + typ + '"></div>');
+  $close = $('<i class="close fa fa-times"></i>');
+
+  $close.click(function() {
+    $alert.remove();
+  });
+
   $alert.text(msg);
+  $alert.append($close);
 
   $alerts.append($alert)
 };
