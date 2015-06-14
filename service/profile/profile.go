@@ -14,6 +14,10 @@ import (
 	"time"
 )
 
+const (
+	connTimeout = 30 * time.Second
+)
+
 var (
 	Profiles = map[string]*Profile{}
 )
@@ -199,7 +203,7 @@ func (p *Profile) Start() (err error) {
 	}()
 
 	go func() {
-		time.Sleep(30 * time.Second)
+		time.Sleep(connTimeout)
 		if p.Status != "connected" && running {
 			evt := event.Event{
 				Type: "timeout_error",
