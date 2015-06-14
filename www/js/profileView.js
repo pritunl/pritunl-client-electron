@@ -169,16 +169,27 @@ var renderProfiles = function() {
     events.subscribe(function(evt) {
       var prfl;
 
-      if (evt.type === 'update') {
-        prfl = profilesId[evt.data.id];
-        if (prfl) {
-          prfl.import(evt.data);
-        }
-      } else if (evt.type === 'output') {
-        prfl = profilesId[evt.data.id];
-        if (prfl) {
-          prfl.pushOutput(evt.data.output);
-        }
+      switch (evt.type) {
+        case 'update':
+          prfl = profilesId[evt.data.id];
+          if (prfl) {
+            prfl.import(evt.data);
+          }
+          break;
+        case 'output':
+          prfl = profilesId[evt.data.id];
+          if (prfl) {
+            prfl.pushOutput(evt.data.output);
+          }
+          break;
+        case 'auth_error':
+          prfl = profilesId[evt.data.id];
+          alert.error('Failed to authenicate to ' + prfl.formatedNameLogo()[0]);
+          break;
+        case 'timeout_error':
+          prfl = profilesId[evt.data.id];
+          alert.error('Connection timed out to ' + prfl.formatedNameLogo()[0]);
+          break;
       }
     });
 
