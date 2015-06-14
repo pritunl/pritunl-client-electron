@@ -205,6 +205,8 @@ func (p *Profile) Start() (err error) {
 	go func() {
 		time.Sleep(connTimeout)
 		if p.Status != "connected" && running {
+			cmd.Process.Kill()
+
 			evt := event.Event{
 				Type: "timeout_error",
 				Data: p,
