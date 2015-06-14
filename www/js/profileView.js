@@ -7,6 +7,7 @@ var service = require('./service.js');
 var editor = require('./editor.js');
 var ace = require('./ace/ace.js');
 var events = require('./events.js');
+var alert = require('./alert.js');
 
 var template = fs.readFileSync(
   path.join(__dirname, '..', 'templates', 'profile.html')).toString();
@@ -107,7 +108,7 @@ var renderProfile = function(prfl) {
     edtr = null;
 
     prfl.saveData(function(err) {
-      // TODO err
+      alert.error('Failed to save config: ' + err);
     });
   });
 
@@ -138,7 +139,7 @@ var renderProfile = function(prfl) {
     edtr.set('');
     prfl.log = '';
     prfl.saveLog(function(err) {
-      // TODO err
+      alert.error('Failed to save log: ' + err);
     });
   });
 
