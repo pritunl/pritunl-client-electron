@@ -174,12 +174,12 @@ var renderProfiles = function() {
       var prfl;
 
       if (evt.type === 'update') {
-        var prfl = profilesId[evt.data.id];
+        prfl = profilesId[evt.data.id];
         if (prfl) {
           prfl.import(evt.data);
         }
       } else if (evt.type === 'output') {
-        var prfl = profilesId[evt.data.id];
+        prfl = profilesId[evt.data.id];
         if (prfl) {
           prfl.pushOutput(evt.data.output);
         }
