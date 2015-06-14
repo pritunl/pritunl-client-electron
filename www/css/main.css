@@ -302,6 +302,38 @@ body {
 }
 
 
+.alerts .info {
+  padding: 10px;
+  background-color: #337AB7;
+  color: #fff4f4;
+  cursor: pointer;
+}
+.alerts .info:hover {
+  background-color: #286090;
+}
+.alerts .info:active {
+  background-color: #337AB7;
+}
+.alerts .info + .info {
+  border-top: 1px solid #c22525;
+}
+
+.alerts .warning {
+  padding: 10px;
+  background-color: #F0AD4E;
+  color: #fff4f4;
+  cursor: pointer;
+}
+.alerts .warning:hover {
+  background-color: #EC971F;
+}
+.alerts .warning:active {
+  background-color: #F0AD4E;
+}
+.alerts .warning + .warning {
+  border-top: 1px solid #c22525;
+}
+
 .alerts .error {
   padding: 10px;
   background-color: #830202;
