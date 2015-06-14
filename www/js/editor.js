@@ -1,3 +1,5 @@
+var ace = require('./ace/ace.js');
+
 var Editor = function Editor($container) {
   this.editor = null;
   this.$container = $container;
