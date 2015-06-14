@@ -10,6 +10,10 @@ type profileData struct {
 	Data string `json:"data"`
 }
 
+func profileGet(c *gin.Context) {
+	c.JSON(200, profile.Profiles)
+}
+
 func profilePost(c *gin.Context) {
 	data := &profileData{}
 	c.Bind(data)
