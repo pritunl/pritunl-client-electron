@@ -302,52 +302,22 @@ body {
 }
 
 
+.alerts div {
+  padding: 10px;
+  color: #fff4f4;
+  cursor: pointer;
+}
+.alerts div + div {
+  border-top: 1px solid rgba(0, 0, 0, 0.15);
+}
 .alerts .info {
-  padding: 10px;
-  background-color: #337ab7;
-  color: #fff4f4;
-  cursor: pointer;
-}
-.alerts .info:hover {
-  background-color: #286090;
-}
-.alerts .info:active {
   background-color: #337ab7;
 }
-.alerts .info + .info {
-  border-top: 1px solid #c22525;
-}
-
 .alerts .warning {
-  padding: 10px;
-  background-color: #f0ad4e;
-  color: #fff4f4;
-  cursor: pointer;
-}
-.alerts .warning:hover {
-  background-color: #ec971f;
-}
-.alerts .warning:active {
   background-color: #f0ad4e;
 }
-.alerts .warning + .warning {
-  border-top: 1px solid #c22525;
-}
-
 .alerts .error {
-  padding: 10px;
   background-color: #830202;
-  color: #fff4f4;
-  cursor: pointer;
-}
-.alerts .error:hover {
-  background-color: #ab0d0d;
-}
-.alerts .error:active {
-  background-color: #8e0909;
-}
-.alerts .error + .error {
-  border-top: 1px solid #c22525;
 }
 
 
