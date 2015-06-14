@@ -5,7 +5,6 @@ var Mustache = require('mustache');
 var profile = require('./profile.js');
 var service = require('./service.js');
 var editor = require('./editor.js');
-var ace = require('./ace/ace.js');
 var events = require('./events.js');
 var alert = require('./alert.js');
 
