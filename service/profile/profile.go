@@ -111,7 +111,7 @@ func (p *Profile) parseLine(line string) {
 	}
 }
 
-func (p *Profile) Start() (err error) {
+func (p *Profile) Start(timeout bool) (err error) {
 	p.Status = "connecting"
 	p.Timestamp = time.Now().Unix()
 
@@ -202,18 +202,20 @@ func (p *Profile) Start() (err error) {
 		delete(Profiles, p.Id)
 	}()
 
-	go func() {
-		time.Sleep(connTimeout)
-		if p.Status != "connected" && running {
-			cmd.Process.Kill()
+	if timeout {
+		go func() {
+			time.Sleep(connTimeout)
+			if p.Status != "connected" && running {
+				cmd.Process.Kill()
 
-			evt := event.Event{
-				Type: "timeout_error",
-				Data: p,
+				evt := event.Event{
+					Type: "timeout_error",
+					Data: p,
+				}
+				evt.Init()
 			}
-			evt.Init()
-		}
-	}()
+		}()
+	}
 
 	return
 }
