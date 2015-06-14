@@ -6,8 +6,9 @@ import (
 )
 
 type profileData struct {
-	Id   string `json:"id"`
-	Data string `json:"data"`
+	Id      string `json:"id"`
+	Data    string `json:"data"`
+	Timeout bool   `json:"timeout"`
 }
 
 func profileGet(c *gin.Context) {
@@ -23,7 +24,7 @@ func profilePost(c *gin.Context) {
 		Data: data.Data,
 	}
 
-	err := prfl.Start()
+	err := prfl.Start(data.Timeout)
 	if err != nil {
 		c.AbortWithError(500, err)
 		return
