@@ -108,7 +108,6 @@ var renderProfile = function(prfl) {
 
     prfl.saveData(function(err) {
       // TODO err
-      closeConfig($profile);
     });
   });
 
