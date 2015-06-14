@@ -1,4 +1,5 @@
 var request = require('request');
+var alert = require('./alert.js');
 
 var Service = function Service() {
   this.onUpdate = null;
@@ -14,24 +15,32 @@ Service.prototype.update = function() {
 
 Service.prototype.start = function(prfl) {
   request.post({
-    url: 'http://localhost:9770/start',
-    form: {
+    url: 'http://localhost:9770/profile',
+    json: true,
+    body: {
       id: prfl.id,
-      path: prfl.path
+      data: prfl.data
     }
-  }, function(err, resp, body) {
-    // TODO err
+  }, function(err) {
+    if (err) {
+      alert.error('Failed to start profile: ' + err);
+    }
   });
 };
 
 Service.prototype.stop = function(prfl) {
-  request.post({
-    url: 'http://localhost:9770/stop',
-    form: {
+  console.log(prfl.id);
+
+  request.del({
+    url: 'http://localhost:9770/profile',
+    json: true,
+    body: {
       id: prfl.id
     }
-  }, function(err, resp, body) {
-    // TODO err
+  }, function(err) {
+    if (err) {
+      alert.error('Failed to stop profile: ' + err);
+    }
   });
 };
 
