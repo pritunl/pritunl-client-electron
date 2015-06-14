@@ -24,13 +24,14 @@ type OutputData struct {
 }
 
 type Profile struct {
-	Id         string `json:"id"`
-	Data       string `json:"-"`
-	Password   string `json:"-"`
-	Status     string `json:"status"`
-	Timestamp  int64  `json:"timestamp"`
-	ServerAddr string `json:"server_addr"`
-	ClientAddr string `json:"client_addr"`
+	cmd        *exec.Cmd `json:"-"`
+	Id         string    `json:"id"`
+	Data       string    `json:"-"`
+	Password   string    `json:"-"`
+	Status     string    `json:"status"`
+	Timestamp  int64     `json:"timestamp"`
+	ServerAddr string    `json:"server_addr"`
+	ClientAddr string    `json:"client_addr"`
 }
 
 func (p *Profile) write() (pth string, err error) {
@@ -130,6 +131,7 @@ func (p *Profile) Start() (err error) {
 	p.update()
 
 	cmd := exec.Command(getOpenvpnPath(), "--config", confPath)
+	p.cmd = cmd
 
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
@@ -195,6 +197,22 @@ func (p *Profile) Start() (err error) {
 	if err != nil {
 		err = &ExecError{
 			errors.Wrap(err, "profile: Openvpn error occurred"),
+		}
+		return
+	}
+
+	return
+}
+
+func (p *Profile) Stop() (err error) {
+	if p.cmd == nil {
+		return
+	}
+
+	err = p.cmd.Process.Kill()
+	if err != nil {
+		err = &ExecError{
+			errors.Wrap(err, "profile: Failed to stop openvpn"),
 		}
 		return
 	}
