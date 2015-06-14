@@ -25,9 +25,6 @@ var openEditor = function($profile, data, typ) {
   edtr.set(data);
 
   $profile.addClass('editing-' + typ);
-  setTimeout(function() {
-    toggleMenu($profile);
-  }, 55);
 
   return edtr;
 };
