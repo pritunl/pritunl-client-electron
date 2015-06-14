@@ -150,6 +150,45 @@ Profile.prototype.import = function(data) {
 };
 
 Profile.prototype.export = function() {
+  var nameLogo = this.formatedNameLogo();
+
+  var hash = crypto.createHash('md5');
+  hash.update(nameLogo[0]);
+  hash = hash.digest('base64');
+
+  var status;
+  if (this.status === 'connected') {
+    status = this.getUptime();
+  } else if (this.status === 'connecting') {
+    status = 'Connecting';
+  } else if (this.status === 'reconnecting') {
+    status = 'Reconnecting';
+  } else {
+    status = 'Disconnected';
+  }
+
+  return {
+    logo: nameLogo[1],
+    logoColor: colors[hash.substr(0, 1)],
+    status: status,
+    serverAddr: this.serverAddr || '-',
+    clientAddr: this.clientAddr || '-',
+    name: nameLogo[0],
+    organizationId: this.organizationId || '',
+    organization: this.organization || '',
+    serverId: this.serverId || '',
+    server: this.server || '',
+    userId: this.userId || '',
+    user: this.user || '',
+    autostart: this.autostart || '',
+    syncHosts: this.syncHosts|| [],
+    syncHash: this.syncHash || '',
+    syncSecret: this.syncSecret || '',
+    syncToken: this.syncToken || ''
+  }
+};
+
+Profile.prototype.formatedNameLogo = function() {
   var logo;
   var name = this.name;
 
@@ -173,40 +212,7 @@ Profile.prototype.export = function() {
     }
   }
 
-  var hash = crypto.createHash('md5');
-  hash.update(name);
-  hash = hash.digest('base64');
-
-  var status;
-  if (this.status === 'connected') {
-    status = this.getUptime();
-  } else if (this.status === 'connecting') {
-    status = 'Connecting';
-  } else if (this.status === 'reconnecting') {
-    status = 'Reconnecting';
-  } else {
-    status = 'Disconnected';
-  }
-
-  return {
-    logo: logo,
-    logoColor: colors[hash.substr(0, 1)],
-    status: status,
-    serverAddr: this.serverAddr || '-',
-    clientAddr: this.clientAddr || '-',
-    name: name,
-    organizationId: this.organizationId || '',
-    organization: this.organization || '',
-    serverId: this.serverId || '',
-    server: this.server || '',
-    userId: this.userId || '',
-    user: this.user || '',
-    autostart: this.autostart || '',
-    syncHosts: this.syncHosts|| [],
-    syncHash: this.syncHash || '',
-    syncSecret: this.syncSecret || '',
-    syncToken: this.syncToken || ''
-  }
+  return [name, logo];
 };
 
 Profile.prototype.pushOutput = function(output) {
