@@ -183,8 +183,11 @@ func (p *Profile) Start() (err error) {
 		return
 	}
 
+	running := true
 	go func() {
 		cmd.Wait()
+
+		running = false
 
 		p.Status = "disconnected"
 		p.Timestamp = 0
@@ -193,6 +196,17 @@ func (p *Profile) Start() (err error) {
 		p.update()
 
 		delete(Profiles, p.Id)
+	}()
+
+	go func() {
+		time.Sleep(30 * time.Second)
+		if p.Status != "connected" && running {
+			evt := event.Event{
+				Type: "timeout_error",
+				Data: p,
+			}
+			evt.Init()
+		}
 	}()
 
 	return
