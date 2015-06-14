@@ -7,7 +7,7 @@ var Service = function Service() {
 
 Service.prototype.update = function() {
   request.get({
-    url: 'http://localhost:9770/status'
+    url: 'http://localhost:9770/profile'
   }, function(err, resp, body) {
     this.onUpdate(JSON.parse(body));
   }.bind(this));
