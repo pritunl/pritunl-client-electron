@@ -113,16 +113,6 @@ func (p *Profile) Start() (err error) {
 
 	Profiles[p.Id] = p
 
-	defer func() {
-		p.Status = "disconnected"
-		p.Timestamp = 0
-		p.ClientAddr = ""
-		p.ServerAddr = ""
-		p.update()
-
-		delete(Profiles, p.Id)
-	}()
-
 	confPath, err := p.write()
 	if err != nil {
 		return
@@ -193,13 +183,17 @@ func (p *Profile) Start() (err error) {
 		return
 	}
 
-	err = cmd.Wait()
-	if err != nil {
-		err = &ExecError{
-			errors.Wrap(err, "profile: Openvpn error occurred"),
-		}
-		return
-	}
+	go func() {
+		cmd.Wait()
+
+		p.Status = "disconnected"
+		p.Timestamp = 0
+		p.ClientAddr = ""
+		p.ServerAddr = ""
+		p.update()
+
+		delete(Profiles, p.Id)
+	}()
 
 	return
 }
