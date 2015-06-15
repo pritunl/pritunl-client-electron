@@ -1,6 +1,7 @@
 var ace = require('./ace/ace.js');
 
-var Editor = function Editor($container) {
+var Editor = function Editor(typ, $container) {
+  this.typ = typ;
   this.editor = null;
   this.$container = $container;
 };
@@ -13,7 +14,9 @@ Editor.prototype.create = function() {
   this.editor.setShowFoldWidgets(false);
   this.editor.getSession().setMode('ace/mode/text');
 
-  this.scrollBottom();
+  if (typ === 'log') {
+    this.scrollBottom();
+  }
 };
 
 Editor.prototype.scrollBottom = function(count) {
