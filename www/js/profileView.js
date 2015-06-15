@@ -20,7 +20,7 @@ var toggleMenu = function($profile) {
 
 var openEditor = function($profile, data, typ) {
   var $editor = $profile.find('.' + typ + ' .editor');
-  var edtr = new editor.Editor($editor);
+  var edtr = new editor.Editor(typ, $editor);
   edtr.create();
   edtr.set(data);
 
