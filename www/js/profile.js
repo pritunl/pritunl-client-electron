@@ -3,6 +3,7 @@ var remote = require('remote');
 var path = require('path');
 var fs = remote.require('fs');
 var app = remote.require('app');
+var profileRemote = remote.require('./js/profileRemote.js');
 
 var colors = {
   'A': '#ff8a80',
@@ -332,5 +333,6 @@ var getProfiles = function(serv, callback) {
 
 module.exports = {
   Profile: Profile,
+  importProfile: profileRemote.importProfile,
   getProfiles: getProfiles
 };
