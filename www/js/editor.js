@@ -12,6 +12,26 @@ Editor.prototype.create = function() {
   this.editor.setShowPrintMargin(false);
   this.editor.setShowFoldWidgets(false);
   this.editor.getSession().setMode('ace/mode/text');
+
+  this.scrollBottom();
+};
+
+Editor.prototype.scrollBottom = function(count) {
+  if (count === undefined) {
+    count = 0;
+  }
+  else if (count >= 10) {
+    return;
+  }
+  count += 1;
+
+  var $scrollbar = this.$container.find('.ace_scrollbar');
+
+  $scrollbar.scrollTop($scrollbar[0].scrollHeight);
+
+  setTimeout(function() {
+    this.scrollBottom(count);
+  }.bind(this), 25);
 };
 
 Editor.prototype.destroy = function() {
