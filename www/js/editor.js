@@ -14,7 +14,7 @@ Editor.prototype.create = function() {
   this.editor.setShowFoldWidgets(false);
   this.editor.getSession().setMode('ace/mode/text');
 
-  if (typ === 'log') {
+  if (this.typ === 'log') {
     this.scrollBottom();
   }
 };
