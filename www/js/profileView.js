@@ -145,7 +145,7 @@ var renderProfile = function(prfl) {
   $('.profiles .list').append($profile);
 };
 
-var renderProfiles = function() {
+var render = function() {
   var serv = new service.Service();
 
   profile.getProfiles(serv, function(err, profiles) {
@@ -205,4 +205,6 @@ var renderProfiles = function() {
   });
 };
 
-renderProfiles();
+module.exports = {
+  render: render
+};

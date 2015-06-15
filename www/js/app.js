@@ -1,6 +1,9 @@
 var remote = require('remote');
 var $ = require('jquery');
+var profile = require('./js/profile.js');
 var profileView = require('./js/profileView.js');
+
+profileView.render();
 
 $(document).on('dblclick mousedown', '.no-select, .btn', false);
 
