@@ -6,6 +6,7 @@
     "jquery": "^2.1.4",
     "mustache": "^2.1.1",
     "request": "^2.57.0",
+    "tar": "^2.1.1",
     "ws": "^0.7.2"
   },
   "devDependencies": {
