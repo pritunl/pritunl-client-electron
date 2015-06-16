@@ -130,12 +130,47 @@ Profile.prototype.load = function(callback) {
   }.bind(this));
 };
 
-Profile.prototype.import = function(data) {
+Profile.prototype.update = function(data) {
   this.status = data['status'];
   this.timestamp = data['timestamp'];
   this.serverAddr = data['server_addr'];
   this.clientAddr = data['client_addr'];
   this.onUpdate();
+};
+
+Profile.prototype.import = function(data) {
+  this.status = 'disconnected';
+  this.serverAddr = null;
+  this.clientAddr = null;
+  this.name = data.name || null;
+  this.organizationId = data.organization_id || null;
+  this.organization = data.organization || null;
+  this.serverId = data.server_id || null;
+  this.server = data.server || null;
+  this.userId = data.user_id || null;
+  this.user = data.user || null;
+  this.autostart = data.autostart || null;
+  this.syncHosts = data.sync_hosts || [];
+  this.syncHash = data.sync_hash || null;
+  this.syncSecret = data.sync_secret || null;
+  this.syncToken = data.sync_token || null;
+};
+
+Profile.prototype.exportConf = function() {
+  return {
+    name: this.name,
+    organization_id: this.organizationId,
+    organization: this.organization,
+    server_id: this.serverId,
+    server: this.server,
+    user_id: this.userId,
+    user: this.user,
+    autostart: this.autostart,
+    sync_hosts: this.syncHosts,
+    sync_hash: this.syncHash,
+    sync_secret: this.syncSecret,
+    sync_token: this.syncToken
+  };
 };
 
 Profile.prototype.export = function() {
