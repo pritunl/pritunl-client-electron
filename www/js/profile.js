@@ -95,11 +95,9 @@ var Profile = function Profile(serv, pth) {
   this.syncSecret = null;
   this.syncToken = null;
   this.log = null;
-
-  this.load();
 };
 
-Profile.prototype.load = function() {
+Profile.prototype.load = function(callback) {
   fs.readFile(this.confPath, function (err, data) {
     var confData;
     try {
@@ -108,21 +106,11 @@ Profile.prototype.load = function() {
       confData = {};
     }
 
-    this.status = 'disconnected';
-    this.serverAddr = null;
-    this.clientAddr = null;
-    this.name = confData.name || null;
-    this.organizationId = confData.organizationId || null;
-    this.organization = confData.organization || null;
-    this.serverId = confData.server_id || null;
-    this.server = confData.server || null;
-    this.userId = confData.user_id || null;
-    this.user = confData.user || null;
-    this.autostart = confData.autostart || null;
-    this.syncHosts = confData.sync_hosts || [];
-    this.syncHash = confData.sync_hash || null;
-    this.syncSecret = confData.sync_secret || null;
-    this.syncToken = confData.sync_token || null;
+    this.import(confData);
+
+    if (callback) {
+      callback();
+    }
   }.bind(this));
 
   fs.readFile(this.ovpnPath, function(err, data) {
