@@ -161,7 +161,7 @@ var render = function() {
       for (var id in data) {
         var prfl = profilesId[id];
         if (prfl) {
-          prfl.import(data[id]);
+          prfl.update(data[id]);
         }
       }
     };
@@ -173,7 +173,7 @@ var render = function() {
         case 'update':
           prfl = profilesId[evt.data.id];
           if (prfl) {
-            prfl.import(evt.data);
+            prfl.update(evt.data);
           }
           break;
         case 'output':
