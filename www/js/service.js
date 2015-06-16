@@ -1,5 +1,6 @@
 var request = require('request');
 var alert = require('./alert.js');
+var constants = require('./constants.js');
 
 var Service = function Service() {
   this.onUpdate = null;
@@ -7,7 +8,7 @@ var Service = function Service() {
 
 Service.prototype.update = function() {
   request.get({
-    url: 'http://localhost:9770/profile'
+    url: constants.serviceUrl + '/profile'
   }, function(err, resp, body) {
     this.onUpdate(JSON.parse(body));
   }.bind(this));
@@ -15,7 +16,7 @@ Service.prototype.update = function() {
 
 Service.prototype.start = function(prfl) {
   request.post({
-    url: 'http://localhost:9770/profile',
+    url: constants.serviceUrl + '/profile',
     json: true,
     body: {
       id: prfl.id,
@@ -32,7 +33,7 @@ Service.prototype.stop = function(prfl) {
   console.log(prfl.id);
 
   request.del({
-    url: 'http://localhost:9770/profile',
+    url: constants.serviceUrl + '/profile',
     json: true,
     body: {
       id: prfl.id
