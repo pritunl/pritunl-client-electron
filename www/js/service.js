@@ -8,7 +8,7 @@ var Service = function Service() {
 
 Service.prototype.update = function() {
   request.get({
-    url: constants.serviceUrl + '/profile'
+    url: 'http://' + constants.serviceHost + '/profile'
   }, function(err, resp, body) {
     this.onUpdate(JSON.parse(body));
   }.bind(this));
@@ -16,7 +16,7 @@ Service.prototype.update = function() {
 
 Service.prototype.start = function(prfl) {
   request.post({
-    url: constants.serviceUrl + '/profile',
+    url: 'http://' + constants.serviceHost + '/profile',
     json: true,
     body: {
       id: prfl.id,
@@ -33,7 +33,7 @@ Service.prototype.stop = function(prfl) {
   console.log(prfl.id);
 
   request.del({
-    url: constants.serviceUrl + '/profile',
+    url: 'http://' + constants.serviceHost + '/profile',
     json: true,
     body: {
       id: prfl.id
