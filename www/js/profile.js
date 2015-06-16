@@ -386,23 +386,37 @@ var getProfiles = function(serv, callback) {
       paths = paths || [];
 
       var i;
-      var path;
+      var loaded = 0;
+      var pth;
       var pathSplit;
+      var profilePaths = [];
       var profiles = [];
+
       for (i = 0; i < paths.length; i++) {
-        path = paths[i];
-        pathSplit = path.split('.');
+        pth = paths[i];
+        pathSplit = pth.split('.');
 
         if (pathSplit[pathSplit.length - 1] !== 'conf') {
           continue;
         }
 
-        path = root + '/' + path.substr(0, path.length - 5);
-
-        profiles.push(new Profile(serv, path));
+        profilePaths.push(root + '/' + pth.substr(0, pth.length - 5));
       }
 
-      callback(err, profiles);
+      for (i = 0; i < profilePaths.length; i++) {
+        pth = profilePaths[i];
+
+        var prfl = new Profile(serv, pth);
+        profiles.push(prfl);
+
+        prfl.load(function() {
+          loaded += 1;
+
+          if (loaded >= profilePaths.length) {
+            callback(err, profiles);
+          }
+        });
+      }
     });
   });
 };
