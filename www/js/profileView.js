@@ -152,6 +152,15 @@ var render = function() {
     var i;
     var profilesId = {};
 
+    $('.profiles .profile-file').change(function(evt) {
+      var pth = evt.currentTarget.files[0].path;
+      profile.importProfile(serv, pth, function(prfl) {
+        profiles.push(prfl);
+        profilesId[prfl.id] = prfl;
+        renderProfile(prfl);
+      });
+    });
+
     for (i = 0; i < profiles.length; i++) {
       profilesId[profiles[i].id] = profiles[i];
       renderProfile(profiles[i]);
