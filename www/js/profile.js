@@ -300,6 +300,10 @@ Profile.prototype.getUptime = function(curTime) {
   return uptimeItems.join(' ');
 };
 
+Profile.prototype.saveConf = function(callback) {
+  fs.writeFile(this.confPath, JSON.stringify(this.exportConf()), callback);
+};
+
 Profile.prototype.saveData = function(callback) {
   fs.writeFile(this.ovpnPath, this.data, callback);
 };
