@@ -1,6 +1,7 @@
 var crypto = require('crypto');
 var remote = require('remote');
 var path = require('path');
+var utils = require('./utils.js');
 var fs = remote.require('fs');
 var app = remote.require('app');
 var profileRemote = remote.require('./js/profileRemote.js');
@@ -320,6 +321,54 @@ Profile.prototype.disconnect = function() {
   this.service.stop(this);
 };
 
+var importProfile = function(serv, pth, callback) {
+  profileRemote.importProfile(pth, function(err, data) {
+    data = data.replace('\r', '');
+    var line;
+    var lines = data.split('\n');
+    var jsonFound = null;
+    var jsonData = '';
+    var ovpnData = '';
+
+    for (var i = 0; i < lines.length; i++) {
+      line = lines[i];
+
+      if (jsonFound === null && line === '#{') {
+        jsonFound = true;
+      }
+
+      if (jsonFound === true) {
+        if (line === '#}') {
+          jsonFound = false;
+        }
+        jsonData += line.replace('#', '');
+      } else {
+        ovpnData += line + '\n';
+      }
+    }
+
+    var confData;
+    try {
+      confData = JSON.parse(jsonData);
+    } catch (err) {
+      confData = {};
+    }
+
+    data = ovpnData.trim() + '\n';
+
+    pth = path.join(app.getPath('userData'), 'profiles', utils.uuid());
+    var prfl = new Profile(serv, pth);
+
+    prfl.import(confData);
+    prfl.data = data;
+
+    prfl.saveData();
+    prfl.saveConf();
+
+    callback(prfl);
+  });
+};
+
 var getProfiles = function(serv, callback) {
   var root = path.join(app.getPath('userData'), 'profiles');
 
@@ -360,6 +409,6 @@ var getProfiles = function(serv, callback) {
 
 module.exports = {
   Profile: Profile,
-  importProfile: profileRemote.importProfile,
+  importProfile: importProfile,
   getProfiles: getProfiles
 };
