@@ -30,8 +30,6 @@ Service.prototype.start = function(prfl) {
 };
 
 Service.prototype.stop = function(prfl) {
-  console.log(prfl.id);
-
   request.del({
     url: 'http://' + constants.serviceHost + '/profile',
     json: true,
