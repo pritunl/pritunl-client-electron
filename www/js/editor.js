@@ -29,7 +29,6 @@ Editor.prototype.scrollBottom = function(count) {
   count += 1;
 
   var $scrollbar = this.$container.find('.ace_scrollbar');
-
   $scrollbar.scrollTop($scrollbar[0].scrollHeight);
 
   setTimeout(function() {
