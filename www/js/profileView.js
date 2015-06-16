@@ -193,11 +193,13 @@ var render = function() {
           break;
         case 'auth_error':
           prfl = profilesId[evt.data.id];
-          alert.error('Failed to authenicate to ' + prfl.formatedNameLogo()[0]);
+          alert.error('Failed to authenicate to ' +
+            prfl.formatedNameLogo()[0]);
           break;
         case 'timeout_error':
           prfl = profilesId[evt.data.id];
-          alert.error('Connection timed out to ' + prfl.formatedNameLogo()[0]);
+          alert.error('Connection timed out to ' +
+            prfl.formatedNameLogo()[0]);
           break;
       }
     });
