@@ -52,6 +52,7 @@ var openMainWin = function() {
   main = new BrowserWindow({
     icon: path.join(__dirname, 'img', 'logo.png'),
     frame: false,
+    fullscreen: false,
     width: 400,
     height: 580,
     'min-width': 280,
