@@ -314,12 +314,27 @@ Profile.prototype.saveLog = function(callback) {
 };
 
 Profile.prototype.delete = function() {
-  fs.unlink(this.confPath, function(err) {
-  });
-  fs.unlink(this.ovpnPath, function(err) {
-  });
-  fs.unlink(this.logPath, function(err) {
-  });
+  fs.exists(this.confPath, function(exists) {
+    if (!exists) {
+      return;
+    }
+    fs.unlink(this.confPath, function(err) {
+    });
+  }.bind(this));
+  fs.exists(this.ovpnPath, function(exists) {
+    if (!exists) {
+      return;
+    }
+    fs.unlink(this.ovpnPath, function(err) {
+    });
+  }.bind(this));
+  fs.exists(this.logPath, function(exists) {
+    if (!exists) {
+      return;
+    }
+    fs.unlink(this.logPath, function(err) {
+    });
+  }.bind(this));
 };
 
 Profile.prototype.connect = function() {
