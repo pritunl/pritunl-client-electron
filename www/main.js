@@ -11,7 +11,7 @@ var events = require('./js/events.js');
 var main = null;
 var tray = null;
 
-// app.on('window-all-closed', function() {}); TODO
+app.on('window-all-closed', function() {});
 
 var connTray;
 var disconnTray;
