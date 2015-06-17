@@ -82,6 +82,9 @@ app.on('ready', function() {
   tray.on('clicked', function() {
     openMainWin();
   });
+  tray.on('double-clicked', function() {
+    openMainWin();
+  });
 
   var menu = Menu.buildFromTemplate([
     {
