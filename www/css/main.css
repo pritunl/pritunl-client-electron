@@ -432,6 +432,29 @@ body {
   display: none;
 }
 
+.profile .menu .delete-ask,
+.profile .menu .delete-yes,
+.profile .menu .delete-no {
+  position: absolute;
+  top: 71px;
+  left: 101px;
+  width: 51px;
+  transition: left 125ms linear;
+}
+.profile .menu .delete-ask {
+  background-color: #575757;
+  width: 110px;
+}
+.profile .menu.deleting .delete-ask {
+  left: -110px;
+}
+.profile .menu.deleting .delete-yes {
+  left: 0;
+}
+.profile .menu.deleting .delete-no {
+  left: 51px;
+}
+
 .profile .logs,
 .profile .config {
   position: absolute;

@@ -98,7 +98,14 @@ var renderProfile = function(prfl) {
   });
 
   $profile.find('.menu .delete').click(function() {
+    $profile.find('.menu').addClass('deleting');
+  });
+  $profile.find('.menu .delete-yes').click(function() {
     prfl.delete();
+    closeMenu($profile);
+  });
+  $profile.find('.menu .delete-no').click(function() {
+    $profile.find('.menu').removeClass('deleting');
   });
 
   $profile.find('.menu .edit-config').click(function() {
