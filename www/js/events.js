@@ -1,4 +1,5 @@
 var WebSocket = require('ws');
+var constants = require('./constants.js');
 var utils = require('./utils.js');
 
 var connected = false;
@@ -12,7 +13,7 @@ var connect = function(callback) {
   socketId = id;
 
   try {
-    var socket = new WebSocket('ws://localhost:9770/events');
+    var socket = new WebSocket('ws://' + constants.serviceHost + '/events');
 
     socket.on('onerror', function() {
       connected = false;
