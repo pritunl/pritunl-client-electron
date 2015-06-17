@@ -13,9 +13,13 @@ var template = fs.readFileSync(
 
 $(document).on('dblclick mousedown', '.no-select, .btn', false);
 
-var toggleMenu = function($profile) {
+var openMenu = function($profile) {
+  $profile.find('.menu').addClass('show');
+  $profile.find('.menu-backdrop').fadeIn(75);
+};
+var closeMenu = function($profile) {
   $profile.find('.menu').toggleClass('show');
-  $profile.find('.menu-backdrop').fadeToggle(75);
+  $profile.find('.menu-backdrop').fadeOut(75);
 };
 
 var openEditor = function($profile, data, typ) {
@@ -76,10 +80,12 @@ var renderProfile = function(prfl) {
     edtr.push(output);
   };
 
-  $profile.find('.open-menu i, .menu-backdrop, .menu .item').click(
-    function() {
-      toggleMenu($profile);
-    });
+  $profile.find('.open-menu i').click(function() {
+    openMenu($profile);
+  });
+  $profile.find('.menu-backdrop').click(function() {
+    closeMenu($profile);
+  });
 
   $profile.find('.menu .connect').click(function() {
     prfl.connect();
