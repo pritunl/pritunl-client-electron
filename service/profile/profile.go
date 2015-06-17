@@ -58,6 +58,12 @@ func (p *Profile) write() (pth string, err error) {
 }
 
 func (p *Profile) update() {
+	evt := event.Event{
+		Type: "update",
+		Data: p,
+	}
+	evt.Init()
+
 	status := GetStatus()
 
 	if status {
@@ -71,12 +77,6 @@ func (p *Profile) update() {
 		}
 		evt.Init()
 	}
-
-	evt := event.Event{
-		Type: "update",
-		Data: p,
-	}
-	evt.Init()
 }
 
 func (p *Profile) pushOutput(output string) {
