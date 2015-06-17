@@ -11,6 +11,24 @@ var tray = null;
 
 // app.on('window-all-closed', function() {}); TODO
 
+var connTray;
+var disconnTray;
+if (process.platform === 'darwin') {
+  connTray = path.join(__dirname, 'img', 'tray_connected_osx.png');
+  disconnTray = path.join(__dirname, 'img', 'tray_connected_osx.png');
+} else if (process.platform === 'win32') {
+  connTray = path.join(__dirname, 'img', 'tray_connected_win.png');
+  disconnTray = path.join(__dirname, 'img', 'tray_connected_win.png');
+} else if (process.platform === 'linux') {
+  connTray = path.join(__dirname, 'img',
+    'tray_connected_linux_light.png');
+  disconnTray = path.join(__dirname, 'img',
+    'tray_disconnected_linux_light.png');
+} else {
+  connTray = path.join(__dirname, 'img', 'tray_connected.png');
+  disconnTray = path.join(__dirname, 'img', 'tray_connected.png');
+}
+
 var openMainWin = function() {
   if (main) {
     return;
@@ -54,7 +72,7 @@ app.on('ready', function() {
   openMainWin();
   main.openDevTools(); // TODO
 
-  tray = new Tray(path.join(__dirname, 'img', 'tray_connected_win.png'));
+  tray = new Tray(connTray);
   tray.on('clicked', function() {
     openMainWin();
   });
