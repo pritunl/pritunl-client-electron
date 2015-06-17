@@ -14,19 +14,25 @@ var tray = null;
 var connTray;
 var disconnTray;
 if (process.platform === 'darwin') {
-  connTray = path.join(__dirname, 'img', 'tray_connected_osx.png');
-  disconnTray = path.join(__dirname, 'img', 'tray_connected_osx.png');
+  connTray = path.join(__dirname, 'img',
+    'tray_connected_osxTemplate.png');
+  disconnTray = path.join(__dirname, 'img',
+    'tray_disconnected_osxTemplate.png');
 } else if (process.platform === 'win32') {
-  connTray = path.join(__dirname, 'img', 'tray_connected_win.png');
-  disconnTray = path.join(__dirname, 'img', 'tray_connected_win.png');
+  connTray = path.join(__dirname, 'img',
+    'tray_connected_win.png');
+  disconnTray = path.join(__dirname, 'img',
+    'tray_disconnected_win.png');
 } else if (process.platform === 'linux') {
   connTray = path.join(__dirname, 'img',
     'tray_connected_linux_light.png');
   disconnTray = path.join(__dirname, 'img',
     'tray_disconnected_linux_light.png');
 } else {
-  connTray = path.join(__dirname, 'img', 'tray_connected.png');
-  disconnTray = path.join(__dirname, 'img', 'tray_connected.png');
+  connTray = path.join(__dirname, 'img',
+    'tray_connected.png');
+  disconnTray = path.join(__dirname, 'img',
+    'tray_disconnected.png');
 }
 
 var openMainWin = function() {
