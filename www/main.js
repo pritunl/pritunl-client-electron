@@ -80,7 +80,7 @@ app.on('ready', function() {
 
       fs.appendFile(pth, evt.data.output + '\n', function(err) {
         if (err) {
-          // TODO Error
+          console.log(err);
         }
       });
     } else if (evt.type === 'connected') {
