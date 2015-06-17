@@ -88,6 +88,10 @@ var renderProfile = function(prfl) {
     prfl.disconnect();
   });
 
+  $profile.find('.menu .delete').click(function() {
+    prfl.delete();
+  });
+
   $profile.find('.menu .edit-config').click(function() {
     edtr = openEditor($profile, prfl.data, 'config');
     edtrType = 'config';
