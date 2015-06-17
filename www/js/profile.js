@@ -313,6 +313,15 @@ Profile.prototype.saveLog = function(callback) {
   fs.writeFile(this.logPath, this.log, callback);
 };
 
+Profile.prototype.delete = function() {
+  fs.unlink(this.confPath, function(err) {
+  });
+  fs.unlink(this.ovpnPath, function(err) {
+  });
+  fs.unlink(this.logPath, function(err) {
+  });
+};
+
 Profile.prototype.connect = function() {
   this.service.start(this);
 };
