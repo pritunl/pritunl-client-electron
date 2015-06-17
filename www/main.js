@@ -1,9 +1,11 @@
 var app = require('app');
 var path = require('path');
 var fs = require('fs');
+var request = require('request');
 var BrowserWindow = require('browser-window');
 var Tray = require('tray');
 var Menu = require('menu');
+var constants = require('./js/constants.js');
 var events = require('./js/events.js');
 
 var main = null;
@@ -61,24 +63,30 @@ var openMainWin = function() {
 
 app.on('ready', function() {
   events.subscribe(function(evt) {
-    if (evt.type !== 'output') {
-      return;
-    }
+    if (evt.type === 'output') {
+      var pth = path.join(app.getPath('userData'), 'profiles',
+        evt.data.id + '.log');
 
-    var pth = path.join(app.getPath('userData'), 'profiles',
-      evt.data.id + '.log');
-
-    fs.appendFile(pth, evt.data.output + '\n', function(err) {
-      if (err) {
-        // TODO Error
+      fs.appendFile(pth, evt.data.output + '\n', function(err) {
+        if (err) {
+          // TODO Error
+        }
+      });
+    } else if (evt.type === 'connected') {
+      if (tray) {
+        tray.setImage(connTray);
       }
-    });
+    } else if (evt.type === 'disconnected') {
+      if (tray) {
+        tray.setImage(disconnTray);
+      }
+    }
   });
 
   openMainWin();
   main.openDevTools(); // TODO
 
-  tray = new Tray(connTray);
+  tray = new Tray(disconnTray);
   tray.on('clicked', function() {
     openMainWin();
   });
@@ -107,4 +115,24 @@ app.on('ready', function() {
     }
   ]);
   tray.setContextMenu(menu);
+
+  request.get({
+    url: 'http://' + constants.serviceHost + '/status'
+  }, function(err, resp, body) {
+    if (!body || !tray) {
+      return;
+    }
+
+    try {
+      var data = JSON.parse(body);
+    } catch(err) {
+      return;
+    }
+
+    if (data.status) {
+      tray.setImage(connTray);
+    } else {
+      tray.setImage(disconnTray);
+    }
+  });
 });
