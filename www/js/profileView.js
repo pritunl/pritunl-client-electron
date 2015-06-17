@@ -76,9 +76,10 @@ var renderProfile = function(prfl) {
     edtr.push(output);
   };
 
-  $profile.find('.open-menu i, .menu-backdrop, .menu .item').click(function() {
-    toggleMenu($profile);
-  });
+  $profile.find('.open-menu i, .menu-backdrop, .menu .item').click(
+    function() {
+      toggleMenu($profile);
+    });
 
   $profile.find('.menu .connect').click(function() {
     prfl.connect();
