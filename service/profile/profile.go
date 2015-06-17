@@ -170,14 +170,14 @@ func (p *Profile) Start(timeout bool) (err error) {
 		for {
 			line, _, err := out.ReadLine()
 			if err != nil {
-				if err == io.EOF {
-					return
+				if err != io.EOF {
+					err = &ExecError{
+						errors.Wrap(err, "profile: Failed to read stdout"),
+					}
+					// TODO log
 				}
 
-				err = &ExecError{
-					errors.Wrap(err, "profile: Failed to read stdout"),
-				}
-				panic(err)
+				return
 			}
 			p.parseLine(string(line))
 		}
@@ -188,14 +188,14 @@ func (p *Profile) Start(timeout bool) (err error) {
 		for {
 			line, _, err := out.ReadLine()
 			if err != nil {
-				if err == io.EOF {
-					return
+				if err != io.EOF {
+					err = &ExecError{
+						errors.Wrap(err, "profile: Failed to read stderr"),
+					}
+					// TODO log
 				}
 
-				err = &ExecError{
-					errors.Wrap(err, "profile: Failed to read stderr"),
-				}
-				panic(err)
+				return
 			}
 			p.parseLine(string(line))
 		}
