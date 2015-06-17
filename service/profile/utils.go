@@ -18,3 +18,13 @@ func getOpenvpnPath() (pth string) {
 
 	return
 }
+
+func GetStatus() (status bool) {
+	for _, prfl := range Profiles {
+		if prfl.Status == "connected" {
+			status = true
+		}
+	}
+
+	return
+}

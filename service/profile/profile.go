@@ -58,15 +58,9 @@ func (p *Profile) write() (pth string, err error) {
 }
 
 func (p *Profile) update() {
-	connected := false
+	status := GetStatus()
 
-	for _, prfl := range Profiles {
-		if prfl.Status == "connected" {
-			connected = true
-		}
-	}
-
-	if connected {
+	if status {
 		evt := event.Event{
 			Type: "connected",
 		}
