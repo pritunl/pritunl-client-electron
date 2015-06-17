@@ -112,8 +112,10 @@ func (p *Profile) parseLine(line string) {
 }
 
 func (p *Profile) Start(timeout bool) (err error) {
+	start := time.Now()
+
 	p.Status = "connecting"
-	p.Timestamp = time.Now().Unix()
+	p.Timestamp = start.Unix()
 
 	Profiles[p.Id] = p
 
@@ -190,8 +192,12 @@ func (p *Profile) Start(timeout bool) (err error) {
 	running := true
 	go func() {
 		cmd.Wait()
-
 		running = false
+
+		diff := time.Since(start)
+		if diff < 3*time.Second {
+			time.Sleep((5 * time.Second) - diff)
+		}
 
 		p.Status = "disconnected"
 		p.Timestamp = 0
