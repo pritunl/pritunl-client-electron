@@ -89,10 +89,12 @@ var renderProfile = function(prfl) {
 
   $profile.find('.menu .connect').click(function() {
     prfl.connect();
+    closeMenu($profile);
   });
 
   $profile.find('.menu .disconnect').click(function() {
     prfl.disconnect();
+    closeMenu($profile);
   });
 
   $profile.find('.menu .delete').click(function() {
@@ -102,11 +104,13 @@ var renderProfile = function(prfl) {
   $profile.find('.menu .edit-config').click(function() {
     edtr = openEditor($profile, prfl.data, 'config');
     edtrType = 'config';
+    closeMenu($profile);
   });
 
   $profile.find('.menu .view-logs').click(function() {
     edtr = openEditor($profile, prfl.log, 'logs');
     edtrType = 'logs';
+    closeMenu($profile);
   });
 
   $profile.find('.config .btns .save').click(function() {
