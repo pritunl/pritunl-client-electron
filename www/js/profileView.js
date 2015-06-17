@@ -18,7 +18,9 @@ var openMenu = function($profile) {
   $profile.find('.menu-backdrop').fadeIn(75);
 };
 var closeMenu = function($profile) {
-  $profile.find('.menu').toggleClass('show');
+  var $menu = $profile.find('.menu');
+  $menu.removeClass('deleting');
+  $menu.removeClass('show');
   $profile.find('.menu-backdrop').fadeOut(75);
 };
 
