@@ -1,6 +1,7 @@
 var crypto = require('crypto');
 var remote = require('remote');
 var path = require('path');
+var alert = require('./alert.js');
 var utils = require('./utils.js');
 var fs = remote.require('fs');
 var app = remote.require('app');
@@ -319,6 +320,9 @@ Profile.prototype.delete = function() {
       return;
     }
     fs.unlink(this.confPath, function(err) {
+      if (err != null) {
+        alert.error('Failed to delete profile conf: ' + err);
+      }
     });
   }.bind(this));
   fs.exists(this.ovpnPath, function(exists) {
@@ -326,6 +330,9 @@ Profile.prototype.delete = function() {
       return;
     }
     fs.unlink(this.ovpnPath, function(err) {
+      if (err != null) {
+        alert.error('Failed to delete profile data: ' + err);
+      }
     });
   }.bind(this));
   fs.exists(this.logPath, function(exists) {
@@ -333,6 +340,9 @@ Profile.prototype.delete = function() {
       return;
     }
     fs.unlink(this.logPath, function(err) {
+      if (err != null) {
+        alert.error('Failed to delete profile log: ' + err);
+      }
     });
   }.bind(this));
 };
