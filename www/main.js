@@ -11,7 +11,14 @@ var events = require('./js/events.js');
 var main = null;
 var tray = null;
 
-app.on('window-all-closed', function() {});
+if (app.dock) {
+  app.dock.hide();
+}
+app.on('window-all-closed', function() {
+  if (app.dock) {
+    app.dock.hide();
+  }
+});
 
 var connTray;
 var disconnTray;
@@ -59,6 +66,10 @@ var openMainWin = function() {
   main.on('closed', function() {
     main = null;
   });
+
+  if (app.dock) {
+    app.dock.show();
+  }
 };
 
 app.on('ready', function() {
