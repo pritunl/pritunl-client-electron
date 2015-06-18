@@ -320,7 +320,7 @@ Profile.prototype.delete = function() {
       return;
     }
     fs.unlink(this.confPath, function(err) {
-      if (err != null) {
+      if (err !== null) {
         alert.error('Failed to delete profile conf: ' + err);
       }
     });
@@ -330,7 +330,7 @@ Profile.prototype.delete = function() {
       return;
     }
     fs.unlink(this.ovpnPath, function(err) {
-      if (err != null) {
+      if (err !== null) {
         alert.error('Failed to delete profile data: ' + err);
       }
     });
@@ -340,7 +340,7 @@ Profile.prototype.delete = function() {
       return;
     }
     fs.unlink(this.logPath, function(err) {
-      if (err != null) {
+      if (err !== null) {
         alert.error('Failed to delete profile log: ' + err);
       }
     });
