@@ -11,4 +11,4 @@ sudo rm /Library/LaunchDaemons/net.sf.tuntaposx.tap.plist
 sudo rm /Library/LaunchDaemons/net.sf.tuntaposx.tun.plist
 
 # Openvpn
-sudo rm -rf /usr/local/share/pritunl
+sudo rm -rf /usr/local/sbin/pritunl-openvpn

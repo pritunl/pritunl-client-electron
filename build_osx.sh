@@ -18,5 +18,5 @@ cp tuntap_osx/net.sf.tuntaposx.tap.plist build/osx/Library/LaunchDaemons/
 cp tuntap_osx/net.sf.tuntaposx.tun.plist build/osx/Library/LaunchDaemons/
 
 # Openvpn
-mkdir -p build/osx/usr/local/share/pritunl
-cp openvpn_osx/openvpn build/osx/usr/local/share/pritunl
+mkdir -p build/osx/usr/local/sbin
+cp openvpn_osx/openvpn build/osx/usr/local/sbin/pritunl-openvpn
