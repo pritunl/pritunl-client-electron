@@ -131,8 +131,12 @@ var renderProfile = function(prfl) {
     edtr = null;
     edtrType = null;
 
+    closeEditor($profile, 'config');
+
     prfl.saveData(function(err) {
-      alert.error('Failed to save config: ' + err);
+      if (err !== null) {
+        alert.error('Failed to save config: ' + err);
+      }
     });
   });
 
