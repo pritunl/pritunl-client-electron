@@ -9,9 +9,7 @@ Thumbs.db
 *.pyc
 *.egg
 *.egg-info
-/build_osx
-/build_win32
-/build_linux
+/build
 /node_modules
 /service/service
 pritunl-client-electron.iml
