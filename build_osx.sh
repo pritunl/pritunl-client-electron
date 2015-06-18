@@ -2,6 +2,13 @@
 mkdir -p build/osx/Applications
 ./node_modules/.bin/electron-packager ./ Pritunl --platform=darwin --arch=x64 --version=0.27.3 --icon=./www/img/pritunl.icns --out=build/osx/Applications
 
+# Service
+cd service
+go build -a
+cd ..
+mkdir -p build/osx/usr/local/sbin
+cp service/service build/osx/usr/local/sbin/pritunl-service
+
 # Tuntap
 mkdir -p build/osx/Library/Extensions
 cp -pR tuntap_osx/tap.kext build/osx/Library/Extensions/
