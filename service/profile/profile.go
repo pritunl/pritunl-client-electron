@@ -140,7 +140,8 @@ func (p *Profile) Start(timeout bool) (err error) {
 
 	p.update()
 
-	cmd := exec.Command(getOpenvpnPath(), "--config", confPath)
+	cmd := exec.Command(getOpenvpnPath(), "--config", confPath,
+		"--script-security", "1")
 	p.cmd = cmd
 
 	stdout, err := cmd.StdoutPipe()
