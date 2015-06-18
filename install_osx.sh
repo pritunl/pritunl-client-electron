@@ -3,8 +3,8 @@ sudo cp -pR build/osx/Applications/Pritunl.app /Applications
 sudo chown -R root:wheel /Applications/Pritunl.app
 
 # Service
-sudo mkdir -p /usr/local/sbin
-sudo cp build/osx/usr/local/sbin/pritunl-service /usr/local/sbin
+sudo mkdir -p /usr/local/bin
+sudo cp build/osx/usr/local/bin/pritunl-service /usr/local/bin
 
 # Tuntap
 sudo mkdir -p /Library/Extensions
@@ -17,5 +17,5 @@ sudo cp build/osx/Library/LaunchDaemons/net.sf.tuntaposx.tap.plist /Library/Laun
 sudo cp build/osx/Library/LaunchDaemons/net.sf.tuntaposx.tun.plist /Library/LaunchDaemons
 
 # Openvpn
-sudo mkdir -p /usr/local/sbin
-sudo cp build/osx/usr/local/sbin/pritunl-openvpn /usr/local/sbin
+sudo mkdir -p /usr/local/bin
+sudo cp build/osx/usr/local/bin/pritunl-openvpn /usr/local/bin

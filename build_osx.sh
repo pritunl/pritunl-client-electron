@@ -6,8 +6,8 @@ mkdir -p build/osx/Applications
 cd service
 go build -a
 cd ..
-mkdir -p build/osx/usr/local/sbin
-cp service/service build/osx/usr/local/sbin/pritunl-service
+mkdir -p build/osx/usr/local/bin
+cp service/service build/osx/usr/local/bin/pritunl-service
 
 # Tuntap
 mkdir -p build/osx/Library/Extensions
@@ -18,5 +18,5 @@ cp tuntap_osx/net.sf.tuntaposx.tap.plist build/osx/Library/LaunchDaemons/
 cp tuntap_osx/net.sf.tuntaposx.tun.plist build/osx/Library/LaunchDaemons/
 
 # Openvpn
-mkdir -p build/osx/usr/local/sbin
-cp openvpn_osx/openvpn build/osx/usr/local/sbin/pritunl-openvpn
+mkdir -p build/osx/usr/local/bin
+cp openvpn_osx/openvpn build/osx/usr/local/bin/pritunl-openvpn
