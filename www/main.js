@@ -74,6 +74,13 @@ var openMainWin = function() {
 };
 
 app.on('ready', function() {
+  var profilesPth = path.join(app.getPath('userData'), 'profiles');
+  fs.exists(profilesPth, function(exists) {
+    if (!exists) {
+      fs.mkdir(profilesPth);
+    }
+  });
+
   events.subscribe(function(evt) {
     if (evt.type === 'output') {
       var pth = path.join(app.getPath('userData'), 'profiles',
