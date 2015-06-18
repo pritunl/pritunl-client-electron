@@ -22,3 +22,14 @@ cp tuntap_osx/net.sf.tuntaposx.tun.plist build/osx/Library/LaunchDaemons/
 # Openvpn
 mkdir -p build/osx/usr/local/bin
 cp openvpn_osx/openvpn build/osx/usr/local/bin/pritunl-openvpn
+
+# Package
+cp install_osx.sh build/osx/install.sh
+cp uninstall_osx.sh build/osx/uninstall.sh
+cd build
+mv osx pritunl_0.1.0-osx
+zip pritunl.zip pritunl_0.1.0-osx
+mv pritunl_0.1.0-osx osx
+cd ..
+rm build/osx/install.sh
+rm build/osx/uninstall.sh
