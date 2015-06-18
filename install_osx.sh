@@ -6,6 +6,10 @@ sudo chown -R root:wheel /Applications/Pritunl.app
 sudo mkdir -p /usr/local/bin
 sudo cp build/osx/usr/local/bin/pritunl-service /usr/local/bin
 
+# Service Daemon
+mkdir -p /Library/LaunchDaemons
+sudo cp build/osx/service_osx/com.pritunl.service.plist /Library/LaunchDaemons
+
 # Tuntap
 #sudo mkdir -p /Library/Extensions
 #sudo cp -pR build/osx/Library/Extensions/pritunl-tap.kext /Library/Extensions/
@@ -21,5 +25,8 @@ sudo cp build/osx/usr/local/bin/pritunl-service /usr/local/bin
 # Openvpn
 sudo mkdir -p /usr/local/bin
 sudo cp build/osx/usr/local/bin/pritunl-openvpn /usr/local/bin
+
+# Start Service
+sudo launchctl load /Library/LaunchDaemons/com.pritunl.service.plist
 
 echo "Installation Successful"

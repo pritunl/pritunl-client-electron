@@ -1,3 +1,6 @@
+# Stop Service
+sudo launchctl unload /Library/LaunchDaemons/com.pritunl.service.plist
+
 # Pritunl
 sudo rm -rf /Applications/Pritunl.app
 

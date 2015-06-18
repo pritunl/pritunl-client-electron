@@ -11,6 +11,10 @@ cd ..
 mkdir -p build/osx/usr/local/bin
 cp service/service build/osx/usr/local/bin/pritunl-service
 
+# Service Daemon
+mkdir -p build/osx/Library/LaunchDaemons
+cp service_osx/com.pritunl.service.plist build/osx/Library/LaunchDaemons
+
 # Tuntap
 mkdir -p build/osx/Library/Extensions
 cp -pR tuntap_osx/pritunl-tap.kext build/osx/Library/Extensions/
@@ -30,7 +34,7 @@ cp uninstall_osx.sh build/osx/uninstall.sh
 sed -i '' 's|build/osx|.|g' build/osx/uninstall.sh
 cd build
 mv osx pritunl_0.1.0-osx
-zip -r pritunl.zip pritunl_0.1.0-osx
+zip -r pritunl_0.1.0-osx.zip pritunl_0.1.0-osx
 mv pritunl_0.1.0-osx osx
 cd ..
 rm build/osx/install.sh
