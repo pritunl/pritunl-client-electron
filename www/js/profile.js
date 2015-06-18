@@ -437,6 +437,10 @@ var getProfiles = function(serv, callback) {
         profilePaths.push(root + '/' + pth.substr(0, pth.length - 5));
       }
 
+      if (!profilePaths.length) {
+        callback(null, []);
+      }
+
       for (i = 0; i < profilePaths.length; i++) {
         pth = profilePaths[i];
 
@@ -447,7 +451,7 @@ var getProfiles = function(serv, callback) {
           loaded += 1;
 
           if (loaded >= profilePaths.length) {
-            callback(err, profiles);
+            callback(null, profiles);
           }
         });
       }
