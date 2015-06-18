@@ -164,7 +164,9 @@ var renderProfile = function(prfl) {
     edtr.set('');
     prfl.log = '';
     prfl.saveLog(function(err) {
-      alert.error('Failed to save log: ' + err);
+      if (err !== null) {
+        alert.error('Failed to save log: ' + err);
+      }
     });
   });
 
