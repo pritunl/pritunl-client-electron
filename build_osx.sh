@@ -6,6 +6,7 @@ mkdir -p build/osx/Applications
 mkdir -p build/osx/Library/Extensions
 cp -pR tuntap_osx/tap.kext build/osx/Library/Extensions/
 cp -pR tuntap_osx/tun.kext build/osx/Library/Extensions/
+mkdir -p build/osx/Library/LaunchDaemons
 cp tuntap_osx/net.sf.tuntaposx.tap.plist build/osx/Library/LaunchDaemons/
 cp tuntap_osx/net.sf.tuntaposx.tun.plist build/osx/Library/LaunchDaemons/
 
