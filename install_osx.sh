@@ -8,7 +8,7 @@ sudo cp build/osx/usr/local/bin/pritunl-service /usr/local/bin
 
 # Service Daemon
 mkdir -p /Library/LaunchDaemons
-sudo cp build/osx/service_osx/com.pritunl.service.plist /Library/LaunchDaemons
+sudo cp build/osx/Library/LaunchDaemons/com.pritunl.service.plist /Library/LaunchDaemons
 
 # Tuntap
 #sudo mkdir -p /Library/Extensions

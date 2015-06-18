@@ -7,6 +7,9 @@ sudo rm -rf /Applications/Pritunl.app
 # Service
 sudo rm -rf /usr/local/bin/pritunl-service
 
+# Service Daemon
+sudo rm -f /Library/LaunchDaemons/com.pritunl.service.plist
+
 # Tuntap
 sudo rm -rf /Library/Extensions/pritunl-tap.kext
 sudo rm -rf /Library/Extensions/pritunl-tun.kext
