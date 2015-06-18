@@ -5,10 +5,12 @@ sudo rm -rf /Applications/Pritunl.app
 sudo rm -rf /usr/local/bin/pritunl-service
 
 # Tuntap
-sudo rm -rf /Library/Extensions/tap.kext
-sudo rm -rf /Library/Extensions/tun.kext
-sudo rm /Library/LaunchDaemons/net.sf.tuntaposx.tap.plist
-sudo rm /Library/LaunchDaemons/net.sf.tuntaposx.tun.plist
+sudo rm -rf /Library/Extensions/pritunl-tap.kext
+sudo rm -rf /Library/Extensions/pritunl-tun.kext
+sudo rm -f /Library/LaunchDaemons/com.pritunl.tuntaposx.pritunl-tap.plist
+sudo rm -f /Library/LaunchDaemons/com.pritunl.tuntaposx.pritunl-tun.plist
 
 # Openvpn
 sudo rm -rf /usr/local/bin/pritunl-openvpn
+
+echo "Uninstallation Successful"

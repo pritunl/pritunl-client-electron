@@ -3,11 +3,11 @@
 <plist version="1.0">
 <dict>
     <key>Label</key>
-    <string>net.sf.tuntaposx.tap</string>
+    <string>com.pritunl.tuntaposx.tun</string>
     <key>ProgramArguments</key>
     <array>
         <string>/sbin/kextload</string>
-        <string>/Library/Extensions/tap.kext</string>
+        <string>/Library/Extensions/pritunl-tun.kext</string>
     </array>
     <key>KeepAlive</key>
     <false/>
