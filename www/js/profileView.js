@@ -129,6 +129,7 @@ var renderProfile = function(prfl) {
     prfl.data = edtr.get();
     edtr.destroy();
     edtr = null;
+    edtrType = null;
 
     prfl.saveData(function(err) {
       alert.error('Failed to save config: ' + err);
@@ -141,6 +142,7 @@ var renderProfile = function(prfl) {
     }
     edtr.destroy();
     edtr = null;
+    edtrType = null;
 
     closeEditor($profile, 'config');
   });
