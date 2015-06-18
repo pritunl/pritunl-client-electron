@@ -25,7 +25,9 @@ cp openvpn_osx/openvpn build/osx/usr/local/bin/pritunl-openvpn
 
 # Package
 cp install_osx.sh build/osx/install.sh
+sed -i '' 's|build/osx|.|g' build/osx/install.sh
 cp uninstall_osx.sh build/osx/uninstall.sh
+sed -i '' 's|build/osx|.|g' build/osx/uninstall.sh
 cd build
 mv osx pritunl_0.1.0-osx
 zip -r pritunl.zip pritunl_0.1.0-osx
