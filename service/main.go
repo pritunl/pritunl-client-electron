@@ -16,9 +16,9 @@ const (
 func main() {
 	autoclean.CheckAndClean()
 
+	gin.SetMode(gin.ReleaseMode)
+
 	router := gin.Default()
-
 	handlers.Register(router)
-
 	router.Run("127.0.0.1:9770")
 }
