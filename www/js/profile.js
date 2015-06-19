@@ -315,6 +315,8 @@ Profile.prototype.saveLog = function(callback) {
 };
 
 Profile.prototype.delete = function() {
+  this.disconnect();
+
   fs.exists(this.confPath, function(exists) {
     if (!exists) {
       return;
