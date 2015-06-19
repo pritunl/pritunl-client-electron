@@ -146,9 +146,9 @@ app.on('ready', function() {
       click: function() {
         request.post({
           url: 'http://' + constants.serviceHost + '/stop'
+        }, function() {
+          app.quit();
         });
-
-        app.quit();
       }
     }
   ]);
