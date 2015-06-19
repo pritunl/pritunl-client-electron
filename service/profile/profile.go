@@ -122,6 +122,18 @@ func (p *Profile) parseLine(line string) {
 
 		p.ClientAddr = line[sIndex:]
 		p.update()
+	} else if strings.Contains(line, "ifconfig") && strings.Contains(
+		line, "netmask") {
+
+		sIndex := strings.Index(line, "ifconfig") + 9
+		eIndex := strings.Index(line, "netmask")
+		line = line[sIndex:eIndex]
+
+		split := strings.Split(line, " ")
+		if len(split) > 2 {
+			p.ClientAddr = split[1]
+			p.update()
+		}
 	}
 }
 
