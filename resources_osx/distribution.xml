@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<installer-gui-script minSpecVersion="1">
+    <title>Pritunl</title>
+    <organization>com.pritunl</organization>
+    <domains enable_localSystem="true"/>
+    <options customize="never" require-scripts="true" rootVolumeOnly="true"/>
+    <!-- <welcome    file="welcome.html"    mime-type="text/html"/>
+    <conclusion file="conclusion.html" mime-type="text/html"/> -->
+    <pkg-ref id="com.pritunl.pkg.Pritunl" version="0.1.0"
+        auth="root">Build.pkg</pkg-ref>
+    <choices-outline>
+        <line choice="com.pritunl.pkg.Pritunl"/>
+    </choices-outline>
+    <choice
+        id="com.pritunl.pkg.Pritunl"
+        visible="true"
+        title="Pritunl Client"
+        description="Pritunl OpenVPN Client"
+        start_selected="true">
+      <pkg-ref id="com.pritunl.pkg.Pritunl"/>
+    </choice>
+</installer-gui-script>
