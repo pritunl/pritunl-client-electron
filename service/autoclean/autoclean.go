@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"time"
 )
 
 const (
@@ -84,4 +85,18 @@ func CheckAndClean() (err error) {
 	os.Exit(0)
 
 	return
+}
+
+func CheckAndCleanWatch() {
+	root := utils.GetRootDir()
+	if runtime.GOOS != "darwin" || root != "/usr/local/bin" {
+		return
+	}
+
+	go func() {
+		for i := 0; i < 16; i++ {
+			time.Sleep(10 * time.Second)
+			CheckAndClean()
+		}
+	}()
 }
