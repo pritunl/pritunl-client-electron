@@ -103,7 +103,6 @@ app.on('ready', function() {
   });
 
   openMainWin();
-  main.openDevTools(); // TODO
 
   tray = new Tray(disconnTray);
   tray.on('clicked', function() {
