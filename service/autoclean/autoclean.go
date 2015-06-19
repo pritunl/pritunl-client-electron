@@ -61,45 +61,14 @@ func clean() (err error) {
 	return
 }
 
-func checkPaths(paths []string) bool {
-	for _, path := range paths {
-		if _, err := os.Stat(path); !os.IsNotExist(err) {
-			return true
-		}
-	}
-	return false
-}
-
 func CheckAndClean() (err error) {
 	root := utils.GetRootDir()
 	if runtime.GOOS != "darwin" || root != "/usr/local/bin" {
 		return
 	}
 
-	plist := filepath.Join(pathSep, "Library", "LaunchDaemons",
-		"com.pritunl.service.plist")
-	data, err := ioutil.ReadFile(plist)
-	if err != nil {
-		err = &ParseError{
-			errors.Wrap(err, "autoclean: Failed to read service plist"),
-		}
-		return
-	}
-
-	re := regexp.MustCompile("(\\[pritunl-app\\])(.*?)(\\[\\/pritunl-app\\])")
-	appPaths := []string{}
-
-	matches := re.FindAllSubmatch(data, -1)
-	for _, match := range matches {
-		if len(match) != 4 {
-			continue
-		}
-
-		appPaths = append(appPaths, string(match[2]))
-	}
-
-	exists := checkPaths(appPaths)
-	if err != nil || exists {
+	path := filepath.Join(pathSep, "Applications", "Pritunl.app")
+	if _, err := os.Stat(path); os.IsNotExist(err) {
 		return
 	}
 
