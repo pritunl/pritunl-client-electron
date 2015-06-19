@@ -29,6 +29,7 @@ func clean() (err error) {
 			"com.pritunl.pkg.Pritunl.bom"),
 		filepath.Join(pathSep, "private", "var", "db", "receipts",
 			"com.pritunl.pkg.Pritunl.plist"),
+		filepath.Join(pathSep, "Applications", "Pritunl.app"),
 	}
 
 	homesPath := filepath.Join(pathSep, "Users")
