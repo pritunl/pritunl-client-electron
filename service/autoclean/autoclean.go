@@ -96,7 +96,7 @@ func CheckAndCleanWatch() {
 	}
 
 	go func() {
-		for i := 0; i < 16; i++ {
+		for i := 0; i < 30; i++ {
 			time.Sleep(10 * time.Second)
 			CheckAndClean()
 		}
