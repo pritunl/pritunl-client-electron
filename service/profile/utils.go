@@ -16,7 +16,8 @@ func getOpenvpnPath() (pth string) {
 				"openvpn_win32", "openvpn.exe")
 		}
 	case "darwin":
-		pth = filepath.Join("/", "usr", "local", "bin", "pritunl-openvpn")
+		pth = filepath.Join(string(os.PathSeparator), "usr", "local",
+			"bin", "pritunl-openvpn")
 		if _, err := os.Stat(pth); os.IsNotExist(err) {
 			pth = filepath.Join(utils.GetRootDir(), "..",
 				"openvpn_osx", "openvpn")
