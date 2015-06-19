@@ -67,7 +67,7 @@ func CheckAndClean() (err error) {
 	}
 
 	path := filepath.Join(pathSep, "Applications", "Pritunl.app")
-	if _, err := os.Stat(path); os.IsNotExist(err) {
+	if _, e := os.Stat(path); os.IsNotExist(e) {
 		return
 	}
 
