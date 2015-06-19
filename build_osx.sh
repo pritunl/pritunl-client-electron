@@ -3,7 +3,7 @@ rm -rf build/osx
 # Pritunl
 mkdir -p build/osx/Applications
 cd client
-../node_modules/.bin/electron-packager ./ Pritunl --platform=darwin --arch=x64 --version=0.27.3 --icon=./www/img/pritunl.icns --out=../build/osx/Applications
+./node_modules/.bin/electron-packager ./ Pritunl --platform=darwin --arch=x64 --version=0.27.3 --icon=./www/img/pritunl.icns --out=../build/osx/Applications
 cd ../
 
 # Service
