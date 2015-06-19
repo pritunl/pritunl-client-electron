@@ -42,7 +42,7 @@ func clean() (err error) {
 
 	for _, home := range homes {
 		if !home.IsDir() {
-			return
+			continue
 		}
 
 		paths = append(paths, filepath.Join(homesPath, home.Name(),
