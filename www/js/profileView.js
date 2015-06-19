@@ -10,6 +10,8 @@ var alert = require('./alert.js');
 
 var template = fs.readFileSync(
   path.join(__dirname, '..', 'templates', 'profile.html')).toString();
+var profiles = [];
+var profilesId = {};
 
 $(document).on('dblclick mousedown', '.no-select, .btn', false);
 
@@ -105,6 +107,10 @@ var renderProfile = function(prfl) {
   $profile.find('.menu .delete-yes').click(function() {
     prfl.delete();
     closeMenu($profile);
+
+    delete profilesId[prfl.id];
+    profiles.splice(profiles.indexOf(prfl));
+    $profile.remove();
   });
   $profile.find('.menu .delete-no').click(function() {
     $profile.find('.menu').removeClass('deleting');
@@ -180,9 +186,9 @@ var renderProfile = function(prfl) {
 var render = function() {
   var serv = new service.Service();
 
-  profile.getProfiles(serv, function(err, profiles) {
+  profile.getProfiles(serv, function(err, prfls) {
     var i;
-    var profilesId = {};
+    profiles = prfls;
 
     $('.profiles .profile-file').change(function(evt) {
       var pth = evt.currentTarget.files[0].path;
@@ -236,16 +242,16 @@ var render = function() {
       }
     });
 
-    setInterval(function() {
-      var curTime = Math.floor((new Date).getTime() / 1000);
-
-      for (i = 0; i < profiles.length; i++) {
-        profiles[i].onUptime(curTime);
-      }
-    }, 1000);
-
     serv.update();
   });
+
+  setInterval(function() {
+    var curTime = Math.floor((new Date).getTime() / 1000);
+
+    for (i = 0; i < profiles.length; i++) {
+      profiles[i].onUptime(curTime);
+    }
+  }, 1000);
 };
 
 module.exports = {
