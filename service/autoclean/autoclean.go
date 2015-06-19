@@ -48,6 +48,10 @@ func clean() (err error) {
 
 		paths = append(paths, filepath.Join(homesPath, home.Name(),
 			"Library", "Application Support", "pritunl"))
+		paths = append(paths, filepath.Join(homesPath, home.Name(),
+			"Library", "Caches", "pritunl"))
+		paths = append(paths, filepath.Join(homesPath, home.Name(),
+			"Library", "Preferences", "com.electron.pritunl.plist"))
 	}
 
 	for _, path := range paths {
