@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/pritunl/pritunl-client-electron/service/handlers"
+	"github.com/pritunl/pritunl-client-electron/service/autoclean"
 )
 
 const (
@@ -13,6 +14,8 @@ const (
 )
 
 func main() {
+	autoclean.CheckAndClean()
+
 	router := gin.Default()
 
 	handlers.Register(router)
