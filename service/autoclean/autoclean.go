@@ -17,12 +17,9 @@ const (
 func clean() (err error) {
 	paths := []string{
 		filepath.Join(pathSep, "Library", "LaunchDaemons",
-			"com.pritunl.service.plist"),
-		filepath.Join(pathSep, "Library", "LaunchDaemons",
 			"com.pritunl.tuntaposx.pritunl-tap.plist"),
 		filepath.Join(pathSep, "Library", "LaunchDaemons",
 			"com.pritunl.tuntaposx.pritunl-tun.plist"),
-		filepath.Join(pathSep, "usr", "local", "bin", "pritunl-service"),
 		filepath.Join(pathSep, "usr", "local", "bin", "pritunl-openvpn"),
 		filepath.Join(pathSep, "Library", "Extensions", "pritunl-tap.kext"),
 		filepath.Join(pathSep, "Library", "Extensions", "pritunl-tun.kext"),
@@ -54,6 +51,11 @@ func clean() (err error) {
 		paths = append(paths, filepath.Join(homesPath, home.Name(),
 			"Library", "Preferences", "com.electron.pritunl.plist"))
 	}
+
+	paths = append(paths, filepath.Join(pathSep, "usr", "local",
+		"bin", "pritunl-service"))
+	paths = append(paths, filepath.Join(pathSep, "Library", "LaunchDaemons",
+		"com.pritunl.service.plist"))
 
 	for _, path := range paths {
 		if len(path) < 30 {
