@@ -128,6 +128,10 @@ app.on('ready', function() {
     {
       label: 'Exit',
       click: function() {
+        request.post({
+          url: 'http://' + constants.serviceHost + '/stop'
+        });
+
         app.quit();
       }
     }
