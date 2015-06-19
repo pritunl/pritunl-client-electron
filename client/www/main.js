@@ -11,6 +11,21 @@ var events = require('./js/events.js');
 var main = null;
 var tray = null;
 
+// TODO Create Pritunl dns server read from pritunl MongoDB database
+
+// TODO Move functions in main
+// TODO Going from connected to reconnecting to connected leaves gui at
+//     connected
+// TODO Set icon disconnected when reconnecting
+// TODO Client address
+// TODO Autostart
+// TODO Stop profiles on exit
+// TODO Error msg for unknow/error on import
+// TODO Key sync
+// TODO Entire window scrolls with no profile scrollbar
+// TODO Use production mode for golang gin server
+// TODO If apple app is reluanched with tray open trigger main win open
+
 if (app.dock) {
   app.dock.hide();
 }
@@ -20,6 +35,7 @@ app.on('window-all-closed', function() {
   }
 });
 
+// TODO Move to function
 var connTray;
 var disconnTray;
 if (process.platform === 'darwin') {
