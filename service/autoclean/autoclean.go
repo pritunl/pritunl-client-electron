@@ -26,6 +26,10 @@ func clean() (err error) {
 		filepath.Join(pathSep, "usr", "local", "bin", "pritunl-openvpn"),
 		filepath.Join(pathSep, "Library", "Extensions", "pritunl-tap.kext"),
 		filepath.Join(pathSep, "Library", "Extensions", "pritunl-tun.kext"),
+		filepath.Join(pathSep, "private", "var", "db", "receipts",
+			"com.pritunl.pkg.Pritunl.bom"),
+		filepath.Join(pathSep, "private", "var", "db", "receipts",
+			"com.pritunl.pkg.Pritunl.plist"),
 	}
 
 	homesPath := filepath.Join(pathSep, "Users")
