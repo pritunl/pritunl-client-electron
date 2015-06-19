@@ -50,7 +50,7 @@ var subscribe = function(callback) {
 
   setInterval(function() {
     connect(callback);
-  }, 5000);
+  }, 20000);
 };
 
 module.exports = {
