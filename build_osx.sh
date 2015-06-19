@@ -3,7 +3,6 @@ rm -rf build/osx
 # Pritunl
 mkdir -p build/osx/Applications
 cd client
-npm install
 ./node_modules/.bin/electron-packager ./ Pritunl --platform=darwin --arch=x64 --version=0.27.3 --icon=./www/img/pritunl.icns --out=../build/osx/Applications
 cd ../
 
@@ -31,6 +30,8 @@ mkdir -p build/osx/usr/local/bin
 cp openvpn_osx/openvpn build/osx/usr/local/bin/pritunl-openvpn
 
 # Package
+chmod +x resources_osx/scripts/postinstall
+chmod +x resources_osx/scripts/preinstall
 cd build
-pkgbuild --root osx --identifier com.pritunl.pkg.Pritunl --version 0.1.0 --ownership recommended --install-location / Build.pkg
+pkgbuild --root osx --scripts ../resources_osx/scripts --identifier com.pritunl.pkg.Pritunl --version 0.1.0 --ownership recommended --install-location / Build.pkg
 productbuild --distribution ../resources_osx/distribution.xml --version 0.1.0 Pritunl.pkg
