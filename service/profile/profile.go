@@ -134,6 +134,19 @@ func (p *Profile) parseLine(line string) {
 			p.ClientAddr = split[1]
 			p.update()
 		}
+	} else if strings.Contains(line, "ip addr add dev") {
+		sIndex := strings.Index(line, "ip addr add dev") + 16
+		eIndex := strings.Index(line, "broadcast")
+		line = line[sIndex:eIndex]
+		split := strings.Split(line, " ")
+
+		if len(split) > 1 {
+			split := strings.Split(split[1], "/")
+			if len(split) > 1 {
+				p.ClientAddr = split[0]
+				p.update()
+			}
+		}
 	}
 }
 
