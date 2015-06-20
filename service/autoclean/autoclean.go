@@ -1,6 +1,7 @@
 package autoclean
 
 import (
+	"github.com/Sirupsen/logrus"
 	"github.com/dropbox/godropbox/errors"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
 	"io/ioutil"
@@ -58,6 +59,11 @@ func clean() (err error) {
 		}
 
 		err = os.RemoveAll(path)
+		if err != nil {
+			err = &RemoveError{
+				errors.Wrap(err, "autoclean: Failed to remove file"),
+			}
+		}
 	}
 
 	return
@@ -93,7 +99,14 @@ func CheckAndCleanWatch() {
 	go func() {
 		for i := 0; i < 30; i++ {
 			time.Sleep(10 * time.Second)
-			CheckAndClean()
+
+			err := CheckAndClean()
+			if err != nil {
+				logrus.WithFields(logrus.Fields{
+					"error": err,
+				}).Error("autoclean: Failed to run check and clean")
+				return
+			}
 		}
 	}()
 }
