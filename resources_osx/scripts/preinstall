@@ -1,2 +1,4 @@
 #!/bin/sh
-/bin/launchctl unload "/Library/LaunchDaemons/com.pritunl.service.plist" || true
+kextunload -b net.sf.tuntaposx.tap || true
+kextunload -b net.sf.tuntaposx.tun || true
+launchctl unload /Library/LaunchDaemons/com.pritunl.service.plist || true

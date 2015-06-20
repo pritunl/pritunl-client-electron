@@ -21,12 +21,12 @@ mkdir -p build/osx/Library/LaunchDaemons
 cp service_osx/com.pritunl.service.plist build/osx/Library/LaunchDaemons
 
 # Tuntap
-#mkdir -p build/osx/Library/Extensions
-#cp -pR tuntap_osx/pritunl-tap.kext build/osx/Library/Extensions/
-#cp -pR tuntap_osx/pritunl-tun.kext build/osx/Library/Extensions/
-#mkdir -p build/osx/Library/LaunchDaemons
-#cp tuntap_osx/com.pritunl.tuntaposx.pritunl-tap.plist build/osx/Library/LaunchDaemons/
-#cp tuntap_osx/com.pritunl.tuntaposx.pritunl-tun.plist build/osx/Library/LaunchDaemons/
+mkdir -p build/osx/Library/Extensions
+cp -pR tuntap_osx/tap.kext build/osx/Library/Extensions/
+cp -pR tuntap_osx/tun.kext build/osx/Library/Extensions/
+mkdir -p build/osx/Library/LaunchDaemons
+cp tuntap_osx/net.sf.tuntaposx.tap.plist build/osx/Library/LaunchDaemons/
+cp tuntap_osx/net.sf.tuntaposx.tun.plist build/osx/Library/LaunchDaemons/
 
 # Openvpn
 mkdir -p build/osx/usr/local/bin

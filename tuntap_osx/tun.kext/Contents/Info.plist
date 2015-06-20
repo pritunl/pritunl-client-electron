@@ -5,17 +5,17 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
-	<string>tap</string>
+	<string>tun</string>
 	<key>CFBundleIdentifier</key>
-	<string>net.sf.tuntaposx.tap</string>
+	<string>net.sf.tuntaposx.tun</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>tap</string>
+	<string>tun</string>
 	<key>CFBundlePackageType</key>
 	<string>KEXT</string>
 	<key>CFBundleShortVersionString</key>
-	<string>20150118</string>
+	<string>20141104</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>

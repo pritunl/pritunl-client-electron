@@ -14,22 +14,25 @@ mkdir -p /Library/LaunchDaemons
 sudo cp build/osx/Library/LaunchDaemons/com.pritunl.service.plist /Library/LaunchDaemons
 
 # Tuntap
-#sudo mkdir -p /Library/Extensions
-#sudo cp -pR build/osx/Library/Extensions/pritunl-tap.kext /Library/Extensions/
-#sudo chown -R root:wheel /Library/Extensions/pritunl-tap.kext
-#sudo cp -pR build/osx/Library/Extensions/pritunl-tun.kext /Library/Extensions/
-#sudo chown -R root:wheel /Library/Extensions/pritunl-tun.kext
-#sudo mkdir -p /Library/LaunchDaemons
-#sudo cp build/osx/Library/LaunchDaemons/com.pritunl.tuntaposx.pritunl-tap.plist /Library/LaunchDaemons
-#sudo cp build/osx/Library/LaunchDaemons/com.pritunl.tuntaposx.pritunl-tun.plist /Library/LaunchDaemons
-#sudo kextload /Library/Extensions/pritunl-tap.kext
-#sudo kextload /Library/Extensions/pritunl-tun.kext
+sudo mkdir -p /Library/Extensions
+sudo cp -pR build/osx/Library/Extensions/tap.kext /Library/Extensions/
+sudo chown -R root:wheel /Library/Extensions/tap.kext
+sudo cp -pR build/osx/Library/Extensions/tun.kext /Library/Extensions/
+sudo chown -R root:wheel /Library/Extensions/tun.kext
+sudo mkdir -p /Library/LaunchDaemons
+sudo cp build/osx/Library/LaunchDaemons/net.sf.tuntaposx.tap.plist /Library/LaunchDaemons
+sudo cp build/osx/Library/LaunchDaemons/net.sf.tuntaposx.tun.plist /Library/LaunchDaemons
+sudo kextunload -b net.sf.tuntaposx.tap || true
+sudo kextunload -b net.sf.tuntaposx.tun || true
+sudo kextload /Library/Extensions/tap.kext || true
+sudo kextload /Library/Extensions/tun.kext || true
 
 # Openvpn
 sudo mkdir -p /usr/local/bin
 sudo cp build/osx/usr/local/bin/pritunl-openvpn /usr/local/bin
 
 # Start Service
+sudo launchctl unload /Library/LaunchDaemons/com.pritunl.service.plist || true
 sudo launchctl load /Library/LaunchDaemons/com.pritunl.service.plist
 
 echo "Installation Successful"
