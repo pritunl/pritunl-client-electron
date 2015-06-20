@@ -1,3 +1,5 @@
+cd ../
+
 # Pritunl
 sudo cp -pR build/osx/Applications/Pritunl.app /Applications
 sudo chown -R root:wheel /Applications/Pritunl.app

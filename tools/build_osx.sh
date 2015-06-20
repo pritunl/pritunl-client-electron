@@ -1,3 +1,5 @@
+cd ../
+
 rm -rf build/osx
 
 # Pritunl
