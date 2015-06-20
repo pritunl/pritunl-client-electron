@@ -1,6 +1,7 @@
 var request = require('request');
 var alert = require('./alert.js');
 var constants = require('./constants.js');
+var logger = require('./logger.js');
 
 var profiles = [];
 var profilesId = {};
@@ -46,6 +47,7 @@ var start = function(prfl) {
     }
   }, function(err) {
     if (err) {
+      logger.error('Failed to start profile: ' + err);
       alert.error('Failed to start profile: ' + err);
     }
   });
@@ -60,6 +62,7 @@ var stop = function(prfl) {
     }
   }, function(err) {
     if (err) {
+      logger.error('Failed to stop profile: ' + err);
       alert.error('Failed to stop profile: ' + err);
     }
   });

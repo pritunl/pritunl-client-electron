@@ -4,6 +4,7 @@ var path = require('path');
 var alert = require('./alert.js');
 var utils = require('./utils.js');
 var service = require('./service.js');
+var logger = require('./logger.js');
 var fs = remote.require('fs');
 var app = remote.require('app');
 var profileRemote = remote.require('./js/profileRemote.js');
@@ -323,6 +324,7 @@ Profile.prototype.delete = function() {
     }
     fs.unlink(this.confPath, function(err) {
       if (err !== null) {
+        logger.error('Failed to delete profile conf: ' + err);
         alert.error('Failed to delete profile conf: ' + err);
       }
     });
@@ -333,6 +335,7 @@ Profile.prototype.delete = function() {
     }
     fs.unlink(this.ovpnPath, function(err) {
       if (err !== null) {
+        logger.error('Failed to delete profile data: ' + err);
         alert.error('Failed to delete profile data: ' + err);
       }
     });
@@ -343,6 +346,7 @@ Profile.prototype.delete = function() {
     }
     fs.unlink(this.logPath, function(err) {
       if (err !== null) {
+        logger.error('Failed to delete profile log: ' + err);
         alert.error('Failed to delete profile log: ' + err);
       }
     });

@@ -139,6 +139,7 @@ var renderProfile = function(prfl) {
 
     prfl.saveData(function(err) {
       if (err !== null) {
+        logger.error('Failed to save config: ' + err);
         alert.error('Failed to save config: ' + err);
       }
     });
@@ -173,6 +174,7 @@ var renderProfile = function(prfl) {
     prfl.log = '';
     prfl.saveLog(function(err) {
       if (err !== null) {
+        logger.error('Failed to save log: ' + err);
         alert.error('Failed to save log: ' + err);
       }
     });
