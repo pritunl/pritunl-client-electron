@@ -19,7 +19,7 @@ if (remote.process.platform === 'linux') {
       $ubuntu.remove();
     });
     setTimeout(function() {
-      if (config.settings.ubuntuClicked < 2) {
+      if (config.settings.ubuntuClicked < 1) {
         $ubuntu.slideDown(200);
       } else {
         $ubuntu.remove();
