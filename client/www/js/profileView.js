@@ -226,7 +226,7 @@ var init = function() {
     });
 
     for (var i = 0; i < prfls.length; i++) {
-      renderProfile(profiles[i]);
+      renderProfile(prfls[i]);
     }
 
     service.update();
