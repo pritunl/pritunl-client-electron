@@ -43,7 +43,7 @@ var load = function() {
       data = {};
     }
 
-    settings.ubuntuClicked = data['ubuntu_click'];
+    settings.ubuntuClicked = data['ubuntu_click'] || 0;
 
     for (var i = 0; i < waiting.length; i++) {
       waiting[i]();
