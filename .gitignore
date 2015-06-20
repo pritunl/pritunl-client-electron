@@ -11,5 +11,6 @@ Thumbs.db
 *.egg-info
 /build
 /node_modules
+/client/node_modules
 /service/service
 pritunl-client-electron.iml
