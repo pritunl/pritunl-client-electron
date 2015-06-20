@@ -2,19 +2,41 @@ var request = require('request');
 var alert = require('./alert.js');
 var constants = require('./constants.js');
 
-var Service = function Service() {
-  this.onUpdate = null;
+var profiles = [];
+var profilesId = {};
+
+var onUpdate = function(data) {
+  for (var id in data) {
+    var prfl = get(id);
+    if (prfl) {
+      prfl.update(data[id]);
+    }
+  }
 };
 
-Service.prototype.update = function() {
+var add = function(prfl) {
+  profiles.push(prfl);
+  profilesId[prfl.id] = prfl;
+};
+
+var remove = function(prfl) {
+  delete profilesId[prfl.id];
+  profiles.splice(profiles.indexOf(prfl));
+};
+
+var get = function(id) {
+  return profilesId[id];
+};
+
+var update = function() {
   request.get({
     url: 'http://' + constants.serviceHost + '/profile'
   }, function(err, resp, body) {
-    this.onUpdate(JSON.parse(body));
+    onUpdate(JSON.parse(body));
   }.bind(this));
 };
 
-Service.prototype.start = function(prfl) {
+var start = function(prfl) {
   request.post({
     url: 'http://' + constants.serviceHost + '/profile',
     json: true,
@@ -29,7 +51,7 @@ Service.prototype.start = function(prfl) {
   });
 };
 
-Service.prototype.stop = function(prfl) {
+var stop = function(prfl) {
   request.del({
     url: 'http://' + constants.serviceHost + '/profile',
     json: true,
@@ -44,5 +66,10 @@ Service.prototype.stop = function(prfl) {
 };
 
 module.exports = {
-  Service: Service
+  add: add,
+  remove: remove,
+  get: get,
+  update: update,
+  start: start,
+  stop: stop
 };
