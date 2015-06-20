@@ -209,6 +209,7 @@ body[fullbleed] {
 
 html {
   height: 100%;
+  overflow: hidden;
 }
 body {
   font-family: 'Ubuntu', sans-serif;
