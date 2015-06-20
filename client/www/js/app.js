@@ -8,20 +8,25 @@ profileView.init();
 
 $(document).on('dblclick mousedown', '.no-select, .btn', false);
 
-config.onReady(function() {
-  $('.ubuntu').click(function() {
-    config.settings.ubuntuClicked += 1;
-    config.save();
-    $('.ubuntu').remove();
+$ubuntu = $('.ubuntu');
+if (remote.process.platform === 'linux') {
+  $ubuntu.remove();
+} else {
+  config.onReady(function() {
+    $ubuntu.click(function() {
+      config.settings.ubuntuClicked += 1;
+      config.save();
+      $ubuntu.remove();
+    });
+    setTimeout(function() {
+      if (config.settings.ubuntuClicked < 2) {
+        $ubuntu.slideDown(200);
+      } else {
+        $ubuntu.remove();
+      }
+    }, 500);
   });
-  setTimeout(function() {
-    if (config.settings.ubuntuClicked < 2) {
-      $('.ubuntu').slideDown(200);
-    } else {
-      $('.ubuntu').remove();
-    }
-  }, 500);
-});
+}
 
 $('.header .close').click(function() {
   remote.getCurrentWindow().close();
