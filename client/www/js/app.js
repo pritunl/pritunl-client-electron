@@ -16,7 +16,7 @@ config.onReady(function() {
   });
   setTimeout(function() {
     if (config.settings.ubuntuClicked < 2) {
-      $('.ubuntu').slideDown();
+      $('.ubuntu').slideDown(200);
     } else {
       $('.ubuntu').remove();
     }
