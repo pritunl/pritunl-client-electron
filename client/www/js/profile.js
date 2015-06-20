@@ -3,6 +3,7 @@ var remote = require('remote');
 var path = require('path');
 var alert = require('./alert.js');
 var utils = require('./utils.js');
+var service = require('./service.js');
 var fs = remote.require('fs');
 var app = remote.require('app');
 var profileRemote = remote.require('./js/profileRemote.js');
@@ -74,8 +75,7 @@ var colors = {
   '/': '#37474f'
 };
 
-var Profile = function Profile(serv, pth) {
-  this.service = serv;
+var Profile = function Profile(pth) {
   this.onUpdate = null;
 
   this.id = path.basename(pth);
@@ -350,14 +350,14 @@ Profile.prototype.delete = function() {
 };
 
 Profile.prototype.connect = function() {
-  this.service.start(this);
+  service.start(this);
 };
 
 Profile.prototype.disconnect = function() {
-  this.service.stop(this);
+  service.stop(this);
 };
 
-var importProfile = function(serv, pth, callback) {
+var importProfile = function(pth, callback) {
   profileRemote.importProfile(pth, function(err, data) {
     data = data.replace('\r', '');
     var line;
@@ -393,7 +393,7 @@ var importProfile = function(serv, pth, callback) {
     data = ovpnData.trim() + '\n';
 
     pth = path.join(app.getPath('userData'), 'profiles', utils.uuid());
-    var prfl = new Profile(serv, pth);
+    var prfl = new Profile(pth);
 
     prfl.import(confData);
     prfl.data = data;
@@ -405,7 +405,7 @@ var importProfile = function(serv, pth, callback) {
   });
 };
 
-var getProfiles = function(serv, callback) {
+var getProfiles = function(callback) {
   var root = path.join(app.getPath('userData'), 'profiles');
 
   fs.exists(root, function(exists) {
@@ -446,7 +446,7 @@ var getProfiles = function(serv, callback) {
       for (i = 0; i < profilePaths.length; i++) {
         pth = profilePaths[i];
 
-        var prfl = new Profile(serv, pth);
+        var prfl = new Profile(pth);
         profiles.push(prfl);
 
         prfl.load(function() {
