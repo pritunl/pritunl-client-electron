@@ -330,6 +330,18 @@ body {
 }
 
 
+.ubuntu {
+  cursor: pointer;
+  color: #fff;
+  padding: 15px;
+  background-color: #dd4814;
+  text-decoration: none;
+}
+.ubuntu img {
+  max-width: 100%;
+}
+
+
 .profiles .list {
   overflow-y: auto;
 }
