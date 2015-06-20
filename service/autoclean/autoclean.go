@@ -16,13 +16,7 @@ const (
 
 func clean() (err error) {
 	paths := []string{
-		filepath.Join(pathSep, "Library", "LaunchDaemons",
-			"com.pritunl.tuntaposx.pritunl-tap.plist"),
-		filepath.Join(pathSep, "Library", "LaunchDaemons",
-			"com.pritunl.tuntaposx.pritunl-tun.plist"),
 		filepath.Join(pathSep, "usr", "local", "bin", "pritunl-openvpn"),
-		filepath.Join(pathSep, "Library", "Extensions", "pritunl-tap.kext"),
-		filepath.Join(pathSep, "Library", "Extensions", "pritunl-tun.kext"),
 		filepath.Join(pathSep, "private", "var", "db", "receipts",
 			"com.pritunl.pkg.Pritunl.bom"),
 		filepath.Join(pathSep, "private", "var", "db", "receipts",
