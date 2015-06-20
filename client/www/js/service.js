@@ -29,6 +29,12 @@ var get = function(id) {
   return profilesId[id];
 };
 
+var iter = function(callback) {
+  for (var i = 0; i < profiles.length; i++) {
+    callback(profiles[i]);
+  }
+};
+
 var update = function() {
   request.get({
     url: 'http://' + constants.serviceHost + '/profile'

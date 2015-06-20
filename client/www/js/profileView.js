@@ -235,9 +235,9 @@ var init = function() {
   setInterval(function() {
     var curTime = Math.floor((new Date).getTime() / 1000);
 
-    for (var i = 0; i < profiles.length; i++) {
-      profiles[i].onUptime(curTime);
-    }
+    service.iter(function(prfl) {
+      prfl.onUptime(curTime);
+    });
 
     service.update();
   }, 1000);
