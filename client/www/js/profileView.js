@@ -12,8 +12,6 @@ var logger = require('./logger.js');
 var template = fs.readFileSync(
   path.join(__dirname, '..', 'templates', 'profile.html')).toString();
 
-$(document).on('dblclick mousedown', '.no-select, .btn', false);
-
 var openMenu = function($profile) {
   $profile.find('.menu').addClass('show');
   $profile.find('.menu-backdrop').fadeIn(75);
