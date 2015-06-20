@@ -13,13 +13,16 @@ if (remote.process.platform === 'linux') {
   $ubuntu.remove();
 } else {
   config.onReady(function() {
-    $ubuntu.click(function() {
-      config.settings.ubuntuClicked += 1;
+    $('.ubuntu').click(function() {
+      config.settings.showUbuntu = false;
       config.save();
-      $ubuntu.remove();
+      $ubuntu.slideUp(200, function() {
+        $ubuntu.remove();
+      });
     });
+
     setTimeout(function() {
-      if (config.settings.ubuntuClicked < 1) {
+      if (config.settings.showUbuntu) {
         $ubuntu.slideDown(200);
       } else {
         $ubuntu.remove();

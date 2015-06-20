@@ -22,7 +22,7 @@ var waiting = [];
 var pth = path.join(app.getPath('userData'), 'pritunl.json');
 
 var settings = {
-  ubuntuClicked: 0
+  showUbuntu: true
 };
 
 var onReady = function(callback) {
@@ -43,7 +43,10 @@ var load = function() {
       data = {};
     }
 
-    settings.ubuntuClicked = data['ubuntu_click'] || 0;
+    settings.showUbuntu = data['show_ubuntu'];
+    if (settings.showUbuntu === undefined) {
+      settings.showUbuntu = true;
+    }
 
     for (var i = 0; i < waiting.length; i++) {
       waiting[i]();
@@ -53,7 +56,7 @@ var load = function() {
 
 var save = function() {
   fs.writeFile(pth, JSON.stringify({
-    'ubuntu_click': settings.ubuntuClicked
+    'show_ubuntu': settings.showUbuntu
   }), function(err) {
     if (err !== null) {
       logger.error('Failed to write conf: ' + err);

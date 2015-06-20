@@ -333,17 +333,29 @@ body {
 
 .ubuntu {
   display: none;
+  position: relative;
 }
 .ubuntu a {
   cursor: pointer;
-  color: #fff;
   padding: 15px;
   background-color: #dd4814;
   text-decoration: none;
   display: none;
+  color: #fff;
 }
 .ubuntu img {
   max-width: 100%;
+}
+.ubuntu .close {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  opacity: 0.5;
+  color: #fff;
+  cursor: pointer;
+}
+.ubuntu .close:hover {
+  opacity: 1;
 }
 
 
