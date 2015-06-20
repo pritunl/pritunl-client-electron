@@ -3,7 +3,7 @@ var $ = require('jquery');
 var profile = require('./js/profile.js');
 var profileView = require('./js/profileView.js');
 
-profileView.render();
+profileView.init();
 
 $(document).on('dblclick mousedown', '.no-select, .btn', false);
 
