@@ -7,11 +7,10 @@ var service = require('./service.js');
 var editor = require('./editor.js');
 var events = require('./events.js');
 var alert = require('./alert.js');
+var logger = require('./logger.js');
 
 var template = fs.readFileSync(
   path.join(__dirname, '..', 'templates', 'profile.html')).toString();
-var profiles = [];
-var profilesId = {};
 
 $(document).on('dblclick mousedown', '.no-select, .btn', false);
 
@@ -51,6 +50,8 @@ var renderProfile = function(prfl) {
   var edtr;
   var edtrType;
   var $profile = $(Mustache.render(template, prfl.export()));
+
+  service.add(prfl);
 
   prfl.onUpdate = function() {
     var data = prfl.export();
@@ -108,8 +109,7 @@ var renderProfile = function(prfl) {
     prfl.delete();
     closeMenu($profile);
 
-    delete profilesId[prfl.id];
-    profiles.splice(profiles.indexOf(prfl));
+    service.remove(prfl);
     $profile.remove();
   });
   $profile.find('.menu .delete-no').click(function() {
@@ -183,77 +183,66 @@ var renderProfile = function(prfl) {
   $('.profiles .list').append($profile);
 };
 
-var render = function() {
-  var serv = new service.Service();
+var init = function() {
+  events.subscribe(function(evt) {
+    var prfl;
 
-  profile.getProfiles(serv, function(err, prfls) {
-    var i;
-    profiles = prfls;
+    switch (evt.type) {
+      case 'update':
+        prfl = service.get(evt.data.id);
+        if (prfl) {
+          prfl.update(evt.data);
+        }
+        break;
+      case 'output':
+        prfl = service.get(evt.data.id);
+        if (prfl) {
+          prfl.pushOutput(evt.data.output);
+        }
+        break;
+      case 'auth_error':
+        prfl = service.get(evt.data.id);
+        logger.error('Failed to authenicate to ' +
+          prfl.formatedNameLogo()[0]);
+        alert.error('Failed to authenicate to ' +
+          prfl.formatedNameLogo()[0]);
+        break;
+      case 'timeout_error':
+        prfl = service.get(evt.data.id);
+        logger.error('Connection timed out to ' +
+          prfl.formatedNameLogo()[0]);
+        alert.error('Connection timed out to ' +
+          prfl.formatedNameLogo()[0]);
+        break;
+    }
+  });
 
+  profile.getProfiles(function(err, prfls) {
     $('.profiles .profile-file').change(function(evt) {
       var pth = evt.currentTarget.files[0].path;
-      profile.importProfile(serv, pth, function(prfl) {
-        profiles.push(prfl);
-        profilesId[prfl.id] = prfl;
+      profile.importProfile(pth, function(prfl) {
         renderProfile(prfl);
       });
     });
 
-    for (i = 0; i < profiles.length; i++) {
-      profilesId[profiles[i].id] = profiles[i];
+    for (var i = 0; i < prfls.length; i++) {
       renderProfile(profiles[i]);
     }
 
-    serv.onUpdate = function(data) {
-      for (var id in data) {
-        var prfl = profilesId[id];
-        if (prfl) {
-          prfl.update(data[id]);
-        }
-      }
-    };
-
-    events.subscribe(function(evt) {
-      var prfl;
-
-      switch (evt.type) {
-        case 'update':
-          prfl = profilesId[evt.data.id];
-          if (prfl) {
-            prfl.update(evt.data);
-          }
-          break;
-        case 'output':
-          prfl = profilesId[evt.data.id];
-          if (prfl) {
-            prfl.pushOutput(evt.data.output);
-          }
-          break;
-        case 'auth_error':
-          prfl = profilesId[evt.data.id];
-          alert.error('Failed to authenicate to ' +
-            prfl.formatedNameLogo()[0]);
-          break;
-        case 'timeout_error':
-          prfl = profilesId[evt.data.id];
-          alert.error('Connection timed out to ' +
-            prfl.formatedNameLogo()[0]);
-          break;
-      }
-    });
-
-    serv.update();
+    service.update();
   });
 
   setInterval(function() {
     var curTime = Math.floor((new Date).getTime() / 1000);
 
-    for (i = 0; i < profiles.length; i++) {
+    for (var i = 0; i < profiles.length; i++) {
       profiles[i].onUptime(curTime);
     }
+
+    service.update();
   }, 1000);
 };
 
 module.exports = {
-  render: render
+  init: init
 };
