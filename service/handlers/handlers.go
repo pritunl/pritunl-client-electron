@@ -1,8 +1,26 @@
 package handlers
 
 import (
+	"fmt"
+	"github.com/Sirupsen/logrus"
+	"github.com/dropbox/godropbox/errors"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
+
+// Recover panics
+func Recovery(c *gin.Context) {
+	defer func() {
+		if r := recover(); r != nil {
+			logrus.WithFields(logrus.Fields{
+				"error": errors.New(fmt.Sprintf("%s", r)),
+			}).Error("handlers: Handler panic")
+			c.Writer.WriteHeader(http.StatusInternalServerError)
+		}
+	}()
+
+	c.Next()
+}
 
 func Register(engine *gin.Engine) {
 	engine.GET("/events", eventsGet)
