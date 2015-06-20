@@ -2,10 +2,26 @@ var remote = require('remote');
 var $ = require('jquery');
 var profile = require('./js/profile.js');
 var profileView = require('./js/profileView.js');
+var config = require('./js/config.js');
 
 profileView.init();
 
 $(document).on('dblclick mousedown', '.no-select, .btn', false);
+
+config.onReady(function() {
+  $('.ubuntu').click(function() {
+    config.settings.ubuntuClicked += 1;
+    config.save();
+    $('.ubuntu').remove();
+  });
+  setTimeout(function() {
+    if (config.settings.ubuntuClicked < 2) {
+      $('.ubuntu').slideDown();
+    } else {
+      $('.ubuntu').remove();
+    }
+  }, 500);
+});
 
 $('.header .close').click(function() {
   remote.getCurrentWindow().close();

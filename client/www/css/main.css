@@ -332,11 +332,15 @@ body {
 
 
 .ubuntu {
+  display: none;
+}
+.ubuntu a {
   cursor: pointer;
   color: #fff;
   padding: 15px;
   background-color: #dd4814;
   text-decoration: none;
+  display: none;
 }
 .ubuntu img {
   max-width: 100%;
