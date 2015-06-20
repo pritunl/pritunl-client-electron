@@ -78,6 +78,7 @@ module.exports = {
   add: add,
   remove: remove,
   get: get,
+  iter: iter,
   update: update,
   start: start,
   stop: stop
