@@ -53,7 +53,7 @@ func clean() (err error) {
 		"com.pritunl.service.plist"))
 
 	for _, path := range paths {
-		if len(path) < 25 {
+		if len(path) < 20 {
 			panic("autoclean: Bad path " + path)
 		}
 
