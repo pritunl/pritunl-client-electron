@@ -1,6 +1,20 @@
-var fs = require('fs');
-var app = require('app');
 var path = require('path');
+
+var remote;
+try {
+  remote = require('remote');
+} catch(err) {
+}
+
+var fs;
+var app;
+if (remote) {
+  fs = remote.require('fs');
+  app = remote.require('app');
+} else {
+  fs = require('fs');
+  app = require('app');
+}
 
 var pth = path.join(app.getPath('userData'), 'pritunl.log');
 
