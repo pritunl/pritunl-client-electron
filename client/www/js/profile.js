@@ -1,13 +1,18 @@
 var crypto = require('crypto');
-var remote = require('remote');
 var path = require('path');
 var alert = require('./alert.js');
 var utils = require('./utils.js');
 var service = require('./service.js');
 var logger = require('./logger.js');
-var fs = remote.require('fs');
-var app = remote.require('app');
-var profileRemote = remote.require('./js/profileRemote.js');
+
+var remote;
+var remotes;
+try {
+  remote = require('remote');
+  remotes = remote.require('./js/remotes.js');
+} catch(err) {
+  remotes = require('./remotes.js')
+}
 
 var colors = {
   'A': '#ff8a80',
@@ -101,7 +106,7 @@ var Profile = function Profile(pth) {
 };
 
 Profile.prototype.load = function(callback) {
-  fs.readFile(this.confPath, function (err, data) {
+  remotes.readFile(this.confPath, function (err, data) {
     var confData;
     try {
       confData = JSON.parse(data);
@@ -116,7 +121,7 @@ Profile.prototype.load = function(callback) {
     }
   }.bind(this));
 
-  fs.readFile(this.ovpnPath, function(err, data) {
+  remotes.readFile(this.ovpnPath, function(err, data) {
     if (!data) {
       this.data = null;
     } else {
@@ -124,7 +129,7 @@ Profile.prototype.load = function(callback) {
     }
   }.bind(this));
 
-  fs.readFile(this.logPath, function(err, data) {
+  remotes.readFile(this.logPath, function(err, data) {
     if (!data) {
       this.log = null;
     } else {
@@ -138,7 +143,10 @@ Profile.prototype.update = function(data) {
   this.timestamp = data['timestamp'];
   this.serverAddr = data['server_addr'];
   this.clientAddr = data['client_addr'];
-  this.onUpdate();
+
+  if (this.onUpdate) {
+    this.onUpdate();
+  }
 };
 
 Profile.prototype.import = function(data) {
@@ -247,7 +255,10 @@ Profile.prototype.pushOutput = function(output) {
     this.log += '\n';
   }
   this.log += output;
-  this.onOutput(output);
+
+  if (this.onOutput) {
+    this.onOutput(output);
+  }
 };
 
 Profile.prototype.getUptime = function(curTime) {
@@ -304,47 +315,48 @@ Profile.prototype.getUptime = function(curTime) {
 };
 
 Profile.prototype.saveConf = function(callback) {
-  fs.writeFile(this.confPath, JSON.stringify(this.exportConf()), callback);
+  remotes.writeFile(this.confPath,
+    JSON.stringify(this.exportConf()), callback);
 };
 
 Profile.prototype.saveData = function(callback) {
-  fs.writeFile(this.ovpnPath, this.data, callback);
+  remotes.writeFile(this.ovpnPath, this.data, callback);
 };
 
 Profile.prototype.saveLog = function(callback) {
-  fs.writeFile(this.logPath, this.log, callback);
+  remotes.writeFile(this.logPath, this.log, callback);
 };
 
 Profile.prototype.delete = function() {
   this.disconnect();
 
-  fs.exists(this.confPath, function(exists) {
+  remotes.exists(this.confPath, function(exists) {
     if (!exists) {
       return;
     }
-    fs.unlink(this.confPath, function(err) {
+    remotes.unlink(this.confPath, function(err) {
       if (err !== null) {
         logger.error('Failed to delete profile conf: ' + err);
         alert.error('Failed to delete profile conf: ' + err);
       }
     });
   }.bind(this));
-  fs.exists(this.ovpnPath, function(exists) {
+  remotes.exists(this.ovpnPath, function(exists) {
     if (!exists) {
       return;
     }
-    fs.unlink(this.ovpnPath, function(err) {
+    remotes.unlink(this.ovpnPath, function(err) {
       if (err !== null) {
         logger.error('Failed to delete profile data: ' + err);
         alert.error('Failed to delete profile data: ' + err);
       }
     });
   }.bind(this));
-  fs.exists(this.logPath, function(exists) {
+  remotes.exists(this.logPath, function(exists) {
     if (!exists) {
       return;
     }
-    fs.unlink(this.logPath, function(err) {
+    remotes.unlink(this.logPath, function(err) {
       if (err !== null) {
         logger.error('Failed to delete profile log: ' + err);
         alert.error('Failed to delete profile log: ' + err);
@@ -396,7 +408,7 @@ var importProfile = function(pth, callback) {
 
     data = ovpnData.trim() + '\n';
 
-    pth = path.join(app.getPath('userData'), 'profiles', utils.uuid());
+    pth = path.join(remotes.getUserDataPath(), 'profiles', utils.uuid());
     var prfl = new Profile(pth);
 
     prfl.import(confData);
@@ -410,15 +422,15 @@ var importProfile = function(pth, callback) {
 };
 
 var getProfiles = function(callback) {
-  var root = path.join(app.getPath('userData'), 'profiles');
+  var root = path.join(remotes.getUserDataPath(), 'profiles');
 
-  fs.exists(root, function(exists) {
+  remotes.exists(root, function(exists) {
     if (!exists) {
       callback(null, []);
       return;
     }
 
-    fs.readdir(root, function(err, paths) {
+    remotes.readdir(root, function(err, paths) {
       if (err) {
         callback(err, null);
         return
