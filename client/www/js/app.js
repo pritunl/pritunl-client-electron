@@ -1,8 +1,10 @@
 var remote = require('remote');
+var path = require('path');
 var $ = require('jquery');
 var profile = require('./js/profile.js');
 var profileView = require('./js/profileView.js');
 var config = require('./js/config.js');
+var BrowserWindow = remote.require('browser-window');
 
 profileView.init();
 
@@ -14,6 +16,13 @@ if (remote.process.platform === 'linux') {
 } else {
   config.onReady(function() {
     $('.ubuntu').click(function() {
+      var win = new BrowserWindow({
+        icon: path.join(__dirname, 'img', 'logo.png'),
+        width: 800,
+        height: 600
+      });
+      win.loadUrl('http://ubuntu.com/desktop');
+
       config.settings.showUbuntu = false;
       config.save();
       $ubuntu.slideUp(200, function() {

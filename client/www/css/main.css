@@ -335,7 +335,7 @@ body {
   display: none;
   position: relative;
 }
-.ubuntu a {
+.ubuntu .box {
   cursor: pointer;
   padding: 15px;
   background-color: #dd4814;
