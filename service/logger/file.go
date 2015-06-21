@@ -3,6 +3,7 @@ package logger
 import (
 	"github.com/Sirupsen/logrus"
 	"github.com/dropbox/godropbox/errors"
+	"github.com/pritunl/pritunl-client-electron/service/utils"
 	"os"
 	"time"
 )
@@ -51,7 +52,7 @@ func (s *fileSender) send(entry *logrus.Entry) (err error) {
 		return
 	}
 
-	file, err := os.OpenFile("pritunl.log",
+	file, err := os.OpenFile(utils.GetLogPath(),
 		os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {
 		err = &WriteError{
