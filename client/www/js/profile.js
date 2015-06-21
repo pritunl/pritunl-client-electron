@@ -477,6 +477,72 @@ var getProfiles = function(callback) {
   });
 };
 
+var importProfile = function(pth, callback) {
+  var ext = path.extname(pth);
+
+  var fsCallback = function(err, data) {
+    if (err) {
+      callback(err);
+    }
+
+    data = data.replace('\r', '');
+    var line;
+    var lines = data.split('\n');
+    var jsonFound = null;
+    var jsonData = '';
+    var ovpnData = '';
+
+    for (var i = 0; i < lines.length; i++) {
+      line = lines[i];
+
+      if (jsonFound === null && line === '#{') {
+        jsonFound = true;
+      }
+
+      if (jsonFound === true) {
+        if (line === '#}') {
+          jsonFound = false;
+        }
+        jsonData += line.replace('#', '');
+      } else {
+        ovpnData += line + '\n';
+      }
+    }
+
+    var confData;
+    try {
+      confData = JSON.parse(jsonData);
+    } catch (err) {
+      confData = {};
+    }
+
+    data = ovpnData.trim() + '\n';
+
+    pth = path.join(remotes.getUserDataPath(), 'profiles', utils.uuid());
+    var prfl = new Profile(pth);
+
+    prfl.import(confData);
+    prfl.data = data;
+
+    prfl.saveData();
+    prfl.saveConf();
+
+    callback(null, prfl);
+  };
+
+  switch (ext) {
+    case '.ovpn':
+    case '.conf':
+      remotes.readFile(pth, 'utf8', fsCallback);
+      break;
+    case '.tar':
+      remotes.readTarFile(pth, fsCallback);
+      break;
+    default:
+      callback('Unsupported file type', null);
+  }
+};
+
 module.exports = {
   Profile: Profile,
   importProfile: importProfile,
