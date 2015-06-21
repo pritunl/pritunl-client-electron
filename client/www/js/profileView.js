@@ -220,7 +220,15 @@ var init = function() {
   profile.getProfiles(function(err, prfls) {
     $('.profiles .profile-file').change(function(evt) {
       var pth = evt.currentTarget.files[0].path;
-      profile.importProfile(pth, function(prfl) {
+      profile.importProfile(pth, function(err, prfl) {
+        if (err) {
+          logger.error('Failed to import profile: ' +
+            prfl.formatedNameLogo()[0]);
+          alert.error('Failed to import profile: ' +
+            prfl.formatedNameLogo()[0]);
+          return;
+        }
+
         renderProfile(prfl);
       });
     });
