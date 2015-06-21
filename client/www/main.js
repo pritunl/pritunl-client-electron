@@ -46,6 +46,7 @@ if (process.platform === 'darwin') {
 
 var openMainWin = function() {
   if (main) {
+    main.focus();
     return;
   }
 
