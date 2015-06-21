@@ -173,7 +173,7 @@ var renderProfile = function(prfl) {
     edtr.set('');
     prfl.log = '';
     prfl.saveLog(function(err) {
-      if (err !== null) {
+      if (err) {
         logger.error('Failed to save log: ' + err);
         alert.error('Failed to save log: ' + err);
       }
