@@ -461,7 +461,7 @@ body {
   transition: width 125ms linear;
 }
 .profile .menu.show {
-  width: 101px;
+  width: 126px;
   visibility: visible;
 }
 .profile .menu-backdrop {
@@ -475,7 +475,7 @@ body {
 }
 .profile .menu .item {
   color: #fff;
-  width: 101px;
+  width: 126px;
   height: 34px;
   justify-content: center;
 }
@@ -492,22 +492,37 @@ body {
 .profile .menu .delete-no {
   position: absolute;
   top: 71px;
-  left: 101px;
-  width: 51px;
+  left: 126px;
+  width: 63px;
   transition: left 125ms linear;
 }
 .profile .menu .delete-ask {
   background-color: #575757;
-  width: 110px;
+  width: 126px;
 }
 .profile .menu.deleting .delete-ask {
-  left: -110px;
+  left: -126px;
 }
 .profile .menu.deleting .delete-yes {
   left: 0;
 }
 .profile .menu.deleting .delete-no {
-  left: 51px;
+  left: 63px;
+}
+
+.profile .menu .autostart-on,
+.profile .menu .autostart-off {
+  position: absolute;
+  top: 105px;
+  left: 126px;
+  width: 63px;
+  transition: left 125ms linear;
+}
+.profile .menu.autostarting .autostart-on {
+  left: 0;
+}
+.profile .menu.autostarting .autostart-off {
+  left: 63px;
 }
 
 .profile .logs,

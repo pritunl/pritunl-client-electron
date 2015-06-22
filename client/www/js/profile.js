@@ -210,7 +210,7 @@ Profile.prototype.export = function() {
     server: this.server || '',
     userId: this.userId || '',
     user: this.user || '',
-    autostart: this.autostart || '',
+    autostart: this.autostart ? 'On' : 'Off',
     syncHosts: this.syncHosts|| [],
     syncHash: this.syncHash || '',
     syncSecret: this.syncSecret || '',

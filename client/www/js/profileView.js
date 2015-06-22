@@ -19,6 +19,7 @@ var openMenu = function($profile) {
 var closeMenu = function($profile) {
   var $menu = $profile.find('.menu');
   $menu.removeClass('deleting');
+  $menu.removeClass('autostarting');
   $menu.removeClass('show');
   $profile.find('.menu-backdrop').fadeOut(75);
 };
@@ -55,6 +56,7 @@ var renderProfile = function(prfl) {
     var data = prfl.export();
     $profile.find('.info .name').text(data.name);
     $profile.find('.info .uptime').text(data.status);
+    $profile.find('.menu .autostart').text('Autostart ' + data.autostart);
     $profile.find('.info .server-addr').text(data.serverAddr);
     $profile.find('.info .client-addr').text(data.clientAddr);
 
@@ -112,6 +114,20 @@ var renderProfile = function(prfl) {
   });
   $profile.find('.menu .delete-no').click(function() {
     $profile.find('.menu').removeClass('deleting');
+  });
+
+  $profile.find('.menu .autostart').click(function() {
+    $profile.find('.menu').addClass('autostarting');
+  });
+  $profile.find('.menu .autostart-on').click(function() {
+    prfl.autostart = true;
+    prfl.saveConf();
+    $profile.find('.menu').removeClass('autostarting');
+  });
+  $profile.find('.menu .autostart-off').click(function() {
+    prfl.autostart = false;
+    prfl.saveConf();
+    $profile.find('.menu').removeClass('autostarting');
   });
 
   $profile.find('.menu .edit-config').click(function() {
