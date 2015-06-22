@@ -497,9 +497,7 @@ var importProfileData = function(data) {
   prfl.saveData();
   prfl.saveConf();
 
-  if (callback) {
-    callback(null, prfl);
-  }
+  return prfl;
 };
 
 var importProfile = function(pth, callback) {
@@ -509,28 +507,35 @@ var importProfile = function(pth, callback) {
     case '.ovpn':
     case '.conf':
       remotes.readFile(pth, 'utf8', function(err, data) {
+        var prfl;
+
         if (err) {
           err = new errors.ReadError(
             'profile: Failed to read profile (%s)', err);
           logger.error(err);
-          return;
         } else {
-          importProfileData(data);
+          prfl = importProfileData(data);
         }
+
         if (callback) {
-          callback(err);
+          callback(err, prfl);
         }
       });
       break;
     case '.tar':
-      remotes.readTarFile(pth, importProfileData, function(err) {
+      remotes.readTarFile(pth, function(err, data) {
+        var prfl;
+
         if (err) {
           err = new errors.ReadError(
             'profile: Failed to read profile archive (%s)', err);
           logger.error(err);
+        } else {
+          prfl = importProfileData(data);
         }
+
         if (callback) {
-          callback(err);
+          callback(err, prfl);
         }
       });
       break;
@@ -543,9 +548,14 @@ var importProfile = function(pth, callback) {
   }
 };
 
-var importProfiles = function(prfls) {
+var importProfiles = function(prfls, callback) {
+  var prfl;
+
   for (var name in prfls) {
-    importProfileData(prfls[name]);
+    prfl = importProfileData(prfls[name]);
+    if (callback) {
+      callback(null, prfl);
+    }
   }
 };
 
@@ -569,14 +579,13 @@ var importProfileUri = function(prflUri, callback) {
       try {
         var data = JSON.parse(body);
       } catch (e) {
-        err = e;
+        err = new errors.ParseError(
+          'profile: Failed to parse profile uri (%s)', e);
+        logger.error(err);
       }
 
       if (!err) {
-        importProfiles(data);
-        if (callback) {
-          callback();
-        }
+        importProfiles(data, callback);
         return;
       }
     }
@@ -591,6 +600,8 @@ var importProfileUri = function(prflUri, callback) {
       url: prflUri,
       strictSSL: false
     }, function(err, resp, body) {
+      var prfl;
+
       if (err) {
         err = new errors.ParseError(
           'profile: Failed to load profile uri (%s)', err);
@@ -599,11 +610,14 @@ var importProfileUri = function(prflUri, callback) {
         try {
           var data = JSON.parse(body);
         } catch (e) {
-          err = e;
+          err = new errors.ParseError(
+            'profile: Failed to parse profile uri (%s)', e);
+          logger.error(err);
         }
 
         if (!err) {
-          importProfiles(data);
+          importProfiles(data, callback);
+          return;
         }
       }
 
