@@ -357,7 +357,7 @@ Profile.prototype.delete = function() {
     }
     remotes.unlink(this.confPath, function(err) {
       if (err) {
-        err = new errors.ParseError(
+        err = new errors.RemoveError(
           'config: Failed to delete profile conf (%s)', err);
         logger.error(err);
       }
@@ -369,7 +369,7 @@ Profile.prototype.delete = function() {
     }
     remotes.unlink(this.ovpnPath, function(err) {
       if (err) {
-        err = new errors.ParseError(
+        err = new errors.RemoveError(
           'config: Failed to delete profile data (%s)', err);
         logger.error(err);
       }
@@ -381,7 +381,7 @@ Profile.prototype.delete = function() {
     }
     remotes.unlink(this.logPath, function(err) {
       if (err) {
-        err = new errors.ParseError(
+        err = new errors.RemoveError(
           'config: Failed to delete profile log (%s)', err);
         logger.error(err);
       }
