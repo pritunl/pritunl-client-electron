@@ -1,6 +1,7 @@
 var fs = require('fs');
 var tar = require('tar');
 var app = require('app');
+var process = require('process');
 var path = require('path');
 
 var readTarFile = function(pth, callback) {
@@ -24,8 +25,10 @@ var getUserDataPath = function() {
 };
 
 module.exports = {
+  platform: process.platform,
   readFile: fs.readFile,
   writeFile: fs.writeFile,
+  appendFile: fs.appendFile,
   exists: fs.exists,
   readdir: fs.readdir,
   unlink: fs.unlink,
