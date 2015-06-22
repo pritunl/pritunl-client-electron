@@ -310,15 +310,42 @@ Profile.prototype.getUptime = function(curTime) {
 
 Profile.prototype.saveConf = function(callback) {
   remotes.writeFile(this.confPath,
-    JSON.stringify(this.exportConf()), callback);
+    JSON.stringify(this.exportConf()), function() {
+      if (err) {
+        err = new errors.WriteError(
+          'config: Failed to save profile conf (%s)', err);
+        logger.error(err);
+      }
+      if (callback) {
+        callback(err);
+      }
+    });
 };
 
 Profile.prototype.saveData = function(callback) {
-  remotes.writeFile(this.ovpnPath, this.data, callback);
+  remotes.writeFile(this.ovpnPath, this.data, function() {
+    if (err) {
+      err = new errors.WriteError(
+        'config: Failed to save profile data (%s)', err);
+      logger.error(err);
+    }
+    if (callback) {
+      callback(err);
+    }
+  });
 };
 
 Profile.prototype.saveLog = function(callback) {
-  remotes.writeFile(this.logPath, this.log, callback);
+  remotes.writeFile(this.logPath, this.log, function() {
+    if (err) {
+      err = new errors.WriteError(
+        'config: Failed to save profile log (%s)', err);
+      logger.error(err);
+    }
+    if (callback) {
+      callback(err);
+    }
+  });
 };
 
 Profile.prototype.delete = function() {
