@@ -79,11 +79,13 @@ var start = function(prfl, callback) {
       err = new NetworkError('service: Failed to start profile (%s)', err);
       logger.error(err);
     }
-    callback(err);
+    if (callback) {
+      callback(err);
+    }
   });
 };
 
-var stop = function(prfl) {
+var stop = function(prfl, callback) {
   request.del({
     url: 'http://' + constants.serviceHost + '/profile',
     json: true,
@@ -95,7 +97,9 @@ var stop = function(prfl) {
       err = new NetworkError('service: Failed to stop profile (%s)', err);
       logger.error(err);
     }
-    callback(err);
+    if (callback) {
+      callback(err);
+    }
   });
 };
 
