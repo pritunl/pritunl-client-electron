@@ -515,7 +515,9 @@ var importProfile = function(pth, callback) {
       remotes.readTarFile(pth, fsCallback);
       break;
     default:
-      callback('Unsupported file type', null);
+      var err = new errors.UnsupportedError('profile: Unsupported file type');
+      logger.error(err);
+      callback(err);
   }
 };
 
