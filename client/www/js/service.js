@@ -1,19 +1,10 @@
 var request = require('request');
 var constants = require('./constants.js');
 var logger = require('./logger.js');
+var errors = require('./errors.js');
 
 var profiles = [];
 var profilesId = {};
-
-function NetworkError() {
-  ErrorInit.call(this, 'NetworkError', arguments);
-}
-NetworkError.prototype = new Error;
-
-function ParseError() {
-  ErrorInit.call(this, 'ParseError', arguments);
-}
-ParseError.prototype = new Error;
 
 var onUpdate = function(data) {
   for (var id in data) {
@@ -49,7 +40,8 @@ var update = function() {
     url: 'http://' + constants.serviceHost + '/profile'
   }, function(err, resp, body) {
     if (err) {
-      err = new NetworkError('service: Failed to update profile (%s)', err);
+      err = new errors.NetworkError(
+        'service: Failed to update profile (%s)', err);
       logger.error(err);
       return;
     }
@@ -57,7 +49,8 @@ var update = function() {
     try {
       var data = JSON.parse(body);
     } catch (err) {
-      err = new ParseError('service: Failed to parse data (%s)', err);
+      err = new errors.ParseError(
+        'service: Failed to parse data (%s)', err);
       logger.error(err);
       return;
     }
@@ -76,7 +69,8 @@ var start = function(prfl, callback) {
     }
   }, function(err) {
     if (err) {
-      err = new NetworkError('service: Failed to start profile (%s)', err);
+      err = new errors.NetworkError(
+        'service: Failed to start profile (%s)', err);
       logger.error(err);
     }
     if (callback) {
@@ -94,7 +88,8 @@ var stop = function(prfl, callback) {
     }
   }, function(err) {
     if (err) {
-      err = new NetworkError('service: Failed to stop profile (%s)', err);
+      err = new errors.NetworkError(
+        'service: Failed to stop profile (%s)', err);
       logger.error(err);
     }
     if (callback) {
