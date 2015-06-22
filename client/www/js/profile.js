@@ -4,15 +4,7 @@ var alert = require('./alert.js');
 var utils = require('./utils.js');
 var service = require('./service.js');
 var logger = require('./logger.js');
-
-var remote;
-var remotes;
-try {
-  remote = require('remote');
-  remotes = remote.require('./js/remotes.js');
-} catch(err) {
-  remotes = require('./remotes.js')
-}
+var remotes = requireRemotes();
 
 var colors = {
   'A': '#ff8a80',
