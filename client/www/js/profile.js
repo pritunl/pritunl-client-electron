@@ -1,6 +1,6 @@
 var crypto = require('crypto');
 var path = require('path');
-var alert = require('./alert.js');
+var errors = require('./errors.js');
 var utils = require('./utils.js');
 var service = require('./service.js');
 var logger = require('./logger.js');
