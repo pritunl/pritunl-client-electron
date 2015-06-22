@@ -5,7 +5,7 @@ var path = require('path');
 var $ = require('jquery');
 var profileView = require('./js/profileView.js');
 var config = require('./js/config.js');
-var BrowserWindow = remote.require('browser-window');
+var BrowserWindow = remoteRequire('browser-window');
 
 profileView.init();
 
