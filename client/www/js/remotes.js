@@ -15,7 +15,9 @@ var readTarFile = function(pth, callback) {
         data += content.toString();
       });
       entry.on('end', function () {
-        callback(null, data);
+        if (callback) {
+          callback(null, data);
+        }
       });
     });
 };
