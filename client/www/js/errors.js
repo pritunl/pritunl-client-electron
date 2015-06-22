@@ -27,3 +27,15 @@ function ParseError() {
 }
 ParseError.prototype = new Error;
 module.exports.ParseError = ParseError;
+
+function AuthError() {
+  ErrorInit.call(this, 'AuthError', arguments);
+}
+AuthError.prototype = new Error;
+module.exports.AuthError = AuthError;
+
+function TimeoutError() {
+  ErrorInit.call(this, 'TimeoutError', arguments);
+}
+TimeoutError.prototype = new Error;
+module.exports.TimeoutError = TimeoutError;
