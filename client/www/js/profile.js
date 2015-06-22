@@ -103,6 +103,8 @@ Profile.prototype.load = function(callback) {
     try {
       confData = JSON.parse(data);
     } catch (err) {
+      err = new errors.ParseError('profile: Failed to parse config (%s)', err);
+      logger.error(err);
       confData = {};
     }
 
@@ -327,9 +329,10 @@ Profile.prototype.delete = function() {
       return;
     }
     remotes.unlink(this.confPath, function(err) {
-      if (err !== null) {
-        logger.error('Failed to delete profile conf: ' + err);
-        alert.error('Failed to delete profile conf: ' + err);
+      if (err) {
+        err = new errors.ParseError(
+          'config: Failed to delete profile conf (%s)', err);
+        logger.error(err);
       }
     });
   }.bind(this));
@@ -338,9 +341,10 @@ Profile.prototype.delete = function() {
       return;
     }
     remotes.unlink(this.ovpnPath, function(err) {
-      if (err !== null) {
-        logger.error('Failed to delete profile data: ' + err);
-        alert.error('Failed to delete profile data: ' + err);
+      if (err) {
+        err = new errors.ParseError(
+          'config: Failed to delete profile data (%s)', err);
+        logger.error(err);
       }
     });
   }.bind(this));
@@ -349,9 +353,10 @@ Profile.prototype.delete = function() {
       return;
     }
     remotes.unlink(this.logPath, function(err) {
-      if (err !== null) {
-        logger.error('Failed to delete profile log: ' + err);
-        alert.error('Failed to delete profile log: ' + err);
+      if (err) {
+        err = new errors.ParseError(
+          'config: Failed to delete profile log (%s)', err);
+        logger.error(err);
       }
     });
   }.bind(this));
