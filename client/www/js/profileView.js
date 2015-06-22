@@ -240,15 +240,9 @@ var init = function() {
     $('.profiles .profile-file').change(function(evt) {
       var pth = evt.currentTarget.files[0].path;
       profile.importProfile(pth, function(err, prfl) {
-        if (err) {
-          err = new errors.AuthError(
-            'profile_view: Failed to import profile %s',
-            prfl.formatedNameLogo()[0]);
-          logger.error(err);
-          return;
+        if (!err) {
+          renderProfile(prfl);
         }
-
-        renderProfile(prfl);
       });
     });
 
