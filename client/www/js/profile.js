@@ -1,5 +1,6 @@
 var crypto = require('crypto');
 var path = require('path');
+var request = require('request');
 var errors = require('./errors.js');
 var utils = require('./utils.js');
 var service = require('./service.js');
@@ -102,8 +103,8 @@ Profile.prototype.load = function(callback) {
     var confData;
     try {
       confData = JSON.parse(data);
-    } catch (err) {
-      err = new errors.ParseError('profile: Failed to parse config (%s)', err);
+    } catch (e) {
+      err = new errors.ParseError('profile: Failed to parse config (%s)', e);
       logger.error(err);
       confData = {};
     }
@@ -453,77 +454,169 @@ var getProfiles = function(callback) {
   });
 };
 
+var importProfileData = function(data) {
+  data = data.replace('\r', '');
+  var line;
+  var lines = data.split('\n');
+  var jsonFound = null;
+  var jsonData = '';
+  var ovpnData = '';
+
+  for (var i = 0; i < lines.length; i++) {
+    line = lines[i];
+
+    if (jsonFound === null && line === '#{') {
+      jsonFound = true;
+    }
+
+    if (jsonFound === true) {
+      if (line === '#}') {
+        jsonFound = false;
+      }
+      jsonData += line.replace('#', '');
+    } else {
+      ovpnData += line + '\n';
+    }
+  }
+
+  var confData;
+  try {
+    confData = JSON.parse(jsonData);
+  } catch (e) {
+    confData = {};
+  }
+
+  data = ovpnData.trim() + '\n';
+
+  var pth = path.join(remotes.getUserDataPath(), 'profiles', utils.uuid());
+  var prfl = new Profile(pth);
+
+  prfl.import(confData);
+  prfl.data = data;
+
+  prfl.saveData();
+  prfl.saveConf();
+
+  if (callback) {
+    callback(null, prfl);
+  }
+};
+
 var importProfile = function(pth, callback) {
   var ext = path.extname(pth);
-
-  var fsCallback = function(err, data) {
-    if (err) {
-      callback(err);
-      return;
-    }
-
-    data = data.replace('\r', '');
-    var line;
-    var lines = data.split('\n');
-    var jsonFound = null;
-    var jsonData = '';
-    var ovpnData = '';
-
-    for (var i = 0; i < lines.length; i++) {
-      line = lines[i];
-
-      if (jsonFound === null && line === '#{') {
-        jsonFound = true;
-      }
-
-      if (jsonFound === true) {
-        if (line === '#}') {
-          jsonFound = false;
-        }
-        jsonData += line.replace('#', '');
-      } else {
-        ovpnData += line + '\n';
-      }
-    }
-
-    var confData;
-    try {
-      confData = JSON.parse(jsonData);
-    } catch (err) {
-      confData = {};
-    }
-
-    data = ovpnData.trim() + '\n';
-
-    pth = path.join(remotes.getUserDataPath(), 'profiles', utils.uuid());
-    var prfl = new Profile(pth);
-
-    prfl.import(confData);
-    prfl.data = data;
-
-    prfl.saveData();
-    prfl.saveConf();
-
-    callback(null, prfl);
-  };
 
   switch (ext) {
     case '.ovpn':
     case '.conf':
-      remotes.readFile(pth, 'utf8', fsCallback);
+      remotes.readFile(pth, 'utf8', function(err, data) {
+        if (err) {
+          err = new errors.ReadError(
+            'profile: Failed to read profile (%s)', err);
+          logger.error(err);
+          return;
+        } else {
+          importProfileData(data);
+        }
+        if (callback) {
+          callback(err);
+        }
+      });
       break;
     case '.tar':
-      remotes.readTarFile(pth, fsCallback);
+      remotes.readTarFile(pth, importProfileData, function(err) {
+        if (err) {
+          err = new errors.ReadError(
+            'profile: Failed to read profile archive (%s)', err);
+          logger.error(err);
+        }
+        if (callback) {
+          callback(err);
+        }
+      });
       break;
     default:
       var err = new errors.UnsupportedError('profile: Unsupported file type');
       logger.error(err);
-      callback(err);
+      if (callback) {
+        callback(err);
+      }
   }
+};
+
+var importProfiles = function(prfls) {
+  for (var name in prfls) {
+    importProfileData(prfls[name]);
+  }
+};
+
+var importProfileUri = function(prflUri, callback) {
+  if (prflUri.startsWith('pritunl:')) {
+    prflUri = prflUri.replace('pritunl', 'https');
+  } else if (prflUri.startsWith('pts:') || prflUri.startsWith('pt:')) {
+    prflUri = prflUri.replace('pt', 'http');
+  } else if (prflUri.startsWith('https:') || prflUri.startsWith('http:')) {
+  } else {
+    prflUri = 'https://' + prflUri;
+  }
+
+  prflUri = prflUri.replace('/k/', '/ku/');
+
+  request.get({
+    url: prflUri,
+    strictSSL: false
+  }, function(err, resp, body) {
+    if (!err) {
+      try {
+        var data = JSON.parse(body);
+      } catch (e) {
+        err = e;
+      }
+
+      if (!err) {
+        importProfiles(data);
+        if (callback) {
+          callback();
+        }
+        return;
+      }
+    }
+
+    if (prflUri.startsWith('https:')) {
+      prflUri = prflUri.replace('https', 'http');
+    } else {
+      prflUri = prflUri.replace('http', 'https');
+    }
+
+    request.get({
+      url: prflUri,
+      strictSSL: false
+    }, function(err, resp, body) {
+      if (err) {
+        err = new errors.ParseError(
+          'profile: Failed to load profile uri (%s)', err);
+        logger.error(err);
+      } else {
+        try {
+          var data = JSON.parse(body);
+        } catch (e) {
+          err = e;
+        }
+
+        if (!err) {
+          importProfiles(data);
+        }
+      }
+
+      if (callback) {
+        callback(err);
+      }
+    });
+  });
 };
 
 module.exports = {
   Profile: Profile,
   importProfile: importProfile,
+  importProfileUri: importProfileUri,
   getProfiles: getProfiles
 };
