@@ -56,6 +56,7 @@ var openMainWin = function() {
     icon: path.join(__dirname, 'img', 'logo.png'),
     frame: false,
     fullscreen: false,
+    transparent: true,
     width: 400,
     height: 585,
     'min-width': 280,
