@@ -49,7 +49,7 @@ $('.header .maximize').click(function() {
 
   if (!win.maximizedPrev) {
     win.maximizedPrev = win.getSize();
-    win.setSize(600, 780);
+    win.setSize(600, 790);
   } else {
     win.setSize(win.maximizedPrev[0], win.maximizedPrev[1]);
     win.maximizedPrev = null;
