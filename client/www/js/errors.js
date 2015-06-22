@@ -4,11 +4,23 @@ function NetworkError() {
 NetworkError.prototype = new Error;
 module.exports.NetworkError = NetworkError;
 
+function ReadError() {
+  ErrorInit.call(this, 'ReadError', arguments);
+}
+ReadError.prototype = new Error;
+module.exports.ReadError = ReadError;
+
 function WriteError() {
   ErrorInit.call(this, 'WriteError', arguments);
 }
 WriteError.prototype = new Error;
 module.exports.WriteError = WriteError;
+
+function RemoveError() {
+  ErrorInit.call(this, 'RemoveError', arguments);
+}
+RemoveError.prototype = new Error;
+module.exports.RemoveError = RemoveError;
 
 function ParseError() {
   ErrorInit.call(this, 'ParseError', arguments);
