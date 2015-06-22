@@ -7,11 +7,13 @@ var profiles = [];
 var profilesId = {};
 
 var onUpdate = function(data) {
-  for (var id in data) {
-    var prfl = get(id);
-    if (prfl) {
-      prfl.update(data[id]);
-    }
+  for (var id in profilesId) {
+    profilesId[id].update(data[id] || {
+      'status': 'disconnected',
+      'timestamp': null,
+      'server_addr': null,
+      'client_addr': null
+    });
   }
 };
 
