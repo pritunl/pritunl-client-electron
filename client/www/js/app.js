@@ -1,3 +1,5 @@
+require('./js/globals.js');
+
 var remote = require('remote');
 var path = require('path');
 var $ = require('jquery');

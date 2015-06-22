@@ -1,3 +1,5 @@
+require('./js/globals.js');
+
 var app = require('app');
 var path = require('path');
 var fs = require('fs');
