@@ -22,7 +22,7 @@ global.requireRemotes = function() {
   try {
     var remote = require('remote');
     return remote.require('./js/remotes.js');
-  } catch(err) {
+  } catch (e) {
     return require('./remotes.js')
   }
 };
@@ -34,7 +34,7 @@ global.remoteRequire = function(name) {
       name = './' + name;
     }
     return remote.require(name);
-  } catch(err) {
+  } catch (e) {
     if (name.indexOf('.js') !== -1) {
       name = './js/' + name;
     }

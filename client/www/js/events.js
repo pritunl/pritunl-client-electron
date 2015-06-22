@@ -38,7 +38,7 @@ var connect = function(callback) {
       data = JSON.parse(data);
       callback(data);
     });
-  } catch(err) {
+  } catch (e) {
     if (id === socketId) {
       connected = false;
     }

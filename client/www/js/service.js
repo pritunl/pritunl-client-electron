@@ -48,9 +48,9 @@ var update = function() {
 
     try {
       var data = JSON.parse(body);
-    } catch (err) {
+    } catch (e) {
       err = new errors.ParseError(
-        'service: Failed to parse data (%s)', err);
+        'service: Failed to parse data (%s)', e);
       logger.error(err);
       return;
     }

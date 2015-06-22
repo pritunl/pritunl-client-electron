@@ -24,8 +24,8 @@ var load = function() {
 
     try {
       data = JSON.parse(data);
-    } catch (err) {
-      err = new errors.ParseError('config: Failed to parse config (%s)', err);
+    } catch (e) {
+      err = new errors.ParseError('config: Failed to parse config (%s)', e);
       logger.error(err);
       data = {};
     }

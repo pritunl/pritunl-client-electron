@@ -5,7 +5,7 @@ var alert;
 try {
   require('remote');
   alert = require('./alert.js');
-} catch(err) {
+} catch (e) {
 }
 
 var pth = path.join(remotes.getUserDataPath(), 'pritunl.log');

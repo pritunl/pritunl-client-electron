@@ -87,7 +87,7 @@ var sync =  function() {
 
     try {
       var data = JSON.parse(body);
-    } catch(err) {
+    } catch (e) {
       return;
     }
 
