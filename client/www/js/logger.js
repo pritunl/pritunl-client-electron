@@ -1,5 +1,12 @@
 var path = require('path');
 
+var alert;
+try {
+  require('remote');
+  alert = require('./alert.js');
+} catch(err) {
+}
+
 var fs;
 var app;
 try {
@@ -31,6 +38,9 @@ var warning = function(msg) {
 };
 
 var error = function(msg) {
+  if (alert) {
+    alert.error(msg);
+  }
   push('ERROR', msg);
 };
 
