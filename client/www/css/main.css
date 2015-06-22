@@ -385,6 +385,27 @@ body {
   width: 100%;
   cursor: pointer;
 }
+.profiles .uri-input {
+  width: 100%;
+  font-size: 18px;
+  padding: 12px 10px;
+  background-color: #253c5a;
+  color: #fff;
+  display: none;
+}
+.profiles .uri-input,
+.profiles .uri-input:focus,
+.profiles .uri-input:hover,
+.profiles .uri-input:active {
+  border: 0;
+  outline: none;
+}
+.profiles .import-btns {
+  display: none;
+}
+.profiles .import-btns .btn {
+  width: 50%;
+}
 
 
 .profile {

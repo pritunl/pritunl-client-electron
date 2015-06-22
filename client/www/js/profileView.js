@@ -209,6 +209,34 @@ var init = function() {
   });
 
   profile.getProfiles(function(err, prfls) {
+    $('.profiles .import-uri').click(function() {
+      $('.profiles .import-uri').hide();
+      $('.profiles .import-btns').show();
+      $('.profiles .uri-input').slideDown(50);
+    });
+
+    $('.profiles .import-uri-confirm').click(function() {
+      var uri = $('.profiles .uri-input').val();
+
+      profile.importProfileUri(uri, function(err, prfl) {
+        if (!err) {
+          renderProfile(prfl);
+        }
+
+        $('.profiles .import-uri').show();
+        $('.profiles .import-btns').hide();
+        $('.profiles .uri-input').slideUp(50);
+      });
+    });
+
+    $('.profiles .import-uri-cancel').click(function() {
+      $('.profiles .import-uri').show();
+      $('.profiles .import-btns').hide();
+      $('.profiles .uri-input').slideUp(50, function() {
+        $('.profiles .uri-input').val('');
+      });
+    });
+
     $('.profiles .profile-file').change(function(evt) {
       var pth = evt.currentTarget.files[0].path;
       profile.importProfile(pth, function(err, prfl) {
