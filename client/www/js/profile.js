@@ -95,7 +95,7 @@ function Profile(pth) {
   this.syncSecret = null;
   this.syncToken = null;
   this.log = null;
-};
+}
 
 Profile.prototype.load = function(callback) {
   remotes.readFile(this.confPath, function (err, data) {
@@ -310,7 +310,7 @@ Profile.prototype.getUptime = function(curTime) {
 
 Profile.prototype.saveConf = function(callback) {
   remotes.writeFile(this.confPath,
-    JSON.stringify(this.exportConf()), function() {
+    JSON.stringify(this.exportConf()), function(err) {
       if (err) {
         err = new errors.WriteError(
           'config: Failed to save profile conf (%s)', err);
@@ -323,7 +323,7 @@ Profile.prototype.saveConf = function(callback) {
 };
 
 Profile.prototype.saveData = function(callback) {
-  remotes.writeFile(this.ovpnPath, this.data, function() {
+  remotes.writeFile(this.ovpnPath, this.data, function(err) {
     if (err) {
       err = new errors.WriteError(
         'config: Failed to save profile data (%s)', err);
@@ -336,7 +336,7 @@ Profile.prototype.saveData = function(callback) {
 };
 
 Profile.prototype.saveLog = function(callback) {
-  remotes.writeFile(this.logPath, this.log, function() {
+  remotes.writeFile(this.logPath, this.log, function(err) {
     if (err) {
       err = new errors.WriteError(
         'config: Failed to save profile log (%s)', err);
@@ -459,6 +459,7 @@ var importProfile = function(pth, callback) {
   var fsCallback = function(err, data) {
     if (err) {
       callback(err);
+      return;
     }
 
     data = data.replace('\r', '');
