@@ -39,3 +39,9 @@ function TimeoutError() {
 }
 TimeoutError.prototype = new Error;
 module.exports.TimeoutError = TimeoutError;
+
+function UnsupportedError() {
+  ErrorInit.call(this, 'UnsupportedError', arguments);
+}
+UnsupportedError.prototype = new Error;
+module.exports.UnsupportedError = UnsupportedError;
