@@ -4,7 +4,7 @@ function Editor(typ, $container) {
   this.typ = typ;
   this.editor = null;
   this.$container = $container;
-};
+}
 
 Editor.prototype.create = function() {
   this.editor = ace.edit(this.$container[0]);
