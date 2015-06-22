@@ -81,7 +81,7 @@ var colors = {
   '/': '#37474f'
 };
 
-var Profile = function Profile(pth) {
+function Profile(pth) {
   this.onUpdate = null;
 
   this.id = path.basename(pth);
