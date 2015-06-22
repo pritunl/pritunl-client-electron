@@ -26,3 +26,18 @@ global.requireRemotes = function() {
     return require('./remotes.js')
   }
 };
+
+global.remoteRequire = function(name) {
+  try {
+    var remote = require('remote');
+    if (name.indexOf('.js') !== -1) {
+      name = './' + name;
+    }
+    return remote.require(name);
+  } catch(err) {
+    if (name.indexOf('.js') !== -1) {
+      name = './js/' + name;
+    }
+    return require(name);
+  }
+};
