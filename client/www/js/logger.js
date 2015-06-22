@@ -1,17 +1,12 @@
 var path = require('path');
 
-var remote;
-try {
-  remote = require('remote');
-} catch(err) {
-}
-
 var fs;
 var app;
-if (remote) {
+try {
+  var remote = require('remote');
   fs = remote.require('fs');
   app = remote.require('app');
-} else {
+} catch(err) {
   fs = require('fs');
   app = require('app');
 }
