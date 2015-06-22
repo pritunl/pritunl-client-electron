@@ -57,7 +57,7 @@ var openMainWin = function() {
     frame: false,
     fullscreen: false,
     width: 400,
-    height: 580,
+    height: 585,
     'min-width': 280,
     'min-height': 225,
     'max-width': 600,
