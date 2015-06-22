@@ -1,26 +1,11 @@
 var path = require('path');
 var logger = require('./logger.js');
-
-var remote;
-try {
-  remote = require('remote');
-} catch(err) {
-}
-
-var fs;
-var app;
-if (remote) {
-  fs = remote.require('fs');
-  app = remote.require('app');
-} else {
-  fs = require('fs');
-  app = require('app');
-}
+var errors = require('./errors.js');
+var remotes = requireRemotes();
 
 var loaded;
 var waiting = [];
-var pth = path.join(app.getPath('userData'), 'pritunl.json');
-
+var pth = path.join(remotes.getUserDataPath(), 'pritunl.json');
 var settings = {
   showUbuntu: true
 };
@@ -34,12 +19,14 @@ var onReady = function(callback) {
 };
 
 var load = function() {
-  fs.readFile(pth, function(err, data) {
+  remotes.readFile(pth, function(err, data) {
     loaded = true;
 
     try {
       data = JSON.parse(data);
     } catch (err) {
+      err = new errors.ParseError('config: Failed to parse config (%s)', err);
+      logger.error(err);
       data = {};
     }
 
@@ -55,11 +42,12 @@ var load = function() {
 };
 
 var save = function() {
-  fs.writeFile(pth, JSON.stringify({
+  remotes.writeFile(pth, JSON.stringify({
     'show_ubuntu': settings.showUbuntu
   }), function(err) {
-    if (err !== null) {
-      logger.error('Failed to write conf: ' + err);
+    if (err) {
+      err = new errors.WriteError('config: Failed to write config (%s)', err);
+      logger.error(err);
     }
   });
 };
