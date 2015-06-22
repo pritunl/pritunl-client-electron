@@ -3,7 +3,6 @@ require('./js/globals.js');
 var remote = require('remote');
 var path = require('path');
 var $ = require('jquery');
-var profile = require('./js/profile.js');
 var profileView = require('./js/profileView.js');
 var config = require('./js/config.js');
 var BrowserWindow = remote.require('browser-window');
