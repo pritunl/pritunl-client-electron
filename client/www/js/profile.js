@@ -365,54 +365,6 @@ Profile.prototype.disconnect = function() {
   service.stop(this);
 };
 
-var importProfile = function(pth, callback) {
-  profileRemote.importProfile(pth, function(err, data) {
-    data = data.replace('\r', '');
-    var line;
-    var lines = data.split('\n');
-    var jsonFound = null;
-    var jsonData = '';
-    var ovpnData = '';
-
-    for (var i = 0; i < lines.length; i++) {
-      line = lines[i];
-
-      if (jsonFound === null && line === '#{') {
-        jsonFound = true;
-      }
-
-      if (jsonFound === true) {
-        if (line === '#}') {
-          jsonFound = false;
-        }
-        jsonData += line.replace('#', '');
-      } else {
-        ovpnData += line + '\n';
-      }
-    }
-
-    var confData;
-    try {
-      confData = JSON.parse(jsonData);
-    } catch (err) {
-      confData = {};
-    }
-
-    data = ovpnData.trim() + '\n';
-
-    pth = path.join(remotes.getUserDataPath(), 'profiles', utils.uuid());
-    var prfl = new Profile(pth);
-
-    prfl.import(confData);
-    prfl.data = data;
-
-    prfl.saveData();
-    prfl.saveConf();
-
-    callback(prfl);
-  });
-};
-
 var getProfiles = function(callback) {
   var root = path.join(remotes.getUserDataPath(), 'profiles');
 
