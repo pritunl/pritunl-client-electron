@@ -304,11 +304,16 @@ body {
 
 
 .alerts div {
+  position: relative;
   padding: 10px;
   color: #fff4f4;
   cursor: pointer;
+  word-wrap: break-word;
 }
 .alerts .close {
+  position: absolute;
+  top: 6px;
+  right: 9px;
   float: right;
 }
 .alerts .close:hover {
