@@ -6,7 +6,7 @@ var profile = require('./profile.js');
 var service = require('./service.js');
 var editor = require('./editor.js');
 var events = require('./events.js');
-var alert = require('./alert.js');
+var errors = require('./errors.js');
 var logger = require('./logger.js');
 
 var template = fs.readFileSync(
@@ -176,6 +176,7 @@ var renderProfile = function(prfl) {
 var init = function() {
   events.subscribe(function(evt) {
     var prfl;
+    var err;
 
     switch (evt.type) {
       case 'update':
@@ -192,17 +193,17 @@ var init = function() {
         break;
       case 'auth_error':
         prfl = service.get(evt.data.id);
-        logger.error('Failed to authenicate to ' +
+        err = new errors.AuthError(
+          'profile_view: Failed to authenicate to %s',
           prfl.formatedNameLogo()[0]);
-        alert.error('Failed to authenicate to ' +
-          prfl.formatedNameLogo()[0]);
+        logger.error(err);
         break;
       case 'timeout_error':
         prfl = service.get(evt.data.id);
-        logger.error('Connection timed out to ' +
+        err = new errors.AuthError(
+          'profile_view: Connection timed out to %s',
           prfl.formatedNameLogo()[0]);
-        alert.error('Connection timed out to ' +
-          prfl.formatedNameLogo()[0]);
+        logger.error(err);
         break;
     }
   });
@@ -212,10 +213,10 @@ var init = function() {
       var pth = evt.currentTarget.files[0].path;
       profile.importProfile(pth, function(err, prfl) {
         if (err) {
-          logger.error('Failed to import profile: ' +
+          err = new errors.AuthError(
+            'profile_view: Failed to import profile %s',
             prfl.formatedNameLogo()[0]);
-          alert.error('Failed to import profile: ' +
-            prfl.formatedNameLogo()[0]);
+          logger.error(err);
           return;
         }
 
