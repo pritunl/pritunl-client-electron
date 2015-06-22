@@ -317,10 +317,13 @@ Profile.prototype.saveConf = function(callback) {
           'config: Failed to save profile conf (%s)', err);
         logger.error(err);
       }
+      if (this.onUpdate) {
+        this.onUpdate();
+      }
       if (callback) {
         callback(err);
       }
-    });
+    }.bind(this));
 };
 
 Profile.prototype.saveData = function(callback) {
