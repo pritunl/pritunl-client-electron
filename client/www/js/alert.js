@@ -11,7 +11,7 @@ var append = function(typ, msg) {
   }
 
   var $alert = $('<div class="' + typ + '"></div>');
-  $close = $('<i class="close fa fa-times"></i>');
+  var $close = $('<i class="close fa fa-times"></i>');
 
   $close.click(function() {
     $alert.slideUp(250, function() {
