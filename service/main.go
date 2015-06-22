@@ -8,13 +8,6 @@ import (
 	"github.com/pritunl/pritunl-client-electron/service/logger"
 )
 
-const (
-	Connecting   = "connecting"
-	Connected    = "connected"
-	Reconnecting = "reconnecting"
-	Disconnected = "diconnected"
-)
-
 func main() {
 	logger.Init()
 
