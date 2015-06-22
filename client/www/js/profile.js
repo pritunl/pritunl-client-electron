@@ -575,13 +575,13 @@ var importProfileUri = function(prflUri, callback) {
     url: prflUri,
     strictSSL: false
   }, function(err, resp, body) {
+    var data;
+
     if (!err) {
       try {
-        var data = JSON.parse(body);
+        data = JSON.parse(body);
       } catch (e) {
-        err = new errors.ParseError(
-          'profile: Failed to parse profile uri (%s)', e);
-        logger.error(err);
+        err = e;
       }
 
       if (!err) {
@@ -601,6 +601,7 @@ var importProfileUri = function(prflUri, callback) {
       strictSSL: false
     }, function(err, resp, body) {
       var prfl;
+      var data;
 
       if (err) {
         err = new errors.ParseError(
@@ -608,7 +609,7 @@ var importProfileUri = function(prflUri, callback) {
         logger.error(err);
       } else {
         try {
-          var data = JSON.parse(body);
+          data = JSON.parse(body);
         } catch (e) {
           err = new errors.ParseError(
             'profile: Failed to parse profile uri (%s)', e);
