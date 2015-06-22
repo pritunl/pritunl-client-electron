@@ -128,6 +128,21 @@ app.on('ready', function() {
     }
   });
 
+  profile.getProfiles(function(err, prfls) {
+    if (err) {
+      return;
+    }
+
+    var prfl;
+    for (var i = 0; i < prfls.length; i++) {
+      prfl = prfls[i];
+
+      if (prfl.autostart) {
+        prfl.connect();
+      }
+    }
+  });
+
   openMainWin();
 
   tray = new Tray(disconnTray);
