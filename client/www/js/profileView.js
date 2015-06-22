@@ -269,6 +269,7 @@ var init = function() {
     service.update();
   });
 
+  var hold;
   setInterval(function() {
     var curTime = Math.floor((new Date).getTime() / 1000);
 
@@ -276,7 +277,16 @@ var init = function() {
       prfl.onUptime(curTime);
     });
 
-    service.update();
+    if (!hold) {
+      service.update(function(err) {
+        if (err) {
+          hold = true;
+          setTimeout(function() {
+            hold = false;
+          }, 30000);
+        }
+      });
+    }
   }, 1000);
 };
 
