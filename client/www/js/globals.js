@@ -17,3 +17,12 @@ global.ErrorInit = function(name, args) {
 
   this.stack = (new Error()).stack;
 };
+
+global.requireRemotes = function() {
+  try {
+    var remote = require('remote');
+    return remote.require('./js/remotes.js');
+  } catch(err) {
+    return require('./remotes.js')
+  }
+};
