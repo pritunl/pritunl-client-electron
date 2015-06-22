@@ -16,7 +16,7 @@ if (remote.process.platform === 'linux') {
   $ubuntu.remove();
 } else {
   config.onReady(function() {
-    $('.ubuntu').click(function() {
+    $('.ubuntu .box').click(function() {
       var win = new BrowserWindow({
         icon: path.join(__dirname, 'img', 'logo.png'),
         width: 800,
@@ -24,6 +24,14 @@ if (remote.process.platform === 'linux') {
       });
       win.loadUrl('http://ubuntu.com/desktop');
 
+      config.settings.showUbuntu = false;
+      config.save();
+      $ubuntu.slideUp(200, function() {
+        $ubuntu.remove();
+      });
+    });
+
+    $('.ubuntu .close').click(function() {
       config.settings.showUbuntu = false;
       config.save();
       $ubuntu.slideUp(200, function() {
