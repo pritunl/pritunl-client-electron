@@ -28,14 +28,12 @@ WaitGroup.prototype.done = function() {
   if (this.count <= 0) {
     if (this.waiter) {
       this.waiter();
-    } else {
-      this.waiter = true;
     }
   }
 };
 
 WaitGroup.prototype.wait = function(callback) {
-  if (this.waiter) {
+  if (this.count === 0) {
     callback();
   } else {
     this.waiter = callback;
