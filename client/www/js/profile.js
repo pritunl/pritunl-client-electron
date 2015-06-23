@@ -254,6 +254,8 @@ Profile.prototype.formatedNameLogo = function() {
       if (this.server) {
         name += ' (' + this.server + ')';
         logo = this.server.substr(0, 1);
+      } else {
+        logo = this.user.substr(0, 1);
       }
     } else if (this.server) {
       name = this.server;
@@ -262,6 +264,8 @@ Profile.prototype.formatedNameLogo = function() {
       name = 'Unknown Profile';
       logo = 'U';
     }
+  } else {
+    logo = name.substr(0, 1);
   }
 
   return [name, logo];
