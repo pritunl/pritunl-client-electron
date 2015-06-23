@@ -11,6 +11,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -19,7 +20,8 @@ const (
 )
 
 var (
-	Profiles = map[string]*Profile{}
+	Profiles     = map[string]*Profile{}
+	profilesLock = sync.Mutex{}
 )
 
 type OutputData struct {
@@ -156,7 +158,14 @@ func (p *Profile) Start(timeout bool) (err error) {
 	p.Status = "connecting"
 	p.Timestamp = start.Unix()
 
+	profilesLock.Lock()
+	_, ok := Profiles[p.Id]
+	if ok {
+		profilesLock.Unlock()
+		return
+	}
 	Profiles[p.Id] = p
+	profilesLock.Unlock()
 
 	confPath, err := p.write()
 	if err != nil {
