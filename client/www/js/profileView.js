@@ -285,7 +285,7 @@ var init = function() {
               remote.getCurrentWindow().close();
             }
           });
-        }, 3000);
+        }, 5000);
       }
     });
   }, 1000);
