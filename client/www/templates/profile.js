@@ -25,7 +25,7 @@ module.exports = `<div class="profile" flex layout horizontal>
     <input class="rename-input" type="text" tabindex="-1"
       placeholder="Enter New Profile Name">
     <div class="rename-confirm item btn btn-success"
-      layout vertical center>Rename</div>
+      layout vertical center>Ok</div>
     <div class="rename-cancel item btn btn-danger"
       layout vertical center>Cancel</div>
     <div class="delete item btn btn-danger"
