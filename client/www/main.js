@@ -4,11 +4,14 @@ var app = require('app');
 var path = require('path');
 var fs = require('fs');
 var request = require('request');
+var dialog = require('dialog');
 var BrowserWindow = require('browser-window');
 var Tray = require('tray');
 var Menu = require('menu');
 var constants = require('./js/constants.js');
 var events = require('./js/events.js');
+var profile = require('./js/profile.js');
+var service = require('./js/service.js');
 
 var main = null;
 var tray = null;
@@ -16,11 +19,6 @@ var tray = null;
 if (app.dock) {
   app.dock.hide();
 }
-app.on('window-all-closed', function() {
-  if (app.dock) {
-    app.dock.hide();
-  }
-});
 
 var connTray;
 var disconnTray;
@@ -45,6 +43,43 @@ if (process.platform === 'darwin') {
   disconnTray = path.join(__dirname, 'img',
     'tray_disconnected.png');
 }
+var icon = path.join(__dirname, 'img', 'logo.png');
+
+var checkService = function(callback) {
+  service.ping(function(status) {
+    if (!status) {
+      setTimeout(function() {
+        service.ping(function(status) {
+          if (!status) {
+            dialog.showMessageBox(null, {
+              type: 'warning',
+              buttons: ['Ok'],
+              icon: icon,
+              title: 'Pritunl - Service Error',
+              message: 'Unable to communicate with helper service, ' +
+                'try restarting'
+            });
+          }
+
+          if (callback) {
+            callback(status);
+          }
+        });
+      }, 1000);
+    } else {
+      if (callback) {
+        callback(true);
+      }
+    }
+  });
+};
+
+app.on('window-all-closed', function() {
+  if (app.dock) {
+    app.dock.hide();
+  }
+  checkService();
+});
 
 var openMainWin = function() {
   if (main) {
@@ -52,29 +87,37 @@ var openMainWin = function() {
     return;
   }
 
-  main = new BrowserWindow({
-    icon: path.join(__dirname, 'img', 'logo.png'),
-    frame: false,
-    fullscreen: false,
-    transparent: true,
-    width: 400,
-    height: 585,
-    'min-width': 280,
-    'min-height': 225,
-    'max-width': 600,
-    'max-height': 790
+  checkService(function(status) {
+    if (!status) {
+      return;
+    }
+
+    main = new BrowserWindow({
+      icon: icon,
+      frame: false,
+      fullscreen: false,
+      transparent: true,
+      width: 400,
+      height: 585,
+      'min-width': 280,
+      'min-height': 225,
+      'max-width': 600,
+      'max-height': 790
+    });
+    main.maximizedPrev = null;
+
+    main.loadUrl('file://' + path.join(__dirname, 'index.html'));
+
+    main.on('closed', function() {
+      main = null;
+    });
+
+    main.openDevTools();
+
+    if (app.dock) {
+      app.dock.show();
+    }
   });
-  main.maximizedPrev = null;
-
-  main.loadUrl('file://' + path.join(__dirname, 'index.html'));
-
-  main.on('closed', function() {
-    main = null;
-  });
-
-  if (app.dock) {
-    app.dock.show();
-  }
 };
 
 var sync =  function() {
@@ -128,21 +171,6 @@ app.on('ready', function() {
     }
   });
 
-  profile.getProfiles(function(err, prfls) {
-    if (err) {
-      return;
-    }
-
-    var prfl;
-    for (var i = 0; i < prfls.length; i++) {
-      prfl = prfls[i];
-
-      if (prfl.autostart) {
-        prfl.connect();
-      }
-    }
-  });
-
   openMainWin();
 
   tray = new Tray(disconnTray);
@@ -178,6 +206,21 @@ app.on('ready', function() {
     }
   ]);
   tray.setContextMenu(menu);
+
+  profile.getProfiles(function(err, prfls) {
+    if (err) {
+      return;
+    }
+
+    var prfl;
+    for (var i = 0; i < prfls.length; i++) {
+      prfl = prfls[i];
+
+      if (prfl.autostart) {
+        prfl.connect();
+      }
+    }
+  });
 
   sync();
   setInterval(function() {
