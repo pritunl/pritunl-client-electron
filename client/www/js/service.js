@@ -37,27 +37,30 @@ var iter = function(callback) {
   }
 };
 
-var update = function() {
+var update = function(callback) {
   request.get({
     url: 'http://' + constants.serviceHost + '/profile'
   }, function(err, resp, body) {
     if (err) {
       err = new errors.NetworkError(
         'service: Failed to update profile (%s)', err);
-      logger.error(err);
-      return;
+    } else {
+      try {
+        var data = JSON.parse(body);
+      } catch (e) {
+        err = new errors.ParseError(
+          'service: Failed to parse data (%s)', e);
+        logger.error(err);
+      }
+
+      if (!err) {
+        onUpdate(data);
+      }
     }
 
-    try {
-      var data = JSON.parse(body);
-    } catch (e) {
-      err = new errors.ParseError(
-        'service: Failed to parse data (%s)', e);
-      logger.error(err);
-      return;
+    if (callback) {
+      callback(err);
     }
-
-    onUpdate(data);
   }.bind(this));
 };
 
