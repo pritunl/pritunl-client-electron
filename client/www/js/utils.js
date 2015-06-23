@@ -14,7 +14,36 @@ var getUserDataPath = function() {
   return app.getPath('userData');
 };
 
+function WaitGroup() {
+  this.count = 0;
+  this.waiter = null;
+}
+
+WaitGroup.prototype.add = function() {
+  this.count += 1;
+};
+
+WaitGroup.prototype.done = function() {
+  this.count -= 1;
+  if (this.count <= 0) {
+    if (this.waiter) {
+      this.waiter();
+    } else {
+      this.waiter = true;
+    }
+  }
+};
+
+WaitGroup.prototype.wait = function(callback) {
+  if (this.waiter) {
+    callback();
+  } else {
+    this.waiter = callback;
+  }
+};
+
 module.exports = {
   uuid: uuid,
-  getUserDataPath: getUserDataPath
+  getUserDataPath: getUserDataPath,
+  WaitGroup: WaitGroup
 };
