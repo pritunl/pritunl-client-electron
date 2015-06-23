@@ -1,11 +1,12 @@
 var path = require('path');
 var logger = require('./logger.js');
 var errors = require('./errors.js');
-var remotes = requireRemotes();
+var utils = require('./utils.js');
+var fs = remoteRequire('fs');
 
 var loaded;
 var waiting = [];
-var pth = path.join(remotes.getUserDataPath(), 'pritunl.json');
+var pth = path.join(utils.getUserDataPath(), 'pritunl.json');
 var settings = {
   showUbuntu: true
 };
@@ -18,31 +19,49 @@ var onReady = function(callback) {
   waiting.push(callback);
 };
 
+var importData = function(data) {
+  loaded = true;
+
+  settings.showUbuntu = data['show_ubuntu'];
+  if (settings.showUbuntu === undefined) {
+    settings.showUbuntu = true;
+  }
+
+  for (var i = 0; i < waiting.length; i++) {
+    waiting[i]();
+  }
+};
+
 var load = function() {
-  remotes.readFile(pth, function(err, data) {
-    loaded = true;
-
-    try {
-      data = JSON.parse(data);
-    } catch (e) {
-      err = new errors.ParseError('config: Failed to parse config (%s)', e);
-      logger.error(err);
-      data = {};
+  fs.exists(pth, function(exists) {
+    if (!exists) {
+      importData({});
+      return;
     }
 
-    settings.showUbuntu = data['show_ubuntu'];
-    if (settings.showUbuntu === undefined) {
-      settings.showUbuntu = true;
-    }
+    fs.readFile(pth, function(err, data) {
+      if (err) {
+        err = new errors.ReadError('config: Failed to read config (%s)', e);
+        logger.error(err);
+        data = {}
+      } else {
+        try {
+          data = JSON.parse(data);
+        } catch (e) {
+          err = new errors.ParseError(
+            'config: Failed to parse config (%s)', e);
+          logger.error(err);
+          data = {};
+        }
+      }
 
-    for (var i = 0; i < waiting.length; i++) {
-      waiting[i]();
-    }
+      importData(data);
+    });
   });
 };
 
 var save = function() {
-  remotes.writeFile(pth, JSON.stringify({
+  fs.writeFile(pth, JSON.stringify({
     'show_ubuntu': settings.showUbuntu
   }), function(err) {
     if (err) {
