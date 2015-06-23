@@ -27,6 +27,7 @@ func Register(engine *gin.Engine) {
 	engine.GET("/profile", profileGet)
 	engine.POST("/profile", profilePost)
 	engine.DELETE("/profile", profileDel)
+	engine.GET("/ping", pingGet)
 	engine.POST("/stop", stopPost)
 	engine.GET("/status", statusGet)
 }
