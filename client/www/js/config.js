@@ -41,7 +41,8 @@ var load = function() {
 
     fs.readFile(pth, function(err, data) {
       if (err) {
-        err = new errors.ReadError('config: Failed to read config (%s)', e);
+        err = new errors.ReadError(
+          'config: Failed to read config (%s)', err);
         logger.error(err);
         data = {}
       } else {
