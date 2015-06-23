@@ -1,4 +1,4 @@
-<div class="profile" flex layout horizontal>
+module.exports = `<div class="profile" flex layout horizontal>
   <div class="logo" layout vertical center
     style="background-color: {{logoColor}};">{{logo}}</div>
   <div class="info" flex>
@@ -53,4 +53,4 @@
       <div class="btn btn-danger close">Close</div><div class="btn btn-info clear">Clear</div>
     </div>
   </div>
-</div>
+</div>`
