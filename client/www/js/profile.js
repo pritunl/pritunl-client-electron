@@ -603,7 +603,6 @@ var importProfileUri = function(prflUri, callback) {
       url: prflUri,
       strictSSL: false
     }, function(err, resp, body) {
-      var prfl;
       var data;
 
       if (err) {
