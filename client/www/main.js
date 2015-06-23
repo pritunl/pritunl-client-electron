@@ -100,7 +100,7 @@ var openMainWin = function() {
       fullscreen: false,
       transparent: true,
       width: 400,
-      height: 585,
+      height: 561,
       'min-width': 320,
       'min-height': 225,
       'max-width': 600,
@@ -113,8 +113,6 @@ var openMainWin = function() {
     main.on('closed', function() {
       main = null;
     });
-
-    main.openDevTools();
 
     if (app.dock) {
       app.dock.show();

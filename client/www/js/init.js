@@ -8,6 +8,7 @@ var errors = require('./errors.js');
 var logger = require('./logger.js');
 var config = require('./config.js');
 var profileView = require('./profileView.js');
+var BrowserWindow = remoteRequire('browser-window');
 
 profileView.init();
 
