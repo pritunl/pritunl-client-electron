@@ -99,8 +99,10 @@ function Profile(pth) {
   this.log = null;
 }
 
-Profile.prototype.load = function(callback) {
-  remotes.readFile(this.confPath, function (err, data) {
+Profile.prototype.load = function(callback, waitAll) {
+  var count = 0;
+
+  fs.readFile(this.confPath, function (err, data) {
     var confData;
     try {
       confData = JSON.parse(data);
@@ -112,24 +114,43 @@ Profile.prototype.load = function(callback) {
 
     this.import(confData);
 
-    if (callback) {
+    if (waitAll) {
+      count += 1;
+      if (callback && count >= 3) {
+        callback();
+      }
+    } else if (callback) {
       callback();
     }
   }.bind(this));
 
-  remotes.readFile(this.ovpnPath, function(err, data) {
+  fs.readFile(this.ovpnPath, function(err, data) {
     if (!data) {
       this.data = null;
     } else {
       this.data = data.toString();
     }
+
+    if (waitAll) {
+      count += 1;
+      if (callback && count >= 3) {
+        callback();
+      }
+    }
   }.bind(this));
 
-  remotes.readFile(this.logPath, function(err, data) {
+  fs.readFile(this.logPath, function(err, data) {
     if (!data) {
       this.log = null;
     } else {
       this.log = data.toString();
+    }
+
+    if (waitAll) {
+      count += 1;
+      if (callback && count >= 3) {
+        callback();
+      }
     }
   }.bind(this));
 };
@@ -311,7 +332,7 @@ Profile.prototype.getUptime = function(curTime) {
 };
 
 Profile.prototype.saveConf = function(callback) {
-  remotes.writeFile(this.confPath,
+  fs.writeFile(this.confPath,
     JSON.stringify(this.exportConf()), function(err) {
       if (err) {
         err = new errors.WriteError(
@@ -328,7 +349,7 @@ Profile.prototype.saveConf = function(callback) {
 };
 
 Profile.prototype.saveData = function(callback) {
-  remotes.writeFile(this.ovpnPath, this.data, function(err) {
+  fs.writeFile(this.ovpnPath, this.data, function(err) {
     if (err) {
       err = new errors.WriteError(
         'config: Failed to save profile data (%s)', err);
@@ -341,7 +362,7 @@ Profile.prototype.saveData = function(callback) {
 };
 
 Profile.prototype.saveLog = function(callback) {
-  remotes.writeFile(this.logPath, this.log, function(err) {
+  fs.writeFile(this.logPath, this.log, function(err) {
     if (err) {
       err = new errors.WriteError(
         'config: Failed to save profile log (%s)', err);
@@ -356,11 +377,11 @@ Profile.prototype.saveLog = function(callback) {
 Profile.prototype.delete = function() {
   this.disconnect();
 
-  remotes.exists(this.confPath, function(exists) {
+  fs.exists(this.confPath, function(exists) {
     if (!exists) {
       return;
     }
-    remotes.unlink(this.confPath, function(err) {
+    fs.unlink(this.confPath, function(err) {
       if (err) {
         err = new errors.RemoveError(
           'config: Failed to delete profile conf (%s)', err);
@@ -368,11 +389,11 @@ Profile.prototype.delete = function() {
       }
     });
   }.bind(this));
-  remotes.exists(this.ovpnPath, function(exists) {
+  fs.exists(this.ovpnPath, function(exists) {
     if (!exists) {
       return;
     }
-    remotes.unlink(this.ovpnPath, function(err) {
+    fs.unlink(this.ovpnPath, function(err) {
       if (err) {
         err = new errors.RemoveError(
           'config: Failed to delete profile data (%s)', err);
@@ -380,11 +401,11 @@ Profile.prototype.delete = function() {
       }
     });
   }.bind(this));
-  remotes.exists(this.logPath, function(exists) {
+  fs.exists(this.logPath, function(exists) {
     if (!exists) {
       return;
     }
-    remotes.unlink(this.logPath, function(err) {
+    fs.unlink(this.logPath, function(err) {
       if (err) {
         err = new errors.RemoveError(
           'config: Failed to delete profile log (%s)', err);
@@ -402,16 +423,16 @@ Profile.prototype.disconnect = function() {
   service.stop(this);
 };
 
-var getProfiles = function(callback) {
-  var root = path.join(remotes.getUserDataPath(), 'profiles');
+var getProfiles = function(callback, waitAll) {
+  var root = path.join(utils.getUserDataPath(), 'profiles');
 
-  remotes.exists(root, function(exists) {
+  fs.exists(root, function(exists) {
     if (!exists) {
       callback(null, []);
       return;
     }
 
-    remotes.readdir(root, function(err, paths) {
+    fs.readdir(root, function(err, paths) {
       if (err) {
         callback(err, null);
         return
@@ -452,7 +473,7 @@ var getProfiles = function(callback) {
           if (loaded >= profilePaths.length) {
             callback(null, profiles);
           }
-        });
+        }, waitAll);
       }
     });
   });
@@ -492,7 +513,7 @@ var importProfileData = function(data) {
 
   data = ovpnData.trim() + '\n';
 
-  var pth = path.join(remotes.getUserDataPath(), 'profiles', utils.uuid());
+  var pth = path.join(utils.getUserDataPath(), 'profiles', utils.uuid());
   var prfl = new Profile(pth);
 
   prfl.import(confData);
@@ -510,7 +531,7 @@ var importProfile = function(pth, callback) {
   switch (ext) {
     case '.ovpn':
     case '.conf':
-      remotes.readFile(pth, 'utf8', function(err, data) {
+      fs.readFile(pth, 'utf8', function(err, data) {
         var prfl;
 
         if (err) {

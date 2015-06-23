@@ -225,7 +225,7 @@ app.on('ready', function() {
         prfl.connect();
       }
     }
-  });
+  }, true);
 
   sync();
   setInterval(function() {
