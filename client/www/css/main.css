@@ -503,10 +503,10 @@ input:active {
 }
 .profile .menu .rename-input {
   font-size: 16px;
-  width: 185px;
+  width: 190px;
 }
 .profile .menu.renaming .rename-input {
-  left: -185px;
+  left: -190px;
 }
 .profile .menu.renaming .rename-confirm {
   left: -126px;
