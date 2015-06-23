@@ -16,9 +16,12 @@ var openMenu = function($profile) {
 };
 var closeMenu = function($profile) {
   var $menu = $profile.find('.menu');
+  $menu.removeClass('renaming');
   $menu.removeClass('deleting');
   $menu.removeClass('autostarting');
   $menu.removeClass('show');
+  $profile.find('.menu .rename-input').blur();
+  $profile.find('.menu .rename-input').val('');
   $profile.find('.menu-backdrop').fadeOut(75);
 };
 
@@ -112,6 +115,20 @@ var renderProfile = function(prfl) {
   });
   $profile.find('.menu .delete-no').click(function() {
     $profile.find('.menu').removeClass('deleting');
+  });
+
+  $profile.find('.menu .rename').click(function() {
+    $profile.find('.menu').addClass('renaming');
+  });
+  $profile.find('.menu .rename-confirm').click(function() {
+    $profile.find('.menu').removeClass('renaming');
+    $profile.find('.menu .rename-input').blur();
+    $profile.find('.menu .rename-input').val('');
+  });
+  $profile.find('.menu .rename-cancel').click(function() {
+    $profile.find('.menu').removeClass('renaming');
+    $profile.find('.menu .rename-input').blur();
+    $profile.find('.menu .rename-input').val('');
   });
 
   $profile.find('.menu .autostart').click(function() {

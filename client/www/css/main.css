@@ -218,6 +218,19 @@ body {
   height: 100%;
 }
 
+input {
+  font-size: 18px;
+  background-color: #253c5a;
+  color: #fff;
+}
+input,
+input:focus,
+input:hover,
+input:active {
+  border: 0;
+  outline: none;
+}
+
 ::-webkit-scrollbar {
   width: 15px;
   background: #171a1d;
@@ -387,18 +400,8 @@ body {
 }
 .profiles .uri-input {
   width: 100%;
-  font-size: 18px;
   padding: 12px 10px;
-  background-color: #253c5a;
-  color: #fff;
   display: none;
-}
-.profiles .uri-input,
-.profiles .uri-input:focus,
-.profiles .uri-input:hover,
-.profiles .uri-input:active {
-  border: 0;
-  outline: none;
 }
 .profiles .import-btns {
   display: none;
@@ -485,6 +488,34 @@ body {
 }
 .profile .menu .item.disconnect {
   display: none;
+}
+
+.profile .menu .rename-input,
+.profile .menu .rename-confirm,
+.profile .menu .rename-cancel {
+  position: absolute;
+  top: 37px;
+  left: 126px;
+  width: 63px;
+  height: 34px;
+  padding: 0 6px;
+  transition: left 125ms linear;
+}
+.profile .menu .rename-input {
+  font-size: 16px;
+  width: 185px;
+}
+.profile .menu.renaming .rename-input {
+  left: -185px;
+}
+.profile .menu.renaming .rename-confirm {
+  left: -126px;
+}
+.profile .menu.renaming .rename-confirm {
+  left: 0;
+}
+.profile .menu.renaming .rename-cancel {
+  left: 63px;
 }
 
 .profile .menu .delete-ask,

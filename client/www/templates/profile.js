@@ -22,6 +22,12 @@ module.exports = `<div class="profile" flex layout horizontal>
       layout vertical center>Disconnect</div>
     <div class="rename item btn btn-info"
       layout vertical center>Rename</div>
+    <input class="rename-input" type="text" tabindex="-1"
+      placeholder="Enter New Profile Name">
+    <div class="rename-confirm item btn btn-success"
+      layout vertical center>Rename</div>
+    <div class="rename-cancel item btn btn-danger"
+      layout vertical center>Cancel</div>
     <div class="delete item btn btn-danger"
       layout vertical center>Delete</div>
     <div class="delete-ask item"
