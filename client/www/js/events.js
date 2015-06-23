@@ -15,7 +15,6 @@ var connect = function(callback) {
   socket.on('close', reconnect);
 
   socket.on('message', function(data) {
-    console.log(data);
     data = JSON.parse(data);
     callback(data);
   });
