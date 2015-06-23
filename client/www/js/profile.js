@@ -233,7 +233,7 @@ Profile.prototype.export = function() {
     userId: this.userId || '',
     user: this.user || '',
     autostart: this.autostart ? 'On' : 'Off',
-    syncHosts: this.syncHosts|| [],
+    syncHosts: this.syncHosts || [],
     syncHash: this.syncHash || '',
     syncSecret: this.syncSecret || '',
     syncToken: this.syncToken || ''
