@@ -103,6 +103,18 @@ var stop = function(prfl, callback) {
   });
 };
 
+var ping = function(callback) {
+  request.get({
+    url: 'http://' + constants.serviceHost + '/ping'
+  }, function(err, resp) {
+    if (err || !resp || resp.statusCode !== 200) {
+      callback(false);
+    } else {
+      callback(true);
+    }
+  });
+};
+
 module.exports = {
   add: add,
   remove: remove,
@@ -110,5 +122,6 @@ module.exports = {
   iter: iter,
   update: update,
   start: start,
-  stop: stop
+  stop: stop,
+  ping: ping
 };
