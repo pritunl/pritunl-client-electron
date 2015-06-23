@@ -16,12 +16,18 @@ func main() {
 		logrus.WithFields(logrus.Fields{
 			"error": err,
 		}).Error("main: Failed to run check and clean")
-		return
+		panic(err)
 	}
 
 	gin.SetMode(gin.ReleaseMode)
 
 	router := gin.New()
 	handlers.Register(router)
-	router.Run("127.0.0.1:9770")
+	err = router.Run("127.0.0.1:9770")
+	if err != nil {
+		logrus.WithFields(logrus.Fields{
+			"error": err,
+		}).Error("main: Server error")
+		panic(err)
+	}
 }
