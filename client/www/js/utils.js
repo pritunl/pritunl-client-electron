@@ -1,3 +1,5 @@
+var app = remoteRequire('app');
+
 var uuid = function() {
   var id = '';
 
@@ -8,6 +10,11 @@ var uuid = function() {
   return id;
 };
 
+var getUserDataPath = function() {
+  return app.getPath('userData');
+};
+
 module.exports = {
-  uuid: uuid
+  uuid: uuid,
+  getUserDataPath: getUserDataPath
 };
