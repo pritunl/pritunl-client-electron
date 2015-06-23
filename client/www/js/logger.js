@@ -1,5 +1,6 @@
 var path = require('path');
-var remotes = requireRemotes();
+var fs = remoteRequire('fs');
+var utils = require('./utils.js');
 
 var alert;
 try {
@@ -8,7 +9,7 @@ try {
 } catch (e) {
 }
 
-var pth = path.join(remotes.getUserDataPath(), 'pritunl.log');
+var pth = path.join(utils.getUserDataPath(), 'pritunl.log');
 
 var push = function(lvl, msg) {
   var time = new Date();
@@ -16,7 +17,7 @@ var push = function(lvl, msg) {
     time.getDate() + ' ' +  time.getHours() + ':' + time.getMinutes() + ':' +
     time.getSeconds() + '][' + lvl  + '] ' + msg + '\n';
 
-  remotes.appendFile(pth, msg, function() {});
+  fs.appendFile(pth, msg, function() {});
 };
 
 var info = function(msg) {
