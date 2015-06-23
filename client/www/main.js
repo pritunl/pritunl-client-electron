@@ -101,7 +101,7 @@ var openMainWin = function() {
       transparent: true,
       width: 400,
       height: 585,
-      'min-width': 280,
+      'min-width': 320,
       'min-height': 225,
       'max-width': 600,
       'max-height': 790

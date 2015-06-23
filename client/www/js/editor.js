@@ -9,7 +9,7 @@ function Editor(typ, $container) {
 Editor.prototype.create = function() {
   this.editor = ace.edit(this.$container[0]);
   this.editor.setTheme('ace/theme/cobalt');
-  this.editor.setFontSize(12);
+  this.editor.setFontSize(10);
   this.editor.setShowPrintMargin(false);
   this.editor.setShowFoldWidgets(false);
   this.editor.getSession().setMode('ace/mode/text');
