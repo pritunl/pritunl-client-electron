@@ -30,14 +30,8 @@ global.requireRemotes = function() {
 global.remoteRequire = function(name) {
   try {
     var remote = require('remote');
-    if (name.indexOf('.js') !== -1) {
-      name = './' + name;
-    }
     return remote.require(name);
   } catch (e) {
-    if (name.indexOf('.js') !== -1) {
-      name = './js/' + name;
-    }
     return require(name);
   }
 };

@@ -5,7 +5,8 @@ var errors = require('./errors.js');
 var utils = require('./utils.js');
 var service = require('./service.js');
 var logger = require('./logger.js');
-var remotes = requireRemotes();
+var fs = remoteRequire('fs');
+var archive = remoteRequire('./archive.js');
 
 var colors = {
   'A': '#ff8a80',
@@ -526,7 +527,7 @@ var importProfile = function(pth, callback) {
       });
       break;
     case '.tar':
-      remotes.readTarFile(pth, function(err, data) {
+      archive.readTarFile(pth, function(err, data) {
         var prfl;
 
         if (err) {
