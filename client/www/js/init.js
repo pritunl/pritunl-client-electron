@@ -6,6 +6,7 @@ var service = require('./service.js');
 var editor = require('./editor.js');
 var errors = require('./errors.js');
 var logger = require('./logger.js');
+var config = require('./config.js');
 var profileView = require('./profileView.js');
 
 profileView.init();
