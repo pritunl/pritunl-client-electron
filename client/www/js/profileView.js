@@ -1,4 +1,3 @@
-var fs = require('fs');
 var path = require('path');
 var remote = require('remote');
 var $ = require('jquery');
@@ -9,9 +8,7 @@ var editor = require('./editor.js');
 var events = require('./events.js');
 var errors = require('./errors.js');
 var logger = require('./logger.js');
-
-var template = fs.readFileSync(
-  path.join(__dirname, '..', 'templates', 'profile.html')).toString();
+var template = require('../templates/profile.js');
 
 var openMenu = function($profile) {
   $profile.find('.menu').addClass('show');
