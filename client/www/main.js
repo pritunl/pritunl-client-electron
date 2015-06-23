@@ -12,6 +12,8 @@ var constants = require('./js/constants.js');
 var events = require('./js/events.js');
 var profile = require('./js/profile.js');
 var service = require('./js/service.js');
+var errors = require('./js/errors.js');
+var logger = require('./js/logger.js');
 
 var main = null;
 var tray = null;
@@ -131,6 +133,9 @@ var sync =  function() {
     try {
       var data = JSON.parse(body);
     } catch (e) {
+      err = new errors.ParseError(
+        'main: Failed to parse service status (%s)', e);
+      logger.error(err);
       return;
     }
 
