@@ -121,9 +121,14 @@ var renderProfile = function(prfl) {
     $profile.find('.menu').addClass('renaming');
   });
   $profile.find('.menu .rename-confirm').click(function() {
+    $renameInput = $profile.find('.menu .rename-input');
+
+    prfl.name = $renameInput.val();
+    prfl.saveConf();
+
     $profile.find('.menu').removeClass('renaming');
-    $profile.find('.menu .rename-input').blur();
-    $profile.find('.menu .rename-input').val('');
+    $renameInput.blur();
+    $renameInput.val('');
   });
   $profile.find('.menu .rename-cancel').click(function() {
     $profile.find('.menu').removeClass('renaming');
