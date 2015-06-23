@@ -56,8 +56,8 @@ var renderProfile = function(prfl) {
   prfl.onUpdate = function() {
     var data = prfl.export();
     $profile.find('.info .name').text(data.name);
-    $profile.find('.info .logo').text(data.logo);
-    $profile.find('.info .logo').css('background-color', data.logoColor);
+    $profile.find('.logo').text(data.logo);
+    $profile.find('.logo').css('background-color', data.logoColor);
     $profile.find('.info .uptime').text(data.status);
     $profile.find('.menu .autostart').text('Autostart ' + data.autostart);
     $profile.find('.info .server-addr').text(data.serverAddr);
