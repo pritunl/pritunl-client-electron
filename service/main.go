@@ -11,10 +11,6 @@ import (
 func main() {
 	logger.Init()
 
-	logrus.WithFields(logrus.Fields{
-		"key": "value",
-	}).Info("main: Starting pritunl")
-
 	err := autoclean.CheckAndClean()
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
