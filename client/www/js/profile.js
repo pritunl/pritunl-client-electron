@@ -388,7 +388,7 @@ Profile.prototype.saveData = function(callback) {
     if (callback) {
       callback(err);
     }
-  });
+  }.bind(this));
 };
 
 Profile.prototype.saveLog = function(callback) {
