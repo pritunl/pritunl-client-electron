@@ -101,7 +101,8 @@ function Profile(pth) {
 }
 
 Profile.prototype.load = function(callback, waitAll) {
-  var count = 0;
+  var waiter = new utils.WaitGroup();
+  waiter.add(3);
 
   fs.readFile(this.confPath, function (err, data) {
     var confData;
@@ -116,10 +117,7 @@ Profile.prototype.load = function(callback, waitAll) {
     this.import(confData);
 
     if (waitAll) {
-      count += 1;
-      if (callback && count >= 3) {
-        callback();
-      }
+      waiter.done();
     } else if (callback) {
       callback();
     }
@@ -135,10 +133,7 @@ Profile.prototype.load = function(callback, waitAll) {
     this.parseData();
 
     if (waitAll) {
-      count += 1;
-      if (callback && count >= 3) {
-        callback();
-      }
+      waiter.done();
     }
   }.bind(this));
 
@@ -150,12 +145,15 @@ Profile.prototype.load = function(callback, waitAll) {
     }
 
     if (waitAll) {
-      count += 1;
-      if (callback && count >= 3) {
-        callback();
-      }
+      waiter.done();
     }
   }.bind(this));
+
+  waiter.wait(function() {
+    if (callback) {
+      callback();
+    }
+  })
 };
 
 Profile.prototype.parseData = function() {
