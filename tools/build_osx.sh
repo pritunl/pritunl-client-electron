@@ -47,6 +47,6 @@ chmod +x resources_osx/scripts/postinstall
 chmod +x resources_osx/scripts/preinstall
 cd build
 pkgbuild --root osx --scripts ../resources_osx/scripts --sign "Developer ID Installer: Zachary Huff (73CNTLZRFJ)" --identifier com.pritunl.pkg.Pritunl --version $APP_VER --ownership recommended --install-location / Build.pkg
-productbuild --distribution ../resources_osx/distribution.xml --sign "Developer ID Installer: Zachary Huff (73CNTLZRFJ)" --version $APP_VER Pritunl.pkg
+productbuild --resources ../resources_osx --distribution ../resources_osx/distribution.xml --sign "Developer ID Installer: Zachary Huff (73CNTLZRFJ)" --version $APP_VER Pritunl.pkg
 zip Pritunl.pkg.zip Pritunl.pkg
 rm -f Build.pkg
