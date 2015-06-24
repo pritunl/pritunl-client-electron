@@ -207,7 +207,7 @@ Importer.prototype.parse = function(callback) {
       });
     }
 
-    waiter.wait(function(prfl) {
+    waiter.wait(function() {
       if (callback) {
         callback(this.profiles);
       }
