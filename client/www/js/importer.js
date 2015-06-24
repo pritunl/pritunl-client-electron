@@ -45,6 +45,10 @@ Importer.prototype.read = function(pth, data, callback) {
   var filePth;
   var split;
   var waiter = new utils.WaitGroup();
+  var fileName = path.basename(pth);
+  fileName = fileName.split('.');
+  fileName.pop();
+  fileName = fileName.join('.');
 
   for (var i = 0; i < lines.length; i++) {
     line = lines[i];
@@ -164,7 +168,6 @@ Importer.prototype.read = function(pth, data, callback) {
   try {
     confData = JSON.parse(jsonData);
   } catch (e) {
-    confData = {};
   }
 
   waiter.wait(function() {
@@ -173,7 +176,11 @@ Importer.prototype.read = function(pth, data, callback) {
     var pth = path.join(utils.getUserDataPath(), 'profiles', utils.uuid());
     var prfl = new profile.Profile(pth);
 
-    prfl.import(confData);
+    if (confData) {
+      prfl.import(confData);
+    } else {
+      prfl.name = fileName;
+    }
     prfl.data = data;
 
     prfl.saveData();
