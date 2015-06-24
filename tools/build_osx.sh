@@ -6,8 +6,9 @@ rm -rf build/osx
 # Pritunl
 mkdir -p build/osx/Applications
 cd client
-./node_modules/.bin/electron-packager ./ Pritunl --sign="Developer ID Application: Zachary Huff (73CNTLZRFJ)" --platform=darwin --arch=x64 --version=0.27.3 --icon=./www/img/pritunl.icns --out=../build/osx/Applications
+./node_modules/.bin/electron-packager ./ Pritunl --platform=darwin --arch=x64 --version=0.28.3 --icon=./www/img/pritunl.icns --out=../build/osx/Applications
 cd ../
+codesign --force --deep --sign "Developer ID Application: Zachary Huff (73CNTLZRFJ)" build/osx/Applications/Pritunl.app
 
 # Service
 cd service
@@ -40,3 +41,4 @@ chmod +x resources_osx/scripts/preinstall
 cd build
 pkgbuild --root osx --scripts ../resources_osx/scripts --sign "Developer ID Installer: Zachary Huff (73CNTLZRFJ)" --identifier com.pritunl.pkg.Pritunl --version 0.1.0 --ownership recommended --install-location / Build.pkg
 productbuild --distribution ../resources_osx/distribution.xml --sign "Developer ID Installer: Zachary Huff (73CNTLZRFJ)" --version 0.1.0 Pritunl.pkg
+codesign --force --deep --sign "Developer ID Application: Zachary Huff (73CNTLZRFJ)" Pritunl.pkg
