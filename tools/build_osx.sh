@@ -1,12 +1,18 @@
+#!/bin/bash
 cd "$( dirname "${BASH_SOURCE[0]}" )"
 cd ../
 
+export APP_VER="$(cat client/package.json | grep version | cut -d '"' -f 4)"
+
 rm -rf build/osx
+rm -f build/Pritunl.pkg
+rm -f build/Pritunl.pkg.zip
 
 # Pritunl
 mkdir -p build/osx/Applications
 cd client
-./node_modules/.bin/electron-packager ./ Pritunl --platform=darwin --arch=x64 --version=0.28.3 --icon=./www/img/pritunl.icns --out=../build/osx/Applications
+export ELECTRON_VER="$(npm ls | grep electron-prebuilt | tr '@' '\n' | tail -n1)"
+./node_modules/.bin/electron-packager ./ Pritunl --platform=darwin --arch=x64 --version=$ELECTRON_VER --icon=./www/img/pritunl.icns --out=../build/osx/Applications
 cd ../
 sleep 3
 codesign --force --deep --sign "Developer ID Application: Zachary Huff (73CNTLZRFJ)" build/osx/Applications/Pritunl.app
@@ -40,5 +46,7 @@ codesign -s "Developer ID Application: Zachary Huff (73CNTLZRFJ)" build/osx/usr/
 chmod +x resources_osx/scripts/postinstall
 chmod +x resources_osx/scripts/preinstall
 cd build
-pkgbuild --root osx --scripts ../resources_osx/scripts --sign "Developer ID Installer: Zachary Huff (73CNTLZRFJ)" --identifier com.pritunl.pkg.Pritunl --version 0.1.0 --ownership recommended --install-location / Build.pkg
-productbuild --distribution ../resources_osx/distribution.xml --sign "Developer ID Installer: Zachary Huff (73CNTLZRFJ)" --version 0.1.0 Pritunl.pkg
+pkgbuild --root osx --scripts ../resources_osx/scripts --sign "Developer ID Installer: Zachary Huff (73CNTLZRFJ)" --identifier com.pritunl.pkg.Pritunl --version $APP_VER --ownership recommended --install-location / Build.pkg
+productbuild --distribution ../resources_osx/distribution.xml --sign "Developer ID Installer: Zachary Huff (73CNTLZRFJ)" --version $APP_VER Pritunl.pkg
+zip Pritunl.pkg.zip Pritunl.pkg
+rm -f Build.pkg
