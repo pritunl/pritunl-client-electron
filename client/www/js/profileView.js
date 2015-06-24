@@ -3,6 +3,7 @@ var remote = require('remote');
 var $ = require('jquery');
 var Mustache = require('mustache');
 var profile = require('./profile.js');
+var importer = require('./importer.js');
 var service = require('./service.js');
 var editor = require('./editor.js');
 var events = require('./events.js');
@@ -256,9 +257,9 @@ var init = function() {
     $('.profiles .import-uri-confirm').click(function() {
       var uri = $('.profiles .uri-input').val();
 
-      profile.importProfileUri(uri, function(err, prfl) {
-        if (!err) {
-          renderProfile(prfl);
+      importer.importProfileUri(uri, function(prfl) {
+        for (var i = 0; i < prfls.length; i++) {
+          renderProfile(prfls[i]);
         }
 
         $('.profiles .import-uri').show();
@@ -277,9 +278,9 @@ var init = function() {
 
     $('.profiles .profile-file').change(function(evt) {
       var pth = evt.currentTarget.files[0].path;
-      profile.importProfile(pth, function(err, prfl) {
-        if (!err) {
-          renderProfile(prfl);
+      importer.importProfile(pth, function(prfls) {
+        for (var i = 0; i < prfls.length; i++) {
+          renderProfile(prfls[i]);
         }
       });
     });
