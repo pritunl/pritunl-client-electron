@@ -1,7 +1,7 @@
 var tar = require('tar');
 var fs = require('fs');
 
-var readTarFile = function(pth, callback) {
+var readTarFile = function(pth, callback, endCallback) {
   // TODO Handle errors
   fs.createReadStream(pth)
     .pipe(tar.Parse())
@@ -13,9 +13,14 @@ var readTarFile = function(pth, callback) {
       });
       entry.on('end', function () {
         if (callback) {
-          callback(null, data);
+          callback(null, entry.path, data);
         }
       });
+    })
+    .on('end', function() {
+      if (endCallback) {
+        endCallback();
+      }
     });
 };
 
