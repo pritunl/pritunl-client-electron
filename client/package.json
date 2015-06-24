@@ -4,14 +4,14 @@
   "main": "www/main.js",
   "dependencies": {
     "jquery": "^2.1.4",
-    "mustache": "^2.1.1",
-    "request": "^2.57.0",
+    "mustache": "^2.1.2",
+    "request": "^2.58.0",
     "tar": "^2.1.1",
     "ws": "^0.7.2"
   },
   "devDependencies": {
-    "electron-packager": "^4.1.2",
-    "electron-prebuilt": "^0.27.3",
+    "electron-packager": "^4.1.3",
+    "electron-prebuilt": "^0.28.3",
     "rimraf": "^2.4.0",
     "rcedit": "^0.3.0"
   },
