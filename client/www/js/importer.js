@@ -325,7 +325,6 @@ var importProfileUri = function(prflUri, callback) {
   });
 };
 
-
 module.exports = {
   Importer: Importer,
   importProfile: importProfile,
