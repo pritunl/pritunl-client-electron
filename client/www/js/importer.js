@@ -64,7 +64,7 @@ Importer.prototype.read = function(pth, data, callback) {
       filePth = split.join(' ');
 
       if (this.files[filePth]) {
-        keyData += '<ca>\n' + this.files[filePth] + '</ca>';
+        keyData += '<ca>\n' + this.files[filePth] + '</ca>\n';
       } else {
         filePth = path.join(path.dirname(pth), filePth);
         waiter.add();
@@ -77,7 +77,7 @@ Importer.prototype.read = function(pth, data, callback) {
             return;
           }
 
-          keyData += '<ca>\n' + data + '</ca>';
+          keyData += '<ca>\n' + data + '</ca>\n';
           waiter.done();
         }.bind(this));
       }
@@ -215,109 +215,35 @@ Importer.prototype.parse = function(callback) {
   }.bind(this));
 };
 
-var importProfileData = function(data) {
-  data = data.replace('\r', '');
-  var line;
-  var lines = data.split('\n');
-  var jsonFound = null;
-  var jsonData = '';
-  var ovpnData = '';
-  var pth;
-
-  for (var i = 0; i < lines.length; i++) {
-    line = lines[i];
-
-    if (jsonFound === null && line === '#{') {
-      jsonFound = true;
-    }
-
-    if (jsonFound === true) {
-      if (line === '#}') {
-        jsonFound = false;
-      }
-      jsonData += line.replace('#', '');
-    } else {
-      ovpnData += line + '\n';
-    }
-  }
-
-  var confData;
-  try {
-    confData = JSON.parse(jsonData);
-  } catch (e) {
-    confData = {};
-  }
-
-  data = ovpnData.trim() + '\n';
-
-  var pth = path.join(utils.getUserDataPath(), 'profiles', utils.uuid());
-  var prfl = new Profile(pth);
-
-  prfl.import(confData);
-  prfl.data = data;
-
-  prfl.saveData();
-  prfl.saveConf();
-
-  return prfl;
-};
-
 var importProfile = function(pth, callback) {
   var ext = path.extname(pth);
+
+  var imptr = new Importer();
 
   switch (ext) {
     case '.ovpn':
     case '.conf':
-      fs.readFile(pth, 'utf8', function(err, data) {
-        var prfl;
-
-        if (err) {
-          err = new errors.ReadError(
-            'profile: Failed to read profile (%s)', err);
-          logger.error(err);
-        } else {
-          prfl = importProfileData(data);
-        }
-
+      imptr.addPath(pth);
+      imptr.parse(function(prfls) {
         if (callback) {
-          callback(err, prfl);
+          callback(prfls);
         }
       });
       break;
     case '.tar':
-      archive.readTarFile(pth, function(err, data) {
-        var prfl;
-
-        if (err) {
-          err = new errors.ReadError(
-            'profile: Failed to read profile archive (%s)', err);
-          logger.error(err);
-        } else {
-          prfl = importProfileData(data);
-        }
-
-        if (callback) {
-          callback(err, prfl);
-        }
+      archive.readTarFile(pth, function(err, pth, data) {
+        imptr.addData(pth, data);
+      }, function() {
+        imptr.parse(function(prfls) {
+          if (callback) {
+            callback(prfls);
+          }
+        });
       });
       break;
     default:
       var err = new errors.UnsupportedError('profile: Unsupported file type');
       logger.error(err);
-      if (callback) {
-        callback(err);
-      }
-  }
-};
-
-var importProfiles = function(prfls, callback) {
-  var prfl;
-
-  for (var name in prfls) {
-    prfl = importProfileData(prfls[name]);
-    if (callback) {
-      callback(null, prfl);
-    }
   }
 };
 
@@ -333,6 +259,20 @@ var importProfileUri = function(prflUri, callback) {
 
   prflUri = prflUri.replace('/k/', '/ku/');
 
+  var importAll = function(prfls) {
+    var imptr = new Importer();
+
+    for (var name in prfls) {
+      imptr.addData(name, prfls[name]);
+    }
+
+    imptr.parse(function(prfls) {
+      if (callback) {
+        callback(prfls);
+      }
+    });
+  };
+
   request.get({
     url: prflUri,
     strictSSL: false
@@ -347,7 +287,7 @@ var importProfileUri = function(prflUri, callback) {
       }
 
       if (!err) {
-        importProfiles(data, callback);
+        importAll(data, callback);
         return;
       }
     }
@@ -368,24 +308,19 @@ var importProfileUri = function(prflUri, callback) {
         err = new errors.ParseError(
           'profile: Failed to load profile uri (%s)', err);
         logger.error(err);
-      } else {
-        try {
-          data = JSON.parse(body);
-        } catch (e) {
-          err = new errors.ParseError(
-            'profile: Failed to parse profile uri (%s)', e);
-          logger.error(err);
-        }
-
-        if (!err) {
-          importProfiles(data, callback);
-          return;
-        }
+        return;
       }
 
-      if (callback) {
-        callback(err);
+      try {
+        data = JSON.parse(body);
+      } catch (e) {
+        err = new errors.ParseError(
+          'profile: Failed to parse profile uri (%s)', e);
+        logger.error(err);
+        return;
       }
+
+      importAll(data, callback);
     });
   });
 };
