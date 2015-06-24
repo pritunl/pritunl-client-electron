@@ -19,8 +19,8 @@ function WaitGroup() {
   this.waiter = null;
 }
 
-WaitGroup.prototype.add = function() {
-  this.count += 1;
+WaitGroup.prototype.add = function(count) {
+  this.count += count || 1;
 };
 
 WaitGroup.prototype.done = function() {
