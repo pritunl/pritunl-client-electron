@@ -85,6 +85,7 @@ function Profile(pth) {
   this.logPath = pth + '.log';
   this.data = null;
   this.name = null;
+  this.uvName = null;
   this.organizationId = null;
   this.organization = null;
   this.serverId = null;
@@ -131,6 +132,8 @@ Profile.prototype.load = function(callback, waitAll) {
       this.data = data.toString();
     }
 
+    this.parseData();
+
     if (waitAll) {
       count += 1;
       if (callback && count >= 3) {
@@ -153,6 +156,25 @@ Profile.prototype.load = function(callback, waitAll) {
       }
     }
   }.bind(this));
+};
+
+Profile.prototype.parseData = function() {
+  var line;
+  var lines = this.data.split('\n');
+
+  this.uvName = null;
+
+  for (var i = 0; i < lines.length; i++) {
+    line = lines[i];
+
+    if (line.startsWith('setenv UV_NAME')) {
+      line = line.split(' ');
+      line.shift();
+      line.shift();
+      this.uvName = line.join(' ');
+      return;
+    }
+  }
 };
 
 Profile.prototype.update = function(data) {
@@ -260,6 +282,9 @@ Profile.prototype.formatedNameLogo = function() {
     } else if (this.server) {
       name = this.server;
       logo = this.server.substr(0, 1);
+    } else if (this.uvName) {
+      name = this.uvName;
+      logo = this.uvName.substr(0, 1);
     } else {
       name = 'Unknown Profile';
       logo = 'U';
@@ -359,6 +384,7 @@ Profile.prototype.saveData = function(callback) {
         'config: Failed to save profile data (%s)', err);
       logger.error(err);
     }
+    this.parseData();
     if (callback) {
       callback(err);
     }
