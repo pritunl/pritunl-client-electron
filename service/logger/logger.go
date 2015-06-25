@@ -1,4 +1,4 @@
-// Logger util.
+// Logger system outputs to log file.
 package logger
 
 import (

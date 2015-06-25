@@ -1,3 +1,4 @@
+// Stores conf for OpenVPN and state of process.
 package profile
 
 import (

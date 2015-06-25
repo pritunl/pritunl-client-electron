@@ -1,3 +1,4 @@
+// For OS X to detect removal of Pritunl.app and auto uninstall all files.
 package autoclean
 
 import (
@@ -69,6 +70,7 @@ func clean() (err error) {
 	return
 }
 
+// Check for Pritunl.app and uninstall if missing
 func CheckAndClean() (err error) {
 	root := utils.GetRootDir()
 	if runtime.GOOS != "darwin" || root != "/usr/local/bin" {
@@ -90,6 +92,7 @@ func CheckAndClean() (err error) {
 	return
 }
 
+// Watch for Pritunl.app removal for next 10 minutes and uninstall if missing
 func CheckAndCleanWatch() {
 	root := utils.GetRootDir()
 	if runtime.GOOS != "darwin" || root != "/usr/local/bin" {

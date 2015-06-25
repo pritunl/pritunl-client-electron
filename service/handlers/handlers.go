@@ -1,3 +1,4 @@
+// Api handlers.
 package handlers
 
 import (

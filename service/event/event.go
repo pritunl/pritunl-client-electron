@@ -1,3 +1,4 @@
+// Event system for client using web socket.
 package event
 
 import (
