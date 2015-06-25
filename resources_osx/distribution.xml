@@ -5,8 +5,8 @@
     <domains enable_localSystem="true"/>
     <options customize="never" require-scripts="true" rootVolumeOnly="true"/>
     <background file="diagram.tiff" alignment="bottomleft" scaling="none"/>
-    <!-- <welcome    file="welcome.html"    mime-type="text/html"/>
-    <conclusion file="conclusion.html" mime-type="text/html"/> -->
+    <welcome file="welcome.html" mime-type="text/html"/>
+    <!-- <conclusion file="conclusion.html" mime-type="text/html"/> -->
     <pkg-ref id="com.pritunl.pkg.Pritunl" version="0.1.0"
         auth="root">Build.pkg</pkg-ref>
     <choices-outline>
