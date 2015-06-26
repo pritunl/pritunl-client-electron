@@ -500,15 +500,14 @@ Profile.prototype.getFullData = function(callback) {
     this.id, function(err, stdout, stderr) {
       if (err) {
         err = new errors.ProcessError(
-          'profile: Failed to get key to keychain (%s)', stderr);
+          'profile: Failed to get key from keychain (%s)', stderr);
         logger.error(err);
         return;
       }
 
-      console.log('***************************************************');
-      console.log(stdout);
-      console.log('***************************************************');
-    });
+      stdout = new Buffer(stdout.replace('\n', ''), 'base64').toString();
+      callback(this.data + stdout);
+    }.bind(this));
 };
 
 Profile.prototype.updateSync = function(data) {
