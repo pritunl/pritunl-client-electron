@@ -517,6 +517,19 @@ Profile.prototype.updateSync = function(data) {
   var cert = '';
   var key = '';
 
+  var line;
+  var dataLines = data.split('\n');
+  data = '';
+  for (var i = 0; i < dataLines.length; i++) {
+    line = dataLines[i];
+
+    if (line.startsWith('#')) {
+      continue;
+    }
+
+    data += line + '\n';
+  }
+
   if (this.data.indexOf('key-direction') >= 0 && data.indexOf(
       'key-direction') < 0) {
     tlsAuth += 'key-direction 1\n'
