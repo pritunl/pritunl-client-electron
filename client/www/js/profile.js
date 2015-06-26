@@ -510,7 +510,7 @@ Profile.prototype.sync = function(syncHosts, callback) {
           logger.warning('profile: Failed to sync conf, user not found');
         } else if (resp.statusCode === 200 && body) {
           this.updateSync(body);
-        } else if (resp.statusCode != 200) {
+        } else if (resp.statusCode !== 200) {
           logger.error('profile: Failed to sync conf, unknown error (%s)',
             resp.statusCode);
           this.sync(syncHosts, callback);
