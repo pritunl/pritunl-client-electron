@@ -1,7 +1,6 @@
 var crypto = require('crypto');
 var path = require('path');
 var util = require('util');
-var remote = require('remote');
 var errors = require('./errors.js');
 var utils = require('./utils.js');
 var service = require('./service.js');
@@ -377,7 +376,7 @@ Profile.prototype.saveConf = function(callback) {
 };
 
 Profile.prototype.saveData = function(callback) {
-  if (remote.process.platform === 'darwin') {
+  if (utils.getPlatform() === 'darwin') {
     this.extractKey(this.data);
   }
 
