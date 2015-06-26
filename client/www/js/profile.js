@@ -456,13 +456,17 @@ Profile.prototype.extractKey = function() {
   sIndex = this.data.indexOf('<tls-auth>');
   eIndex = this.data.indexOf('</tls-auth>\n');
   if (sIndex > 0 &&  eIndex > 0) {
-    keyData += this.data.slice(sIndex, eIndex + 12);
+    keyData += this.data.substring(sIndex, eIndex + 12);
+    this.data = this.data.substring(0, sIndex) + this.data.substring(
+      eIndex + 12, this.data.length);
   }
 
   sIndex = this.data.indexOf('<key>');
   eIndex = this.data.indexOf('</key>\n');
   if (sIndex > 0 &&  eIndex > 0) {
-    keyData += this.data.slice(sIndex, eIndex + 7);
+    keyData += this.data.substring(sIndex, eIndex + 7);
+    this.data = this.data.substring(0, sIndex) + this.data.substring(
+      eIndex + 7, this.data.length);
   }
 
   if (!keyData) {
