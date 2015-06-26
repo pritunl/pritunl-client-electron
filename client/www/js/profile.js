@@ -465,17 +465,25 @@ Profile.prototype.extractKey = function() {
     keyData += this.data.slice(sIndex, eIndex + 7);
   }
 
+  if (!keyData) {
+    return;
+  }
+
   keyData = new Buffer(keyData).toString('base64');
 
-  childProcess.exec('security add-generic-password -s pritunl -a ' +
-    this.id + ' -w ' + keyData + ' login-keychain',
-    function(err, stdout, stderr) {
-      if (err) {
-        err = new errors.ProcessError(
-          'profile: Failed to add key to keychain (%s)', e);
-        logger.error(err);
-      }
-    });
+  // -U not working
+  childProcess.exec('security delete-generic-password -s pritunl -a ' +
+      this.id, function() {
+    childProcess.exec('security add-generic-password -U -s pritunl -a ' +
+      this.id + ' -w ' + keyData + ' login-keychain',
+      function(err, stdout, stderr) {
+        if (err) {
+          err = new errors.ProcessError(
+            'profile: Failed to add key to keychain (%s)', stderr);
+          logger.error(err);
+        }
+      }.bind(this));
+  }.bind(this));
 };
 
 Profile.prototype.getFullData = function(callback) {
@@ -488,7 +496,7 @@ Profile.prototype.getFullData = function(callback) {
     this.id, function(err, stdout, stderr) {
       if (err) {
         err = new errors.ProcessError(
-          'profile: Failed to get key to keychain (%s)', e);
+          'profile: Failed to get key to keychain (%s)', stderr);
         logger.error(err);
         return;
       }
