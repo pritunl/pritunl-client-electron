@@ -1,4 +1,6 @@
 var app = remoteRequire('app');
+var request = require('request');
+var crypto = require('crypto');
 
 var uuid = function() {
   var id = '';
@@ -12,6 +14,49 @@ var uuid = function() {
 
 var getUserDataPath = function() {
   return app.getPath('userData');
+};
+
+var authRequest = function(method, host, path, token, secret, jsonData,
+    callback) {
+  method = method.toUpperCase();
+
+  var authTimestamp = Math.floor(new Date().getTime() / 1000).toString();
+  var authNonce = uuid();
+  var authString = [token, authTimestamp, authNonce, method, path];
+
+  var data;
+  if (jsonData) {
+    data = JSON.stringify(jsonData);
+    authString.push(data);
+  }
+
+  authString = authString.join('&');
+
+  var authSignature = crypto.createHmac('sha256', secret).update(
+    authString).digest('base64');
+
+  var headers = {
+    'Auth-Token': token,
+    'Auth-Timestamp': authTimestamp,
+    'Auth-Nonce': authNonce,
+    'Auth-Signature': authSignature,
+  };
+  if (data) {
+    headers['Content-Type'] = 'application/json';
+  }
+
+  request({
+    method: method,
+    url: host + path,
+    json: data ? true : undefined,
+    body: data,
+    headers: headers,
+    strictSSL: false
+  }, function(err, resp, body) {
+    if (callback) {
+      callback(err, resp, body);
+    }
+  });
 };
 
 function WaitGroup() {
@@ -43,5 +88,6 @@ WaitGroup.prototype.wait = function(callback) {
 module.exports = {
   uuid: uuid,
   getUserDataPath: getUserDataPath,
+  authRequest: authRequest,
   WaitGroup: WaitGroup
 };
