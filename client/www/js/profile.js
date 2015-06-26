@@ -1,5 +1,6 @@
 var crypto = require('crypto');
 var path = require('path');
+var util = require('util');
 var request = require('request');
 var errors = require('./errors.js');
 var utils = require('./utils.js');
@@ -443,8 +444,94 @@ Profile.prototype.delete = function() {
   }.bind(this));
 };
 
+Profile.prototype.updateSync = function(data) {
+  var sIndex;
+  var eIndex;
+  var tlsAuth = '';
+  var cert = '';
+  var key = '';
+
+  sIndex = this.data.indexOf('<tls-auth>');
+  eIndex = this.data.indexOf('</tls-auth>');
+  if (sIndex > 0 &&  eIndex > 0) {
+    if (data.indexOf('key-direction') < 0) {
+      tlsAuth += 'key-direction 1\n'
+    }
+    tlsAuth += this.data.substring(sIndex, eIndex + 11) + '\n';
+  }
+
+  sIndex = this.data.indexOf('<cert>');
+  eIndex = this.data.indexOf('</cert>');
+  if (sIndex > 0 && eIndex > 0) {
+    cert = this.data.substring(sIndex, eIndex + 7) + '\n';
+  }
+
+  sIndex = this.data.indexOf('<key>');
+  eIndex = this.data.indexOf('</key>');
+  if (sIndex > 0 && eIndex > 0) {
+    key = this.data.substring(sIndex, eIndex + 6) + '\n';
+  }
+
+  this.data = data + tlsAuth + cert + key;
+  this.saveData();
+};
+
+Profile.prototype.sync = function(syncHosts, callback) {
+  var pth = util.format('/key/%s/%s/%s/%s',
+    this.organizationId,
+    this.userId,
+    this.serverId,
+    this.syncHash
+  );
+  var host = syncHosts.shift();
+
+  if (!host) {
+    if (callback) {
+      callback();
+    }
+    return;
+  }
+
+  utils.authRequest('get', host, pth, this.syncToken, this.syncSecret, null,
+    function(err, resp, body) {
+      if (err) {
+        if (!syncHosts.length) {
+          err = new errors.NetworkError(
+            'profile: Failed to sync config (%s)', err);
+          logger.error(err);
+        } else {
+          this.sync(syncHosts, callback);
+          return;
+        }
+      } else {
+        if (resp.statusCode === 480) {
+          logger.info('profile: Failed to sync conf, no subscription');
+        } else if (resp.statusCode === 404) {
+          logger.warning('profile: Failed to sync conf, user not found');
+        } else if (resp.statusCode === 200 && body) {
+          this.updateSync(body);
+        } else if (resp.statusCode != 200) {
+          logger.error('profile: Failed to sync conf, unknown error (%s)',
+            resp.statusCode);
+          this.sync(syncHosts, callback);
+          return;
+        }
+      }
+
+      if (callback) {
+        callback();
+      }
+    }.bind(this));
+};
+
 Profile.prototype.connect = function() {
-  service.start(this);
+  if (this.syncHosts.length) {
+    this.sync(this.syncHosts.slice(0), function() {
+      service.start(this);
+    }.bind(this));
+  } else {
+    service.start(this);
+  }
 };
 
 Profile.prototype.disconnect = function() {
