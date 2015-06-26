@@ -22,6 +22,12 @@ function RemoveError() {
 RemoveError.prototype = new Error;
 module.exports.RemoveError = RemoveError;
 
+function ProcessError() {
+  ErrorInit.call(this, 'ProcessError', arguments);
+}
+ProcessError.prototype = new Error;
+module.exports.ProcessError = ProcessError;
+
 function ParseError() {
   ErrorInit.call(this, 'ParseError', arguments);
 }
