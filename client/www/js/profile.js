@@ -517,24 +517,26 @@ Profile.prototype.updateSync = function(data) {
   var cert = '';
   var key = '';
 
+  if (this.data.indexOf('key-direction') >= 0 && data.indexOf(
+      'key-direction') < 0) {
+    tlsAuth += 'key-direction 1\n'
+  }
+
   sIndex = this.data.indexOf('<tls-auth>');
   eIndex = this.data.indexOf('</tls-auth>');
-  if (sIndex > 0 &&  eIndex > 0) {
-    if (data.indexOf('key-direction') < 0) {
-      tlsAuth += 'key-direction 1\n'
-    }
+  if (sIndex >= 0 &&  eIndex >= 0) {
     tlsAuth += this.data.substring(sIndex, eIndex + 11) + '\n';
   }
 
   sIndex = this.data.indexOf('<cert>');
   eIndex = this.data.indexOf('</cert>');
-  if (sIndex > 0 && eIndex > 0) {
+  if (sIndex >= 0 && eIndex >= 0) {
     cert = this.data.substring(sIndex, eIndex + 7) + '\n';
   }
 
   sIndex = this.data.indexOf('<key>');
   eIndex = this.data.indexOf('</key>');
-  if (sIndex > 0 && eIndex > 0) {
+  if (sIndex >= 0 && eIndex >= 0) {
     key = this.data.substring(sIndex, eIndex + 6) + '\n';
   }
 
