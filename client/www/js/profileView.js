@@ -257,7 +257,7 @@ var init = function() {
     $('.profiles .import-uri-confirm').click(function() {
       var uri = $('.profiles .uri-input').val();
 
-      importer.importProfileUri(uri, function(prfl) {
+      importer.importProfileUri(uri, function(prfls) {
         for (var i = 0; i < prfls.length; i++) {
           renderProfile(prfls[i]);
         }
