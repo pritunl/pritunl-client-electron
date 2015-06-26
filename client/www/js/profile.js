@@ -1,13 +1,13 @@
 var crypto = require('crypto');
 var path = require('path');
 var util = require('util');
-var request = require('request');
+var remote = require('remote');
 var errors = require('./errors.js');
 var utils = require('./utils.js');
 var service = require('./service.js');
 var logger = require('./logger.js');
 var fs = remoteRequire('fs');
-var archive = remoteRequire('./archive.js');
+var childProcess = remoteRequire('child_process');
 
 var colors = {
   'A': '#ff8a80',
@@ -377,6 +377,10 @@ Profile.prototype.saveConf = function(callback) {
 };
 
 Profile.prototype.saveData = function(callback) {
+  if (remote.process.platform === 'darwin') {
+    this.extractKey(this.data);
+  }
+
   fs.writeFile(this.ovpnPath, this.data, function(err) {
     if (err) {
       err = new errors.WriteError(
@@ -442,6 +446,36 @@ Profile.prototype.delete = function() {
       }
     });
   }.bind(this));
+};
+
+Profile.prototype.extractKey = function() {
+  var sIndex;
+  var eIndex;
+  var keyData = '';
+
+  sIndex = this.data.indexOf('<tls-auth>');
+  eIndex = this.data.indexOf('</tls-auth>\n');
+  if (sIndex > 0 &&  eIndex > 0) {
+    keyData += this.data.slice(sIndex, eIndex + 12);
+  }
+
+  sIndex = this.data.indexOf('<key>');
+  eIndex = this.data.indexOf('</key>\n');
+  if (sIndex > 0 &&  eIndex > 0) {
+    keyData += this.data.slice(sIndex, eIndex + 7);
+  }
+
+  keyData = new Buffer(keyData).toString('base64');
+
+  childProcess.exec('security add-generic-password -s pritunl -a ' +
+    this.id + ' -w ' + keyData + ' login-keychain',
+    function(err, stdout, stderr) {
+      if (err) {
+        err = new errors.ProcessError(
+          'profile: Failed to add key to keychain (%s)', e);
+        logger.error(err);
+      }
+    });
 };
 
 Profile.prototype.updateSync = function(data) {
