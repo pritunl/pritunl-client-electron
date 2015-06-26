@@ -2,6 +2,12 @@ var app = remoteRequire('app');
 var request = require('request');
 var crypto = require('crypto');
 
+var remote;
+try {
+  remote = require('remote');
+} catch(e) {
+}
+
 var uuid = function() {
   var id = '';
 
@@ -14,6 +20,13 @@ var uuid = function() {
 
 var getUserDataPath = function() {
   return app.getPath('userData');
+};
+
+var getPlatform = function() {
+  if (remote) {
+    return remote.process.platform;
+  }
+  return process.platform;
 };
 
 var authRequest = function(method, host, path, token, secret, jsonData,
@@ -89,5 +102,6 @@ module.exports = {
   uuid: uuid,
   getUserDataPath: getUserDataPath,
   authRequest: authRequest,
+  getPlatform: getPlatform,
   WaitGroup: WaitGroup
 };
