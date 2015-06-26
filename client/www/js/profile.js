@@ -5,6 +5,7 @@ var errors = require('./errors.js');
 var utils = require('./utils.js');
 var service = require('./service.js');
 var logger = require('./logger.js');
+var constants = require('./constants.js');
 var fs = remoteRequire('fs');
 var childProcess = remoteRequire('child_process');
 
@@ -376,7 +377,7 @@ Profile.prototype.saveConf = function(callback) {
 };
 
 Profile.prototype.saveData = function(callback) {
-  if (utils.getPlatform() === 'darwin') {
+  if (constants.platform === 'darwin') {
     this.extractKey(this.data);
   }
 
@@ -474,6 +475,27 @@ Profile.prototype.extractKey = function() {
           'profile: Failed to add key to keychain (%s)', e);
         logger.error(err);
       }
+    });
+};
+
+Profile.prototype.getFullData = function(callback) {
+  if (constants.platform !== 'darwin') {
+    callback(this.data);
+    return;
+  }
+
+  childProcess.exec('security find-generic-password -w -s pritunl -a ' +
+    this.id, function(err, stdout, stderr) {
+      if (err) {
+        err = new errors.ProcessError(
+          'profile: Failed to get key to keychain (%s)', e);
+        logger.error(err);
+        return;
+      }
+
+      console.log('***************************************************');
+      console.log(stdout);
+      console.log('***************************************************');
     });
 };
 

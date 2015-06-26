@@ -65,22 +65,24 @@ var update = function(callback) {
 };
 
 var start = function(prfl, callback) {
-  request.post({
-    url: 'http://' + constants.serviceHost + '/profile',
-    json: true,
-    body: {
-      id: prfl.id,
-      data: prfl.data
-    }
-  }, function(err) {
-    if (err) {
-      err = new errors.NetworkError(
-        'service: Failed to start profile (%s)', err);
-      logger.error(err);
-    }
-    if (callback) {
-      callback(err);
-    }
+  prfl.getFullData(function(data) {
+    request.post({
+      url: 'http://' + constants.serviceHost + '/profile',
+      json: true,
+      body: {
+        id: prfl.id,
+        data: data
+      }
+    }, function(err) {
+      if (err) {
+        err = new errors.NetworkError(
+          'service: Failed to start profile (%s)', err);
+        logger.error(err);
+      }
+      if (callback) {
+        callback(err);
+      }
+    });
   });
 };
 
