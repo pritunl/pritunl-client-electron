@@ -3,6 +3,7 @@ package profile
 
 import (
 	"bufio"
+	"github.com/Sirupsen/logrus"
 	"github.com/dropbox/godropbox/errors"
 	"github.com/pritunl/pritunl-client-electron/service/event"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
@@ -235,7 +236,9 @@ func (p *Profile) Start(timeout bool) (err error) {
 					err = &ExecError{
 						errors.Wrap(err, "profile: Failed to read stdout"),
 					}
-					// TODO log
+					logrus.WithFields(logrus.Fields{
+						"error": err,
+					}).Error("profile: Stdout error")
 				}
 
 				return
@@ -253,7 +256,9 @@ func (p *Profile) Start(timeout bool) (err error) {
 					err = &ExecError{
 						errors.Wrap(err, "profile: Failed to read stderr"),
 					}
-					// TODO log
+					logrus.WithFields(logrus.Fields{
+						"error": err,
+					}).Error("profile: Stderr error")
 				}
 
 				return
