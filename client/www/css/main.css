@@ -582,6 +582,7 @@ input:active {
 .profile .logs .btn,
 .profile .config .btn {
   width: 50%;
+  height: 52px;
   display: inline-block;
   font-size: 20px;
   padding: 14px;
