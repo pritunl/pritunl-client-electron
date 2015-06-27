@@ -22,8 +22,21 @@ const (
 
 var (
 	Profiles     = map[string]*Profile{}
+	Ping = time.Now()
 	profilesLock = sync.Mutex{}
 )
+
+func init() {
+	go func() {
+		if time.Since(Ping) > 1 * time.Minute {
+			for _, prfl := range Profiles {
+				prfl.Stop()
+			}
+		}
+
+		time.Sleep(2 * time.Minute)
+	}()
+}
 
 type OutputData struct {
 	Id     string `json:"id"`

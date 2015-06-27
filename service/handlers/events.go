@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"github.com/pritunl/pritunl-client-electron/service/event"
+	"github.com/pritunl/pritunl-client-electron/service/profile"
 	"net/http"
 	"time"
 )
@@ -77,6 +78,8 @@ func eventsGet(c *gin.Context) {
 			if err != nil {
 				return
 			}
+
+			profile.Ping = time.Now()
 		}
 	}
 }
