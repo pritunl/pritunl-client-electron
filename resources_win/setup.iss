@@ -19,11 +19,13 @@ PrivilegesRequired=admin
 DisableProgramGroupPage=yes
 OutputDir=.\
 OutputBaseFilename=pritunl-setup
-SetupIconFile=.\client\www\img\logo.ico
+SetupIconFile=..\client\www\img\logo.ico
 Compression=lzma
 SolidCompression=yes
 CloseApplications=yes
 CloseApplicationsFilter=*.exe,*.dll,*.chm
+ArchitecturesAllowed=x64
+ArchitecturesInstallIn64BitMode=x64
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -32,9 +34,9 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: checkedonce
 
 [Files]
-Source: ".\build\win\x64\pritunl-win32\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: ".\tuntap_win\*"; DestDir: "{app}\tuntap"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: ".\service\service.exe"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\build\win\pritunl-win32\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\tuntap_win\*"; DestDir: "{app}\tuntap"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\service\service.exe"; DestDir: "{app}"; DestName: "pritunl-service.exe"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
