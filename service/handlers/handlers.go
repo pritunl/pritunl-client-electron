@@ -24,6 +24,8 @@ func Recovery(c *gin.Context) {
 }
 
 func Register(engine *gin.Engine) {
+	engine.Use(Recovery)
+
 	engine.GET("/events", eventsGet)
 	engine.GET("/profile", profileGet)
 	engine.POST("/profile", profilePost)
