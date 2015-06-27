@@ -36,7 +36,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: "..\build\win\pritunl-win32\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\tuntap_win\*"; DestDir: "{app}\tuntap"; Flags: ignoreversion recursesubdirs createallsubdirs 
+Source: "..\tuntap_win\*"; DestDir: "{app}\tuntap"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\resources_win\nssm.exe"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\service\service.exe"; DestDir: "{app}"; DestName: "pritunl-service.exe"; Flags: ignoreversion recursesubdirs createallsubdirs
 
@@ -45,11 +45,11 @@ Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
 Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
-[Run] 
-Filename: "{app}\nssm.exe"; Parameters: "install pritunl ""{app}\pritunl-service.exe"""; Flags: runhidden 
-Filename: "{app}\nssm.exe"; Parameters: "set pritunl DisplayName ""Pritunl Helper Service"""; Flags: runhidden  
-Filename: "{app}\nssm.exe"; Parameters: "set pritunl Start SERVICE_AUTO_START"; Flags: runhidden 
-Filename: "{app}\nssm.exe"; Parameters: "set pritunl AppStdout C:\ProgramData\Pritunl\service.log"; Flags: runhidden 
+[Run]
+Filename: "{app}\nssm.exe"; Parameters: "install pritunl ""{app}\pritunl-service.exe"""; Flags: runhidden
+Filename: "{app}\nssm.exe"; Parameters: "set pritunl DisplayName ""Pritunl Helper Service"""; Flags: runhidden
+Filename: "{app}\nssm.exe"; Parameters: "set pritunl Start SERVICE_AUTO_START"; Flags: runhidden
+Filename: "{app}\nssm.exe"; Parameters: "set pritunl AppStdout C:\ProgramData\Pritunl\service.log"; Flags: runhidden
 Filename: "{app}\nssm.exe"; Parameters: "set pritunl AppStderr C:\ProgramData\Pritunl\service.log"; Flags: runhidden
 Filename: "{app}\nssm.exe"; Parameters: "start pritunl"; Flags: runhidden
 Filename: "{app}\{#MyAppExeName}"; Flags: postinstall nowait
@@ -62,10 +62,10 @@ Filename: "timeout.exe"; Parameters: "/t 3"; Flags: runascurrentuser runhidden s
 Filename: "taskkill.exe"; Parameters: "/F /IM openvpn.exe"; Flags: runascurrentuser runhidden skipifdoesntexist
 Filename: "taskkill.exe"; Parameters: "/F /IM openvpn.exe"; Flags: runascurrentuser runhidden skipifdoesntexist
 Filename: "taskkill.exe"; Parameters: "/F /IM openvpn.exe"; Flags: runascurrentuser runhidden skipifdoesntexist
-Filename: "timeout.exe"; Parameters: "/t 3"; Flags: runascurrentuser runhidden skipifdoesntexist  
-Filename: "{app}\nssm.exe"; Parameters: "remove pritunl confirm"; Flags: runhidden       
+Filename: "timeout.exe"; Parameters: "/t 3"; Flags: runascurrentuser runhidden skipifdoesntexist
+Filename: "{app}\nssm.exe"; Parameters: "remove pritunl confirm"; Flags: runhidden
 Filename: "{app}\nssm.exe"; Parameters: "stop pritunl"; Flags: runhidden
 
-[UninstallDelete] 
+[UninstallDelete]
 Type: filesandordirs; Name: "{app}"
 Type: filesandordirs; Name: "C:\ProgramData\Pritunl"
