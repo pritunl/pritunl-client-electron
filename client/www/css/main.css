@@ -417,12 +417,6 @@ input:active {
   transition: height 125ms linear;
   overflow: hidden;
 }
-.profile.editing-logs {
-  height: 342px;
-}
-.profile.editing-config {
-  height: 312px;
-}
 .profile + .profile {
   border-top: 1px solid #242a30;
 }
