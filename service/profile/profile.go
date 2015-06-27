@@ -166,6 +166,19 @@ func (p *Profile) parseLine(line string) {
 	}
 }
 
+func (p *Profile) clearStatus(start time.Time) {
+	diff := time.Since(start)
+	if diff < 3*time.Second {
+		time.Sleep((5*time.Second) - diff)
+	}
+
+	p.Status = "disconnected"
+	p.Timestamp = 0
+	p.ClientAddr = ""
+	p.ServerAddr = ""
+	p.update()
+}
+
 func (p *Profile) Start(timeout bool) (err error) {
 	start := time.Now()
 
@@ -183,6 +196,7 @@ func (p *Profile) Start(timeout bool) (err error) {
 
 	confPath, err := p.write()
 	if err != nil {
+		p.clearStatus(start)
 		return
 	}
 
@@ -197,6 +211,7 @@ func (p *Profile) Start(timeout bool) (err error) {
 		err = &ExecError{
 			errors.Wrap(err, "profile: Failed to get stdout"),
 		}
+		p.clearStatus(start)
 		return
 	}
 
@@ -205,6 +220,7 @@ func (p *Profile) Start(timeout bool) (err error) {
 		err = &ExecError{
 			errors.Wrap(err, "profile: Failed to get stderr"),
 		}
+		p.clearStatus(start)
 		return
 	}
 
@@ -249,6 +265,7 @@ func (p *Profile) Start(timeout bool) (err error) {
 		err = &ExecError{
 			errors.Wrap(err, "profile: Failed to start openvpn"),
 		}
+		p.clearStatus(start)
 		return
 	}
 
@@ -256,18 +273,7 @@ func (p *Profile) Start(timeout bool) (err error) {
 	go func() {
 		cmd.Wait()
 		running = false
-
-		diff := time.Since(start)
-		if diff < 3*time.Second {
-			time.Sleep((5 * time.Second) - diff)
-		}
-
-		p.Status = "disconnected"
-		p.Timestamp = 0
-		p.ClientAddr = ""
-		p.ServerAddr = ""
-		p.update()
-
+		p.clearStatus(start)
 		delete(Profiles, p.Id)
 	}()
 
