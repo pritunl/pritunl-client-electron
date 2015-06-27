@@ -564,7 +564,7 @@ input:active {
   bottom: 0;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 125ms linear;
+  transition: opacity 200ms linear;
 }
 .profile.editing-logs .logs,
 .profile.editing-config .config {
