@@ -11,6 +11,7 @@ rm -f build/Pritunl.pkg.zip
 # Pritunl
 mkdir -p build/osx/Applications
 cd client
+npm install
 export ELECTRON_VER="$(npm ls | grep electron-prebuilt | tr '@' '\n' | tail -n1)"
 ./node_modules/.bin/electron-packager ./ Pritunl --platform=darwin --arch=x64 --version=$ELECTRON_VER --icon=./www/img/pritunl.icns --out=../build/osx/Applications
 cd ../
@@ -19,7 +20,8 @@ codesign --force --deep --sign "Developer ID Application: Zachary Huff (73CNTLZR
 
 # Service
 cd service
-go build -a
+go get -u -f
+go build -v -a
 cd ..
 mkdir -p build/osx/usr/local/bin
 cp service/service build/osx/usr/local/bin/pritunl-service
