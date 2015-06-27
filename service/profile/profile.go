@@ -22,13 +22,13 @@ const (
 
 var (
 	Profiles     = map[string]*Profile{}
-	Ping = time.Now()
+	Ping         = time.Now()
 	profilesLock = sync.Mutex{}
 )
 
 func init() {
 	go func() {
-		if time.Since(Ping) > 1 * time.Minute {
+		if time.Since(Ping) > 1*time.Minute {
 			for _, prfl := range Profiles {
 				prfl.Stop()
 			}
@@ -170,7 +170,7 @@ func (p *Profile) clearStatus(start time.Time) {
 	go func() {
 		diff := time.Since(start)
 		if diff < 3*time.Second {
-			time.Sleep((5*time.Second) - diff)
+			time.Sleep((5 * time.Second) - diff)
 		}
 
 		p.Status = "disconnected"
