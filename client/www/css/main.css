@@ -413,7 +413,6 @@ input:active {
 
 .profile {
   height: 207px;
-  position: relative;
   color: #fff;
   transition: height 125ms linear;
   overflow: hidden;
@@ -571,11 +570,13 @@ input:active {
 .profile.editing-config .config {
   visibility: visible;
   opacity: 1;
+  z-index: 100;
+  top: 45px;
 }
 .profile .logs .editor,
 .profile .config .editor {
   width: 100%;
-  height: 260px;
+  height: calc(100% - 52px);
   margin: 0;
 }
 .profile .logs .editor {
