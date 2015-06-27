@@ -579,9 +579,6 @@ input:active {
   height: calc(100% - 52px);
   margin: 0;
 }
-.profile .logs .editor {
-  height: 290px;
-}
 .profile .logs .btn,
 .profile .config .btn {
   width: 50%;
