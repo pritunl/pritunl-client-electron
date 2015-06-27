@@ -167,16 +167,18 @@ func (p *Profile) parseLine(line string) {
 }
 
 func (p *Profile) clearStatus(start time.Time) {
-	diff := time.Since(start)
-	if diff < 3*time.Second {
-		time.Sleep((5*time.Second) - diff)
-	}
+	go func() {
+		diff := time.Since(start)
+		if diff < 3*time.Second {
+			time.Sleep((5*time.Second) - diff)
+		}
 
-	p.Status = "disconnected"
-	p.Timestamp = 0
-	p.ClientAddr = ""
-	p.ServerAddr = ""
-	p.update()
+		p.Status = "disconnected"
+		p.Timestamp = 0
+		p.ClientAddr = ""
+		p.ServerAddr = ""
+		p.update()
+	}()
 }
 
 func (p *Profile) Start(timeout bool) (err error) {
