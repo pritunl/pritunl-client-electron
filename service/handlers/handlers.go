@@ -28,7 +28,7 @@ func Errors(c *gin.Context) {
 	c.Next()
 	for _, err := range c.Errors {
 		logrus.WithFields(logrus.Fields{
-			"error": errors.New(fmt.Sprintf("%s", err)),
+			"error": err,
 		}).Error("handlers: Handler error")
 	}
 }
