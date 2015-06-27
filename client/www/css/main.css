@@ -416,6 +416,11 @@ input:active {
   color: #fff;
   transition: height 125ms linear;
   overflow: hidden;
+  position: relative;
+}
+.profile.editing-logs,
+.profile.editing-config {
+  position: static;
 }
 .profile + .profile {
   border-top: 1px solid #242a30;
