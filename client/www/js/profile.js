@@ -518,6 +518,8 @@ Profile.prototype.updateSync = function(data) {
   var tlsAuth = '';
   var cert = '';
   var key = '';
+  var jsonData = '';
+  var jsonFound = null;
 
   var line;
   var dataLines = data.split('\n');
@@ -525,11 +527,28 @@ Profile.prototype.updateSync = function(data) {
   for (var i = 0; i < dataLines.length; i++) {
     line = dataLines[i];
 
-    if (line.startsWith('#')) {
-      continue;
+    if (jsonFound === null && line === '#{') {
+      jsonFound = true;
     }
 
-    data += line + '\n';
+    if (jsonFound === true && line.startsWith('#')) {
+      if (line === '#}') {
+        jsonFound = false;
+      }
+      jsonData += line.replace('#', '');
+    } else {
+      data += line + '\n';
+    }
+  }
+
+  var confData;
+  try {
+    confData = JSON.parse(jsonData);
+  } catch (e) {
+  }
+
+  if (confData) {
+    this.import(confData);
   }
 
   if (this.data.indexOf('key-direction') >= 0 && data.indexOf(
