@@ -23,8 +23,19 @@ func Recovery(c *gin.Context) {
 	c.Next()
 }
 
+// Log errors
+func Errors(c *gin.Context) {
+	c.Next()
+	for _, err := range c.Errors {
+		logrus.WithFields(logrus.Fields{
+			"error": errors.New(fmt.Sprintf("%s", err)),
+		}).Error("handlers: Handler error")
+	}
+}
+
 func Register(engine *gin.Engine) {
 	engine.Use(Recovery)
+	engine.Use(Errors)
 
 	engine.GET("/events", eventsGet)
 	engine.GET("/profile", profileGet)
