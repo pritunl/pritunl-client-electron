@@ -6,7 +6,6 @@ var errors = require('./errors.js');
 var utils = require('./utils.js');
 var service = require('./service.js');
 var logger = require('./logger.js');
-var constants = require('./constants.js');
 var fs = require('fs');
 var childProcess = require('child_process');
 
