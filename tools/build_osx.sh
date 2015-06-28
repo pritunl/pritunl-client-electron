@@ -12,6 +12,7 @@ rm -f build/Pritunl.pkg.zip
 mkdir -p build/osx/Applications
 cd client
 npm install
+./node_modules/.bin/electron-rebuild
 export ELECTRON_VER="$(npm ls | grep electron-prebuilt | tr '@' '\n' | tail -n1)"
 ./node_modules/.bin/electron-packager ./ Pritunl --platform=darwin --arch=x64 --version=$ELECTRON_VER --icon=./www/img/pritunl.icns --out=../build/osx/Applications
 cd ../
