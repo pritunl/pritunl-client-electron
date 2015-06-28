@@ -1,5 +1,5 @@
 var path = require('path');
-var remote = require('remote');
+var os = require('os');
 var $ = require('jquery');
 var profile = require('./profile.js');
 var service = require('./service.js');
@@ -8,6 +8,7 @@ var errors = require('./errors.js');
 var logger = require('./logger.js');
 var config = require('./config.js');
 var profileView = require('./profileView.js');
+var remote = require('remote');
 var BrowserWindow = remoteRequire('browser-window');
 
 profileView.init();
@@ -15,7 +16,7 @@ profileView.init();
 $(document).on('dblclick mousedown', '.no-select, .btn', false);
 
 $ubuntu = $('.ubuntu');
-if (remote.process.platform === 'linux') {
+if (os.platform() === 'linux') {
   $ubuntu.remove();
 } else {
   config.onReady(function() {
