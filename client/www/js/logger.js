@@ -1,5 +1,5 @@
 var path = require('path');
-var fs = remoteRequire('fs');
+var fs = require('fs');
 var utils = require('./utils.js');
 
 var alert;

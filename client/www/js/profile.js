@@ -6,8 +6,8 @@ var utils = require('./utils.js');
 var service = require('./service.js');
 var logger = require('./logger.js');
 var constants = require('./constants.js');
-var fs = remoteRequire('fs');
-var childProcess = remoteRequire('child_process');
+var fs = require('fs');
+var childProcess = require('child_process');
 
 var colors = {
   'A': '#ff8a80',

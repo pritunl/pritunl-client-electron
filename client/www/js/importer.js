@@ -6,8 +6,8 @@ var utils = require('./utils.js');
 var service = require('./service.js');
 var logger = require('./logger.js');
 var profile = require('./profile.js');
-var fs = remoteRequire('fs');
-var archive = remoteRequire('./archive.js');
+var fs = require('fs');
+var archive = require('./archive.js');
 
 function Importer() {
   this.files = {};

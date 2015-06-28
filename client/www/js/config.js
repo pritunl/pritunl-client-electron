@@ -2,7 +2,7 @@ var path = require('path');
 var logger = require('./logger.js');
 var errors = require('./errors.js');
 var utils = require('./utils.js');
-var fs = remoteRequire('fs');
+var fs = require('fs');
 
 var loaded;
 var waiting = [];
