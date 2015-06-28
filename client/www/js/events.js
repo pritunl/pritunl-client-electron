@@ -2,9 +2,14 @@ var WebSocket = require('ws');
 var constants = require('./constants.js');
 
 var connect = function(callback) {
+  var reconnected = false;
   var socket = new WebSocket('ws://' + constants.serviceHost + '/events');
 
   var reconnect = function() {
+    if (reconnected) {
+      return;
+    }
+    reconnected = true;
     setTimeout(function() {
       connect(callback);
     }, 500);
