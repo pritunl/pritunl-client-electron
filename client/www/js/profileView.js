@@ -277,7 +277,12 @@ var init = function() {
     });
 
     $('.profiles .profile-file').change(function(evt) {
+      if (!evt.currentTarget.files.length) {
+        return;
+      }
       var pth = evt.currentTarget.files[0].path;
+      $('.profiles .profile-file').val('');
+
       importer.importProfile(pth, function(prfls) {
         for (var i = 0; i < prfls.length; i++) {
           renderProfile(prfls[i]);
