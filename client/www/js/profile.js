@@ -1,6 +1,7 @@
 var crypto = require('crypto');
 var path = require('path');
 var util = require('util');
+var os = require('os');
 var errors = require('./errors.js');
 var utils = require('./utils.js');
 var service = require('./service.js');
@@ -379,7 +380,7 @@ Profile.prototype.saveConf = function(callback) {
 };
 
 Profile.prototype.saveData = function(callback) {
-  if (constants.platform === 'darwin') {
+  if (os.platform() === 'darwin') {
     this.extractKey(this.data);
   }
 
@@ -493,7 +494,7 @@ Profile.prototype.extractKey = function() {
 };
 
 Profile.prototype.getFullData = function(callback) {
-  if (constants.platform !== 'darwin') {
+  if (os.platform() !== 'darwin') {
     callback(this.data);
     return;
   }
