@@ -20,6 +20,7 @@ DisableProgramGroupPage=yes
 OutputDir=..\build\
 OutputBaseFilename={#MyAppName}
 SetupIconFile=..\client\www\img\logo.ico
+UninstallDisplayName=Pritunl Client
 UninstallDisplayIcon={app}\{#MyAppExeName}
 Compression=lzma
 SolidCompression=yes
