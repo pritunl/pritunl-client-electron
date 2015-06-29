@@ -25,8 +25,6 @@ Compression=lzma
 SolidCompression=yes
 CloseApplications=yes
 CloseApplicationsFilter=*.exe,*.dll,*.chm
-ArchitecturesAllowed=x64
-ArchitecturesInstallIn64BitMode=x64
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
