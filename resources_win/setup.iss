@@ -57,7 +57,7 @@ Filename: "{app}\nssm.exe"; Parameters: "set pritunl Start SERVICE_AUTO_START"; 
 Filename: "{app}\nssm.exe"; Parameters: "set pritunl AppStdout C:\ProgramData\Pritunl\service.log"; Flags: runhidden
 Filename: "{app}\nssm.exe"; Parameters: "set pritunl AppStderr C:\ProgramData\Pritunl\service.log"; Flags: runhidden
 Filename: "{app}\nssm.exe"; Parameters: "start pritunl"; Flags: runhidden
-Filename: "{app}\{#MyAppExeName}"; Flags: postinstall nowait
+Filename: "{app}\{#MyAppExeName}"; Description: "Start the Pritunl Client"; Flags: postinstall nowait
 
 [UninstallRun]
 Filename: "taskkill.exe"; Parameters: "/F /IM {#MyAppExeName}"; Flags: runascurrentuser runhidden skipifdoesntexist
