@@ -15,8 +15,5 @@
     "electron-prebuilt": "^0.28.3",
     "rimraf": "^2.4.0",
     "rcedit": "^0.3.0"
-  },
-  "scripts": {
-    "start": "electron ."
   }
 }
