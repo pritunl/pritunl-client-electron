@@ -99,7 +99,7 @@ var openMainWin = function() {
       frame: false,
       fullscreen: false,
       transparent: true,
-      width: 400,
+      width: 420,
       height: 561,
       'min-width': 325,
       'min-height': 225,
