@@ -21,12 +21,11 @@ if (os.platform() === 'linux') {
 } else {
   config.onReady(function() {
     $('.ubuntu .box').click(function() {
-      var win = new BrowserWindow({
+      new BrowserWindow({
         icon: path.join(__dirname, 'img', 'logo.png'),
         width: 800,
         height: 600
-      });
-      win.loadUrl('http://ubuntu.com/desktop');
+      }).loadUrl('http://ubuntu.com/desktop');
 
       config.settings.showUbuntu = false;
       config.save();
