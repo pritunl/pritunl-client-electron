@@ -19,14 +19,26 @@ func main() {
 		tuntapDir = filepath.Join(rootDir, "64")
 	}
 
-	cmd := &exec.Cmd{
-		Path: "tapinstall.exe",
-		Dir:  tuntapDir,
-		Args: []string{
-			"install",
-			"OemVista.inf",
-			"tap0901",
-		},
+	var cmd *exec.Cmd
+	if os.Args[1] == "install" {
+		cmd = &exec.Cmd{
+			Path: "tapinstall.exe",
+			Dir:  tuntapDir,
+			Args: []string{
+				"install",
+				"OemVista.inf",
+				"tap0901",
+			},
+		}
+	} else {
+		cmd = &exec.Cmd{
+			Path: "tapinstall.exe",
+			Dir:  tuntapDir,
+			Args: []string{
+				"remove",
+				"tap0901",
+			},
+		}
 	}
 
 	err = cmd.Run()
