@@ -103,7 +103,7 @@ var openMainWin = function() {
       height: 561,
       'min-width': 325,
       'min-height': 225,
-      'max-width': 600,
+      'max-width': 650,
       'max-height': 790
     });
     main.maximizedPrev = null;
