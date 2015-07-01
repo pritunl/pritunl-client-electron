@@ -7,22 +7,14 @@ import (
 )
 
 func main() {
-	err := os.Chdir("tuntap")
+	err := os.Chdir("tuntap_win")
 	if err != nil {
 		panic(err)
 	}
 
-	cmd := &exec.Cmd{
-		Path: "go",
-		Args: []string{
-			"build",
-			"-v",
-			"-a",
-			"-o tuntap.exe",
-		},
-		Stdout: os.Stdout,
-		Stderr: os.Stderr,
-	}
+	cmd := exec.Command("go", "build", "-v", "-a", "-o tuntap.exe")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
 	err = cmd.Run()
 	if err != nil {
 		panic(err)
@@ -33,31 +25,17 @@ func main() {
 		panic(err)
 	}
 
-	cmd = &exec.Cmd{
-		Path: "go",
-		Args: []string{
-			"get",
-			"-u",
-			"-f",
-		},
-		Stdout: os.Stdout,
-		Stderr: os.Stderr,
-	}
+	cmd = exec.Command("go", "get", "-u", "-f")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
 	err = cmd.Run()
 	if err != nil {
 		panic(err)
 	}
 
-	cmd = &exec.Cmd{
-		Path: "go",
-		Args: []string{
-			"build",
-			"-v",
-			"-a",
-		},
-		Stdout: os.Stdout,
-		Stderr: os.Stderr,
-	}
+	cmd = exec.Command("go", "build", "-v", "-a")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
 	err = cmd.Run()
 	if err != nil {
 		panic(err)
@@ -68,48 +46,34 @@ func main() {
 		panic(err)
 	}
 
-	cmd = &exec.Cmd{
-		Path: "npm",
-		Args: []string{
-			"install",
-		},
-		Stdout: os.Stdout,
-		Stderr: os.Stderr,
-	}
+	cmd = exec.Command("npm", "install")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
 	err = cmd.Run()
 	if err != nil {
 		panic(err)
 	}
 
-	cmd = &exec.Cmd{
-		Path: ".\\node_modules\\.bin\\electron-rebuild",
-		Args: []string{
-			"install",
-		},
-		Stdout: os.Stdout,
-		Stderr: os.Stderr,
-	}
+	cmd = exec.Command(".\\node_modules\\.bin\\electron-rebuild")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
 	err = cmd.Run()
 	if err != nil {
 		panic(err)
 	}
 
-	cmd = &exec.Cmd{
-		Path: ".\\node_modules\\.bin\\electron-packager",
-		Args: []string{
-			".\\",
-			"pritunl",
-			"--platform=win32",
-			"--arch=ia32",
-			"--version=0.28.3",
-			"--icon=www\\img\\logo.ico",
-			"--out=..\\build\\win",
-			"--prune",
-			"--asar",
-		},
-		Stdout: os.Stdout,
-		Stderr: os.Stderr,
-	}
+	cmd = exec.Command(".\\node_modules\\.bin\\electron-rebuild",
+		".\\",
+		"pritunl",
+		"--platform=win32",
+		"--arch=ia32",
+		"--version=0.28.3",
+		"--icon=www\\img\\logo.ico",
+		"--out=..\\build\\win",
+		"--prune",
+		"--asar")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
 	err = cmd.Run()
 	if err != nil {
 		panic(err)
