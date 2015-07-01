@@ -1,5 +1,5 @@
 ; ****************************************************************************
-; * Copyright (C) 2002-2010 OpenVPN Technologies, Inc.                            *
+; * Copyright (C) 2002-2014 OpenVPN Technologies, Inc.                            *
 ; *  This program is free software; you can redistribute it and/or modify    *
 ; *  it under the terms of the GNU General Public License version 2          *
 ; *  as published by the Free Software Foundation.                           *
@@ -7,13 +7,13 @@
 
 ; SYNTAX CHECKER
 ; cd \WINDDK\3790\tools\chkinf
-; chkinf c:\src\openvpn\tap-win32\i386\oemwin2k.inf
+; chkinf c:\src\openvpn\tap-win32\i386\oemvista.inf
 ; OUTPUT -> file:///c:/WINDDK/3790/tools/chkinf/htm/c%23+src+openvpn+tap-win32+i386+__OemWin2k.htm
 
 ; INSTALL/REMOVE DRIVER
-;   tapinstall install OemWin2k.inf TAP0901
-;   tapinstall update OemWin2k.inf TAP0901
-;   tapinstall remove TAP0901
+;   tapinstall install OemVista.inf tapoas
+;   tapinstall update OemVista.inf tapoas
+;   tapinstall remove tapoas
 
 ;*********************************************************
 ; Note to Developers:
@@ -55,7 +55,7 @@
 
 ; This version number should match the version
 ; number given in SOURCES.
-   DriverVer=07/02/2012,9.00.00.9
+   DriverVer=11/05/2014,9.00.00.21
 
 [Strings]
    DeviceDescription = "TAP-Windows Adapter V9"
@@ -65,10 +65,11 @@
 ;                      Manufacturer + Product Section (Done)
 ;----------------------------------------------------------------
 [Manufacturer]
-   %Provider% = tap0901, NTamd64
+   %Provider% = tap0901
 
-[tap0901.NTamd64]
-   %DeviceDescription% = tap0901.ndi, tap0901
+[tap0901]
+   %DeviceDescription% = tap0901.ndi, root\tap0901 ; Root enumerated
+   %DeviceDescription% = tap0901.ndi, tap0901      ; Legacy
 
 ;---------------------------------------------------------------
 ;                             Driver Section (Done)
@@ -87,7 +88,10 @@
    CopyFiles       = tap0901.driver, tap0901.files
    AddReg          = tap0901.reg
    AddReg          = tap0901.params.reg
-   Characteristics = 0x81
+   Characteristics = 
+   *IfType            = 0x6 ; IF_TYPE_ETHERNET_CSMACD
+   *MediaType         = 0x0 ; NdisMedium802_3
+   *PhysicalMediaType = 14  ; NdisPhysicalMedium802_3
 
 [tap0901.ndi.Services]
    AddService = tap0901,        2, tap0901.service
