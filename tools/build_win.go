@@ -12,7 +12,7 @@ func main() {
 		panic(err)
 	}
 
-	cmd := exec.Command("go", "build", "-v", "-a", "-o tuntap.exe")
+	cmd := exec.Command("go", "build", "-v", "-a", "-o", "tuntap.exe")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err = cmd.Run()
