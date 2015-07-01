@@ -62,7 +62,7 @@ func main() {
 		panic(err)
 	}
 
-	cmd = exec.Command(".\\node_modules\\.bin\\electron-rebuild",
+	cmd = exec.Command(".\\node_modules\\.bin\\electron-packager",
 		".\\",
 		"pritunl",
 		"--platform=win32",
