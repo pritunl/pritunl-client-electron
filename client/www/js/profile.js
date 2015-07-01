@@ -412,6 +412,8 @@ Profile.prototype.saveLog = function(callback) {
 Profile.prototype.delete = function() {
   this.disconnect();
 
+  childProcess.exec('security delete-generic-password -s pritunl -a ' +
+    this.id, function() {}.bind(this));
   fs.exists(this.confPath, function(exists) {
     if (!exists) {
       return;
