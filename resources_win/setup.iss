@@ -5,7 +5,7 @@
 #define MyAppExeName "pritunl.exe"
 
 [Setup]
-AppId={{80EC2557-82C8-4ECB-9E02-B7DB1B8F6BC7}
+AppId={#MyAppName}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 AppPublisher={#MyAppPublisher}
