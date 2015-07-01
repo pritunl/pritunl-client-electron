@@ -33,7 +33,6 @@ func main() {
 		panic(err)
 	}
 
-
 	err = os.Chdir(filepath.Join(rootDir, "service"))
 	if err != nil {
 		panic(err)
@@ -68,7 +67,6 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-
 
 	err = os.Chdir(filepath.Join(rootDir, "client"))
 	if err != nil {
