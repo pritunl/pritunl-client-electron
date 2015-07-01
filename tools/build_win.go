@@ -7,12 +7,7 @@ import (
 )
 
 func main() {
-	rootDir, err := filepath.Abs(filepath.Dir(os.Args[0]))
-	if err != nil {
-		panic(err)
-	}
-
-	err = os.Chdir(filepath.Join(rootDir, "tuntap"))
+	err := os.Chdir("tuntap")
 	if err != nil {
 		panic(err)
 	}
@@ -33,7 +28,7 @@ func main() {
 		panic(err)
 	}
 
-	err = os.Chdir(filepath.Join(rootDir, "service"))
+	err = os.Chdir(filepath.Join("..", "service"))
 	if err != nil {
 		panic(err)
 	}
@@ -68,7 +63,7 @@ func main() {
 		panic(err)
 	}
 
-	err = os.Chdir(filepath.Join(rootDir, "client"))
+	err = os.Chdir(filepath.Join("..", "client"))
 	if err != nil {
 		panic(err)
 	}
