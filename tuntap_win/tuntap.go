@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"os/exec"
 	"path/filepath"
 )
 
@@ -11,12 +12,25 @@ func main() {
 		panic(err)
 	}
 
-	tuntapPath := ""
+	tuntapDir := ""
 	if os.Getenv("PROGRAMFILES(X86)") == "" {
-		tuntapPath = filepath.Join(rootDir, "32", "tapinstall.exe")
+		tuntapDir = filepath.Join(rootDir, "32")
 	} else {
-		tuntapPath = filepath.Join(rootDir, "64", "tapinstall.exe")
+		tuntapDir = filepath.Join(rootDir, "64")
 	}
 
-	_ = tuntapPath
+	cmd := &exec.Cmd{
+		Path: "tapinstall.exe",
+		Dir:  tuntapDir,
+		Args: []string{
+			"install",
+			"OemVista.inf",
+			"tap0901",
+		},
+	}
+
+	err = cmd.Run()
+	if err != nil {
+		panic(err)
+	}
 }
