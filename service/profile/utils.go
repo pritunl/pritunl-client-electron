@@ -10,10 +10,11 @@ import (
 func getOpenvpnPath() (pth string) {
 	switch runtime.GOOS {
 	case "windows":
-		pth = filepath.Join(utils.GetRootDir(), "openvpn", "openvpn.exe")
+		pth = filepath.Join(utils.GetRootDir(), "openvpn",
+			utils.GetWinArch(), "openvpn.exe")
 		if _, err := os.Stat(pth); os.IsNotExist(err) {
 			pth = filepath.Join(utils.GetRootDir(), "..",
-				"openvpn_win", "openvpn.exe")
+				utils.GetWinArch(), "openvpn_win", "openvpn.exe")
 		}
 	case "darwin":
 		pth = filepath.Join(string(os.PathSeparator), "usr", "local",
