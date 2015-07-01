@@ -45,10 +45,10 @@ Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
 Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
 [Run]
-Filename: "{app}\tuntap\devcon.exe"; Parameters: "install OemWin2k.inf tap0901"; Flags: runhidden
-Filename: "{app}\tuntap\devcon.exe"; Parameters: "install OemWin2k.inf tap0901"; Flags: runhidden
-Filename: "{app}\tuntap\devcon.exe"; Parameters: "install OemWin2k.inf tap0901"; Flags: runhidden
-Filename: "{app}\tuntap\devcon.exe"; Parameters: "install OemWin2k.inf tap0901"; Flags: runhidden
+Filename: "{app}\tuntap\tuntap.exe"; Parameters: "install"; Flags: runhidden
+Filename: "{app}\tuntap\tuntap.exe"; Parameters: "install"; Flags: runhidden
+Filename: "{app}\tuntap\tuntap.exe"; Parameters: "install"; Flags: runhidden
+Filename: "{app}\tuntap\tuntap.exe"; Parameters: "install"; Flags: runhidden
 Filename: "{app}\nssm.exe"; Parameters: "install pritunl ""{app}\pritunl-service.exe"""; Flags: runhidden
 Filename: "{app}\nssm.exe"; Parameters: "set pritunl DisplayName ""Pritunl Helper Service"""; Flags: runhidden
 Filename: "{app}\nssm.exe"; Parameters: "set pritunl Start SERVICE_AUTO_START"; Flags: runhidden
@@ -68,7 +68,7 @@ Filename: "taskkill.exe"; Parameters: "/F /IM openvpn.exe"; Flags: runascurrentu
 Filename: "timeout.exe"; Parameters: "/t 3"; Flags: runascurrentuser runhidden skipifdoesntexist
 Filename: "{app}\nssm.exe"; Parameters: "remove pritunl confirm"; Flags: runhidden
 Filename: "{app}\nssm.exe"; Parameters: "stop pritunl"; Flags: runhidden
-Filename: "{app}\tuntap\devcon.exe"; Parameters: "remove tap0901"; Flags: runhidden
+Filename: "{app}\tuntap\tuntap.exe"; Parameters: "uninstall"; Flags: runhidden
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{app}"
