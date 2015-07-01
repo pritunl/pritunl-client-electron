@@ -25,6 +25,7 @@ func main() {
 			Path: "tapinstall.exe",
 			Dir:  tuntapDir,
 			Args: []string{
+				"tapinstall.exe",
 				"install",
 				"OemVista.inf",
 				"tap0901",
@@ -35,6 +36,7 @@ func main() {
 			Path: "tapinstall.exe",
 			Dir:  tuntapDir,
 			Args: []string{
+				"tapinstall.exe",
 				"remove",
 				"tap0901",
 			},
