@@ -46,19 +46,19 @@ Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
 Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
 [Run]
-Filename: "{app}\nssm.exe"; Parameters: "remove pritunl confirm"; Flags: runhidden
-Filename: "{app}\nssm.exe"; Parameters: "stop pritunl"; Flags: runhidden
-Filename: "{app}\tuntap\tuntap.exe"; Parameters: "uninstall"; Flags: runhidden
-Filename: "{app}\tuntap\tuntap.exe"; Parameters: "install"; Flags: runhidden
-Filename: "{app}\tuntap\tuntap.exe"; Parameters: "install"; Flags: runhidden
-Filename: "{app}\tuntap\tuntap.exe"; Parameters: "install"; Flags: runhidden
-Filename: "{app}\tuntap\tuntap.exe"; Parameters: "install"; Flags: runhidden
-Filename: "{app}\nssm.exe"; Parameters: "install pritunl ""{app}\pritunl-service.exe"""; Flags: runhidden
-Filename: "{app}\nssm.exe"; Parameters: "set pritunl DisplayName ""Pritunl Helper Service"""; Flags: runhidden
-Filename: "{app}\nssm.exe"; Parameters: "set pritunl Start SERVICE_AUTO_START"; Flags: runhidden
-Filename: "{app}\nssm.exe"; Parameters: "set pritunl AppStdout C:\ProgramData\Pritunl\service.log"; Flags: runhidden
-Filename: "{app}\nssm.exe"; Parameters: "set pritunl AppStderr C:\ProgramData\Pritunl\service.log"; Flags: runhidden
-Filename: "{app}\nssm.exe"; Parameters: "start pritunl"; Flags: runhidden
+Filename: "{app}\nssm.exe"; Parameters: "remove pritunl confirm"; Flags: runhidden; StatusMsg: "Configuring Pritunl..."
+Filename: "{app}\nssm.exe"; Parameters: "stop pritunl"; Flags: runhidden; StatusMsg: "Configuring Pritunl..."
+Filename: "{app}\tuntap\tuntap.exe"; Parameters: "uninstall"; Flags: runhidden; StatusMsg: "Configuring Pritunl..."
+Filename: "{app}\tuntap\tuntap.exe"; Parameters: "install"; Flags: runhidden; StatusMsg: "Configuring Pritunl..."
+Filename: "{app}\tuntap\tuntap.exe"; Parameters: "install"; Flags: runhidden; StatusMsg: "Configuring Pritunl..."
+Filename: "{app}\tuntap\tuntap.exe"; Parameters: "install"; Flags: runhidden; StatusMsg: "Configuring Pritunl..."
+Filename: "{app}\tuntap\tuntap.exe"; Parameters: "install"; Flags: runhidden; StatusMsg: "Configuring Pritunl..."
+Filename: "{app}\nssm.exe"; Parameters: "install pritunl ""{app}\pritunl-service.exe"""; Flags: runhidden; StatusMsg: "Configuring Pritunl..."
+Filename: "{app}\nssm.exe"; Parameters: "set pritunl DisplayName ""Pritunl Helper Service"""; Flags: runhidden; StatusMsg: "Configuring Pritunl..."
+Filename: "{app}\nssm.exe"; Parameters: "set pritunl Start SERVICE_AUTO_START"; Flags: runhidden; StatusMsg: "Configuring Pritunl..."
+Filename: "{app}\nssm.exe"; Parameters: "set pritunl AppStdout C:\ProgramData\Pritunl\service.log"; Flags: runhidden; StatusMsg: "Configuring Pritunl..."
+Filename: "{app}\nssm.exe"; Parameters: "set pritunl AppStderr C:\ProgramData\Pritunl\service.log"; Flags: runhidden; StatusMsg: "Configuring Pritunl..."
+Filename: "{app}\nssm.exe"; Parameters: "start pritunl"; Flags: runhidden; StatusMsg: "Configuring Pritunl..."
 Filename: "{app}\{#MyAppExeName}"; Description: "Start the Pritunl Client"; Flags: postinstall nowait
 
 [UninstallRun]
