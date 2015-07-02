@@ -45,6 +45,9 @@ Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
 Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
+[InstallDelete]
+Type: filesandordirs; Name: "{app}"
+
 [Run]
 Filename: "{app}\nssm.exe"; Parameters: "remove pritunl confirm"; Flags: runhidden; StatusMsg: "Configuring Pritunl..."
 Filename: "{app}\nssm.exe"; Parameters: "stop pritunl"; Flags: runhidden; StatusMsg: "Configuring Pritunl..."
