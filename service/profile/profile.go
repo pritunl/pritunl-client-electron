@@ -307,13 +307,18 @@ func (p *Profile) Stop() (err error) {
 		return
 	}
 
-	err = p.cmd.Process.Kill()
+	err = p.cmd.Process.Signal(os.Interrupt)
 	if err != nil {
 		err = &ExecError{
-			errors.Wrap(err, "profile: Failed to stop openvpn"),
+			errors.Wrap(err, "profile: Failed to interrupt openvpn"),
 		}
 		return
 	}
+
+	go func() {
+		time.Sleep(6 * time.Second)
+		p.cmd.Process.Kill()
+	}()
 
 	return
 }
