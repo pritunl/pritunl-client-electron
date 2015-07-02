@@ -330,6 +330,7 @@ func (p *Profile) Stop() (err error) {
 		go func() {
 			time.Sleep(6 * time.Second)
 			p.cmd.Process.Kill()
+			utils.ResetNetworking()
 		}()
 	}
 
