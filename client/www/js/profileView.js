@@ -248,15 +248,7 @@ var init = function() {
   });
 
   profile.getProfiles(function(err, prfls) {
-    $('.profiles .import-uri').click(function() {
-      $('.profiles .import-uri').hide();
-      $('.profiles .import-btns').show();
-      $('.profiles .uri-input').slideDown(50, function() {
-        $('.profiles .uri-input').focus();
-      });
-    });
-
-    $('.profiles .import-uri-confirm').click(function() {
+    var importUri = function() {
       var uri = $('.profiles .uri-input').val();
 
       importer.importProfileUri(uri, function(prfls) {
@@ -268,6 +260,24 @@ var init = function() {
         $('.profiles .import-btns').hide();
         $('.profiles .uri-input').slideUp(50);
       });
+    };
+
+    $('.profiles .import-uri').click(function() {
+      $('.profiles .import-uri').hide();
+      $('.profiles .import-btns').show();
+      $('.profiles .uri-input').slideDown(50, function() {
+        $('.profiles .uri-input').focus();
+      });
+    });
+
+    $('.profiles .uri-input').keypress(function(evt) {
+      if (evt.which === 13) {
+        importUri();
+      }
+    });
+
+    $('.profiles .import-uri-confirm').click(function() {
+      importUri();
     });
 
     $('.profiles .import-uri-cancel').click(function() {
