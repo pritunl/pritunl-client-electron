@@ -42,10 +42,11 @@ Source: "..\service_win\nssm.exe"; DestDir: "{app}"; Flags: ignoreversion recurs
 Source: "..\service\service.exe"; DestDir: "{app}"; DestName: "pritunl-service.exe"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Code]
+var ResultCode: Integer;
 procedure PreInstall();
 begin
-    Exec('net.exe', 'stop pritunl', '', SW_HIDE, ewWaitUntilTerminated);
-    Exec('taskkill.exe', '/F /IM pritunl.exe', '', SW_HIDE, ewWaitUntilTerminated);
+    Exec('net.exe', 'stop pritunl', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+    Exec('taskkill.exe', '/F /IM pritunl.exe', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
 end;
 
 [Icons]
