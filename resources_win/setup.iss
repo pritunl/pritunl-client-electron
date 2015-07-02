@@ -12,6 +12,7 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
+MinVersion=6.2.9200
 DefaultDirName={pf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 PrivilegesRequired=admin
