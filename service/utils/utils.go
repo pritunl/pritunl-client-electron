@@ -6,9 +6,26 @@ import (
 	"encoding/hex"
 	"github.com/dropbox/godropbox/errors"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"runtime"
 )
+
+func ResetNetworking() (err error) {
+	switch runtime.GOOS {
+	case "windows":
+		exec.Command("route", "-f").Run()
+		exec.Command("ipconfig", "/release").Run()
+		exec.Command("ipconfig", "/renew").Run()
+		exec.Command("arp", "-d", "*").Run()
+		exec.Command("nbtstat", "-R").Run()
+		exec.Command("nbtstat", "-RR").Run()
+		exec.Command("ipconfig", "/flushdns").Run()
+		exec.Command("nbtstat", "/registerdns").Run()
+	}
+
+	return
+}
 
 func Uuid() (id string) {
 	idByte := make([]byte, 16)
