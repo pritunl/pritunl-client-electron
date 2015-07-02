@@ -12,32 +12,71 @@ func main() {
 		panic(err)
 	}
 
-	exec.Command(filepath.Join(rootDir, "nssm.exe"),
-		"remove", "pritunl", "confirm").Run()
-	exec.Command(filepath.Join(rootDir, "tuntap", "tuntap.exe"),
-		"uninstall").Run()
-	exec.Command(filepath.Join(rootDir, "tuntap", "tuntap.exe"),
-		"install").Run()
-	exec.Command(filepath.Join(rootDir, "tuntap", "tuntap.exe"),
-		"install").Run()
-	exec.Command(filepath.Join(rootDir, "tuntap", "tuntap.exe"),
-		"install").Run()
-	exec.Command(filepath.Join(rootDir, "tuntap", "tuntap.exe"),
-		"install").Run()
-	exec.Command(filepath.Join(rootDir, "nssm.exe"), "install", "pritunl",
-		filepath.Join(rootDir, "pritunl-service.exe")).Run()
-	exec.Command(filepath.Join(rootDir, "nssm.exe"),
-		"set", "pritunl", "DisplayName", "Pritunl Helper Service").Run()
-	exec.Command(filepath.Join(rootDir, "nssm.exe"),
-		"set", "pritunl", "Start", "SERVICE_AUTO_START").Run()
-	exec.Command(filepath.Join(rootDir, "nssm.exe"),
+	cmd := exec.Command(filepath.Join(rootDir, "nssm.exe"),
+		"remove", "pritunl", "confirm")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Run()
+	cmd = exec.Command(filepath.Join(rootDir, "tuntap", "tuntap.exe"),
+		"uninstall")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Run()
+	cmd = exec.Command(filepath.Join(rootDir, "tuntap", "tuntap.exe"),
+		"install")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Run()
+	cmd = exec.Command(filepath.Join(rootDir, "tuntap", "tuntap.exe"),
+		"install")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Run()
+	cmd = exec.Command(filepath.Join(rootDir, "tuntap", "tuntap.exe"),
+		"install")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Run()
+	cmd = exec.Command(filepath.Join(rootDir, "tuntap", "tuntap.exe"),
+		"install")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Run()
+	cmd = exec.Command(filepath.Join(rootDir, "nssm.exe"), "install", "pritunl",
+		filepath.Join(rootDir, "pritunl-service.exe"))
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Run()
+	cmd = exec.Command(filepath.Join(rootDir, "nssm.exe"),
+		"set", "pritunl", "DisplayName", "Pritunl Helper Service")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Run()
+	cmd = exec.Command(filepath.Join(rootDir, "nssm.exe"),
+		"set", "pritunl", "Start", "SERVICE_AUTO_START")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Run()
+	cmd = exec.Command(filepath.Join(rootDir, "nssm.exe"),
 		"set", "pritunl", "AppStdout",
-		"C:\\ProgramData\\Pritunl\\service.log").Run()
-	exec.Command(filepath.Join(rootDir, "nssm.exe"),
+		"C:\\ProgramData\\Pritunl\\service.log")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Run()
+	cmd = exec.Command(filepath.Join(rootDir, "nssm.exe"),
 		"set", "pritunl", "AppStderr",
-		"C:\\ProgramData\\Pritunl\\service.log").Run()
-	exec.Command(filepath.Join(rootDir, "nssm.exe"),
-		"set", "pritunl", "Start", "SERVICE_AUTO_START").Run()
-	exec.Command(filepath.Join(rootDir, "nssm.exe"),
-		"start", "pritunl").Run()
+		"C:\\ProgramData\\Pritunl\\service.log")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Run()
+	cmd = exec.Command(filepath.Join(rootDir, "nssm.exe"),
+		"set", "pritunl", "Start", "SERVICE_AUTO_START")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Run()
+	cmd = exec.Command(filepath.Join(rootDir, "nssm.exe"),
+		"start", "pritunl")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Run()
 }
