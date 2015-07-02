@@ -17,6 +17,11 @@ func main() {
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Run()
+	cmd = exec.Command(filepath.Join(rootDir, "nssm.exe"),
+		"stop", "pritunl")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Run()
 	cmd = exec.Command(filepath.Join(rootDir, "tuntap", "tuntap.exe"),
 		"uninstall")
 	cmd.Stdout = os.Stdout
