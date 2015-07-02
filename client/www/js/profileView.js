@@ -251,7 +251,9 @@ var init = function() {
     $('.profiles .import-uri').click(function() {
       $('.profiles .import-uri').hide();
       $('.profiles .import-btns').show();
-      $('.profiles .uri-input').slideDown(50);
+      $('.profiles .uri-input').slideDown(50, function() {
+        $('.profiles .uri-input').focus();
+      });
     });
 
     $('.profiles .import-uri-confirm').click(function() {
