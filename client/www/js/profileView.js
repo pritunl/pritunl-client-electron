@@ -124,7 +124,7 @@ var renderProfile = function(prfl) {
     $profile.find('.menu').addClass('renaming');
   });
   $profile.find('.menu .rename-confirm').click(function() {
-    $renameInput = $profile.find('.menu .rename-input');
+    var $renameInput = $profile.find('.menu .rename-input');
 
     prfl.name = $renameInput.val();
     prfl.saveConf();
