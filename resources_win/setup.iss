@@ -48,6 +48,7 @@ Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: 
 [Run]
 Filename: "{app}\nssm.exe"; Parameters: "remove pritunl confirm"; Flags: runhidden
 Filename: "{app}\nssm.exe"; Parameters: "stop pritunl"; Flags: runhidden
+Filename: "{app}\tuntap\tuntap.exe"; Parameters: "uninstall"; Flags: runhidden
 Filename: "{app}\tuntap\tuntap.exe"; Parameters: "install"; Flags: runhidden
 Filename: "{app}\tuntap\tuntap.exe"; Parameters: "install"; Flags: runhidden
 Filename: "{app}\tuntap\tuntap.exe"; Parameters: "install"; Flags: runhidden
