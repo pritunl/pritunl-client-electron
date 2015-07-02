@@ -57,7 +57,6 @@ Type: filesandordirs; Name: "{app}"
 
 [Run]
 Filename: "{app}\nssm.exe"; Parameters: "remove pritunl confirm"; Flags: runhidden; StatusMsg: "Configuring Pritunl..."
-Filename: "{app}\nssm.exe"; Parameters: "stop pritunl"; Flags: runhidden; StatusMsg: "Configuring Pritunl..."
 Filename: "{app}\tuntap\tuntap.exe"; Parameters: "uninstall"; Flags: runhidden; StatusMsg: "Configuring Pritunl..."
 Filename: "{app}\tuntap\tuntap.exe"; Parameters: "install"; Flags: runhidden; StatusMsg: "Configuring Pritunl..."
 Filename: "{app}\tuntap\tuntap.exe"; Parameters: "install"; Flags: runhidden; StatusMsg: "Configuring Pritunl..."
