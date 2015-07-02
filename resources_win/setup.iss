@@ -43,8 +43,8 @@ Source: "..\service\service.exe"; DestDir: "{app}"; DestName: "pritunl-service.e
 [Code]
 procedure PreInstall();
 begin
-    Exec('net.exe', 'stop pritunl');
-    Exec('taskkill.exe', '/F /IM pritunl.exe');
+    Exec('net.exe', 'stop pritunl', '', SW_HIDE, ewWaitUntilTerminated);
+    Exec('taskkill.exe', '/F /IM pritunl.exe', '', SW_HIDE, ewWaitUntilTerminated);
 end;
 
 [Icons]
