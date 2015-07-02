@@ -15,6 +15,7 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"runtime"
 )
 
 const (
@@ -307,18 +308,28 @@ func (p *Profile) Stop() (err error) {
 		return
 	}
 
-	err = p.cmd.Process.Signal(os.Interrupt)
-	if err != nil {
-		err = &ExecError{
-			errors.Wrap(err, "profile: Failed to interrupt openvpn"),
+	if runtime.GOOS != "windows" {
+		err = p.cmd.Process.Kill()
+		if err != nil {
+			err = &ExecError{
+				errors.Wrap(err, "profile: Failed to stop openvpn"),
+			}
+			return
 		}
-		return
-	}
+	} else {
+		err = p.cmd.Process.Signal(os.Interrupt)
+		if err != nil {
+			err = &ExecError{
+				errors.Wrap(err, "profile: Failed to interrupt openvpn"),
+			}
+			return
+		}
 
-	go func() {
-		time.Sleep(6 * time.Second)
-		p.cmd.Process.Kill()
-	}()
+		go func() {
+			time.Sleep(6 * time.Second)
+			p.cmd.Process.Kill()
+		}()
+	}
 
 	return
 }
