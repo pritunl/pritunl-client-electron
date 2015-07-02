@@ -11,7 +11,7 @@ import (
 	"runtime"
 )
 
-func ResetNetworking() (err error) {
+func ResetNetworking() {
 	if runtime.GOOS != "windows" {
 		return
 	}
@@ -24,8 +24,6 @@ func ResetNetworking() (err error) {
 	exec.Command("nbtstat", "-RR").Run()
 	exec.Command("ipconfig", "/flushdns").Run()
 	exec.Command("nbtstat", "/registerdns").Run()
-
-	return
 }
 
 func Uuid() (id string) {
