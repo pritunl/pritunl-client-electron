@@ -7,7 +7,17 @@ import (
 )
 
 func main() {
-	err := os.Chdir("tuntap_win")
+	err := os.Remove(filepath.Join("build", "win", "Pritunl.exe"))
+	if err != nil && !os.IsNotExist(err) {
+		panic(err)
+	}
+
+	err = os.RemoveAll(filepath.Join("build", "win"))
+	if err != nil && !os.IsNotExist(err) {
+		panic(err)
+	}
+
+	err = os.Chdir("tuntap_win")
 	if err != nil {
 		panic(err)
 	}
