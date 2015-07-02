@@ -37,6 +37,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Source: "..\build\win\pritunl-win32\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; BeforeInstall: PreInstall
 Source: "..\tuntap_win\*"; DestDir: "{app}\tuntap"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\openvpn_win\*"; DestDir: "{app}\openvpn"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\resources_win\post_install\post_install.exe"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\service_win\nssm.exe"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\service\service.exe"; DestDir: "{app}"; DestName: "pritunl-service.exe"; Flags: ignoreversion recursesubdirs createallsubdirs
 
@@ -56,18 +57,7 @@ Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: 
 Type: filesandordirs; Name: "{app}"
 
 [Run]
-Filename: "{app}\nssm.exe"; Parameters: "remove pritunl confirm"; Flags: runhidden; StatusMsg: "Configuring Pritunl..."
-Filename: "{app}\tuntap\tuntap.exe"; Parameters: "uninstall"; Flags: runhidden; StatusMsg: "Configuring Pritunl..."
-Filename: "{app}\tuntap\tuntap.exe"; Parameters: "install"; Flags: runhidden; StatusMsg: "Configuring Pritunl..."
-Filename: "{app}\tuntap\tuntap.exe"; Parameters: "install"; Flags: runhidden; StatusMsg: "Configuring Pritunl..."
-Filename: "{app}\tuntap\tuntap.exe"; Parameters: "install"; Flags: runhidden; StatusMsg: "Configuring Pritunl..."
-Filename: "{app}\tuntap\tuntap.exe"; Parameters: "install"; Flags: runhidden; StatusMsg: "Configuring Pritunl..."
-Filename: "{app}\nssm.exe"; Parameters: "install pritunl ""{app}\pritunl-service.exe"""; Flags: runhidden; StatusMsg: "Configuring Pritunl..."
-Filename: "{app}\nssm.exe"; Parameters: "set pritunl DisplayName ""Pritunl Helper Service"""; Flags: runhidden; StatusMsg: "Configuring Pritunl..."
-Filename: "{app}\nssm.exe"; Parameters: "set pritunl Start SERVICE_AUTO_START"; Flags: runhidden; StatusMsg: "Configuring Pritunl..."
-Filename: "{app}\nssm.exe"; Parameters: "set pritunl AppStdout C:\ProgramData\Pritunl\service.log"; Flags: runhidden; StatusMsg: "Configuring Pritunl..."
-Filename: "{app}\nssm.exe"; Parameters: "set pritunl AppStderr C:\ProgramData\Pritunl\service.log"; Flags: runhidden; StatusMsg: "Configuring Pritunl..."
-Filename: "{app}\nssm.exe"; Parameters: "start pritunl"; Flags: runhidden; StatusMsg: "Configuring Pritunl..."
+Filename: "{app}\post_install.exe"; Flags: runhidden; StatusMsg: "Configuring Pritunl..."
 Filename: "{app}\{#MyAppExeName}"; Description: "Start the Pritunl Client"; Flags: postinstall nowait
 
 [UninstallRun]
