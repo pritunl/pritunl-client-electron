@@ -316,6 +316,8 @@ func (p *Profile) Stop() (err error) {
 			}
 			return
 		}
+
+		utils.ResetNetworking()
 	} else {
 		err = p.cmd.Process.Signal(os.Interrupt)
 		if err != nil {
