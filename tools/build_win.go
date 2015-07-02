@@ -88,4 +88,18 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	err = os.Chdir(filepath.Join("..", "resources_win"))
+	if err != nil {
+		panic(err)
+	}
+
+	cmd = exec.Command("C:\\Program Files\\Inno Setup 5\\ISCC.exe",
+		"setup.iss")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err = cmd.Run()
+	if err != nil {
+		panic(err)
+	}
 }
