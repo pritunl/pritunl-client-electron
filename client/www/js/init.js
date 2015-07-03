@@ -55,8 +55,13 @@ if (os.platform() === 'linux') {
 $('.header .close').click(function() {
   remote.getCurrentWindow().close();
 });
-$('.header .maximize').click(function() {
+$('.header .maximize').click(function(evt) {
   var win = remote.getCurrentWindow();
+
+  if (evt.shiftKey) {
+    remote.getCurrentWindow().openDevTools();
+    return;
+  }
 
   if (!win.maximizedPrev) {
     win.maximizedPrev = win.getSize();
