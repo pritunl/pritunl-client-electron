@@ -17,6 +17,7 @@ Editor.prototype.create = function() {
   }
   this.editor.setShowPrintMargin(false);
   this.editor.setShowFoldWidgets(false);
+  this.editor.getSession().setUseWrapMode(true);
   this.editor.getSession().setMode('ace/mode/text');
 
   if (this.typ === 'log') {
