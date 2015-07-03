@@ -76,6 +76,26 @@ func (p *Profile) write() (pth string, err error) {
 	return
 }
 
+func (p *Profile) writeAuth() (pth string, err error) {
+	rootDir, err := utils.GetTempDir()
+	if err != nil {
+		return
+	}
+
+	pth = filepath.Join(rootDir, p.Id + ".auth")
+
+	err = ioutil.WriteFile(pth, []byte(p.Username + "\n" + p.Password + "\n"),
+		os.FileMode(0600))
+	if err != nil {
+		err = &WriteError{
+			errors.Wrap(err, "profile: Failed to write profile auth"),
+		}
+		return
+	}
+
+	return
+}
+
 func (p *Profile) update() {
 	evt := event.Event{
 		Type: "update",
@@ -205,10 +225,28 @@ func (p *Profile) Start(timeout bool) (err error) {
 		return
 	}
 
+	var authPath string
+	if p.Username != "" || p.Password != "" {
+		authPath, err = p.writeAuth()
+		if err != nil {
+			p.clearStatus(start)
+			return
+		}
+	}
+
 	p.update()
 
-	cmd := exec.Command(getOpenvpnPath(), "--config", confPath,
-		"--script-security", "1", "--verb", "2")
+	args := []string{
+		"--config", confPath,
+		"--script-security", "1",
+		"--verb", "2",
+	}
+
+	if authPath != "" {
+		args = append(args, "--auth-user-pass", authPath)
+	}
+
+	cmd := exec.Command(getOpenvpnPath(), args...)
 	p.cmd = cmd
 
 	stdout, err := cmd.StdoutPipe()
