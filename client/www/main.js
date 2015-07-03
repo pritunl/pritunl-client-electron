@@ -192,12 +192,6 @@ app.on('ready', function() {
       }
     },
     {
-      label: 'Open Developer Tools',
-      click: function() {
-        main.openDevTools();
-      }
-    },
-    {
       label: 'Exit',
       click: function() {
         request.post({
