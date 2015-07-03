@@ -102,6 +102,19 @@ func main() {
 		panic(err)
 	}
 
+	err = os.Chdir(filepath.Join("..", "pre_uninstall"))
+	if err != nil {
+		panic(err)
+	}
+
+	cmd = exec.Command("go", "build", "-v", "-a")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err = cmd.Run()
+	if err != nil {
+		panic(err)
+	}
+
 	err = os.Chdir(filepath.Join(".."))
 	if err != nil {
 		panic(err)
