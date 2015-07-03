@@ -49,6 +49,7 @@ type Profile struct {
 	cmd        *exec.Cmd `json:"-"`
 	Id         string    `json:"id"`
 	Data       string    `json:"-"`
+	Username   string    `json:"-"`
 	Password   string    `json:"-"`
 	Status     string    `json:"status"`
 	Timestamp  int64     `json:"timestamp"`
