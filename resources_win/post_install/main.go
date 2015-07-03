@@ -4,51 +4,61 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"sync"
 )
 
 func main() {
+	wait := &sync.WaitGroup{}
+
 	rootDir, err := filepath.Abs(filepath.Dir(os.Args[0]))
 	if err != nil {
 		panic(err)
 	}
 
 	cmd := exec.Command(filepath.Join(rootDir, "nssm.exe"),
-		"remove", "pritunl", "confirm")
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	cmd.Run()
-	cmd = exec.Command(filepath.Join(rootDir, "nssm.exe"),
 		"stop", "pritunl")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Run()
-	cmd = exec.Command(filepath.Join(rootDir, "tuntap", "tuntap.exe"),
-		"uninstall")
+
+	wait.Add(1)
+	go func() {
+		defer wait.Done()
+
+		cmd := exec.Command(filepath.Join(rootDir, "tuntap", "tuntap.exe"),
+			"uninstall")
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		cmd.Run()
+		cmd = exec.Command(filepath.Join(rootDir, "tuntap", "tuntap.exe"),
+			"install")
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		cmd.Run()
+		cmd = exec.Command(filepath.Join(rootDir, "tuntap", "tuntap.exe"),
+			"install")
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		cmd.Run()
+		cmd = exec.Command(filepath.Join(rootDir, "tuntap", "tuntap.exe"),
+			"install")
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		cmd.Run()
+		cmd = exec.Command(filepath.Join(rootDir, "tuntap", "tuntap.exe"),
+			"install")
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		cmd.Run()
+	}()
+
+	cmd = exec.Command(filepath.Join(rootDir, "nssm.exe"),
+		"remove", "pritunl", "confirm")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Run()
-	cmd = exec.Command(filepath.Join(rootDir, "tuntap", "tuntap.exe"),
-		"install")
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	cmd.Run()
-	cmd = exec.Command(filepath.Join(rootDir, "tuntap", "tuntap.exe"),
-		"install")
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	cmd.Run()
-	cmd = exec.Command(filepath.Join(rootDir, "tuntap", "tuntap.exe"),
-		"install")
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	cmd.Run()
-	cmd = exec.Command(filepath.Join(rootDir, "tuntap", "tuntap.exe"),
-		"install")
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	cmd.Run()
-	cmd = exec.Command(filepath.Join(rootDir, "nssm.exe"), "install", "pritunl",
-		filepath.Join(rootDir, "pritunl-service.exe"))
+	cmd = exec.Command(filepath.Join(rootDir, "nssm.exe"), "install",
+		"pritunl", filepath.Join(rootDir, "pritunl-service.exe"))
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Run()
@@ -84,4 +94,6 @@ func main() {
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Run()
+
+	wait.Wait()
 }
