@@ -59,7 +59,6 @@ Type: filesandordirs; Name: "{app}"
 
 [Run]
 Filename: "{app}\post_install.exe"; Flags: runhidden; StatusMsg: "Configuring Pritunl..."
-Filename: "{app}\{#MyAppExeName}"; Description: "Start the Pritunl Client"; Flags: postinstall nowait
 
 [UninstallRun]
 Filename: "taskkill.exe"; Parameters: "/F /IM {#MyAppExeName}"; Flags: runascurrentuser runhidden skipifdoesntexist
