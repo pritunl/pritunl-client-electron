@@ -82,9 +82,9 @@ func (p *Profile) writeAuth() (pth string, err error) {
 		return
 	}
 
-	pth = filepath.Join(rootDir, p.Id + ".auth")
+	pth = filepath.Join(rootDir, p.Id+".auth")
 
-	err = ioutil.WriteFile(pth, []byte(p.Username + "\n" + p.Password + "\n"),
+	err = ioutil.WriteFile(pth, []byte(p.Username+"\n"+p.Password+"\n"),
 		os.FileMode(0600))
 	if err != nil {
 		err = &WriteError{
