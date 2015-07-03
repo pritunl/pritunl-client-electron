@@ -89,12 +89,7 @@ func main() {
 		panic(err)
 	}
 
-	err = os.Chdir(filepath.Join("..", "resources_win"))
-	if err != nil {
-		panic(err)
-	}
-
-	err = os.Chdir(filepath.Join("post_install"))
+	err = os.Chdir(filepath.Join("..", "resources_win", "post_install"))
 	if err != nil {
 		panic(err)
 	}
