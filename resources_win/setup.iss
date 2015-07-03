@@ -62,17 +62,7 @@ Type: filesandordirs; Name: "{app}"
 Filename: "{app}\post_install.exe"; Flags: runhidden; StatusMsg: "Configuring Pritunl..."
 
 [UninstallRun]
-Filename: "taskkill.exe"; Parameters: "/F /IM {#MyAppExeName}"; Flags: runascurrentuser runhidden skipifdoesntexist
-Filename: "taskkill.exe"; Parameters: "/F /IM {#MyAppExeName}"; Flags: runascurrentuser runhidden skipifdoesntexist
-Filename: "taskkill.exe"; Parameters: "/F /IM {#MyAppExeName}"; Flags: runascurrentuser runhidden skipifdoesntexist
-Filename: "timeout.exe"; Parameters: "/t 3"; Flags: runascurrentuser runhidden skipifdoesntexist
-Filename: "taskkill.exe"; Parameters: "/F /IM openvpn.exe"; Flags: runascurrentuser runhidden skipifdoesntexist
-Filename: "taskkill.exe"; Parameters: "/F /IM openvpn.exe"; Flags: runascurrentuser runhidden skipifdoesntexist
-Filename: "taskkill.exe"; Parameters: "/F /IM openvpn.exe"; Flags: runascurrentuser runhidden skipifdoesntexist
-Filename: "timeout.exe"; Parameters: "/t 3"; Flags: runascurrentuser runhidden skipifdoesntexist
-Filename: "{app}\nssm.exe"; Parameters: "remove pritunl confirm"; Flags: runhidden
-Filename: "{app}\nssm.exe"; Parameters: "stop pritunl"; Flags: runhidden
-Filename: "{app}\tuntap\tuntap.exe"; Parameters: "uninstall"; Flags: runhidden
+Filename: "{app}\pre_uninstall.exe"; Flags: runhidden
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{app}"
