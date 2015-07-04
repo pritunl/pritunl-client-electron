@@ -26,7 +26,7 @@ Editor.prototype.create = function() {
 };
 
 Editor.prototype.scrollBottom = function(count) {
-  if (count === undefined) {
+  if (count == null) {
     count = 0;
   }
   else if (count >= 10) {
