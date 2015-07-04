@@ -24,8 +24,6 @@ UninstallDisplayName=Pritunl Client
 UninstallDisplayIcon={app}\{#MyAppExeName}
 Compression=lzma
 SolidCompression=yes
-CloseApplications=yes
-CloseApplicationsFilter=*.exe,*.dll,*.chm
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
