@@ -64,4 +64,4 @@ Filename: "{app}\pre_uninstall.exe"; Flags: runhidden
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{app}"
-Type: filesandordirs; Name: "C:\ProgramData\Pritunl"
+Type: filesandordirs; Name: "C:\ProgramData\{#MyAppName}"
