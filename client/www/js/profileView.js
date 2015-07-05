@@ -324,7 +324,7 @@ var init = function() {
               remote.getCurrentWindow().close();
             }
           });
-        }, 5000);
+        }, 10000);
       }
     });
   }, 1000);
