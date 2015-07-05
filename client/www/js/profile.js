@@ -605,9 +605,8 @@ Profile.prototype.sync = function(syncHosts, callback) {
     function(err, resp, body) {
       if (err) {
         if (!syncHosts.length) {
-          err = new errors.NetworkError(
-            'profile: Failed to sync config (%s)', err);
-          logger.error(err);
+          logger.warning('profile: Failed to sync config (' +
+            resp.statusCode + ')');
         } else {
           this.sync(syncHosts, callback);
           return;
