@@ -619,7 +619,8 @@ Profile.prototype.sync = function(syncHosts, callback) {
         } else if (resp.statusCode === 404) {
           logger.warning('profile: Failed to sync conf, user not found');
         } else if (resp.statusCode === 401) {
-          logger.warning('profile: Failed to sync conf, authentication error');
+          logger.warning('profile: Failed to sync conf, ' +
+            'authentication error');
         } else if (resp.statusCode === 200 && body) {
           this.updateSync(body);
         } else if (resp.statusCode !== 200) {
