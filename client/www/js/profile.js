@@ -603,46 +603,38 @@ Profile.prototype.sync = function(syncHosts, callback) {
     return;
   }
 
-  try {
-    utils.authRequest('get', host, pth, this.syncToken, this.syncSecret, null,
-      function(err, resp, body) {
-        if (err) {
-          if (!syncHosts.length) {
-            logger.warning('profile: Failed to sync config (' +
-              resp.statusCode + ')');
-          } else {
-            this.sync(syncHosts, callback);
-            return;
-          }
+  utils.authRequest('get', host, pth, this.syncToken, this.syncSecret, null,
+    function(err, resp, body) {
+      if (err) {
+        if (!syncHosts.length) {
+          logger.warning('profile: Failed to sync config (' +
+            resp.statusCode + ')');
         } else {
-          if (resp.statusCode === 480) {
-            logger.info('profile: Failed to sync conf, no subscription');
-          } else if (resp.statusCode === 404) {
-            logger.warning('profile: Failed to sync conf, user not found');
-          } else if (resp.statusCode === 401) {
-            logger.warning('profile: Failed to sync conf, ' +
-              'authentication error');
-          } else if (resp.statusCode === 200 && body) {
-            this.updateSync(body);
-          } else if (resp.statusCode !== 200) {
-            logger.warning('profile: Failed to sync conf, unknown error (' +
-              resp.statusCode + ')');
-            this.sync(syncHosts, callback);
-            return;
-          }
+          this.sync(syncHosts, callback);
+          return;
         }
+      } else {
+        if (resp.statusCode === 480) {
+          logger.info('profile: Failed to sync conf, no subscription');
+        } else if (resp.statusCode === 404) {
+          logger.warning('profile: Failed to sync conf, user not found');
+        } else if (resp.statusCode === 401) {
+          logger.warning('profile: Failed to sync conf, ' +
+            'authentication error');
+        } else if (resp.statusCode === 200 && body) {
+          this.updateSync(body);
+        } else if (resp.statusCode !== 200) {
+          logger.warning('profile: Failed to sync conf, unknown error (' +
+            resp.statusCode + ')');
+          this.sync(syncHosts, callback);
+          return;
+        }
+      }
 
-        if (callback) {
-          callback();
-        }
-      }.bind(this));
-  } catch(e) {
-    logger.warning('profile: Failed to sync conf, ' +
-      'unknown exception (' + e + ')');
-    if (callback) {
-      callback();
-    }
-  }
+      if (callback) {
+        callback();
+      }
+    }.bind(this));
 };
 
 Profile.prototype.connect = function() {
