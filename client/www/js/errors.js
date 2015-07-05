@@ -51,3 +51,9 @@ function UnsupportedError() {
 }
 UnsupportedError.prototype = new Error;
 module.exports.UnsupportedError = UnsupportedError;
+
+function UnknownError() {
+  ErrorInit.call(this, 'UnknownError', arguments);
+}
+UnknownError.prototype = new Error;
+module.exports.UnknownError = UnknownError;
