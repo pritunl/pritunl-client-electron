@@ -134,6 +134,7 @@ var sync =  function() {
       err = new errors.ParseError(
         'main: Failed to parse service status (%s)', e);
       logger.error(err);
+      tray.setImage(disconnTray);
       return;
     }
 
