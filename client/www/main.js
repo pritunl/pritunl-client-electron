@@ -50,6 +50,14 @@ var icon = path.join(__dirname, 'img', 'logo.png');
 var checkService = function(callback) {
   service.ping(function(status) {
     if (!status) {
+      var timeout;
+
+      if (callback) {
+        timeout = 1000;
+      } else {
+        timeout = 8000;
+      }
+
       setTimeout(function() {
         service.ping(function(status) {
           if (!status) {
@@ -68,7 +76,7 @@ var checkService = function(callback) {
             callback(status);
           }
         });
-      }, 1000);
+      }, timeout);
     } else {
       if (callback) {
         callback(true);
