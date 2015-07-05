@@ -53,6 +53,7 @@ var checkService = function(callback) {
       setTimeout(function() {
         service.ping(function(status) {
           if (!status) {
+            tray.setImage(disconnTray);
             dialog.showMessageBox(null, {
               type: 'warning',
               buttons: ['Ok'],
