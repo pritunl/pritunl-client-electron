@@ -622,8 +622,8 @@ Profile.prototype.sync = function(syncHosts, callback) {
         } else if (resp.statusCode === 200 && body) {
           this.updateSync(body);
         } else if (resp.statusCode !== 200) {
-          logger.error('profile: Failed to sync conf, unknown error (%s)',
-            resp.statusCode);
+          logger.warning('profile: Failed to sync conf, unknown error (' +
+            resp.statusCode + ')');
           this.sync(syncHosts, callback);
           return;
         }
