@@ -238,6 +238,8 @@ Profile.prototype.export = function() {
     status = 'Connecting';
   } else if (this.status === 'reconnecting') {
     status = 'Reconnecting';
+  } else if (this.status === 'disconnecting') {
+    status = 'Disconnecting';
   } else {
     status = 'Disconnected';
   }
