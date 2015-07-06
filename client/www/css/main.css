@@ -313,6 +313,7 @@ input:active {
   top: 8px;
   right: 14px;
   font-size: 24px;
+  cursor: default;
 }
 
 
