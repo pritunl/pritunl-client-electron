@@ -445,6 +445,10 @@ input:active {
   color: #515356;
   text-transform: uppercase;
 }
+.profile .logo,
+.profile .info {
+  transition: -webkit-filter 125ms linear, filter 125ms linear;
+}
 .profile.menu-open .logo,
 .profile.menu-open .info {
   -webkit-filter: blur(1px);
