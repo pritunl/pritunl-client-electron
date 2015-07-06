@@ -170,7 +170,9 @@ app.on('ready', function() {
 
       fs.appendFile(pth, evt.data.output + '\n', function(err) {
         if (err) {
-          console.log(err);
+          err = new errors.ParseError(
+            'main: Failed to append profile output (%s)', err);
+          logger.error(err);
         }
       });
     } else if (evt.type === 'connected') {
