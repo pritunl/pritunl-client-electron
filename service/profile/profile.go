@@ -350,7 +350,7 @@ func (p *Profile) Stop() (err error) {
 	p.Status = "disconnecting"
 	p.update()
 
-	if runtime.GOOS != "windows" {
+	if runtime.GOOS == "windows" {
 		err = p.cmd.Process.Kill()
 		if err != nil {
 			err = &ExecError{
