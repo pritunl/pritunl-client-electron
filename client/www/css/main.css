@@ -445,6 +445,11 @@ input:active {
   color: #515356;
   text-transform: uppercase;
 }
+.profile.menu-open .logo,
+.profile.menu-open .info {
+  -webkit-filter: blur(1px);
+  filter: blur(1px);
+}
 .profile .info .label:first-child {
   margin-top: 0;
 }
@@ -467,13 +472,15 @@ input:active {
   visibility: visible;
 }
 .profile .menu-backdrop {
-  background-color: rgba(0, 0, 0, .65);
   position: absolute;
   left: 0;
   right: 0;
   top: 0;
   bottom: 0;
   display: none;
+}
+.profile.menu-open .menu-backdrop {
+  display: block;
 }
 .profile .menu .item {
   color: #fff;

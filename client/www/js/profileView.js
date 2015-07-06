@@ -12,10 +12,11 @@ var logger = require('./logger.js');
 var template = require('../templates/profile.js');
 
 var openMenu = function($profile) {
+  $profile.addClass('menu-open');
   $profile.find('.menu').addClass('show');
-  $profile.find('.menu-backdrop').fadeIn(75);
 };
 var closeMenu = function($profile) {
+  $profile.removeClass('menu-open');
   var $menu = $profile.find('.menu');
   $menu.removeClass('renaming');
   $menu.removeClass('deleting');
@@ -23,7 +24,6 @@ var closeMenu = function($profile) {
   $menu.removeClass('show');
   $profile.find('.menu .rename-input').blur();
   $profile.find('.menu .rename-input').val('');
-  $profile.find('.menu-backdrop').fadeOut(75);
 };
 
 var openEditor = function($profile, data, typ) {
