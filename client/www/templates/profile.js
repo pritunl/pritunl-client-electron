@@ -18,6 +18,16 @@ module.exports = `<div class="profile" flex layout horizontal>
   <div class="menu">
     <div class="connect item btn btn-success"
       layout vertical center>Connect</div>
+    <input class="connect-user-input" type="text" tabindex="-1"
+      placeholder="Username">
+    <input class="connect-pass-input" type="password" tabindex="-1"
+      placeholder="Password">
+    <input class="connect-otp-input" type="text" tabindex="-1"
+      placeholder="Enter OTP Code">
+    <div class="connect-confirm item btn btn-success"
+      layout vertical center>Ok</div>
+    <div class="connect-cancel item btn btn-danger"
+      layout vertical center>Cancel</div>
     <div class="disconnect item btn btn-danger"
       layout vertical center>Disconnect</div>
     <div class="rename item btn btn-info"

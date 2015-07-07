@@ -504,6 +504,50 @@ input:active {
   display: none;
 }
 
+.profile .menu .connect-user-input,
+.profile .menu .connect-pass-input,
+.profile .menu .connect-otp-input,
+.profile .menu .connect-confirm,
+.profile .menu .connect-cancel {
+  position: absolute;
+  top: 0;
+  left: 126px;
+  width: 63px;
+  height: 37px;
+  padding: 0 6px;
+  transition: left 125ms linear;
+}
+.profile .menu .connect-user-input,
+.profile .menu .connect-pass-input {
+  font-size: 16px;
+  width: 95px;
+}
+.profile .menu .connect-otp-input {
+  font-size: 16px;
+  width: 190px;
+}
+.profile .menu.authenticating-user .connect-user-input {
+  left: -190px;
+}
+.profile .menu.authenticating-otp .connect-otp-input {
+  left: -190px;
+}
+.profile .menu.authenticating-user .connect-pass-input {
+  left: -95px;
+}
+.profile .menu.authenticating-user .connect-confirm,
+.profile .menu.authenticating-otp .connect-confirm {
+  left: -126px;
+}
+.profile .menu.authenticating-user .connect-confirm,
+.profile .menu.authenticating-otp .connect-confirm {
+  left: 0;
+}
+.profile .menu.authenticating-user .connect-cancel,
+.profile .menu.authenticating-otp .connect-cancel {
+  left: 63px;
+}
+
 .profile .menu .rename-input,
 .profile .menu .rename-confirm,
 .profile .menu .rename-cancel {
