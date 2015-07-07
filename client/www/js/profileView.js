@@ -18,12 +18,16 @@ var openMenu = function($profile) {
 var closeMenu = function($profile) {
   $profile.removeClass('menu-open');
   var $menu = $profile.find('.menu');
+  $menu.removeClass('authenticating-user');
+  $menu.removeClass('authenticating-otp');
   $menu.removeClass('renaming');
   $menu.removeClass('deleting');
   $menu.removeClass('autostarting');
   $menu.removeClass('show');
-  $profile.find('.menu .rename-input').blur();
-  $profile.find('.menu .rename-input').val('');
+  $profile.find('.menu .connect').removeClass('disabled');
+  var $inputs = $profile.find('.menu input');
+  $inputs.blur();
+  $inputs.val('');
 };
 
 var openEditor = function($profile, data, typ) {
@@ -97,8 +101,50 @@ var renderProfile = function(prfl) {
   });
 
   $profile.find('.menu .connect').click(function() {
-    prfl.connect();
-    closeMenu($profile);
+    if ($profile.find('.menu .connect').hasClass('disabled')) {
+      return;
+    }
+    $profile.find('.menu .connect').addClass('disabled');
+
+    prfl.connect(function(authType, callback) {
+      if (!authType) {
+        closeMenu($profile);
+        return;
+      }
+
+      if (authType === 'otp') {
+        $profile.find('.menu .connect-confirm').one('click', function() {
+          var otpCode = $profile.find('.connect-otp-input').val();
+          if (otpCode) {
+            callback(otpCode);
+          }
+          closeMenu($profile);
+        });
+        $profile.find('.menu').addClass('authenticating-otp');
+      } else {
+        $profile.find('.menu .connect-confirm').one('click', function() {
+          var username = $profile.find('.connect-user-input').val();
+          var password = $profile.find('.connect-pass-input').val();
+          if (username || password) {
+            callback(username, password);
+          }
+          closeMenu($profile);
+        });
+        $profile.find('.menu').addClass('authenticating-user');
+      }
+    });
+  });
+  $profile.find('.menu .connect-cancel').click(function() {
+    var $menu = $profile.find('.menu');
+    $menu.removeClass('authenticating-user');
+    $menu.removeClass('authenticating-otp');
+    $profile.find('.menu .connect').removeClass('disabled');
+    $profile.find('.menu .connect-user-input').blur();
+    $profile.find('.menu .connect-user-input').val('');
+    $profile.find('.menu .connect-pass-input').blur();
+    $profile.find('.menu .connect-pass-input').val('');
+    $profile.find('.menu .connect-otp-input').blur();
+    $profile.find('.menu .connect-otp-input').val('');
   });
 
   $profile.find('.menu .disconnect').click(function() {
