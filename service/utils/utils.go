@@ -16,7 +16,8 @@ func ResetNetworking() {
 		return
 	}
 
-	exec.Command("route", "-f").Run()
+	exec.Command("netsh", "interface", "ip", "delete",
+		"destinationcache").Run()
 	exec.Command("ipconfig", "/release").Run()
 	exec.Command("ipconfig", "/renew").Run()
 	exec.Command("arp", "-d", "*").Run()
