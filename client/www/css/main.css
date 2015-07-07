@@ -468,6 +468,7 @@ input:active {
   cursor: pointer;
 }
 .profile .menu {
+  background-color: #000;
   position: absolute;
   right: 0;
   width: 0;
