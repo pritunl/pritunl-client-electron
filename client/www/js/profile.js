@@ -521,6 +521,18 @@ Profile.prototype.getFullData = function(callback) {
     }.bind(this));
 };
 
+Profile.prototype.getAuthType = function() {
+  if (this.data.indexOf('auth-user-pass') !== -1) {
+    if (this.user) {
+      return 'otp';
+    } else {
+      return 'user';
+    }
+  } else {
+    return null;
+  }
+};
+
 Profile.prototype.updateSync = function(data) {
   var sIndex;
   var eIndex;
@@ -637,13 +649,33 @@ Profile.prototype.sync = function(syncHosts, callback) {
     }.bind(this));
 };
 
-Profile.prototype.connect = function() {
+Profile.prototype.connect = function(authCallback) {
   if (this.syncHosts.length) {
     this.sync(this.syncHosts.slice(0), function() {
-      service.start(this);
+      this.auth(authCallback);
     }.bind(this));
   } else {
+    this.auth(authCallback);
+  }
+};
+
+Profile.prototype.auth = function(callback) {
+  var authType = this.getAuthType();
+
+  if (!authType) {
+    if (callback) {
+      callback(null);
+    }
     service.start(this);
+  } else if (!callback) {
+  } else if (authType === 'otp') {
+    callback(authType, function(otpCode) {
+      service.start(this, 'pritunl', otpCode);
+    }.bind(this));
+  } else if (authType === 'user') {
+    callback(authType, function(username, pass) {
+      service.start(this, username, pass);
+    }.bind(this));
   }
 };
 
