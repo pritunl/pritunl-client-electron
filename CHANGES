@@ -1,6 +1,11 @@
 Pritunl Client Changelog
 ========================
 
+Version 0.10.2 2015-07-07
+-------------------------
+
+Fix disconnect issue with Windows client
+
 Version 0.10.1 2015-07-07
 -------------------------
 
