@@ -1,4 +1,4 @@
-# pritunl-client-electron: pritun openvpn client
+# pritunl-client-electron: pritun vpn client
 
 [![package-osx](https://img.shields.io/badge/package-osx-cfcfcf.svg?style=flat)](https://github.com/pritunl/pritunl-client-electron/releases)
 [![package-windows](https://img.shields.io/badge/package-windows-00adef.svg?style=flat)](https://github.com/pritunl/pritunl-client-electron/releases)
