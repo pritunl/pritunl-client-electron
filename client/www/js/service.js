@@ -64,13 +64,15 @@ var update = function(callback) {
   }.bind(this));
 };
 
-var start = function(prfl, callback) {
+var start = function(prfl, username, password, callback) {
   prfl.getFullData(function(data) {
     request.post({
       url: 'http://' + constants.serviceHost + '/profile',
       json: true,
       body: {
         id: prfl.id,
+        username: username,
+        password: password,
         data: data
       }
     }, function(err) {
