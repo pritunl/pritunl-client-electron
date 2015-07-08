@@ -1,6 +1,11 @@
 Pritunl Client Changelog
 ========================
 
+Version 0.10.3
+--------------
+
+Allow using path with auth-user-pass
+
 Version 0.10.2 2015-07-07
 -------------------------
 
