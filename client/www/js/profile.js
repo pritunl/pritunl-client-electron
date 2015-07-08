@@ -522,7 +522,15 @@ Profile.prototype.getFullData = function(callback) {
 };
 
 Profile.prototype.getAuthType = function() {
-  if (this.data.indexOf('auth-user-pass') !== -1) {
+  var n = this.data.indexOf('auth-user-pass');
+
+  if (n !== -1) {
+    var authStr = this.data.substring(n, this.data.indexOf('\n', n));
+    authStr = authStr.split(' ');
+    if (authStr.length > 1 && authStr[1]) {
+      return null;
+    }
+
     if (this.user) {
       return 'otp';
     } else {
