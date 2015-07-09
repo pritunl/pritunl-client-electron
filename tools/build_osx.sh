@@ -8,6 +8,8 @@ rm -rf build/osx
 rm -f build/Pritunl.pkg
 rm -f build/Pritunl.pkg.zip
 
+git pull
+
 # Pritunl
 mkdir -p build/osx/Applications
 cd client
