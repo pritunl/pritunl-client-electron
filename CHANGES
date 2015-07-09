@@ -1,6 +1,11 @@
 Pritunl Client Changelog
 ========================
 
+Version 0.10.4
+--------------
+
+Handle reopen events
+
 Version 0.10.3 2015-07-08
 -------------------------
 
