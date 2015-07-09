@@ -34,6 +34,10 @@ codesign -s "Developer ID Application: Zachary Huff (73CNTLZRFJ)" build/osx/usr/
 mkdir -p build/osx/Library/LaunchDaemons
 cp service_osx/com.pritunl.service.plist build/osx/Library/LaunchDaemons
 
+# Client Agent
+mkdir -p build/osx/Library/LaunchAgents
+cp service_osx/com.pritunl.client.plist build/osx/Library/LaunchAgents
+
 # Tuntap
 mkdir -p build/osx/Library/Extensions
 cp -pR tuntap_osx/tap.kext build/osx/Library/Extensions/
