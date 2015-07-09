@@ -198,7 +198,16 @@ app.on('ready', function() {
     }
   });
 
-  openMainWin();
+  var noMain = false;
+  process.argv.forEach(function(val) {
+    if (val === "--no-main") {
+      noMain = true;
+    }
+  });
+
+  if (!noMain) {
+    openMainWin();
+  }
 
   tray = new Tray(disconnTray);
   tray.on('clicked', function() {
