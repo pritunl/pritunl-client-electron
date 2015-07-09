@@ -92,6 +92,18 @@ app.on('window-all-closed', function() {
   checkService();
 });
 
+app.on('open-file', function() {
+  openMainWin();
+});
+
+app.on('open-url', function() {
+  openMainWin();
+});
+
+app.on('activate-with-no-open-windows', function() {
+  openMainWin();
+});
+
 var openMainWin = function() {
   if (main) {
     main.focus();
