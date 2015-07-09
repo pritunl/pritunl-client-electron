@@ -308,6 +308,13 @@ input:active {
   height: 12px;
   margin: 0 2px;
 }
+.header .version {
+  position: absolute;
+  color: #969696;
+  top: 15px;
+  right: 110px;
+  display: none;
+}
 .header .logo {
   color: #fff;
   display: inline-block;

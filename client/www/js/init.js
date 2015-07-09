@@ -71,6 +71,11 @@ $('.header .maximize').click(function(evt) {
     win.maximizedPrev = null;
   }
 });
-$('.header .minimize').click(function() {
+$('.header .minimize').click(function(evt) {
+  if (evt.shiftKey) {
+    $('.header .version').toggle();
+    return;
+  }
+
   remote.getCurrentWindow().minimize();
 });
