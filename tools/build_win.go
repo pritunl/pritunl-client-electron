@@ -7,7 +7,15 @@ import (
 )
 
 func main() {
-	err := os.Remove(filepath.Join("build", "win", "Pritunl.exe"))
+	cmd := exec.Command("git", "pull")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err := cmd.Run()
+	if err != nil {
+		panic(err)
+	}
+
+	err = os.Remove(filepath.Join("build", "win", "Pritunl.exe"))
 	if err != nil && !os.IsNotExist(err) {
 		panic(err)
 	}
@@ -22,7 +30,7 @@ func main() {
 		panic(err)
 	}
 
-	cmd := exec.Command("go", "build", "-v", "-a", "-o", "tuntap.exe")
+	cmd = exec.Command("go", "build", "-v", "-a", "-o", "tuntap.exe")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err = cmd.Run()
