@@ -25,6 +25,8 @@ func clean() (err error) {
 			"com.pritunl.pkg.Pritunl.plist"),
 		filepath.Join(pathSep, "private", "tmp", "pritunl"),
 		filepath.Join(pathSep, "Applications", "Pritunl.app"),
+		filepath.Join(pathSep, "Library", "LaunchAgents",
+			"com.pritunl.client.plist"),
 	}
 
 	homesPath := filepath.Join(pathSep, "Users")
