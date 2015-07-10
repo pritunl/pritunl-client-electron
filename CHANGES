@@ -1,6 +1,11 @@
 Pritunl Client Changelog
 ========================
 
+Version 0.10.5 2015-07-10
+-------------------------
+
+Update openvpn and openssl
+
 Version 0.10.4 2015-07-09
 -------------------------
 
