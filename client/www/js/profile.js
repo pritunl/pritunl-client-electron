@@ -627,8 +627,12 @@ Profile.prototype.sync = function(syncHosts, callback) {
     function(err, resp, body) {
       if (err) {
         if (!syncHosts.length) {
-          logger.warning('profile: Failed to sync config (' +
-            resp.statusCode + ')');
+          if (resp) {
+            logger.warning('profile: Failed to sync config (' +
+              resp.statusCode + ')');
+          } else {
+            logger.warning('profile: Failed to sync config');
+          }
         } else {
           this.sync(syncHosts, callback);
           return;
