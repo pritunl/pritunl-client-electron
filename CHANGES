@@ -1,6 +1,11 @@
 Pritunl Client Changelog
 ========================
 
+Version 0.10.6
+--------------
+
+Fix key sync error message
+
 Version 0.10.5 2015-07-10
 -------------------------
 
