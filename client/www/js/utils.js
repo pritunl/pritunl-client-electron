@@ -51,7 +51,8 @@ var authRequest = function(method, host, path, token, secret, jsonData,
     json: data ? true : undefined,
     body: data,
     headers: headers,
-    strictSSL: false
+    strictSSL: false,
+    timeout: 5000
   }, function(err, resp, body) {
     if (callback) {
       callback(err, resp, body);
