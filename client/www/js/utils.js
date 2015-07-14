@@ -52,7 +52,7 @@ var authRequest = function(method, host, path, token, secret, jsonData,
     body: data,
     headers: headers,
     strictSSL: false,
-    timeout: 5000
+    timeout: 3000
   }, function(err, resp, body) {
     if (callback) {
       callback(err, resp, body);
