@@ -18,6 +18,8 @@ npm install
 export ELECTRON_VER="$(npm ls | grep electron-prebuilt | tr '@' '\n' | tail -n1)"
 ./node_modules/.bin/electron-packager ./ Pritunl --platform=darwin --arch=x64 --version=$ELECTRON_VER --icon=./www/img/pritunl.icns --out=../build/osx/Applications
 cd ../
+mv build/osx/Applications/Pritunl-darwin-x64/Pritunl.app build/osx/Applications/
+rm -rf build/osx/Applications/Pritunl-darwin-x64
 sleep 3
 codesign --force --deep --sign "Developer ID Application: Zachary Huff (73CNTLZRFJ)" build/osx/Applications/Pritunl.app
 
