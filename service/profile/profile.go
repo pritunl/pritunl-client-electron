@@ -20,6 +20,50 @@ import (
 
 const (
 	connTimeout = 30 * time.Second
+	tunScript   = `if [ -z "$dev" ]; then echo "$0: \$dev not defined, exiting"; exit 1; fi
+
+case "$script_type" in
+   up)
+
+     unset dns
+     unset domain
+     n=1; i=0; j=0;
+     while o=foreign_option_${n}; o=${!o}; [ "$o" ]
+     do
+         case $o in
+             'dhcp-option DNS '*) dns[i++]=${o/dhcp-option DNS /};;
+             'dhcp-option DOMAIN '*) domain[j++]=${o/dhcp-option DOMAIN /};;
+         esac;
+         let n++
+     done
+
+     if [ ${#dns[@]} ]; then
+         /usr/sbin/scutil <<EOF
+d.init
+d.add Addresses * ${ifconfig_local}
+d.add DestAddresses * ${ifconfig_remote}
+d.add InterfaceName ${dev}
+set State:/Network/Service/openvpn-${dev}/IPv4
+d.init
+d.add ServerAddresses * ${dns[*]}
+d.add SupplementalMatchDomains * ${domain[*]}
+set State:/Network/Service/openvpn-${dev}/DNS
+EOF
+     fi
+
+   ;;
+
+   down)
+
+     if [ $(/usr/bin/id -u) -eq 0 ]; then
+         /usr/sbin/scutil <<EOF
+remove State:/Network/Service/openvpn-${dev}/IPv4
+remove State:/Network/Service/openvpn-${dev}/DNS
+EOF
+     fi
+   ;;
+   *) echo "$0: invalid script_type" && exit 1 ;;
+esac`
 )
 
 var (
@@ -69,6 +113,25 @@ func (p *Profile) write() (pth string, err error) {
 	if err != nil {
 		err = &WriteError{
 			errors.Wrap(err, "profile: Failed to write profile"),
+		}
+		return
+	}
+
+	return
+}
+
+func (p *Profile) writeUpDown() (pth string, err error) {
+	rootDir, err := utils.GetTempDir()
+	if err != nil {
+		return
+	}
+
+	pth = filepath.Join(rootDir, p.Id+".sh")
+
+	err = ioutil.WriteFile(pth, []byte(tunScript), os.FileMode(0755))
+	if err != nil {
+		err = &WriteError{
+			errors.Wrap(err, "profile: Failed to write up down script"),
 		}
 		return
 	}
@@ -238,8 +301,21 @@ func (p *Profile) Start(timeout bool) (err error) {
 
 	args := []string{
 		"--config", confPath,
-		"--script-security", "1",
 		"--verb", "2",
+	}
+
+	if runtime.GOOS == "darwin" {
+		upDownPath, e := p.writeUpDown()
+		if e != nil {
+			err = e
+			p.clearStatus(start)
+			return
+		}
+
+		args = append(args, "--script-security", "2",
+			"--up", upDownPath, "--down", upDownPath)
+	} else {
+		args = append(args, "--script-security", "1")
 	}
 
 	if authPath != "" {
