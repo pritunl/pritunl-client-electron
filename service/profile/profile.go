@@ -321,7 +321,12 @@ func (p *Profile) Start(timeout bool) (err error) {
 		args = append(args, "--script-security", "2",
 			"--up", upPath,
 			"--down", downPath,
-			"--route-pre-down", preDownPath)
+			"--route-pre-down", preDownPath,
+			// TODO Block all scripts
+			"--tls-verify", "",
+			"--ipchange", "",
+			"--route-up", "",
+		)
 	} else {
 		args = append(args, "--script-security", "1")
 	}
