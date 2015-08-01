@@ -1,6 +1,12 @@
 Pritunl Client Changelog
 ========================
 
+Version 0.10.7 2015-08-01
+-------------------------
+
+Fix dns issues with OS X
+Enable Windows 7 support
+
 Version 0.10.6 2015-07-18
 -------------------------
 
