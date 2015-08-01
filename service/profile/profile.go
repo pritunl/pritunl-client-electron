@@ -16,54 +16,11 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"fmt"
 )
 
 const (
 	connTimeout = 30 * time.Second
-	tunScript   = `if [ -z "$dev" ]; then echo "$0: \$dev not defined, exiting"; exit 1; fi
-
-case "$script_type" in
-   up)
-
-     unset dns
-     unset domain
-     n=1; i=0; j=0;
-     while o=foreign_option_${n}; o=${!o}; [ "$o" ]
-     do
-         case $o in
-             'dhcp-option DNS '*) dns[i++]=${o/dhcp-option DNS /};;
-             'dhcp-option DOMAIN '*) domain[j++]=${o/dhcp-option DOMAIN /};;
-         esac;
-         let n++
-     done
-
-     if [ ${#dns[@]} ]; then
-         /usr/sbin/scutil <<EOF
-d.init
-d.add Addresses * ${ifconfig_local}
-d.add DestAddresses * ${ifconfig_remote}
-d.add InterfaceName ${dev}
-set State:/Network/Service/openvpn-${dev}/IPv4
-d.init
-d.add ServerAddresses * ${dns[*]}
-d.add SupplementalMatchDomains * ${domain[*]}
-set State:/Network/Service/openvpn-${dev}/DNS
-EOF
-     fi
-
-   ;;
-
-   down)
-
-     if [ $(/usr/bin/id -u) -eq 0 ]; then
-         /usr/sbin/scutil <<EOF
-remove State:/Network/Service/openvpn-${dev}/IPv4
-remove State:/Network/Service/openvpn-${dev}/DNS
-EOF
-     fi
-   ;;
-   *) echo "$0: invalid script_type" && exit 1 ;;
-esac`
 )
 
 var (
@@ -120,15 +77,53 @@ func (p *Profile) write() (pth string, err error) {
 	return
 }
 
-func (p *Profile) writeUpDown() (pth string, err error) {
+func (p *Profile) writeUp() (pth string, err error) {
 	rootDir, err := utils.GetTempDir()
 	if err != nil {
 		return
 	}
 
-	pth = filepath.Join(rootDir, p.Id+".sh")
+	pth = filepath.Join(rootDir, p.Id+"-up.sh")
 
-	err = ioutil.WriteFile(pth, []byte(tunScript), os.FileMode(0755))
+	err = ioutil.WriteFile(pth, []byte(upScript), os.FileMode(0755))
+	if err != nil {
+		err = &WriteError{
+			errors.Wrap(err, "profile: Failed to write up down script"),
+		}
+		return
+	}
+
+	return
+}
+
+func (p *Profile) writeDown() (pth string, err error) {
+	rootDir, err := utils.GetTempDir()
+	if err != nil {
+		return
+	}
+
+	pth = filepath.Join(rootDir, p.Id+"-down.sh")
+
+	err = ioutil.WriteFile(pth, []byte(downScript), os.FileMode(0755))
+	if err != nil {
+		err = &WriteError{
+			errors.Wrap(err, "profile: Failed to write up down script"),
+		}
+		return
+	}
+
+	return
+}
+
+func (p *Profile) writePreDown() (pth string, err error) {
+	rootDir, err := utils.GetTempDir()
+	if err != nil {
+		return
+	}
+
+	pth = filepath.Join(rootDir, p.Id+"-predown.sh")
+
+	err = ioutil.WriteFile(pth, []byte(preDownScript), os.FileMode(0755))
 	if err != nil {
 		err = &WriteError{
 			errors.Wrap(err, "profile: Failed to write up down script"),
@@ -305,7 +300,19 @@ func (p *Profile) Start(timeout bool) (err error) {
 	}
 
 	if runtime.GOOS == "darwin" {
-		upDownPath, e := p.writeUpDown()
+		upPath, e := p.writeUp()
+		if e != nil {
+			err = e
+			p.clearStatus(start)
+			return
+		}
+		downPath, e := p.writeDown()
+		if e != nil {
+			err = e
+			p.clearStatus(start)
+			return
+		}
+		preDownPath, e := p.writePreDown()
 		if e != nil {
 			err = e
 			p.clearStatus(start)
@@ -313,7 +320,9 @@ func (p *Profile) Start(timeout bool) (err error) {
 		}
 
 		args = append(args, "--script-security", "2",
-			"--up", upDownPath, "--down", upDownPath)
+			"--up", upPath,
+			"--down", downPath,
+			"--route-pre-down", preDownPath)
 	} else {
 		args = append(args, "--script-security", "1")
 	}
