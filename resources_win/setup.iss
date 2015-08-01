@@ -14,7 +14,6 @@ AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 DefaultDirName={pf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
-MinVersion=6.2.9200
 PrivilegesRequired=admin
 DisableProgramGroupPage=yes
 OutputDir=..\build\
