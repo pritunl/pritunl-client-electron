@@ -133,6 +133,25 @@ func (p *Profile) writePreDown() (pth string, err error) {
 	return
 }
 
+func (p *Profile) writeBlock() (pth string, err error) {
+	rootDir, err := utils.GetTempDir()
+	if err != nil {
+		return
+	}
+
+	pth = filepath.Join(rootDir, p.Id+"-block.sh")
+
+	err = ioutil.WriteFile(pth, []byte(""), os.FileMode(0755))
+	if err != nil {
+		err = &WriteError{
+			errors.Wrap(err, "profile: Failed to write block script"),
+		}
+		return
+	}
+
+	return
+}
+
 func (p *Profile) writeAuth() (pth string, err error) {
 	rootDir, err := utils.GetTempDir()
 	if err != nil {
@@ -317,15 +336,20 @@ func (p *Profile) Start(timeout bool) (err error) {
 			p.clearStatus(start)
 			return
 		}
+		blockPath, e := p.writeBlock()
+		if e != nil {
+			err = e
+			p.clearStatus(start)
+			return
+		}
 
 		args = append(args, "--script-security", "2",
 			"--up", upPath,
 			"--down", downPath,
 			"--route-pre-down", preDownPath,
-			// TODO Block all scripts
-			"--tls-verify", "",
-			"--ipchange", "",
-			"--route-up", "",
+			"--tls-verify", blockPath,
+			"--ipchange", blockPath,
+			"--route-up", blockPath,
 		)
 	} else {
 		args = append(args, "--script-security", "1")
