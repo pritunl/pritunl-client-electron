@@ -46,6 +46,7 @@ type OutputData struct {
 }
 
 type Profile struct {
+	remPaths   []string  `json:"-"`
 	cmd        *exec.Cmd `json:"-"`
 	Id         string    `json:"id"`
 	Data       string    `json:"-"`
@@ -277,11 +278,16 @@ func (p *Profile) clearStatus(start time.Time) {
 		p.ClientAddr = ""
 		p.ServerAddr = ""
 		p.update()
+
+		for _, path := range p.remPaths {
+			os.Remove(path)
+		}
 	}()
 }
 
 func (p *Profile) Start(timeout bool) (err error) {
 	start := time.Now()
+	p.remPaths = []string{}
 
 	p.Status = "connecting"
 	p.Timestamp = start.Unix()
@@ -300,6 +306,7 @@ func (p *Profile) Start(timeout bool) (err error) {
 		p.clearStatus(start)
 		return
 	}
+	p.remPaths = append(p.remPaths, confPath)
 
 	var authPath string
 	if p.Username != "" || p.Password != "" {
@@ -308,6 +315,7 @@ func (p *Profile) Start(timeout bool) (err error) {
 			p.clearStatus(start)
 			return
 		}
+		p.remPaths = append(p.remPaths, authPath)
 	}
 
 	p.update()
@@ -324,24 +332,31 @@ func (p *Profile) Start(timeout bool) (err error) {
 			p.clearStatus(start)
 			return
 		}
+		p.remPaths = append(p.remPaths, upPath)
+
 		downPath, e := p.writeDown()
 		if e != nil {
 			err = e
 			p.clearStatus(start)
 			return
 		}
+		p.remPaths = append(p.remPaths, downPath)
+
 		preDownPath, e := p.writePreDown()
 		if e != nil {
 			err = e
 			p.clearStatus(start)
 			return
 		}
+		p.remPaths = append(p.remPaths, preDownPath)
+
 		blockPath, e := p.writeBlock()
 		if e != nil {
 			err = e
 			p.clearStatus(start)
 			return
 		}
+		p.remPaths = append(p.remPaths, blockPath)
 
 		args = append(args, "--script-security", "2",
 			"--up", upPath,
