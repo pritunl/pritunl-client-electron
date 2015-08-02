@@ -4,9 +4,11 @@ package event
 import (
 	"github.com/dropbox/godropbox/container/set"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
+	"time"
 )
 
 var (
+	LastAwake = time.Now()
 	listeners = set.NewSet()
 )
 
