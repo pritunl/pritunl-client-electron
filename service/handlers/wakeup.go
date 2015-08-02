@@ -14,7 +14,7 @@ func wakeupGet(c *gin.Context) {
 	}
 	evt.Init()
 
-	for i := 0; i < 6; i++ {
+	for i := 0; i < 8; i++ {
 		time.Sleep(50 * time.Millisecond)
 		if time.Since(event.LastAwake) < 200*time.Millisecond {
 			c.String(200, "")
