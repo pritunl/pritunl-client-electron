@@ -7,6 +7,7 @@ import (
 	"github.com/pritunl/pritunl-client-electron/service/profile"
 	"net/http"
 	"time"
+	"io/ioutil"
 )
 
 const (
@@ -51,9 +52,19 @@ func eventsGet(c *gin.Context) {
 
 	go func() {
 		for {
-			if _, _, err := conn.NextReader(); err != nil {
+			_, msgByt, err := conn.NextReader()
+			if err != nil {
 				conn.Close()
 				break
+			}
+
+			msg, err := ioutil.ReadAll(msgByt)
+			if err != nil {
+				continue
+			}
+
+			if string(msg) == "awake" {
+				event.LastAwake = time.Now()
 			}
 		}
 	}()
