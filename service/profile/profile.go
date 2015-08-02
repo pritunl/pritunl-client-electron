@@ -141,7 +141,7 @@ func (p *Profile) writeBlock() (pth string, err error) {
 
 	pth = filepath.Join(rootDir, p.Id+"-block.sh")
 
-	err = ioutil.WriteFile(pth, []byte(""), os.FileMode(0755))
+	err = ioutil.WriteFile(pth, []byte(blockScript), os.FileMode(0755))
 	if err != nil {
 		err = &WriteError{
 			errors.Wrap(err, "profile: Failed to write block script"),
