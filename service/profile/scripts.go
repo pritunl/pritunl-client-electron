@@ -1,7 +1,8 @@
 package profile
 
 const (
-  upScript = `#!/bin/bash -e
+	blockScript = "#!/bin/bash\n"
+	upScript = `#!/bin/bash -e
 # Note: must be bash; uses bash-specific tricks
 #
 # ******************************************************************************************************************
@@ -1438,7 +1439,7 @@ logMessage "End of output from ${OUR_NAME}"
 logMessage "**********************************************"
 
 exit $EXIT_CODE`
-  downScript = `#!/bin/bash -e
+	downScript = `#!/bin/bash -e
 # Note: must be bash; uses bash-specific tricks
 #
 # ******************************************************************************************************************
@@ -1836,7 +1837,7 @@ logMessage "End of output from ${OUR_NAME}"
 logMessage "**********************************************"
 
 exit 0`
-  preDownScript = `#!/bin/bash -e
+	preDownScript = `#!/bin/bash -e
 # Note: must be bash; uses bash-specific tricks
 #
 # ******************************************************************************************************************
