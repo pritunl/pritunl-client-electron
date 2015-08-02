@@ -21,6 +21,11 @@ var connect = function(callback) {
 
   socket.on('message', function(data) {
     data = JSON.parse(data);
+
+    if (data.type === 'wakeup') {
+      socket.send('awake');
+    }
+
     callback(data);
   });
 };
