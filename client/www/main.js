@@ -168,92 +168,101 @@ var sync =  function() {
 };
 
 app.on('ready', function() {
-  var profilesPth = path.join(app.getPath('userData'), 'profiles');
-  fs.exists(profilesPth, function(exists) {
-    if (!exists) {
-      fs.mkdir(profilesPth);
-    }
-  });
-
-  events.subscribe(function(evt) {
-    if (evt.type === 'output') {
-      var pth = path.join(app.getPath('userData'), 'profiles',
-        evt.data.id + '.log');
-
-      fs.appendFile(pth, evt.data.output + '\n', function(err) {
-        if (err) {
-          err = new errors.ParseError(
-            'main: Failed to append profile output (%s)', err);
-          logger.error(err);
-        }
-      });
-    } else if (evt.type === 'connected') {
-      if (tray) {
-        tray.setImage(connTray);
-      }
-    } else if (evt.type === 'disconnected') {
-      if (tray) {
-        tray.setImage(disconnTray);
-      }
-    }
-  });
-
-  var noMain = false;
-  process.argv.forEach(function(val) {
-    if (val === "--no-main") {
-      noMain = true;
-    }
-  });
-
-  if (!noMain) {
-    openMainWin();
-  }
-
-  tray = new Tray(disconnTray);
-  tray.on('clicked', function() {
-    openMainWin();
-  });
-  tray.on('double-clicked', function() {
-    openMainWin();
-  });
-
-  var menu = Menu.buildFromTemplate([
-    {
-      label: 'Settings',
-      click: function() {
-        openMainWin();
-      }
-    },
-    {
-      label: 'Exit',
-      click: function() {
-        request.post({
-          url: 'http://' + constants.serviceHost + '/stop'
-        }, function() {
-          app.quit();
-        });
-      }
-    }
-  ]);
-  tray.setContextMenu(menu);
-
-  profile.getProfiles(function(err, prfls) {
-    if (err) {
+  service.wakeup(function(status) {
+    if (status) {
+      app.quit();
       return;
     }
 
-    var prfl;
-    for (var i = 0; i < prfls.length; i++) {
-      prfl = prfls[i];
-
-      if (prfl.autostart) {
-        prfl.connect();
+    var profilesPth = path.join(app.getPath('userData'), 'profiles');
+    fs.exists(profilesPth, function(exists) {
+      if (!exists) {
+        fs.mkdir(profilesPth);
       }
-    }
-  }, true);
+    });
 
-  sync();
-  setInterval(function() {
+    events.subscribe(function(evt) {
+      if (evt.type === 'output') {
+        var pth = path.join(app.getPath('userData'), 'profiles',
+          evt.data.id + '.log');
+
+        fs.appendFile(pth, evt.data.output + '\n', function(err) {
+          if (err) {
+            err = new errors.ParseError(
+              'main: Failed to append profile output (%s)', err);
+            logger.error(err);
+          }
+        });
+      } else if (evt.type === 'connected') {
+        if (tray) {
+          tray.setImage(connTray);
+        }
+      } else if (evt.type === 'disconnected') {
+        if (tray) {
+          tray.setImage(disconnTray);
+        }
+      } else if (evt.type === 'wakeup') {
+        openMainWin();
+      }
+    });
+
+    var noMain = false;
+    process.argv.forEach(function(val) {
+      if (val === "--no-main") {
+        noMain = true;
+      }
+    });
+
+    if (!noMain) {
+      openMainWin();
+    }
+
+    tray = new Tray(disconnTray);
+    tray.on('clicked', function() {
+      openMainWin();
+    });
+    tray.on('double-clicked', function() {
+      openMainWin();
+    });
+
+    var menu = Menu.buildFromTemplate([
+      {
+        label: 'Settings',
+        click: function() {
+          openMainWin();
+        }
+      },
+      {
+        label: 'Exit',
+        click: function() {
+          request.post({
+            url: 'http://' + constants.serviceHost + '/stop'
+          }, function() {
+            app.quit();
+          });
+        }
+      }
+    ]);
+    tray.setContextMenu(menu);
+
+    profile.getProfiles(function(err, prfls) {
+      if (err) {
+        return;
+      }
+
+      var prfl;
+      for (var i = 0; i < prfls.length; i++) {
+        prfl = prfls[i];
+
+        if (prfl.autostart) {
+          prfl.connect();
+        }
+      }
+    }, true);
+
     sync();
-  }, 10000);
+    setInterval(function() {
+      sync();
+    }, 10000);
+  });
 });
