@@ -1,3 +1,4 @@
+var os = require('os');
 var request = require('request');
 var constants = require('./constants.js');
 var logger = require('./logger.js');
@@ -120,6 +121,11 @@ var ping = function(callback) {
 };
 
 var wakeup = function(callback) {
+  if (os.platform() !== 'win32') {
+    callback(false);
+    return;
+  }
+
   request.get({
     url: 'http://' + constants.serviceHost + '/wakeup'
   }, function(err, resp) {
