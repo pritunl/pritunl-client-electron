@@ -119,6 +119,18 @@ var ping = function(callback) {
   });
 };
 
+var wakeup = function(callback) {
+  request.get({
+    url: 'http://' + constants.serviceHost + '/wakeup'
+  }, function(err, resp) {
+    if (err || !resp || resp.statusCode !== 200) {
+      callback(false);
+    } else {
+      callback(true);
+    }
+  });
+};
+
 module.exports = {
   add: add,
   remove: remove,
@@ -127,5 +139,6 @@ module.exports = {
   update: update,
   start: start,
   stop: stop,
-  ping: ping
+  ping: ping,
+  wakeup: wakeup
 };
