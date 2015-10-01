@@ -294,7 +294,13 @@ var init = function() {
   });
 
   profile.getProfiles(function(err, prfls) {
+    var importLock = false;
     var importUri = function() {
+      if (importLock) {
+        return;
+      }
+      importLock = true;
+
       var uri = $('.profiles .uri-input').val();
 
       importer.importProfileUri(uri, function(prfls) {
@@ -305,6 +311,7 @@ var init = function() {
         $('.profiles .import-uri').show();
         $('.profiles .import-btns').hide();
         $('.profiles .uri-input').slideUp(50);
+        importLock = false;
       });
     };
 
