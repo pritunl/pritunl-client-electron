@@ -219,6 +219,7 @@ body {
 }
 
 input {
+  font-family: 'Ubuntu', sans-serif;
   font-size: 18px;
   background-color: #253c5a;
   color: #fff;
