@@ -18,7 +18,7 @@ const (
 
 func clean() (err error) {
 	paths := []string{
-		filepath.Join(pathSep, "usr", "local", "bin", "pritunl-openvpn"),
+		filepath.Join(pathSep, "opt", "pritunl", "pritunl-openvpn"),
 		filepath.Join(pathSep, "private", "var", "db", "receipts",
 			"com.pritunl.pkg.Pritunl.bom"),
 		filepath.Join(pathSep, "private", "var", "db", "receipts",
@@ -51,8 +51,8 @@ func clean() (err error) {
 			"Library", "Preferences", "com.electron.pritunl.plist"))
 	}
 
-	paths = append(paths, filepath.Join(pathSep, "usr", "local",
-		"bin", "pritunl-service"))
+	paths = append(paths, filepath.Join(pathSep, "opt", "pritunl",
+		"pritunl-service"))
 	paths = append(paths, filepath.Join(pathSep, "Library", "LaunchDaemons",
 		"com.pritunl.service.plist"))
 
@@ -75,7 +75,7 @@ func clean() (err error) {
 // Check for Pritunl.app and uninstall if missing
 func CheckAndClean() (err error) {
 	root := utils.GetRootDir()
-	if runtime.GOOS != "darwin" || root != "/usr/local/bin" {
+	if runtime.GOOS != "darwin" || root != "/opt/pritunl" {
 		return
 	}
 
@@ -97,7 +97,7 @@ func CheckAndClean() (err error) {
 // Watch for Pritunl.app removal for next 10 minutes and uninstall if missing
 func CheckAndCleanWatch() {
 	root := utils.GetRootDir()
-	if runtime.GOOS != "darwin" || root != "/usr/local/bin" {
+	if runtime.GOOS != "darwin" || root != "/opt/pritunl" {
 		return
 	}
 
