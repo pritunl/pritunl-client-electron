@@ -289,6 +289,9 @@ var importProfileUri = function(prflUri, callback) {
     if (resp.statusCode === 404) {
       err = new errors.ParseError('profile: Invalid profile uri');
       logger.error(err);
+      if (callback) {
+        callback();
+      }
       return;
     }
 
@@ -321,12 +324,18 @@ var importProfileUri = function(prflUri, callback) {
         err = new errors.ParseError(
           'profile: Failed to load profile uri (%s)', err);
         logger.error(err);
+        if (callback) {
+          callback();
+        }
         return;
       }
 
       if (resp.statusCode === 404) {
         err = new errors.ParseError('profile: Invalid profile uri');
         logger.error(err);
+        if (callback) {
+          callback();
+        }
         return;
       }
 
@@ -334,6 +343,9 @@ var importProfileUri = function(prflUri, callback) {
         err = new errors.ParseError(
           'profile: Failed to load profile uri (%s)', resp.statusCode);
         logger.error(err);
+        if (callback) {
+          callback();
+        }
         return;
       }
 
@@ -343,6 +355,9 @@ var importProfileUri = function(prflUri, callback) {
         err = new errors.ParseError(
           'profile: Failed to parse profile uri (%s)', e);
         logger.error(err);
+        if (callback) {
+          callback();
+        }
         return;
       }
 
