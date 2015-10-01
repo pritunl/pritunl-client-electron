@@ -300,6 +300,7 @@ var init = function() {
         return;
       }
       importLock = true;
+      $('.profiles .import-uri').attr('disabled','disabled');
 
       var uri = $('.profiles .uri-input').val();
 
@@ -311,6 +312,8 @@ var init = function() {
         $('.profiles .import-uri').show();
         $('.profiles .import-btns').hide();
         $('.profiles .uri-input').slideUp(50);
+
+        $('.profiles .import-uri').removeAttr('disabled');
         importLock = false;
       });
     };
