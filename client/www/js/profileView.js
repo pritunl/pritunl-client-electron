@@ -305,8 +305,10 @@ var init = function() {
       var uri = $('.profiles .uri-input').val();
 
       importer.importProfileUri(uri, function(prfls) {
-        for (var i = 0; i < prfls.length; i++) {
-          renderProfile(prfls[i]);
+        if (prfls) {
+          for (var i = 0; i < prfls.length; i++) {
+            renderProfile(prfls[i]);
+          }
         }
 
         $('.profiles .import-uri').show();
