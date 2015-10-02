@@ -225,25 +225,25 @@ app.on('ready', function() {
       openMainWin();
     });
 
-    //var menu = Menu.buildFromTemplate([
-    //  {
-    //    label: 'Settings',
-    //    click: function() {
-    //      openMainWin();
-    //    }
-    //  },
-    //  {
-    //    label: 'Exit',
-    //    click: function() {
-    //      request.post({
-    //        url: 'http://' + constants.serviceHost + '/stop'
-    //      }, function() {
-    //        app.quit();
-    //      });
-    //    }
-    //  }
-    //]);
-    //tray.setContextMenu(menu);
+    var menu = Menu.buildFromTemplate([
+      {
+        label: 'Settings',
+        click: function() {
+          openMainWin();
+        }
+      },
+      {
+        label: 'Exit',
+        click: function() {
+          request.post({
+            url: 'http://' + constants.serviceHost + '/stop'
+          }, function() {
+            app.quit();
+          });
+        }
+      }
+    ]);
+    tray.setContextMenu(menu);
 
     profile.getProfiles(function(err, prfls) {
       if (err) {
