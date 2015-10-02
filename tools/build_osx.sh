@@ -26,7 +26,7 @@ codesign --force --deep --sign "Developer ID Application: Zachary Huff (73CNTLZR
 # Service
 cd service
 go get -u -f
-go build -v -a
+go build -v
 cd ..
 mkdir -p build/osx/usr/local/bin
 cp service/service build/osx/usr/local/bin/pritunl-service
