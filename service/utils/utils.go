@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"crypto/rand"
 	"encoding/hex"
+	"github.com/dropbox/godropbox/container/set"
 	"github.com/dropbox/godropbox/errors"
 	"io"
 	"os"
@@ -15,12 +16,20 @@ import (
 	"strings"
 )
 
+var (
+	lockedInterfaces set.Set
+)
+
+func init() {
+	lockedInterfaces = set.NewSet()
+}
+
 type Interface struct {
 	Id   string
 	Name string
 }
 
-func GetTapInterfaces() (interfaces []Interface, err error) {
+func GetTaps() (interfaces []Interface, err error) {
 	interfaces = []Interface{}
 
 	cmd := exec.Command("ipconfig", "/all")
@@ -79,6 +88,27 @@ func GetTapInterfaces() (interfaces []Interface, err error) {
 	}
 
 	return
+}
+
+func AcquireTap() (intf Interface, err error) {
+	interfaces, err := GetTaps()
+	if err != nil {
+		return
+	}
+
+	for _, intrf := range interfaces {
+		if !lockedInterfaces.Contains(intrf.Id) {
+			lockedInterfaces.Add(intrf.Id)
+			intf = intrf
+			return
+		}
+	}
+
+	return
+}
+
+func ReleaseTap(intf Interface) {
+	lockedInterfaces.Remove(intf.Id)
 }
 
 func ResetNetworking() {
