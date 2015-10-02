@@ -46,16 +46,17 @@ type OutputData struct {
 }
 
 type Profile struct {
-	remPaths   []string  `json:"-"`
-	cmd        *exec.Cmd `json:"-"`
-	Id         string    `json:"id"`
-	Data       string    `json:"-"`
-	Username   string    `json:"-"`
-	Password   string    `json:"-"`
-	Status     string    `json:"status"`
-	Timestamp  int64     `json:"timestamp"`
-	ServerAddr string    `json:"server_addr"`
-	ClientAddr string    `json:"client_addr"`
+	remPaths   []string        `json:"-"`
+	cmd        *exec.Cmd       `json:"-"`
+	intf       utils.Interface `json:"-"`
+	Id         string          `json:"id"`
+	Data       string          `json:"-"`
+	Username   string          `json:"-"`
+	Password   string          `json:"-"`
+	Status     string          `json:"status"`
+	Timestamp  int64           `json:"timestamp"`
+	ServerAddr string          `json:"server_addr"`
+	ClientAddr string          `json:"client_addr"`
 }
 
 func (p *Profile) write() (pth string, err error) {
@@ -267,6 +268,10 @@ func (p *Profile) parseLine(line string) {
 }
 
 func (p *Profile) clearStatus(start time.Time) {
+	if p.intf != nil {
+		utils.ReleaseTap(p.intf)
+	}
+
 	go func() {
 		diff := time.Since(start)
 		if diff < 3*time.Second {
@@ -323,6 +328,17 @@ func (p *Profile) Start(timeout bool) (err error) {
 	args := []string{
 		"--config", confPath,
 		"--verb", "2",
+	}
+
+	if runtime.GOOS == "windows" {
+		p.intf, err = utils.AcquireTap()
+		if err != nil {
+			return
+		}
+
+		if p.intf != nil {
+			args = append(args, "--dev-node", p.intf.Name)
+		}
 	}
 
 	if runtime.GOOS == "darwin" {
