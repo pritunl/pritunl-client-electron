@@ -46,17 +46,17 @@ type OutputData struct {
 }
 
 type Profile struct {
-	remPaths   []string        `json:"-"`
-	cmd        *exec.Cmd       `json:"-"`
-	intf       utils.Interface `json:"-"`
-	Id         string          `json:"id"`
-	Data       string          `json:"-"`
-	Username   string          `json:"-"`
-	Password   string          `json:"-"`
-	Status     string          `json:"status"`
-	Timestamp  int64           `json:"timestamp"`
-	ServerAddr string          `json:"server_addr"`
-	ClientAddr string          `json:"client_addr"`
+	remPaths   []string         `json:"-"`
+	cmd        *exec.Cmd        `json:"-"`
+	intf       *utils.Interface `json:"-"`
+	Id         string           `json:"id"`
+	Data       string           `json:"-"`
+	Username   string           `json:"-"`
+	Password   string           `json:"-"`
+	Status     string           `json:"status"`
+	Timestamp  int64            `json:"timestamp"`
+	ServerAddr string           `json:"server_addr"`
+	ClientAddr string           `json:"client_addr"`
 }
 
 func (p *Profile) write() (pth string, err error) {

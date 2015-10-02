@@ -29,8 +29,8 @@ type Interface struct {
 	Name string
 }
 
-func GetTaps() (interfaces []Interface, err error) {
-	interfaces = []Interface{}
+func GetTaps() (interfaces []*Interface, err error) {
+	interfaces = []*Interface{}
 
 	cmd := exec.Command("ipconfig", "/all")
 
@@ -77,7 +77,7 @@ func GetTaps() (interfaces []Interface, err error) {
 				intAddr = strings.Split(line, ":")[1]
 				intAddr = strings.TrimSpace(intAddr)
 			} else if intTap && intAddr != "" {
-				intf := Interface{
+				intf := &Interface{
 					Id:   intAddr,
 					Name: intName,
 				}
@@ -90,7 +90,7 @@ func GetTaps() (interfaces []Interface, err error) {
 	return
 }
 
-func AcquireTap() (intf Interface, err error) {
+func AcquireTap() (intf *Interface, err error) {
 	interfaces, err := GetTaps()
 	if err != nil {
 		return
@@ -107,7 +107,7 @@ func AcquireTap() (intf Interface, err error) {
 	return
 }
 
-func ReleaseTap(intf Interface) {
+func ReleaseTap(intf *Interface) {
 	lockedInterfaces.Remove(intf.Id)
 }
 
