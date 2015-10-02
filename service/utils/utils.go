@@ -2,14 +2,84 @@
 package utils
 
 import (
+	"bufio"
+	"bytes"
 	"crypto/rand"
 	"encoding/hex"
 	"github.com/dropbox/godropbox/errors"
+	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"strings"
 )
+
+type Interface struct {
+	Id   string
+	Name string
+}
+
+func GetTapInterfaces() (interfaces []Interface, err error) {
+	interfaces = []Interface{}
+
+	cmd := exec.Command("ipconfig", "/all")
+
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		err = &CommandError{
+			errors.Wrap(err, "utils: Failed to exec ipconfig"),
+		}
+		return
+	}
+
+	buf := bytes.NewBuffer(output)
+	scan := bufio.NewReader(buf)
+
+	intName := ""
+	intTap := false
+	intAddr := ""
+
+	for {
+		lineByte, _, e := scan.ReadLine()
+		if e != nil {
+			if e == io.EOF {
+				break
+			}
+			err = e
+			panic(err)
+			return
+		}
+		line := string(lineByte)
+
+		if line == "" {
+			continue
+		}
+
+		if strings.HasPrefix(line, "Ethernet adapter ") {
+			intName = strings.Split(line, "Ethernet adapter ")[1]
+			intName = intName[:len(intName)-1]
+			intTap = false
+			intAddr = ""
+		} else if intName != "" {
+			if strings.Contains(line, "TAP-Windows Adapter") {
+				intTap = true
+			} else if strings.Contains(line, "Physical Address") {
+				intAddr = strings.Split(line, ":")[1]
+				intAddr = strings.TrimSpace(intAddr)
+			} else if intTap && intAddr != "" {
+				intf := Interface{
+					Id:   intAddr,
+					Name: intName,
+				}
+				interfaces = append(interfaces, intf)
+				intName = ""
+			}
+		}
+	}
+
+	return
+}
 
 func ResetNetworking() {
 	if runtime.GOOS != "windows" {
