@@ -22,7 +22,7 @@ if (os.platform() === 'linux') {
   config.onReady(function() {
     $('.ubuntu .box').click(function() {
       new BrowserWindow({
-        icon: path.join(__dirname, 'img', 'logo.png'),
+        icon: path.join(__dirname, '..', 'img', 'logo.png'),
         width: 800,
         height: 600
       }).loadUrl('http://ubuntu.com/desktop');
