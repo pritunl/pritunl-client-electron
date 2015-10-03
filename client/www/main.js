@@ -116,6 +116,7 @@ var openMainWin = function() {
     }
 
     main = new BrowserWindow({
+      title: 'Pritunl',
       icon: icon,
       frame: false,
       fullscreen: false,
