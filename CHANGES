@@ -1,8 +1,8 @@
 Pritunl Client Changelog
 ========================
 
-Version 0.10.11
----------------
+Version 0.10.11 2015-10-02
+--------------------------
 
 Fix IPv6 connection issue on Windows
 Fix display issues with viewing logs
