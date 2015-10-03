@@ -59,7 +59,7 @@ $('.header .maximize').click(function(evt) {
   var win = remote.getCurrentWindow();
 
   if (evt.shiftKey) {
-    remote.getCurrentWindow().openDevTools();
+    $('.header .version').toggle();
     return;
   }
 
@@ -73,7 +73,7 @@ $('.header .maximize').click(function(evt) {
 });
 $('.header .minimize').click(function(evt) {
   if (evt.shiftKey) {
-    $('.header .version').toggle();
+    remote.getCurrentWindow().openDevTools();
     return;
   }
 
