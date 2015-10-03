@@ -242,6 +242,7 @@ var renderProfile = function(prfl) {
     }
     edtr.destroy();
     edtr = null;
+    edtrType = null;
 
     closeEditor($profile, 'logs');
   });
