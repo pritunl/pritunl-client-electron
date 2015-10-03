@@ -12,7 +12,7 @@
   "devDependencies": {
     "electron-rebuild": "^1.0.0",
     "electron-packager": "^5.1.0",
-    "electron-prebuilt": "^0.33.3",
+    "electron-prebuilt": "^0.33.4",
     "rimraf": "^2.4.3",
     "rcedit": "^0.3.0"
   }
