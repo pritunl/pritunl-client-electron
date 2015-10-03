@@ -141,6 +141,12 @@ var openMainWin = function() {
   });
 };
 
+var closeMainWin = function() {
+  if (main) {
+    main.close();
+  }
+}
+
 var sync =  function() {
   request.get({
     url: 'http://' + constants.serviceHost + '/status'
@@ -244,6 +250,65 @@ app.on('ready', function() {
       }
     ]);
     tray.setContextMenu(menu);
+
+    var appMenuTemplate = [
+      {
+        label: 'Edit',
+        submenu: [
+          {
+            label: 'Undo',
+            accelerator: 'CmdOrCtrl+Z',
+            role: 'undo'
+          },
+          {
+            label: 'Redo',
+            accelerator: 'Shift+CmdOrCtrl+Z',
+            role: 'redo'
+          },
+          {
+            type: 'separator'
+          },
+          {
+            label: 'Cut',
+            accelerator: 'CmdOrCtrl+X',
+            role: 'cut'
+          },
+          {
+            label: 'Copy',
+            accelerator: 'CmdOrCtrl+C',
+            role: 'copy'
+          },
+          {
+            label: 'Paste',
+            accelerator: 'CmdOrCtrl+V',
+            role: 'paste'
+          },
+          {
+            label: 'Select All',
+            accelerator: 'CmdOrCtrl+A',
+            role: 'selectall'
+          },
+        ]
+      }
+    ];
+
+    if (process.platform == 'darwin') {
+      var name = require('app').getName();
+      appMenuTemplate.unshift({
+        label: name,
+        submenu: [
+          {
+            label: 'Close ' + name,
+            accelerator: 'Command+Q',
+            click: function() {
+              closeMainWin();
+            }
+          },
+        ]
+      });
+    }
+
+    Menu.setApplicationMenu(Menu.buildFromTemplate(appMenuTemplate));
 
     profile.getProfiles(function(err, prfls) {
       if (err) {
