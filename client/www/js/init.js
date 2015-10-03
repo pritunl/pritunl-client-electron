@@ -24,7 +24,8 @@ if (os.platform() === 'linux') {
       new BrowserWindow({
         icon: path.join(__dirname, '..', 'img', 'logo.png'),
         width: 800,
-        height: 600
+        height: 600,
+        'auto-hide-menu-bar': true
       }).loadUrl('http://ubuntu.com/desktop');
 
       config.settings.showUbuntu = false;
