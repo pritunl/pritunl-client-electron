@@ -5,6 +5,7 @@ Version 0.10.11
 ---------------
 
 Fix IPv6 connection issue on Windows
+Fix display issues with viewing logs
 
 Version 0.10.10 2015-10-02
 --------------------------
