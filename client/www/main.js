@@ -248,7 +248,7 @@ app.on('ready', function() {
 
     var appMenu = Menu.buildFromTemplate([
       {
-        label: app.getName(),
+        label: 'Pritunl',
         submenu: [
           {
             label: 'Quit',
