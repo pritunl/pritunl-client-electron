@@ -252,9 +252,7 @@ app.on('ready', function() {
           {
             label: 'Quit',
             accelerator: 'CmdOrCtrl+Q',
-            click: function() {
-              main.close();
-            }
+            role: 'close'
           }
         ]
       },
