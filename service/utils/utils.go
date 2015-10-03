@@ -13,6 +13,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"sort"
 	"strings"
 )
 
@@ -27,6 +28,20 @@ func init() {
 type Interface struct {
 	Id   string
 	Name string
+}
+
+type Interfaces []*Interface
+
+func (intfs Interfaces) Len() int {
+	return len(intfs)
+}
+
+func (intfs Interfaces) Swap(i, j int) {
+	intfs[i], intfs[j] = intfs[j], intfs[i]
+}
+
+func (intfs Interfaces) Less(i, j int) bool {
+	return intfs[i].Name < intfs[j].Name
 }
 
 func GetTaps() (interfaces []*Interface, err error) {
@@ -86,6 +101,8 @@ func GetTaps() (interfaces []*Interface, err error) {
 			}
 		}
 	}
+
+	sort.Sort(Interfaces(interfaces))
 
 	return
 }
