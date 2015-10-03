@@ -8,6 +8,7 @@ function Editor(typ, $container) {
 }
 
 Editor.prototype.create = function() {
+  setTimeout(function)
   this.editor = ace.edit(this.$container[0]);
   this.editor.setTheme('ace/theme/cobalt');
   if (os.platform() === 'darwin') {

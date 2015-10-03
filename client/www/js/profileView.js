@@ -31,12 +31,12 @@ var closeMenu = function($profile) {
 };
 
 var openEditor = function($profile, data, typ) {
+  $profile.addClass('editing-' + typ);
+
   var $editor = $profile.find('.' + typ + ' .editor');
   var edtr = new editor.Editor(typ, $editor);
   edtr.create();
   edtr.set(data);
-
-  $profile.addClass('editing-' + typ);
 
   return edtr;
 };
