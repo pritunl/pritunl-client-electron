@@ -205,6 +205,9 @@ body[fullbleed] {
 
 *, *:before, *:after {
   box-sizing: border-box;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 html {
