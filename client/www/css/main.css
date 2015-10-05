@@ -459,6 +459,13 @@ input:active {
   color: #515356;
   text-transform: uppercase;
 }
+.editor,
+.profile .info .server-addr,
+.profile .info .client-addr {
+  -webkit-touch-callout: default;
+  -webkit-user-select: text;
+  user-select: text;
+}
 .profile .logo,
 .profile .info {
   transition: -webkit-filter 125ms linear, filter 125ms linear;
