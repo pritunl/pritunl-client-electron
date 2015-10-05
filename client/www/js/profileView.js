@@ -347,6 +347,27 @@ var init = function() {
       });
     });
 
+    $('html').on('dragover', function(evt) {
+      evt.preventDefault();
+      evt.stopPropagation();
+    }).on('dragleave', function(evt) {
+      evt.preventDefault();
+      evt.stopPropagation();
+    }).on('drop', function(evt) {
+      evt.preventDefault();
+      evt.stopPropagation();
+      if (evt.originalEvent.dataTransfer &&
+          evt.originalEvent.dataTransfer.files.length) {
+        var pth = evt.originalEvent.dataTransfer.files[0].path;
+
+        importer.importProfile(pth, function(prfls) {
+          for (var i = 0; i < prfls.length; i++) {
+            renderProfile(prfls[i]);
+          }
+        });
+      }
+    });
+
     $('.profiles .profile-file').change(function(evt) {
       if (!evt.currentTarget.files.length) {
         return;
