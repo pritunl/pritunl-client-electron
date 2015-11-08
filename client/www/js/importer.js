@@ -286,7 +286,7 @@ var importProfileUri = function(prflUri, callback) {
   }, function(err, resp, body) {
     var data;
 
-    if (resp.statusCode === 404) {
+    if (resp && resp.statusCode === 404) {
       err = new errors.ParseError('profile: Invalid profile uri');
       logger.error(err);
       if (callback) {
