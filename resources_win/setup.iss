@@ -18,6 +18,7 @@ PrivilegesRequired=admin
 DisableProgramGroupPage=yes
 OutputDir=..\build\
 OutputBaseFilename={#MyAppName}
+LicenseFile=license.txt
 SetupIconFile=..\client\www\img\logo.ico
 UninstallDisplayName=Pritunl Client
 UninstallDisplayIcon={app}\{#MyAppExeName}
