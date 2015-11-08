@@ -302,8 +302,10 @@ Profile.prototype.formatedNameLogo = function() {
 Profile.prototype.pushOutput = function(output) {
   if (this.log) {
     this.log += '\n';
+    this.log += output;
+  } else {
+    this.log = output;
   }
-  this.log += output;
 
   if (this.onOutput) {
     this.onOutput(output);
