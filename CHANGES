@@ -1,10 +1,10 @@
 Pritunl Client Changelog
 ========================
 
-Version 0.10.14 2015-11-08
---------------------------
+Version 0.10.14
+---------------
 
-Update frameworks
+Fix issue with importing profiles
 
 Version 0.10.13 2015-10-05
 --------------------------
