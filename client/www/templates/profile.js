@@ -22,6 +22,8 @@ module.exports = `<div class="profile" flex layout horizontal>
       placeholder="Username">
     <input class="connect-pass-input" type="password" tabindex="-1"
       placeholder="Password">
+    <input class="connect-pin-input" type="text" tabindex="-1"
+      placeholder="Enter PIN">
     <input class="connect-otp-input" type="text" tabindex="-1"
       placeholder="Enter OTP Code">
     <div class="connect-confirm item btn btn-success"
