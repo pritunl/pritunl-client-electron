@@ -200,6 +200,7 @@ Profile.prototype.import = function(data) {
   this.server = data.server || null;
   this.userId = data.user_id || null;
   this.user = data.user || null;
+  this.passwordMode = data.password_mode || null;
   this.autostart = data.autostart || null;
   this.syncHosts = data.sync_hosts || [];
   this.syncHash = data.sync_hash || null;
@@ -524,6 +525,10 @@ Profile.prototype.getFullData = function(callback) {
 };
 
 Profile.prototype.getAuthType = function() {
+  if (this.passwordMode) {
+    return this.passwordMode;
+  }
+
   var n = this.data.indexOf('auth-user-pass');
 
   if (n !== -1) {
