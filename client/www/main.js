@@ -120,7 +120,6 @@ var openMainWin = function() {
       icon: icon,
       frame: false,
       fullscreen: false,
-      transparent: true,
       width: 420,
       height: 561,
       'min-width': 325,
