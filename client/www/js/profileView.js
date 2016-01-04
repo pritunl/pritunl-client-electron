@@ -407,7 +407,9 @@ var init = function() {
 
         $('.profiles .import-uri').show();
         $('.profiles .import-btns').hide();
-        $('.profiles .uri-input').slideUp(50);
+        $('.profiles .uri-input').slideUp(50, function() {
+          $('.profiles .uri-input').val('');
+        });
 
         $('.profiles .import-uri').removeAttr('disabled');
         importLock = false;
