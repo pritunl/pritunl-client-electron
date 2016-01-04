@@ -216,7 +216,7 @@ html {
 }
 body {
   font-family: 'Ubuntu', sans-serif;
-  background-color: rgba(20, 23, 26, .9);
+  background-color: rgb(21, 23, 25);
   margin: 0;
   height: 100%;
 }
