@@ -683,8 +683,6 @@ Profile.prototype.connect = function(authCallback) {
 Profile.prototype.auth = function(callback) {
   var authType = this.getAuthType();
 
-  console.log(authType, callback);
-
   if (!authType) {
     if (callback) {
       callback(null);
