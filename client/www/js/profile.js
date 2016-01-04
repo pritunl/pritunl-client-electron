@@ -93,6 +93,7 @@ function Profile(pth) {
   this.server = null;
   this.userId = null;
   this.user = null;
+  this.passwordMode = null;
   this.autostart = false;
   this.syncHosts = [];
   this.syncHash = null;
@@ -217,6 +218,7 @@ Profile.prototype.exportConf = function() {
     server: this.server,
     user_id: this.userId,
     user: this.user,
+    password_mode: this.passwordMode,
     autostart: this.autostart,
     sync_hosts: this.syncHosts,
     sync_hash: this.syncHash,
@@ -681,17 +683,20 @@ Profile.prototype.connect = function(authCallback) {
 Profile.prototype.auth = function(callback) {
   var authType = this.getAuthType();
 
+  console.log(authType, callback);
+
   if (!authType) {
     if (callback) {
       callback(null);
     }
     service.start(this);
   } else if (!callback) {
-  } else if (authType === 'otp') {
-    callback(authType, function(otpCode) {
-      service.start(this, 'pritunl', otpCode);
+  } else if (authType === 'otp' ||
+      authType === 'pin' || authType === 'otp_pin') {
+    callback(authType, function(pass) {
+      service.start(this, 'pritunl', pass);
     }.bind(this));
-  } else if (authType === 'user') {
+  } else {
     callback(authType, function(username, pass) {
       service.start(this, username, pass);
     }.bind(this));
