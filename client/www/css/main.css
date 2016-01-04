@@ -524,6 +524,7 @@ input:active {
 
 .profile .menu .connect-user-input,
 .profile .menu .connect-pass-input,
+.profile .menu .connect-pin-input,
 .profile .menu .connect-otp-input,
 .profile .menu .connect-confirm,
 .profile .menu .connect-cancel {
@@ -540,6 +541,7 @@ input:active {
   font-size: 16px;
   width: 95px;
 }
+.profile .menu .connect-pin-input,
 .profile .menu .connect-otp-input {
   font-size: 16px;
   width: 190px;
@@ -547,6 +549,7 @@ input:active {
 .profile .menu.authenticating-user .connect-user-input {
   left: -190px;
 }
+.profile .menu.authenticating-pin .connect-pin-input,
 .profile .menu.authenticating-otp .connect-otp-input {
   left: -190px;
 }
@@ -554,14 +557,12 @@ input:active {
   left: -95px;
 }
 .profile .menu.authenticating-user .connect-confirm,
-.profile .menu.authenticating-otp .connect-confirm {
-  left: -126px;
-}
-.profile .menu.authenticating-user .connect-confirm,
+.profile .menu.authenticating-pin .connect-confirm,
 .profile .menu.authenticating-otp .connect-confirm {
   left: 0;
 }
 .profile .menu.authenticating-user .connect-cancel,
+.profile .menu.authenticating-pin .connect-cancel,
 .profile .menu.authenticating-otp .connect-cancel {
   left: 63px;
 }
