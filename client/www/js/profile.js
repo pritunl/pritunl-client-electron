@@ -690,7 +690,9 @@ Profile.prototype.auth = function(callback) {
     service.start(this);
   } else if (!callback) {
   } else if (authType === 'otp' ||
-      authType === 'pin' || authType === 'otp_pin') {
+      authType === 'pin' || authType === 'otp_pin' ||
+      authType === 'otp_password' || authType === 'pin_otp' ||
+      authType === 'password_otp') {
     callback(authType, function(pass) {
       service.start(this, 'pritunl', pass);
     }.bind(this));
