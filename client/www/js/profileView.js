@@ -18,7 +18,7 @@ var openMenu = function($profile) {
 var closeMenu = function($profile) {
   $profile.removeClass('menu-open');
   var $menu = $profile.find('.menu');
-  $menu.removeClass('authenticating-user');
+  $menu.removeClass('authenticating-pass');
   $menu.removeClass('authenticating-pin');
   $menu.removeClass('authenticating-otp');
   $menu.removeClass('renaming');
@@ -113,125 +113,114 @@ var renderProfile = function(prfl) {
     $profile.find('.menu .connect').addClass('disabled');
 
     prfl.connect(function(authType, callback) {
-      var handler;
-
       if (!authType) {
         closeMenu($profile);
         return;
       }
 
-      if (authType === 'pin') {
-        handler = function(evt) {
-          if (evt.type === 'keypress' && evt.which !== 13) {
-            return;
-          }
+      var handler;
+      var password = '';
+      authType = authType.split('_');
 
-          var pin = $profile.find('.connect-pin-input').val();
-          if (pin) {
-            callback(pin);
-          }
-          closeMenu($profile);
-        };
+      var authHandler = function() {
+        if (authType.indexOf('password') !== -1) {
+          authType.splice(authType.indexOf('password'), 1);
 
-        $profile.find('.menu .connect-confirm').bind('click', handler);
-        $profile.find('.connect-pin-input').bind('keypress', handler);
-        $profile.find('.menu').addClass('authenticating-pin');
-        setTimeout(function() {
-          $profile.find('.connect-pin-input').focus();
-        }, 150);
-      } else if (authType === 'otp_pin') {
-        var pin;
+          handler = function(evt) {
+            if (evt.type === 'keypress' && evt.which !== 13) {
+              return;
+            }
 
-        handler = function(evt) {
-          if (evt.type === 'keypress' && evt.which !== 13) {
-            return;
-          }
+            var pass = $profile.find('.connect-pass-input').val();
+            if (pass) {
+              password += pass;
 
-          pin = $profile.find('.connect-pin-input').val();
-          if (pin) {
-            $profile.find('.menu .connect-confirm').unbind('click');
-            $profile.find('.connect-pin-input').unbind('keypress');
+              if (!authType.length) {
+                callback(password);
+                closeMenu($profile);
+              } else {
+                authHandler();
+              }
+            } else {
+              closeMenu($profile);
+            }
+          };
 
-            $profile.find('.menu').removeClass('authenticating-pin');
-            $profile.find('.menu .connect-confirm').bind('click', otpHandler);
-            $profile.find('.connect-otp-input').bind('keypress', otpHandler);
-            $profile.find('.menu').addClass('authenticating-otp');
-            setTimeout(function() {
-              $profile.find('.connect-otp-input').focus();
-            }, 150);
-          } else {
-            closeMenu($profile);
-          }
-        };
+          $profile.find('.menu .connect-confirm').bind('click', handler);
+          $profile.find('.connect-pass-input').bind('keypress', handler);
+          $profile.find('.menu').addClass('authenticating-pass');
+          setTimeout(function() {
+            $profile.find('.connect-pass-input').focus();
+          }, 150);
+        } else if (authType.indexOf('pin') !== -1) {
+          authType.splice(authType.indexOf('pin'), 1);
 
-        var otpHandler = function(evt) {
-          if (evt.type === 'keypress' && evt.which !== 13) {
-            return;
-          }
+          handler = function(evt) {
+            if (evt.type === 'keypress' && evt.which !== 13) {
+              return;
+            }
 
-          var otpCode = $profile.find('.connect-otp-input').val();
-          if (otpCode) {
-            callback(pin + otpCode);
-          }
-          closeMenu($profile);
-        };
+            var pin = $profile.find('.connect-pin-input').val();
+            if (pin) {
+              password += pin;
 
-        $profile.find('.menu .connect-confirm').bind('click', handler);
-        $profile.find('.connect-pin-input').bind('keypress', handler);
-        $profile.find('.menu').addClass('authenticating-pin');
-        setTimeout(function() {
-          $profile.find('.connect-pin-input').focus();
-        }, 150);
-      } else if (authType === 'otp') {
-        handler = function(evt) {
-          if (evt.type === 'keypress' && evt.which !== 13) {
-            return;
-          }
+              if (!authType.length) {
+                callback(password);
+                closeMenu($profile);
+              } else {
+                authHandler();
+              }
+            } else {
+              closeMenu($profile);
+            }
+          };
 
-          var otpCode = $profile.find('.connect-otp-input').val();
-          if (otpCode) {
-            callback(otpCode);
-          }
-          closeMenu($profile);
-        };
+          $profile.find('.menu .connect-confirm').bind('click', handler);
+          $profile.find('.connect-pin-input').bind('keypress', handler);
+          $profile.find('.menu').addClass('authenticating-pin');
+          setTimeout(function() {
+            $profile.find('.connect-pin-input').focus();
+          }, 150);
+        } else if (authType.indexOf('otp') !== -1) {
+          authType.splice(authType.indexOf('otp'), 1);
 
-        $profile.find('.menu .connect-confirm').bind('click', handler);
-        $profile.find('.connect-otp-input').bind('keypress', handler);
-        $profile.find('.menu').addClass('authenticating-otp');
-        setTimeout(function() {
-          $profile.find('.connect-otp-input').focus();
-        }, 150);
-      } else {
-        handler = function(evt) {
-          if (evt.type === 'keypress' && evt.which !== 13) {
-            return;
-          }
+          handler = function(evt) {
+            if (evt.type === 'keypress' && evt.which !== 13) {
+              return;
+            }
 
-          var username = $profile.find('.connect-user-input').val();
-          var password = $profile.find('.connect-pass-input').val();
-          if (username || password) {
-            callback(username, password);
-          }
-          closeMenu($profile);
-        };
+            var otpCode = $profile.find('.connect-otp-input').val();
+            if (otpCode) {
+              password += otpCode;
 
-        $profile.find('.menu .connect-confirm').bind('click', handler);
-        $profile.find('.connect-pass-input').bind('keypress', handler);
-        $profile.find('.menu').addClass('authenticating-user');
-        setTimeout(function() {
-          $profile.find('.connect-user-input').focus();
-        }, 150);
-      }
+              if (!authType.length) {
+                callback(password);
+                closeMenu($profile);
+              } else {
+                authHandler();
+              }
+            } else {
+              closeMenu($profile);
+            }
+          };
+
+          $profile.find('.menu .connect-confirm').bind('click', handler);
+          $profile.find('.connect-otp-input').bind('keypress', handler);
+          $profile.find('.menu').addClass('authenticating-otp');
+          setTimeout(function() {
+            $profile.find('.connect-otp-input').focus();
+          }, 150);
+        }
+      };
+      authHandler();
     });
   });
   $profile.find('.menu .connect-cancel').click(function() {
     var $menu = $profile.find('.menu');
-    $menu.removeClass('authenticating-user');
+    $menu.removeClass('authenticating-pass');
     $menu.removeClass('authenticating-pin');
     $menu.removeClass('authenticating-otp');
     $profile.find('.menu .connect').removeClass('disabled');
-    $profile.find('.menu .connect-user-input').blur();
-    $profile.find('.menu .connect-user-input').val('');
     $profile.find('.menu .connect-pass-input').blur();
     $profile.find('.menu .connect-pass-input').val('');
     $profile.find('.menu .connect-pin-input').blur();
