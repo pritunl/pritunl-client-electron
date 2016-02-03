@@ -85,7 +85,7 @@ func main() {
 		"pritunl",
 		"--platform=win32",
 		"--arch=ia32",
-		"--version=0.36.2",
+		"--version=0.36.7",
 		"--icon=www\\img\\logo.ico",
 		"--out=..\\build\\win",
 		"--prune",
