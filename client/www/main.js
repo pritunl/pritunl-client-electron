@@ -65,7 +65,7 @@ var checkService = function(callback) {
             dialog.showMessageBox(null, {
               type: 'warning',
               buttons: ['Ok'],
-              icon: icon,
+              //icon: icon,
               title: 'Pritunl - Service Error',
               message: 'Unable to communicate with helper service, ' +
                 'try restarting'
