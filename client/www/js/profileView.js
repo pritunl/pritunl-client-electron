@@ -33,6 +33,7 @@ var closeMenu = function($profile) {
   $profile.find('.menu .connect-confirm').unbind('click');
   $profile.find('.connect-pin-input').unbind('keypress');
   $profile.find('.connect-otp-input').unbind('keypress');
+  $profile.find('.connect-user-input').unbind('keypress');
   $profile.find('.connect-pass-input').unbind('keypress');
 };
 
@@ -251,6 +252,8 @@ var renderProfile = function(prfl) {
     $menu.removeClass('authenticating-pin');
     $menu.removeClass('authenticating-otp');
     $profile.find('.menu .connect').removeClass('disabled');
+    $profile.find('.menu .connect-user-input').blur();
+    $profile.find('.menu .connect-user-input').val('');
     $profile.find('.menu .connect-pass-input').blur();
     $profile.find('.menu .connect-pass-input').val('');
     $profile.find('.menu .connect-pin-input').blur();
