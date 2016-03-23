@@ -15,6 +15,13 @@ var openMenu = function($profile) {
   $profile.addClass('menu-open');
   $profile.find('.menu').addClass('show');
 };
+var unbindAll = function($profile) {
+  $profile.find('.menu .connect-confirm').unbind('click');
+  $profile.find('.connect-pin-input').unbind('keypress');
+  $profile.find('.connect-otp-input').unbind('keypress');
+  $profile.find('.connect-user-input').unbind('keypress');
+  $profile.find('.connect-pass-input').unbind('keypress');
+};
 var closeMenu = function($profile) {
   $profile.removeClass('menu-open');
   var $menu = $profile.find('.menu');
@@ -133,6 +140,7 @@ var renderProfile = function(prfl) {
             if (evt.type === 'keypress' && evt.which !== 13) {
               return;
             }
+            unbindAll($profile);
 
             var user = $profile.find('.connect-user-input').val();
             if (user) {
@@ -162,6 +170,7 @@ var renderProfile = function(prfl) {
             if (evt.type === 'keypress' && evt.which !== 13) {
               return;
             }
+            unbindAll($profile);
 
             var pass = $profile.find('.connect-pass-input').val();
             if (pass) {
@@ -191,6 +200,7 @@ var renderProfile = function(prfl) {
             if (evt.type === 'keypress' && evt.which !== 13) {
               return;
             }
+            unbindAll($profile);
 
             var pin = $profile.find('.connect-pin-input').val();
             if (pin) {
@@ -220,6 +230,7 @@ var renderProfile = function(prfl) {
             if (evt.type === 'keypress' && evt.which !== 13) {
               return;
             }
+            unbindAll($profile);
 
             var otpCode = $profile.find('.connect-otp-input').val();
             if (otpCode) {
