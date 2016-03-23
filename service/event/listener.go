@@ -5,12 +5,16 @@ type Listener struct {
 }
 
 func (l *Listener) Listen() chan *Event {
-	listeners.Add(l)
+	listeners.Lock()
+	listeners.s.Add(l)
+	listeners.Unlock()
 	return l.stream
 }
 
 func (l *Listener) Close() {
-	listeners.Remove(l)
+	listeners.Lock()
+	listeners.s.Remove(l)
+	listeners.Unlock()
 	close(l.stream)
 }
 

@@ -4,12 +4,18 @@ package event
 import (
 	"github.com/dropbox/godropbox/container/set"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
+	"sync"
 	"time"
 )
 
 var (
 	LastAwake = time.Now()
-	listeners = set.NewSet()
+	listeners = struct {
+		sync.RWMutex
+		s set.Set
+	}{
+		s: set.NewSet(),
+	}
 )
 
 type Event struct {
@@ -20,7 +26,11 @@ type Event struct {
 
 func (e *Event) Init() {
 	e.Id = utils.Uuid()
-	for listInf := range listeners.Iter() {
+
+	listeners.RLock()
+	defer listeners.RUnlock()
+
+	for listInf := range listeners.s.Iter() {
 		list := listInf.(*Listener)
 
 		go func() {
