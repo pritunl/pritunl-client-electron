@@ -18,6 +18,7 @@ var openMenu = function($profile) {
 var closeMenu = function($profile) {
   $profile.removeClass('menu-open');
   var $menu = $profile.find('.menu');
+  $menu.removeClass('authenticating-user');
   $menu.removeClass('authenticating-pass');
   $menu.removeClass('authenticating-pin');
   $menu.removeClass('authenticating-otp');
