@@ -18,6 +18,8 @@ module.exports = `<div class="profile" flex layout horizontal>
   <div class="menu">
     <div class="connect item btn btn-success"
       layout vertical center>Connect</div>
+    <input class="connect-user-input" type="text" tabindex="-1"
+      placeholder="Enter Username">
     <input class="connect-pass-input" type="password" tabindex="-1"
       placeholder="Password">
     <input class="connect-pin-input" type="password" tabindex="-1"
