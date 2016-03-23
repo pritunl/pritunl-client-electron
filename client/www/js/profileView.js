@@ -37,12 +37,7 @@ var closeMenu = function($profile) {
   var $inputs = $profile.find('.menu input');
   $inputs.blur();
   $inputs.val('');
-
-  $profile.find('.menu .connect-confirm').unbind('click');
-  $profile.find('.connect-pin-input').unbind('keypress');
-  $profile.find('.connect-otp-input').unbind('keypress');
-  $profile.find('.connect-user-input').unbind('keypress');
-  $profile.find('.connect-pass-input').unbind('keypress');
+  unbindAll();
 };
 
 var openEditor = function($profile, data, typ) {
