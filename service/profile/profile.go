@@ -23,15 +23,20 @@ const (
 )
 
 var (
-	Profiles     = map[string]*Profile{}
-	Ping         = time.Now()
-	profilesLock = sync.Mutex{}
+	Profiles = struct {
+		sync.RWMutex
+		m map[string]*Profile
+	}{
+		m: map[string]*Profile{},
+	}
+	Ping = time.Now()
 )
 
 func init() {
 	go func() {
 		if time.Since(Ping) > 1*time.Minute {
-			for _, prfl := range Profiles {
+			prfls := GetProfiles()
+			for _, prfl := range prfls {
 				prfl.Stop()
 			}
 		}
@@ -297,14 +302,16 @@ func (p *Profile) Start(timeout bool) (err error) {
 	p.Status = "connecting"
 	p.Timestamp = start.Unix()
 
-	profilesLock.Lock()
-	_, ok := Profiles[p.Id]
+	Profiles.RLock()
+	_, ok := Profiles.m[p.Id]
+	Profiles.RUnlock()
 	if ok {
-		profilesLock.Unlock()
 		return
 	}
-	Profiles[p.Id] = p
-	profilesLock.Unlock()
+
+	Profiles.Lock()
+	Profiles.m[p.Id] = p
+	Profiles.Unlock()
 
 	confPath, err := p.write()
 	if err != nil {
@@ -465,7 +472,9 @@ func (p *Profile) Start(timeout bool) (err error) {
 		cmd.Wait()
 		running = false
 		p.clearStatus(start)
-		delete(Profiles, p.Id)
+		Profiles.Lock()
+		delete(Profiles.m, p.Id)
+		Profiles.Unlock()
 	}()
 
 	if timeout {

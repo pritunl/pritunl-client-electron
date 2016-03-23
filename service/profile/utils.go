@@ -33,11 +33,30 @@ func getOpenvpnPath() (pth string) {
 }
 
 func GetStatus() (status bool) {
-	for _, prfl := range Profiles {
+	for _, prfl := range GetProfiles() {
 		if prfl.Status == "connected" {
 			status = true
 		}
 	}
+
+	return
+}
+
+func GetProfile(id string) (prfl *Profile) {
+	Profiles.RLock()
+	prfl = Profiles.m[id]
+	Profiles.RUnlock()
+	return
+}
+
+func GetProfiles() (prfls map[string]*Profile) {
+	prfls = map[string]*Profile{}
+
+	Profiles.RLock()
+	for _, prfl := range Profiles.m {
+		prfls[prfl.Id] = prfl
+	}
+	Profiles.RUnlock()
 
 	return
 }
