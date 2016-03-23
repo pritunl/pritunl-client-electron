@@ -268,6 +268,7 @@ var renderProfile = function(prfl) {
     $profile.find('.menu .connect-pin-input').val('');
     $profile.find('.menu .connect-otp-input').blur();
     $profile.find('.menu .connect-otp-input').val('');
+    unbindAll($profile);
   });
 
   $profile.find('.menu .disconnect').click(function() {
