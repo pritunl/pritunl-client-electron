@@ -5,9 +5,9 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/pritunl/pritunl-client-electron/service/event"
 	"github.com/pritunl/pritunl-client-electron/service/profile"
+	"io/ioutil"
 	"net/http"
 	"time"
-	"io/ioutil"
 )
 
 const (
