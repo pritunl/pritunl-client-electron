@@ -21,7 +21,7 @@ module.exports = `<div class="profile" flex layout horizontal>
     <input class="connect-user-input" type="text" tabindex="-1"
       placeholder="Enter Username">
     <input class="connect-pass-input" type="password" tabindex="-1"
-      placeholder="Password">
+      placeholder="Enter Password">
     <input class="connect-pin-input" type="password" tabindex="-1"
       placeholder="Enter Pin">
     <input class="connect-otp-input" type="text" tabindex="-1"
