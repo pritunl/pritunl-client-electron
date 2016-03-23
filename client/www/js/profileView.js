@@ -119,11 +119,41 @@ var renderProfile = function(prfl) {
       }
 
       var handler;
+      var username = '';
       var password = '';
       authType = authType.split('_');
 
       var authHandler = function() {
-        if (authType.indexOf('password') !== -1) {
+        if (authType.indexOf('username') !== -1) {
+          authType.splice(authType.indexOf('username'), 1);
+
+          handler = function(evt) {
+            if (evt.type === 'keypress' && evt.which !== 13) {
+              return;
+            }
+
+            var user = $profile.find('.connect-user-input').val();
+            if (user) {
+              username = user;
+
+              if (!authType.length) {
+                callback(username, password);
+                closeMenu($profile);
+              } else {
+                authHandler();
+              }
+            } else {
+              closeMenu($profile);
+            }
+          };
+
+          $profile.find('.menu .connect-confirm').bind('click', handler);
+          $profile.find('.connect-user-input').bind('keypress', handler);
+          $profile.find('.menu').addClass('authenticating-user');
+          setTimeout(function() {
+            $profile.find('.connect-user-input').focus();
+          }, 150);
+        } else if (authType.indexOf('password') !== -1) {
           authType.splice(authType.indexOf('password'), 1);
 
           handler = function(evt) {
@@ -136,7 +166,7 @@ var renderProfile = function(prfl) {
               password += pass;
 
               if (!authType.length) {
-                callback(password);
+                callback(username, password);
                 closeMenu($profile);
               } else {
                 authHandler();
@@ -165,7 +195,7 @@ var renderProfile = function(prfl) {
               password += pin;
 
               if (!authType.length) {
-                callback(password);
+                callback(username, password);
                 closeMenu($profile);
               } else {
                 authHandler();
@@ -194,7 +224,7 @@ var renderProfile = function(prfl) {
               password += otpCode;
 
               if (!authType.length) {
-                callback(password);
+                callback(username, password);
                 closeMenu($profile);
               } else {
                 authHandler();
