@@ -260,6 +260,7 @@ var renderProfile = function(prfl) {
   });
   $profile.find('.menu .connect-cancel').click(function() {
     var $menu = $profile.find('.menu');
+    $menu.removeClass('authenticating-user');
     $menu.removeClass('authenticating-pass');
     $menu.removeClass('authenticating-pin');
     $menu.removeClass('authenticating-otp');
