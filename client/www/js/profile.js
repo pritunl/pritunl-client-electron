@@ -690,8 +690,8 @@ Profile.prototype.auth = function(callback) {
     service.start(this);
   } else if (!callback) {
   } else {
-    callback(authType, function(pass) {
-      service.start(this, 'pritunl', pass);
+    callback(authType, function(user, pass) {
+      service.start(this, user || 'pritunl', pass);
     }.bind(this));
   }
 };
