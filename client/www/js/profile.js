@@ -543,7 +543,7 @@ Profile.prototype.getAuthType = function() {
     if (this.user) {
       return 'otp';
     } else {
-      return 'user';
+      return 'username-password';
     }
   } else {
     return null;
