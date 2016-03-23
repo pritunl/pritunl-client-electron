@@ -7,7 +7,7 @@ import (
 )
 
 func stopPost(c *gin.Context) {
-	for _, prfl := range profile.Profiles {
+	for _, prfl := range profile.GetProfiles() {
 		prfl.Stop()
 	}
 

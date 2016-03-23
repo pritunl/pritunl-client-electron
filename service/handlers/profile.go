@@ -14,7 +14,7 @@ type profileData struct {
 }
 
 func profileGet(c *gin.Context) {
-	c.JSON(200, profile.Profiles)
+	c.JSON(200, profile.GetProfiles())
 }
 
 func profilePost(c *gin.Context) {
@@ -41,7 +41,8 @@ func profileDel(c *gin.Context) {
 	data := &profileData{}
 	c.Bind(data)
 
-	if prfl, ok := profile.Profiles[data.Id]; ok {
+	prfl := profile.GetProfile(data.Id)
+	if prfl != nil {
 		err := prfl.Stop()
 		if err != nil {
 			c.AbortWithError(500, err)
