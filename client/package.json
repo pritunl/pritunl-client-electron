@@ -3,7 +3,7 @@
   "version": "0.10.17",
   "main": "www/main.js",
   "dependencies": {
-    "jquery": "^2.2.0",
+    "jquery": "^2.2.2",
     "mustache": "^2.2.1",
     "request": "^2.69.0",
     "tar": "^2.2.1",
@@ -12,8 +12,8 @@
   "devDependencies": {
     "electron-rebuild": "^1.1.3",
     "electron-packager": "^5.2.1",
-    "electron-prebuilt": "^0.36.7",
-    "rimraf": "^2.5.1",
+    "electron-prebuilt": "^0.37.2",
+    "rimraf": "^2.5.2",
     "rcedit": "^0.4.0"
   }
 }
