@@ -1,8 +1,8 @@
 Pritunl Client Changelog
 ========================
 
-Version 0.10.18
----------------
+Version 0.10.18 2016-03-24
+--------------------------
 
 Add support for username and passwords
 Improve IPv6 support
