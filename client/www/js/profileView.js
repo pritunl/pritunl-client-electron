@@ -37,7 +37,7 @@ var closeMenu = function($profile) {
   var $inputs = $profile.find('.menu input');
   $inputs.blur();
   $inputs.val('');
-  unbindAll();
+  unbindAll($profile);
 };
 
 var openEditor = function($profile, data, typ) {
