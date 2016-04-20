@@ -256,10 +256,12 @@ var importProfile = function(pth, callback) {
 
 var importProfileUri = function(prflUri, callback) {
   if (prflUri.startsWith('pritunl:')) {
-    prflUri = prflUri.replace('pritunl', 'https');
-  } else if (prflUri.startsWith('pts:') || prflUri.startsWith('pt:')) {
-    prflUri = prflUri.replace('pt', 'http');
-  } else if (prflUri.startsWith('https:') || prflUri.startsWith('http:')) {
+    prflUri = prflUri.replace('pritunl:', 'https:');
+  } else if (prflUri.startsWith('pts:')) {
+    prflUri = prflUri.replace('pts:', 'https:');
+  } else if (prflUri.startsWith('http:')) {
+    prflUri = prflUri.replace('http:', 'https');
+  } else if (prflUri.startsWith('https:')) {
   } else {
     prflUri = 'https://' + prflUri;
   }
