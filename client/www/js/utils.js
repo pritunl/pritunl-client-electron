@@ -1,4 +1,4 @@
-var app = remoteRequire('app');
+var app = remoteRequire().app;
 var request = require('request');
 var crypto = require('crypto');
 

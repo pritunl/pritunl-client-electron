@@ -1,13 +1,13 @@
 require('./js/globals.js');
 
-var app = require('app');
+var app = require('electron').app;
 var path = require('path');
 var fs = require('fs');
 var request = require('request');
-var dialog = require('dialog');
-var BrowserWindow = require('browser-window');
-var Tray = require('tray');
-var Menu = require('menu');
+var dialog = require('electron').dialog;
+var BrowserWindow = require('electron').BrowserWindow;
+var Tray = require('electron').Tray;
+var Menu = require('electron').Menu;
 var constants = require('./js/constants.js');
 var events = require('./js/events.js');
 var profile = require('./js/profile.js');
@@ -129,7 +129,7 @@ var openMainWin = function() {
     });
     main.maximizedPrev = null;
 
-    main.loadUrl('file://' + path.join(__dirname, 'index.html'));
+    main.loadURL('file://' + path.join(__dirname, 'index.html'));
 
     main.on('closed', function() {
       main = null;

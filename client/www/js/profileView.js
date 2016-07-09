@@ -1,5 +1,5 @@
 var path = require('path');
-var remote = require('remote');
+var remote = require('electron').remote;
 var $ = require('jquery');
 var Mustache = require('mustache');
 var profile = require('./profile.js');

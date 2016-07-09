@@ -18,11 +18,10 @@ global.ErrorInit = function(name, args) {
   this.stack = (new Error()).stack;
 };
 
-global.remoteRequire = function(name) {
-  try {
-    var remote = require('remote');
-    return remote.require(name);
-  } catch (e) {
-    return require(name);
+global.remoteRequire = function() {
+  var remote = require('electron').remote;
+  if (remote) {
+    return remote;
   }
+  return require('electron');
 };

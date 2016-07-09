@@ -8,8 +8,8 @@ var errors = require('./errors.js');
 var logger = require('./logger.js');
 var config = require('./config.js');
 var profileView = require('./profileView.js');
-var remote = require('remote');
-var BrowserWindow = remoteRequire('browser-window');
+var remote = require('electron').remote;
+var BrowserWindow = remoteRequire().BrowserWindow;
 
 profileView.init();
 
@@ -26,7 +26,7 @@ if (os.platform() === 'linux') {
         width: 800,
         height: 600,
         'auto-hide-menu-bar': true
-      }).loadUrl('http://ubuntu.com/desktop');
+      }).loadURL('http://ubuntu.com/desktop');
 
       config.settings.showUbuntu = false;
       config.save();
