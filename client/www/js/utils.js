@@ -39,7 +39,7 @@ var authRequest = function(method, host, path, token, secret, jsonData,
     'Auth-Token': token,
     'Auth-Timestamp': authTimestamp,
     'Auth-Nonce': authNonce,
-    'Auth-Signature': authSignature,
+    'Auth-Signature': authSignature
   };
   if (data) {
     headers['Content-Type'] = 'application/json';
