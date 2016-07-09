@@ -4,6 +4,7 @@ Pritunl Client Changelog
 Version 0.10.19
 ---------------
 
+Support for macOS Sierra
 Fix issues with import profile
 
 Version 0.10.18 2016-03-24
