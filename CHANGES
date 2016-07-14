@@ -1,6 +1,11 @@
 Pritunl Client Changelog
 ========================
 
+Version 0.10.20
+---------------
+
+Improve reconnection script
+
 Version 0.10.19 2016-07-09
 --------------------------
 
