@@ -231,25 +231,25 @@ app.on('ready', function() {
       openMainWin();
     });
 
-    var trayMenu = Menu.buildFromTemplate([
-      {
-        label: 'Settings',
-        click: function() {
-          openMainWin();
-        }
-      },
-      {
-        label: 'Exit',
-        click: function() {
-          request.post({
-            url: 'http://' + constants.serviceHost + '/stop'
-          }, function() {
-            app.quit();
-          });
-        }
-      }
-    ]);
-    tray.setContextMenu(trayMenu);
+    // var trayMenu = Menu.buildFromTemplate([
+    //   {
+    //     label: 'Settings',
+    //     click: function() {
+    //       openMainWin();
+    //     }
+    //   },
+    //   {
+    //     label: 'Exit',
+    //     click: function() {
+    //       request.post({
+    //         url: 'http://' + constants.serviceHost + '/stop'
+    //       }, function() {
+    //         app.quit();
+    //       });
+    //     }
+    //   }
+    // ]);
+    // tray.setContextMenu(trayMenu);
 
     var appMenu = Menu.buildFromTemplate([
       {
