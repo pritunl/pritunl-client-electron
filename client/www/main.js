@@ -236,9 +236,19 @@ app.on('ready', function() {
         label: 'Pritunl',
         submenu: [
           {
-            label: 'Quit',
+            label: 'Close',
             accelerator: 'CmdOrCtrl+Q',
             role: 'close'
+          },
+          {
+            label: 'Exit',
+            click: function() {
+              request.post({
+                url: 'http://' + constants.serviceHost + '/stop'
+              }, function() {
+                app.quit();
+              });
+            }
           }
         ]
       },
