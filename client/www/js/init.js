@@ -1,6 +1,8 @@
 var path = require('path');
 var os = require('os');
 var $ = require('jquery');
+var request = require('request');
+var constants = require('./constants.js');
 var profile = require('./profile.js');
 var service = require('./service.js');
 var editor = require('./editor.js');
@@ -9,7 +11,9 @@ var logger = require('./logger.js');
 var config = require('./config.js');
 var profileView = require('./profileView.js');
 var remote = require('electron').remote;
+var Menu = remoteRequire().Menu;
 var BrowserWindow = remoteRequire().BrowserWindow;
+var app = remoteRequire().app;
 
 profileView.init();
 
@@ -41,4 +45,23 @@ $('.header .minimize').click(function(evt) {
   }
 
   remote.getCurrentWindow().minimize();
+});
+$('.header .logo').click(function(evt) {
+  var menu = Menu.buildFromTemplate([
+    {
+      label: 'Close',
+      role: 'close'
+    },
+    {
+      label: 'Exit',
+      click: function () {
+        request.post({
+          url: 'http://' + constants.serviceHost + '/stop'
+        }, function () {
+          app.quit();
+        });
+      }
+    }
+  ]);
+  menu.popup(remote.getCurrentWindow());
 });
