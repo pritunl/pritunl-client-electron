@@ -320,6 +320,7 @@ input:active {
   display: none;
 }
 .header .logo {
+  -webkit-app-region: no-drag;
   color: #fff;
   display: inline-block;
   font-family: 'Fredoka One', cursive;
