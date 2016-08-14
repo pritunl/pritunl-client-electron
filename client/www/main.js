@@ -224,26 +224,12 @@ app.on('ready', function() {
     tray.on('double-clicked', function() {
       openMainWin();
     });
-
-    var trayMenu = Menu.buildFromTemplate([
-      {
-        label: 'Settings',
-        click: function() {
-          openMainWin();
-        }
-      },
-      {
-        label: 'Exit',
-        click: function() {
-          request.post({
-            url: 'http://' + constants.serviceHost + '/stop'
-          }, function() {
-            app.quit();
-          });
-        }
-      }
-    ]);
-    tray.setContextMenu(trayMenu);
+    tray.on('click', function() {
+      openMainWin();
+    });
+    tray.on('double-click', function() {
+      openMainWin();
+    });
 
     var appMenu = Menu.buildFromTemplate([
       {
