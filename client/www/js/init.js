@@ -15,44 +15,6 @@ profileView.init();
 
 $(document).on('dblclick mousedown', '.no-select, .btn', false);
 
-$ubuntu = $('.ubuntu');
-if (os.platform() === 'linux') {
-  $ubuntu.remove();
-} else {
-  config.onReady(function() {
-    $('.ubuntu .box').click(function() {
-      new BrowserWindow({
-        icon: path.join(__dirname, '..', 'img', 'logo.png'),
-        width: 800,
-        height: 600,
-        'auto-hide-menu-bar': true
-      }).loadURL('http://ubuntu.com/desktop');
-
-      config.settings.showUbuntu = false;
-      config.save();
-      $ubuntu.slideUp(200, function() {
-        $ubuntu.remove();
-      });
-    });
-
-    $('.ubuntu .close').click(function() {
-      config.settings.showUbuntu = false;
-      config.save();
-      $ubuntu.slideUp(200, function() {
-        $ubuntu.remove();
-      });
-    });
-
-    setTimeout(function() {
-      if (config.settings.showUbuntu) {
-        $ubuntu.slideDown(200);
-      } else {
-        $ubuntu.remove();
-      }
-    }, 500);
-  });
-}
-
 $('.header .close').click(function() {
   remote.getCurrentWindow().close();
 });

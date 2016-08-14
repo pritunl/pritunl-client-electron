@@ -7,9 +7,7 @@ var fs = require('fs');
 var loaded;
 var waiting = [];
 var pth = path.join(utils.getUserDataPath(), 'pritunl.json');
-var settings = {
-  showUbuntu: true
-};
+var settings = {};
 
 var onReady = function(callback) {
   if (loaded) {
@@ -21,11 +19,6 @@ var onReady = function(callback) {
 
 var importData = function(data) {
   loaded = true;
-
-  settings.showUbuntu = data['show_ubuntu'];
-  if (settings.showUbuntu === undefined) {
-    settings.showUbuntu = true;
-  }
 
   for (var i = 0; i < waiting.length; i++) {
     waiting[i]();
@@ -62,9 +55,7 @@ var load = function() {
 };
 
 var save = function() {
-  fs.writeFile(pth, JSON.stringify({
-    'show_ubuntu': settings.showUbuntu
-  }), function(err) {
+  fs.writeFile(pth, JSON.stringify({}), function(err) {
     if (err) {
       err = new errors.WriteError('config: Failed to write config (%s)', err);
       logger.error(err);
