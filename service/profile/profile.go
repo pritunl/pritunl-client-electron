@@ -382,7 +382,6 @@ func (p *Profile) Start(timeout bool) (err error) {
 		p.remPaths = append(p.remPaths, blockPath)
 
 		args = append(args, "--script-security", "2",
-			"--up-restart",
 			"--up", upPath,
 			"--down", downPath,
 			"--route-pre-down", preDownPath,
