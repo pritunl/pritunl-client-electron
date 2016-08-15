@@ -6,6 +6,7 @@ import (
 	"github.com/pritunl/pritunl-client-electron/service/autoclean"
 	"github.com/pritunl/pritunl-client-electron/service/handlers"
 	"github.com/pritunl/pritunl-client-electron/service/logger"
+	"github.com/pritunl/pritunl-client-electron/service/watch"
 )
 
 func main() {
@@ -23,6 +24,9 @@ func main() {
 
 	router := gin.New()
 	handlers.Register(router)
+
+	watch.StartWatch()
+
 	err = router.Run("127.0.0.1:9770")
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
