@@ -15,6 +15,7 @@ import (
 	"runtime"
 	"strings"
 	"sync"
+	"syscall"
 	"time"
 )
 
@@ -566,6 +567,22 @@ func (p *Profile) Stop() (err error) {
 		p.cmd.Process.Wait()
 		done = true
 		utils.ResetNetworking()
+	}
+
+	return
+}
+
+func (p *Profile) Reset() (err error) {
+	if p.cmd == nil {
+		return
+	}
+
+	err = p.cmd.Process.Signal(syscall.SIGHUP)
+	if err != nil {
+		err = &ExecError{
+			errors.Wrap(err, "profile: Failed to reset openvpn"),
+		}
+		return
 	}
 
 	return
