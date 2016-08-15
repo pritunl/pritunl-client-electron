@@ -296,6 +296,17 @@ func (p *Profile) clearStatus(start time.Time) {
 	}()
 }
 
+func (p *Profile) Copy() (prfl *Profile) {
+	prfl = &Profile{
+		Id:       p.Id,
+		Data:     p.Data,
+		Username: p.Username,
+		Password: p.Password,
+	}
+
+	return
+}
+
 func (p *Profile) Start(timeout bool) (err error) {
 	start := time.Now()
 	p.remPaths = []string{}
