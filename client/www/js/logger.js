@@ -32,7 +32,11 @@ var warning = function(msg) {
 
 var error = function(msg) {
   if (alert) {
-    alert.error(msg);
+    if (msg.formatted) {
+      alert.error(msg.formatted);
+    } else {
+      alert.error(msg);
+    }
   }
   push('ERROR', msg);
 };
