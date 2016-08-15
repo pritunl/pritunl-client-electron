@@ -296,6 +296,14 @@ func (p *Profile) clearStatus(start time.Time) {
 		for _, path := range p.remPaths {
 			os.Remove(path)
 		}
+
+		p.stateLock.Lock()
+		p.state = false
+		for _, waiter := range p.waiters {
+			waiter <- true
+		}
+		p.waiters = []chan bool{}
+		p.stateLock.Unlock()
 	}()
 }
 
@@ -559,6 +567,19 @@ func (p *Profile) Stop() (err error) {
 		done = true
 		utils.ResetNetworking()
 	}
+
+	return
+}
+
+func (p *Profile) Wait() (err error) {
+	waiter := make(chan bool, 1)
+
+	p.stateLock.Lock()
+	if !p.state {
+		return
+	}
+	p.waiters = append(p.waiters, waiter)
+	p.stateLock.Unlock()
 
 	return
 }
