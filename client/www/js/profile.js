@@ -670,28 +670,28 @@ Profile.prototype.sync = function(syncHosts, callback) {
     }.bind(this));
 };
 
-Profile.prototype.connect = function(authCallback) {
+Profile.prototype.connect = function(timeout, authCallback) {
   if (this.syncHosts.length) {
     this.sync(this.syncHosts.slice(0), function() {
-      this.auth(authCallback);
+      this.auth(timeout, authCallback);
     }.bind(this));
   } else {
-    this.auth(authCallback);
+    this.auth(timeout, authCallback);
   }
 };
 
-Profile.prototype.auth = function(callback) {
+Profile.prototype.auth = function(timeout, callback) {
   var authType = this.getAuthType();
 
   if (!authType) {
     if (callback) {
       callback(null);
     }
-    service.start(this);
+    service.start(this, timeout);
   } else if (!callback) {
   } else {
     callback(authType, function(user, pass) {
-      service.start(this, user || 'pritunl', pass);
+      service.start(this, timeout, user || 'pritunl', pass);
     }.bind(this));
   }
 };
