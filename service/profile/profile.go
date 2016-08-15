@@ -222,7 +222,7 @@ func (p *Profile) parseLine(line string) {
 
 	if strings.Contains(line, "Initialization Sequence Completed") {
 		p.Status = "connected"
-		p.Timestamp = time.Now().Unix()
+		p.Timestamp = time.Now().Unix() - 1
 		p.update()
 	} else if strings.Contains(line, "Inactivity timeout") {
 		p.Status = "reconnecting"
