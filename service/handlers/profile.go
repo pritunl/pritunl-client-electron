@@ -27,6 +27,7 @@ func profilePost(c *gin.Context) {
 		Username: data.Username,
 		Password: data.Password,
 	}
+	prfl.Init()
 
 	err := prfl.Start(data.Timeout)
 	if err != nil {
