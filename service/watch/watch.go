@@ -11,7 +11,7 @@ var (
 	wakeLock = sync.Mutex{}
 )
 
-func sleepWatch(delay time.Duration) {
+func wakeWatch(delay time.Duration) {
 	curTime := time.Now()
 	delay += 1 * time.Second
 
@@ -36,6 +36,6 @@ func sleepWatch(delay time.Duration) {
 }
 
 func StartWatch() {
-	go sleepWatch(10 * time.Millisecond)
-	go sleepWatch(100 * time.Millisecond)
+	go wakeWatch(10 * time.Millisecond)
+	go wakeWatch(100 * time.Millisecond)
 }
