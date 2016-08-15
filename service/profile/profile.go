@@ -51,6 +51,9 @@ type OutputData struct {
 }
 
 type Profile struct {
+	state      bool             `json:"-"`
+	stateLock  sync.Mutex       `json:"-"`
+	waiters    []chan bool      `json:"-"`
 	remPaths   []string         `json:"-"`
 	cmd        *exec.Cmd        `json:"-"`
 	intf       *utils.Interface `json:"-"`
@@ -303,8 +306,14 @@ func (p *Profile) Copy() (prfl *Profile) {
 		Username: p.Username,
 		Password: p.Password,
 	}
+	prfl.Init()
 
 	return
+}
+
+func (p *Profile) Init() {
+	p.stateLock = sync.Mutex{}
+	p.waiters = []chan bool{}
 }
 
 func (p *Profile) Start(timeout bool) (err error) {
@@ -312,6 +321,9 @@ func (p *Profile) Start(timeout bool) (err error) {
 	p.remPaths = []string{}
 
 	p.Status = "connecting"
+	p.stateLock.Lock()
+	p.state = true
+	p.stateLock.Unlock()
 
 	Profiles.RLock()
 	_, ok := Profiles.m[p.Id]
