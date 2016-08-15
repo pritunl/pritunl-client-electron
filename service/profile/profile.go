@@ -571,7 +571,7 @@ func (p *Profile) Stop() (err error) {
 	return
 }
 
-func (p *Profile) Wait() () {
+func (p *Profile) Wait() {
 	waiter := make(chan bool, 1)
 
 	p.stateLock.Lock()
@@ -581,7 +581,7 @@ func (p *Profile) Wait() () {
 	p.waiters = append(p.waiters, waiter)
 	p.stateLock.Unlock()
 
-	<- waiter
+	<-waiter
 	time.Sleep(50 * time.Millisecond)
 
 	return
