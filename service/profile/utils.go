@@ -81,7 +81,7 @@ func RestartProfiles() (err error) {
 	return
 }
 
-func ResetProfiles() () {
+func ResetProfiles() {
 	for _, prfl := range GetProfiles() {
 		prfl.Reset()
 	}
