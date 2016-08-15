@@ -2,6 +2,7 @@ var path = require('path');
 var remote = require('electron').remote;
 var $ = require('jquery');
 var Mustache = require('mustache');
+var constants = require('./constants.js');
 var profile = require('./profile.js');
 var importer = require('./importer.js');
 var service = require('./service.js');
@@ -384,6 +385,8 @@ var renderProfile = function(prfl) {
 };
 
 var init = function() {
+  $('.version').text(constants.version);
+
   events.subscribe(function(evt) {
     var prfl;
     var err;
