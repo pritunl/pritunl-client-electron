@@ -303,7 +303,7 @@ app.on('ready', function() {
         prfl = prfls[i];
 
         if (prfl.autostart) {
-          prfl.connect();
+          prfl.connect(false);
         }
       }
     }, true);
