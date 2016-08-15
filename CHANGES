@@ -5,6 +5,7 @@ Version 0.10.20
 ---------------
 
 Improve profile reconnection
+Fix connection issues after waking from sleep
 
 Version 0.10.19 2016-07-09
 --------------------------
