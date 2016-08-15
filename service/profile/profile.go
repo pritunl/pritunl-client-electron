@@ -219,6 +219,7 @@ func (p *Profile) parseLine(line string) {
 
 	if strings.Contains(line, "Initialization Sequence Completed") {
 		p.Status = "connected"
+		p.Timestamp = time.Now().Unix()
 		p.update()
 	} else if strings.Contains(line, "Inactivity timeout") {
 		p.Status = "reconnecting"
@@ -300,7 +301,6 @@ func (p *Profile) Start(timeout bool) (err error) {
 	p.remPaths = []string{}
 
 	p.Status = "connecting"
-	p.Timestamp = start.Unix()
 
 	Profiles.RLock()
 	_, ok := Profiles.m[p.Id]
