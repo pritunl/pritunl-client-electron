@@ -4,8 +4,10 @@ var utils = require('./utils.js');
 
 var alert;
 try {
-  require('remote');
-  alert = require('./alert.js');
+  var remote = require('electron').remote;
+  if (remote) {
+    alert = require('./alert.js');
+  }
 } catch (e) {
 }
 
