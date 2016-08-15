@@ -116,7 +116,7 @@ var renderProfile = function(prfl) {
     }
     $profile.find('.menu .connect').addClass('disabled');
 
-    prfl.connect(function(authType, callback) {
+    prfl.connect(true, function(authType, callback) {
       if (!authType) {
         closeMenu($profile);
         return;
