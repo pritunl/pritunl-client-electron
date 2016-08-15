@@ -85,6 +85,4 @@ func ResetProfiles() {
 	for _, prfl := range GetProfiles() {
 		prfl.Reset()
 	}
-
-	return
 }
