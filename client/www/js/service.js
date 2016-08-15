@@ -65,7 +65,7 @@ var update = function(callback) {
   }.bind(this));
 };
 
-var start = function(prfl, username, password, callback) {
+var start = function(prfl, timeout, username, password, callback) {
   prfl.getFullData(function(data) {
     request.post({
       url: 'http://' + constants.serviceHost + '/profile',
@@ -74,6 +74,7 @@ var start = function(prfl, username, password, callback) {
         id: prfl.id,
         username: username,
         password: password,
+        timeout: timeout,
         data: data
       }
     }, function(err) {
