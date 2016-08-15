@@ -545,11 +545,19 @@ func (p *Profile) Stop() (err error) {
 			return
 		}
 
+		done := false
+
 		go func() {
-			time.Sleep(6 * time.Second)
+			if done {
+				return
+			}
+			time.Sleep(5 * time.Second)
 			p.cmd.Process.Kill()
-			utils.ResetNetworking()
 		}()
+
+		p.cmd.Process.Wait()
+		done = true
+		utils.ResetNetworking()
 	}
 
 	return
