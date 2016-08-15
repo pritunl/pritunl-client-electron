@@ -28,9 +28,7 @@ func sleepWatch(delay time.Duration) {
 			wakeLock.Unlock()
 
 			if reset {
-				for _, prfl := range profile.GetProfiles() {
-					prfl.Reset()
-				}
+				profile.ResetProfiles()
 			}
 		}
 		curTime = time.Now()
