@@ -60,3 +60,23 @@ func GetProfiles() (prfls map[string]*Profile) {
 
 	return
 }
+
+func RestartProfiles() (err error) {
+	for _, prfl := range GetProfiles() {
+		prfl2 := prfl.Copy()
+
+		err = prfl.Stop()
+		if err != nil {
+			return
+		}
+
+		prfl.Wait()
+
+		err = prfl2.Start(false)
+		if err != nil {
+			return
+		}
+	}
+
+	return
+}
