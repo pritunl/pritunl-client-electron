@@ -6,6 +6,7 @@ import (
 	"github.com/Sirupsen/logrus"
 	"github.com/dropbox/godropbox/errors"
 	"github.com/gin-gonic/gin"
+	"github.com/pritunl/pritunl-client-electron/service/auth"
 	"net/http"
 )
 
@@ -33,7 +34,17 @@ func Errors(c *gin.Context) {
 	}
 }
 
+// Auth requests
+func Auth(c *gin.Context) {
+	if c.Request.Header.Get("Auth-Key") != auth.Key {
+		c.AbortWithStatus(401)
+		return
+	}
+	c.Next()
+}
+
 func Register(engine *gin.Engine) {
+	engine.Use(Auth)
 	engine.Use(Recovery)
 	engine.Use(Errors)
 
