@@ -12,9 +12,11 @@ var config = require('./config.js');
 var profileView = require('./profileView.js');
 var remote = require('electron').remote;
 var webFrame = require('electron').webFrame;
+var getGlobal = remoteRequire().getGlobal;
 var Menu = remoteRequire().Menu;
 var app = remoteRequire().app;
 
+constants.key = getGlobal('key');
 profileView.init();
 
 if (os.platform() === 'darwin') {
