@@ -169,6 +169,16 @@ func GetRootDir() (pth string) {
 	return
 }
 
+func GetAuthPath() (pth string) {
+	if runtime.GOOS == "windows" {
+		pth = filepath.Join("C:", "ProgramData", "Pritunl", "auth")
+	} else {
+		pth = filepath.Join(string(filepath.Separator), "tmp", "pritunl_auth")
+	}
+
+	return
+}
+
 func GetLogPath() (pth string) {
 	if runtime.GOOS == "windows" {
 		pth = filepath.Join("C:", "ProgramData", "Pritunl")
