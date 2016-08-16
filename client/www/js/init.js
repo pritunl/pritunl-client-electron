@@ -11,11 +11,15 @@ var logger = require('./logger.js');
 var config = require('./config.js');
 var profileView = require('./profileView.js');
 var remote = require('electron').remote;
+var webFrame = require('electron').webFrame;
 var Menu = remoteRequire().Menu;
-var BrowserWindow = remoteRequire().BrowserWindow;
 var app = remoteRequire().app;
 
 profileView.init();
+
+if (os.platform() === 'darwin') {
+  webFrame.setZoomFactor(0.8);
+}
 
 $(document).on('dblclick mousedown', '.no-select, .btn', false);
 
