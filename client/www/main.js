@@ -253,6 +253,9 @@ app.on('ready', function() {
         label: 'Pritunl',
         submenu: [
           {
+            label: 'Pritunl ' + constants.version
+          },
+          {
             label: 'Close',
             accelerator: 'CmdOrCtrl+Q',
             role: 'close'
