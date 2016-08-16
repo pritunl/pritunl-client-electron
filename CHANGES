@@ -6,6 +6,7 @@ Version 1.x.x
 
 Interface improvements
 Improve profile reconnection
+Fix authentication failure message
 Fix connection issues after waking from sleep
 
 Version 0.10.19 2016-07-09
