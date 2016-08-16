@@ -4,6 +4,7 @@ Pritunl Client Changelog
 Version 0.10.20
 ---------------
 
+Interface improvements
 Improve profile reconnection
 Fix connection issues after waking from sleep
 
