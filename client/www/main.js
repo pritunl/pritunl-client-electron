@@ -22,6 +22,16 @@ if (app.dock) {
   app.dock.hide();
 }
 
+var authPath;
+if (process.platform === 'win32') {
+  authPath = path.join('C:', 'ProgramData', 'Pritunl', 'auth');
+} else {
+  authPath = path.join(path.sep, 'tmp', 'pritunl_auth');
+}
+
+global.key = fs.readFileSync(authPath, 'utf8');
+constants.key = global.key;
+
 var connTray;
 var disconnTray;
 if (process.platform === 'darwin') {
