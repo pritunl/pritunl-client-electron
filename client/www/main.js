@@ -115,17 +115,34 @@ var openMainWin = function() {
       return;
     }
 
+    var width;
+    var height;
+    var maxWidth;
+    var maxHeight;
+    if (process.platform === 'darwin') {
+      width = 308;
+      height = 414;
+      maxWidth = 520;
+      maxHeight = 632;
+    } else {
+      width = 385;
+      height = 518;
+      maxWidth = 650;
+      maxHeight = 790;
+    }
+
     main = new BrowserWindow({
       title: 'Pritunl',
       icon: icon,
       frame: false,
       fullscreen: false,
-      width: 420,
-      height: 561,
-      'min-width': 325,
-      'min-height': 225,
-      'max-width': 650,
-      'max-height': 790
+      width: width,
+      height: height,
+      show: false,
+      minWidth: 340,
+      minHeight: 440,
+      maxWidth: maxWidth,
+      maxHeight: maxHeight
     });
     main.maximizedPrev = null;
 
