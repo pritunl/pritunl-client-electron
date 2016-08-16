@@ -171,7 +171,17 @@ func GetRootDir() (pth string) {
 
 func GetAuthPath() (pth string) {
 	if runtime.GOOS == "windows" {
-		pth = filepath.Join("C:", "ProgramData", "Pritunl", "auth")
+		pth = filepath.Join("C:", "ProgramData", "Pritunl")
+
+		err := os.MkdirAll(pth, 0700)
+		if err != nil {
+			err = &IoError{
+				errors.Wrap(err, "utils: Failed to create data directory"),
+			}
+			panic(err)
+		}
+
+		pth = filepath.Join(pth, "auth")
 	} else {
 		pth = filepath.Join(string(filepath.Separator), "tmp", "pritunl_auth")
 	}
@@ -186,7 +196,7 @@ func GetLogPath() (pth string) {
 		err := os.MkdirAll(pth, 0700)
 		if err != nil {
 			err = &IoError{
-				errors.Wrap(err, "utils: Failed to create log directory"),
+				errors.Wrap(err, "utils: Failed to create data directory"),
 			}
 			panic(err)
 		}
