@@ -152,6 +152,10 @@ var openMainWin = function() {
       main = null;
     });
 
+    main.on('ready-to-show', function() {
+      main.show();
+    });
+
     if (app.dock) {
       app.dock.show();
     }
