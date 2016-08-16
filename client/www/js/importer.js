@@ -1,6 +1,7 @@
 var crypto = require('crypto');
 var path = require('path');
 var request = require('request');
+var constants = require('./constants.js');
 var errors = require('./errors.js');
 var utils = require('./utils.js');
 var service = require('./service.js');
@@ -284,7 +285,10 @@ var importProfileUri = function(prflUri, callback) {
 
   request.get({
     url: prflUri,
-    strictSSL: false
+    strictSSL: false,
+    headers: {
+      'Auth-Key': constants.key
+    }
   }, function(err, resp, body) {
     var data;
 
@@ -318,7 +322,10 @@ var importProfileUri = function(prflUri, callback) {
 
     request.get({
       url: prflUri,
-      strictSSL: false
+      strictSSL: false,
+      headers: {
+        'Auth-Key': constants.key
+      }
     }, function(err, resp, body) {
       var data;
 

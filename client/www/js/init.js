@@ -63,7 +63,10 @@ $('.header .logo').click(function(evt) {
       label: 'Exit',
       click: function () {
         request.post({
-          url: 'http://' + constants.serviceHost + '/stop'
+          url: 'http://' + constants.serviceHost + '/stop',
+          headers: {
+            'Auth-Key': constants.key
+          }
         }, function () {
           app.quit();
         });

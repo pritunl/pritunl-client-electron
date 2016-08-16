@@ -40,7 +40,10 @@ var iter = function(callback) {
 
 var update = function(callback) {
   request.get({
-    url: 'http://' + constants.serviceHost + '/profile'
+    url: 'http://' + constants.serviceHost + '/profile',
+    headers: {
+      'Auth-Key': constants.key
+    }
   }, function(err, resp, body) {
     if (err) {
       err = new errors.NetworkError(
@@ -70,6 +73,9 @@ var start = function(prfl, timeout, username, password, callback) {
     request.post({
       url: 'http://' + constants.serviceHost + '/profile',
       json: true,
+      headers: {
+        'Auth-Key': constants.key
+      },
       body: {
         id: prfl.id,
         username: username,
@@ -94,6 +100,9 @@ var stop = function(prfl, callback) {
   request.del({
     url: 'http://' + constants.serviceHost + '/profile',
     json: true,
+    headers: {
+      'Auth-Key': constants.key
+    },
     body: {
       id: prfl.id
     }
@@ -111,7 +120,10 @@ var stop = function(prfl, callback) {
 
 var ping = function(callback) {
   request.get({
-    url: 'http://' + constants.serviceHost + '/ping'
+    url: 'http://' + constants.serviceHost + '/ping',
+    headers: {
+      'Auth-Key': constants.key
+    }
   }, function(err, resp) {
     if (err || !resp || resp.statusCode !== 200) {
       callback(false);
@@ -128,7 +140,10 @@ var wakeup = function(callback) {
   }
 
   request.get({
-    url: 'http://' + constants.serviceHost + '/wakeup'
+    url: 'http://' + constants.serviceHost + '/wakeup',
+    headers: {
+      'Auth-Key': constants.key
+    }
   }, function(err, resp) {
     if (err || !resp || resp.statusCode !== 200) {
       callback(false);

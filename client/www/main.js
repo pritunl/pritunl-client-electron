@@ -174,7 +174,10 @@ var openMainWin = function() {
 
 var sync =  function() {
   request.get({
-    url: 'http://' + constants.serviceHost + '/status'
+    url: 'http://' + constants.serviceHost + '/status',
+    headers: {
+      'Auth-Key': constants.key
+    }
   }, function(err, resp, body) {
     if (!body || !tray) {
       return;
@@ -278,7 +281,10 @@ app.on('ready', function() {
             label: 'Exit',
             click: function() {
               request.post({
-                url: 'http://' + constants.serviceHost + '/stop'
+                url: 'http://' + constants.serviceHost + '/stop',
+                headers: {
+                  'Auth-Key': constants.key
+                }
               }, function() {
                 app.quit();
               });
