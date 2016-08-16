@@ -55,7 +55,7 @@
 
 ; This version number should match the version
 ; number given in SOURCES.
-   DriverVer=11/05/2014,9.00.00.21
+   DriverVer=04/21/2016,9.00.00.21
 
 [Strings]
    DeviceDescription = "TAP-Windows Adapter V9"
