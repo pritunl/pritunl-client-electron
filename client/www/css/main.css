@@ -397,11 +397,12 @@ input:active {
   overflow-y: auto;
 }
 .profiles .btns .btn {
-  padding: 18px;
+  padding: 18px 0;
   text-align: center;
-  font-size: 22px;
+  font-size: 19px;
   color: #fff;
   position: relative;
+  width: 50%;
 }
 .profiles .btns .btn .profile-file {
   position: absolute;
@@ -421,9 +422,6 @@ input:active {
 }
 .profiles .import-btns {
   display: none;
-}
-.profiles .import-btns .btn {
-  width: 50%;
 }
 
 
@@ -658,8 +656,8 @@ input:active {
   width: 50%;
   height: 52px;
   display: inline-block;
-  font-size: 20px;
-  padding: 14px;
+  font-size: 19px;
+  padding: 14px 0;
 }
 .profile .logs ::-webkit-scrollbar,
 .profile .config ::-webkit-scrollbar {
