@@ -24,7 +24,7 @@ if (app.dock) {
 
 var authPath;
 if (process.platform === 'win32') {
-  authPath = path.join('C:', 'ProgramData', 'Pritunl', 'auth');
+  authPath = path.join('C:\\', 'ProgramData', 'Pritunl', 'auth');
 } else {
   authPath = path.join(path.sep, 'tmp', 'pritunl_auth');
 }

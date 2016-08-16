@@ -171,7 +171,7 @@ func GetRootDir() (pth string) {
 
 func GetAuthPath() (pth string) {
 	if runtime.GOOS == "windows" {
-		pth = filepath.Join("C:", "ProgramData", "Pritunl")
+		pth = filepath.Join("C:\\", "ProgramData", "Pritunl")
 
 		err := os.MkdirAll(pth, 0700)
 		if err != nil {
@@ -191,7 +191,7 @@ func GetAuthPath() (pth string) {
 
 func GetLogPath() (pth string) {
 	if runtime.GOOS == "windows" {
-		pth = filepath.Join("C:", "ProgramData", "Pritunl")
+		pth = filepath.Join("C:\\", "ProgramData", "Pritunl")
 
 		err := os.MkdirAll(pth, 0700)
 		if err != nil {
@@ -201,7 +201,7 @@ func GetLogPath() (pth string) {
 			panic(err)
 		}
 
-		pth = filepath.Join("C:", "ProgramData", "Pritunl", "pritunl.log")
+		pth = filepath.Join(pth, "pritunl.log")
 	} else {
 		pth = filepath.Join(string(filepath.Separator),
 			"var", "log", "pritunl.log")
@@ -212,7 +212,7 @@ func GetLogPath() (pth string) {
 
 func GetTempDir() (pth string, err error) {
 	if runtime.GOOS == "windows" {
-		pth = filepath.Join("C:", "ProgramData", "Pritunl")
+		pth = filepath.Join("C:\\", "ProgramData", "Pritunl")
 	} else {
 		pth = filepath.Join(string(filepath.Separator), "tmp", "pritunl")
 	}
