@@ -439,8 +439,9 @@ var init = function() {
           }
         }
 
-        $('.profiles .import-uri').show();
         $('.profiles .import-btns').hide();
+        $('.profiles .import').show();
+        $('.profiles .import-uri').show();
         $('.profiles .uri-input').slideUp(50, function() {
           $('.profiles .uri-input').val('');
         });
@@ -451,6 +452,7 @@ var init = function() {
     };
 
     $('.profiles .import-uri').click(function() {
+      $('.profiles .import').hide();
       $('.profiles .import-uri').hide();
       $('.profiles .import-btns').show();
       $('.profiles .uri-input').slideDown(50, function() {
@@ -469,8 +471,9 @@ var init = function() {
     });
 
     $('.profiles .import-uri-cancel').click(function() {
-      $('.profiles .import-uri').show();
       $('.profiles .import-btns').hide();
+      $('.profiles .import').show();
+      $('.profiles .import-uri').show();
       $('.profiles .uri-input').slideUp(50, function() {
         $('.profiles .uri-input').val('');
       });
