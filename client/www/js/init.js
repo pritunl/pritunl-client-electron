@@ -52,7 +52,7 @@ $('.header .minimize').click(function(evt) {
 
   remote.getCurrentWindow().minimize();
 });
-$('.header .logo').click(function(evt) {
+$('.header .logo').click(function() {
   var menu = Menu.buildFromTemplate([
     {
       label: 'Pritunl ' + constants.version
