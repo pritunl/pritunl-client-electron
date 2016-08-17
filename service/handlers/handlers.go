@@ -36,7 +36,9 @@ func Errors(c *gin.Context) {
 
 // Auth requests
 func Auth(c *gin.Context) {
-	if c.Request.Header.Get("Auth-Key") != auth.Key {
+	if c.Request.Header.Get("Origin") != "" ||
+			c.Request.Header.Get("Referer") != "" ||
+			c.Request.Header.Get("Auth-Key") != auth.Key {
 		c.AbortWithStatus(401)
 		return
 	}
