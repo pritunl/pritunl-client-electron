@@ -57,5 +57,5 @@ func Register(engine *gin.Engine) {
 	engine.GET("/ping", pingGet)
 	engine.POST("/stop", stopPost)
 	engine.GET("/status", statusGet)
-	engine.GET("/wakeup", wakeupGet)
+	engine.POST("/wakeup", wakeupPost)
 }

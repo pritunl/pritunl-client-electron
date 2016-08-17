@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func wakeupGet(c *gin.Context) {
+func wakeupPost(c *gin.Context) {
 	evt := &event.Event{
 		Id:   utils.Uuid(),
 		Type: "wakeup",
