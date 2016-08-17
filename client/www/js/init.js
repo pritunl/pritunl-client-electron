@@ -55,7 +55,7 @@ $('.header .minimize').click(function(evt) {
 $('.header .logo').click(function() {
   var menu = Menu.buildFromTemplate([
     {
-      label: 'Pritunl ' + constants.version
+      label: 'Pritunl v' + constants.version
     },
     {
       label: 'Close',

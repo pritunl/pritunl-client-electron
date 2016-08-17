@@ -385,7 +385,7 @@ var renderProfile = function(prfl) {
 };
 
 var init = function() {
-  $('.version').text(constants.version);
+  $('.version').text('v' + constants.version);
 
   events.subscribe(function(evt) {
     var prfl;
