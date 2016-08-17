@@ -7,10 +7,18 @@ import (
 )
 
 func main() {
-	cmd := exec.Command("git", "pull")
+	cmd := exec.Command("npm", "cache", "clean")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err := cmd.Run()
+	if err != nil {
+		panic(err)
+	}
+
+	cmd = exec.Command("git", "pull")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err = cmd.Run()
 	if err != nil {
 		panic(err)
 	}
