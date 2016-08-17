@@ -8,6 +8,8 @@ rm -rf build/osx
 rm -f build/Pritunl.pkg
 rm -f build/Pritunl.pkg.zip
 
+npm cache clean
+
 git pull
 
 # Pritunl
