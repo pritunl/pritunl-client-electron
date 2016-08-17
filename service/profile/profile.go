@@ -425,7 +425,6 @@ func (p *Profile) Start(timeout bool) (err error) {
 			"--tls-verify", blockPath,
 			"--ipchange", blockPath,
 			"--route-up", blockPath,
-			"--learn-address", blockPath,
 		)
 	} else {
 		args = append(args, "--script-security", "1")
