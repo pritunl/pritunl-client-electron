@@ -134,11 +134,6 @@ var ping = function(callback) {
 };
 
 var wakeup = function(callback) {
-  if (os.platform() !== 'win32') {
-    callback(false);
-    return;
-  }
-
   request.post({
     url: 'http://' + constants.serviceHost + '/wakeup',
     headers: {
