@@ -114,6 +114,10 @@ app.on('activate-with-no-open-windows', function() {
   openMainWin();
 });
 
+app.on('activate', function() {
+  openMainWin();
+});
+
 var openMainWin = function() {
   if (main) {
     main.focus();
