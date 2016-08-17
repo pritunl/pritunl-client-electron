@@ -139,7 +139,7 @@ var wakeup = function(callback) {
     return;
   }
 
-  request.get({
+  request.post({
     url: 'http://' + constants.serviceHost + '/wakeup',
     headers: {
       'Auth-Key': constants.key
