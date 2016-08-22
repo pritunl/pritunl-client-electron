@@ -518,7 +518,31 @@ func (p *Profile) Start(timeout bool) (err error) {
 		go func() {
 			time.Sleep(connTimeout)
 			if p.Status != "connected" && running {
-				cmd.Process.Kill()
+				if runtime.GOOS == "windows" {
+					cmd.Process.Kill()
+				} else {
+					err = p.cmd.Process.Signal(os.Interrupt)
+					if err != nil {
+						err = &ExecError{
+							errors.Wrap(err,
+								"profile: Failed to interrupt openvpn"),
+						}
+						return
+					}
+
+					done := false
+
+					go func() {
+						if done {
+							return
+						}
+						time.Sleep(3 * time.Second)
+						p.cmd.Process.Kill()
+					}()
+
+					p.cmd.Process.Wait()
+					done = true
+				}
 
 				evt := event.Event{
 					Type: "timeout_error",
