@@ -20,7 +20,7 @@ import (
 )
 
 const (
-	connTimeout = 15 * time.Second
+	connTimeout = 30 * time.Second
 )
 
 var (
