@@ -533,10 +533,10 @@ func (p *Profile) Start(timeout bool) (err error) {
 					done := false
 
 					go func() {
+						time.Sleep(3 * time.Second)
 						if done {
 							return
 						}
-						time.Sleep(3 * time.Second)
 						p.cmd.Process.Kill()
 					}()
 
@@ -586,10 +586,10 @@ func (p *Profile) Stop() (err error) {
 		done := false
 
 		go func() {
+			time.Sleep(5 * time.Second)
 			if done {
 				return
 			}
-			time.Sleep(5 * time.Second)
 			p.cmd.Process.Kill()
 		}()
 
