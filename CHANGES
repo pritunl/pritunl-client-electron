@@ -1,6 +1,11 @@
 Pritunl Client Changelog
 ========================
 
+Version
+-------
+
+Fix connection timeout issues
+
 Version 1.0.1070.17 2016-08-16
 ------------------------------
 
