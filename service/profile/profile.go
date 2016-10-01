@@ -326,6 +326,7 @@ func (p *Profile) Copy() (prfl *Profile) {
 }
 
 func (p *Profile) Init() {
+	p.Id = FilterStr(p.Id)
 	p.stateLock = sync.Mutex{}
 	p.waiters = []chan bool{}
 }

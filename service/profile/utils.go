@@ -4,8 +4,11 @@ import (
 	"github.com/pritunl/pritunl-client-electron/service/utils"
 	"os"
 	"path/filepath"
+	"regexp"
 	"runtime"
 )
+
+var alphaNumRe = regexp.MustCompile("[^a-zA-Z0-9]+")
 
 func getOpenvpnPath() (pth string) {
 	switch runtime.GOOS {
@@ -85,4 +88,8 @@ func ResetProfiles() {
 	for _, prfl := range GetProfiles() {
 		prfl.Reset()
 	}
+}
+
+func FilterStr(input string) string {
+	return string(alphaNumRe.ReplaceAll([]byte(input), []byte("")))
 }
