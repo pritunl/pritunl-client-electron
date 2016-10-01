@@ -32,7 +32,7 @@ var authRequest = function(method, host, path, token, secret, jsonData,
 
   authString = authString.join('&');
 
-  var authSignature = crypto.createHmac('sha256', secret).update(
+  var authSignature = crypto.createHmac('sha512', secret).update(
     authString).digest('base64');
 
   var headers = {

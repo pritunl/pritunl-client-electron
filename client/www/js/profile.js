@@ -649,6 +649,32 @@ Profile.prototype.sync = function(syncHosts, callback) {
 
   utils.authRequest('get', host, pth, this.syncToken, this.syncSecret, null,
     function(err, resp, body) {
+      try {
+        var data = JSON.parse(body);
+      } catch (_) {
+        if (callback) {
+          callback();
+        }
+        return;
+      }
+
+      if (!data.signature || !data.conf) {
+        if (callback) {
+          callback();
+        }
+        return;
+      }
+
+      var confSignature = crypto.createHmac('sha512', this.syncSecret).update(
+        data.conf).digest('base64');
+
+      if (confSignature !== data.signature) {
+        if (callback) {
+          callback();
+        }
+        return;
+      }
+
       if (err) {
         if (!syncHosts.length) {
           if (resp) {
@@ -670,7 +696,7 @@ Profile.prototype.sync = function(syncHosts, callback) {
           logger.warning('profile: Failed to sync conf, ' +
             'authentication error');
         } else if (resp.statusCode === 200 && body) {
-          this.updateSync(body);
+          this.updateSync(data.conf);
         } else if (resp.statusCode !== 200) {
           logger.warning('profile: Failed to sync conf, unknown error (' +
             resp.statusCode + ')');
