@@ -192,9 +192,7 @@ Profile.prototype.import = function(data) {
   this.status = 'disconnected';
   this.serverAddr = null;
   this.clientAddr = null;
-  if (data.name) {
-    this.name = data.name;
-  }
+  this.name = data.name || this.name;
   this.organizationId = data.organization_id || null;
   this.organization = data.organization || null;
   this.serverId = data.server_id || null;
