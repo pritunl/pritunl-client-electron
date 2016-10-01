@@ -1,6 +1,11 @@
 Pritunl Client Changelog
 ========================
 
+Version
+-------
+
+Fix local privilege escalation (Anthony Weems of Praetorian)
+
 Version 1.0.1075.52 2016-08-22
 ------------------------------
 
