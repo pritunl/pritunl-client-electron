@@ -600,7 +600,8 @@ Profile.prototype.updateSync = function(data) {
   }
 
   if (confData) {
-    this.import(confData);
+    this.upsert(confData);
+    this.saveConf();
   }
 
   if (this.data.indexOf('key-direction') >= 0 && data.indexOf(
