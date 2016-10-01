@@ -209,6 +209,20 @@ Profile.prototype.import = function(data) {
   this.syncToken = data.sync_token || null;
 };
 
+Profile.prototype.upsert = function(data) {
+  this.name = data.name || this.name;
+  this.organizationId = data.organization_id || this.organizationId;
+  this.organization = data.organization || this.organization;
+  this.serverId = data.server_id || this.serverId;
+  this.server = data.server || this.server;
+  this.userId = data.user_id || this.userId;
+  this.user = data.user || this.user;
+  this.passwordMode = data.password_mode || this.passwordMode;
+  this.autostart = data.autostart || this.autostart;
+  this.syncHosts = data.sync_hosts || this.syncHosts;
+  this.syncHash = data.sync_hash || this.syncHash;
+};
+
 Profile.prototype.exportConf = function() {
   return {
     name: this.name,
