@@ -630,7 +630,7 @@ Profile.prototype.updateSync = function(data) {
 };
 
 Profile.prototype.sync = function(syncHosts, callback) {
-  var pth = util.format('/key/%s/%s/%s/%s',
+  var pth = util.format('/key/sync/%s/%s/%s/%s',
     this.organizationId,
     this.userId,
     this.serverId,
