@@ -156,8 +156,6 @@ var openMainWin = function() {
     });
     main.maximizedPrev = null;
 
-    main.loadURL('file://' + path.join(__dirname, 'index.html'));
-
     main.on('closed', function() {
       main = null;
     });
@@ -165,6 +163,8 @@ var openMainWin = function() {
     main.on('ready-to-show', function() {
       main.show();
     });
+
+    main.loadURL('file://' + path.join(__dirname, 'index.html'));
 
     if (app.dock) {
       app.dock.show();
