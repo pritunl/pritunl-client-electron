@@ -160,9 +160,11 @@ var openMainWin = function() {
       main = null;
     });
 
-    main.on('ready-to-show', function() {
-      main.show();
-    });
+    // TODO Not working
+    // main.on('ready-to-show', function() {
+    //   main.show();
+    // });
+    main.show();
 
     main.loadURL('file://' + path.join(__dirname, 'index.html'));
 
