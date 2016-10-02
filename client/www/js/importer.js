@@ -292,7 +292,17 @@ var importProfileUri = function(prflUri, callback) {
   }, function(err, resp, body) {
     var data;
 
-    if (resp && resp.statusCode === 404) {
+    if (err) {
+      err = new errors.ParseError(
+        'profile: Failed to load profile uri (%s)', err);
+      logger.error(err);
+      if (callback) {
+        callback();
+      }
+      return;
+    }
+
+    if (resp.statusCode === 404) {
       err = new errors.ParseError('profile: Invalid profile uri');
       logger.error(err);
       if (callback) {
@@ -301,77 +311,29 @@ var importProfileUri = function(prflUri, callback) {
       return;
     }
 
-    if (!err) {
-      try {
-        data = JSON.parse(body);
-      } catch (e) {
-        err = e;
+    if (resp.statusCode !== 200) {
+      err = new errors.ParseError(
+        'profile: Failed to load profile uri (%s)', resp.statusCode);
+      logger.error(err);
+      if (callback) {
+        callback();
       }
-
-      if (!err) {
-        importAll(data, callback);
-        return;
-      }
+      return;
     }
 
-    if (prflUri.startsWith('https:')) {
-      prflUri = prflUri.replace('https', 'http');
-    } else {
-      prflUri = prflUri.replace('http', 'https');
+    try {
+      data = JSON.parse(body);
+    } catch (e) {
+      err = new errors.ParseError(
+        'profile: Failed to parse profile uri (%s)', e);
+      logger.error(err);
+      if (callback) {
+        callback();
+      }
+      return;
     }
 
-    request.get({
-      url: prflUri,
-      strictSSL: false,
-      headers: {
-        'Auth-Key': constants.key
-      }
-    }, function(err, resp, body) {
-      var data;
-
-      if (err) {
-        err = new errors.ParseError(
-          'profile: Failed to load profile uri (%s)', err);
-        logger.error(err);
-        if (callback) {
-          callback();
-        }
-        return;
-      }
-
-      if (resp.statusCode === 404) {
-        err = new errors.ParseError('profile: Invalid profile uri');
-        logger.error(err);
-        if (callback) {
-          callback();
-        }
-        return;
-      }
-
-      if (resp.statusCode !== 200) {
-        err = new errors.ParseError(
-          'profile: Failed to load profile uri (%s)', resp.statusCode);
-        logger.error(err);
-        if (callback) {
-          callback();
-        }
-        return;
-      }
-
-      try {
-        data = JSON.parse(body);
-      } catch (e) {
-        err = new errors.ParseError(
-          'profile: Failed to parse profile uri (%s)', e);
-        logger.error(err);
-        if (callback) {
-          callback();
-        }
-        return;
-      }
-
-      importAll(data, callback);
-    });
+    importAll(data, callback);
   });
 };
 
