@@ -110,10 +110,6 @@ app.on('open-url', function() {
   openMainWin();
 });
 
-app.on('activate-with-no-open-windows', function() {
-  openMainWin();
-});
-
 app.on('activate', function() {
   openMainWin();
 });
