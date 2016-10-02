@@ -256,12 +256,6 @@ app.on('ready', function() {
     }
 
     tray = new Tray(disconnTray);
-    tray.on('clicked', function() {
-      openMainWin();
-    });
-    tray.on('double-clicked', function() {
-      openMainWin();
-    });
     tray.on('click', function() {
       openMainWin();
     });
