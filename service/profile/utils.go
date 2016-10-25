@@ -76,7 +76,7 @@ func RestartProfiles() (err error) {
 	prfls := GetProfiles()
 	prfls2 := map[string]*Profile{}
 
-	if !len(prfls) {
+	if len(prfls) == 0 {
 		return
 	}
 
@@ -94,10 +94,8 @@ func RestartProfiles() (err error) {
 		prfl.Wait()
 	}
 
-	if len(prfls) {
-		utils.ResetNetworking()
-		time.Sleep(1500 * time.Millisecond)
-	}
+	utils.ResetNetworking()
+	time.Sleep(1500 * time.Millisecond)
 
 	for _, prfl := range prfls2 {
 		err = prfl.Start(false)
