@@ -131,6 +131,24 @@ func ReleaseTap(intf *Interface) {
 	lockedInterfaces.Remove(intf.Id)
 }
 
+func GetScutilKey(key string) (val string, err error) {
+	cmd := exec.Command("/usr/sbin/scutil")
+	cmd.Stdin = strings.NewReader(
+		fmt.Sprintf("open\nshow State:%s\nquit\n", key))
+
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		err = &CommandError{
+			errors.Wrap(err, "utils: Failed to exec ipconfig"),
+		}
+		return
+	}
+
+	val = strings.TrimSpace(string(output))
+
+	return
+}
+
 func ResetNetworking() {
 	networkResetLock.Lock()
 	defer networkResetLock.Unlock()
