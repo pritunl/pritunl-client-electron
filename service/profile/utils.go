@@ -6,9 +6,14 @@ import (
 	"path/filepath"
 	"regexp"
 	"runtime"
+	"sync"
+	"time"
 )
 
-var alphaNumRe = regexp.MustCompile("[^a-zA-Z0-9]+")
+var (
+	alphaNumRe  = regexp.MustCompile("[^a-zA-Z0-9]+")
+	restartLock sync.Mutex
+)
 
 func getOpenvpnPath() (pth string) {
 	switch runtime.GOOS {
@@ -65,17 +70,37 @@ func GetProfiles() (prfls map[string]*Profile) {
 }
 
 func RestartProfiles() (err error) {
-	for _, prfl := range GetProfiles() {
-		prfl2 := prfl.Copy()
+	restartLock.Lock()
+	defer restartLock.Unlock()
 
-		err = prfl.Stop()
+	prfls := GetProfiles()
+	prfls2 := map[string]*Profile{}
+
+	if !len(prfls) {
+		return
+	}
+
+	for _, prfl := range prfls {
+		prfl2 := prfl.Copy()
+		prfls2[prfl2.Id] = prfl2
+
+		err = prfl.Stop(false)
 		if err != nil {
 			return
 		}
+	}
 
+	for _, prfl := range prfls {
 		prfl.Wait()
+	}
 
-		err = prfl2.Start(false)
+	if len(prfls) {
+		utils.ResetNetworking()
+		time.Sleep(1500 * time.Millisecond)
+	}
+
+	for _, prfl := range prfls2 {
+		err = prfl.Start(false)
 		if err != nil {
 			return
 		}
