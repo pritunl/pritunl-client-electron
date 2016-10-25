@@ -522,8 +522,6 @@ func (p *Profile) Start(timeout bool) (err error) {
 		Profiles.Unlock()
 
 		if p.reset {
-			utils.ResetNetworking()
-			time.Sleep(1500 * time.Millisecond)
 			RestartProfiles()
 		}
 	}()
