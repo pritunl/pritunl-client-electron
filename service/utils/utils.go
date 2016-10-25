@@ -153,7 +153,7 @@ func ResetNetworking() {
 	networkResetLock.Lock()
 	defer networkResetLock.Unlock()
 
-	if runtime.GOOS != "windows" {
+	if runtime.GOOS == "windows" {
 		exec.Command("netsh", "interface", "ip", "delete",
 			"destinationcache").Run()
 		exec.Command("ipconfig", "/release").Run()
