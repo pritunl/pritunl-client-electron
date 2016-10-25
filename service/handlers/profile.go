@@ -44,7 +44,7 @@ func profileDel(c *gin.Context) {
 
 	prfl := profile.GetProfile(data.Id)
 	if prfl != nil {
-		err := prfl.Stop()
+		err := prfl.Stop(true)
 		if err != nil {
 			c.AbortWithError(500, err)
 			return
