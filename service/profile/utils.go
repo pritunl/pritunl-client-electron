@@ -95,7 +95,7 @@ func RestartProfiles() (err error) {
 	}
 
 	utils.ResetNetworking()
-	time.Sleep(1500 * time.Millisecond)
+	time.Sleep(resetWait)
 
 	for _, prfl := range prfls2 {
 		err = prfl.Start(false)

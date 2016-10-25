@@ -21,6 +21,7 @@ import (
 
 const (
 	connTimeout = 60 * time.Second
+	resetWait   = 3000 * time.Millisecond
 )
 
 var (
@@ -523,7 +524,7 @@ func (p *Profile) Start(timeout bool) (err error) {
 
 		if p.reset {
 			utils.ResetNetworking()
-			time.Sleep(1500 * time.Millisecond)
+			time.Sleep(resetWait)
 			RestartProfiles()
 		}
 	}()
