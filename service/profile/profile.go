@@ -43,7 +43,7 @@ func init() {
 			for _, prfl := range prfls {
 				prfl.Wait()
 			}
-			if len(prfls) {
+			if len(prfls) > 0 {
 				utils.ResetNetworking()
 			}
 		}
