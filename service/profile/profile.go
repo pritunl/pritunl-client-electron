@@ -38,7 +38,13 @@ func init() {
 		if time.Since(Ping) > 1*time.Minute {
 			prfls := GetProfiles()
 			for _, prfl := range prfls {
-				prfl.Stop()
+				prfl.Stop(false)
+			}
+			for _, prfl := range prfls {
+				prfl.Wait()
+			}
+			if len(prfls) {
+				utils.ResetNetworking()
 			}
 		}
 
