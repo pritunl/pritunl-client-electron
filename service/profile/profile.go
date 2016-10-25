@@ -59,6 +59,7 @@ type Profile struct {
 	cmd         *exec.Cmd        `json:"-"`
 	intf        *utils.Interface `json:"-"`
 	lastAuthErr time.Time        `json:"-"`
+	reset       bool             `json:"-"`
 	Id          string           `json:"id"`
 	Data        string           `json:"-"`
 	Username    string           `json:"-"`
@@ -513,6 +514,12 @@ func (p *Profile) Start(timeout bool) (err error) {
 		Profiles.Lock()
 		delete(Profiles.m, p.Id)
 		Profiles.Unlock()
+
+		if p.reset {
+			utils.ResetNetworking()
+			time.Sleep(1500 * time.Millisecond)
+			RestartProfiles()
+		}
 	}()
 
 	if timeout {
@@ -557,11 +564,12 @@ func (p *Profile) Start(timeout bool) (err error) {
 	return
 }
 
-func (p *Profile) Stop() (err error) {
+func (p *Profile) Stop(reset bool) (err error) {
 	if p.cmd == nil {
 		return
 	}
 
+	p.reset = reset
 	p.Status = "disconnecting"
 	p.update()
 
@@ -573,8 +581,6 @@ func (p *Profile) Stop() (err error) {
 			}
 			return
 		}
-
-		utils.ResetNetworking()
 	} else {
 		err = p.cmd.Process.Signal(os.Interrupt)
 		if err != nil {
@@ -596,7 +602,6 @@ func (p *Profile) Stop() (err error) {
 
 		p.cmd.Process.Wait()
 		done = true
-		utils.ResetNetworking()
 	}
 
 	return
