@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"crypto/rand"
 	"encoding/hex"
+	"fmt"
 	"github.com/dropbox/godropbox/container/set"
 	"github.com/dropbox/godropbox/errors"
 	"io"
@@ -15,10 +16,12 @@ import (
 	"runtime"
 	"sort"
 	"strings"
+	"sync"
 )
 
 var (
 	lockedInterfaces set.Set
+	networkResetLock sync.Mutex
 )
 
 func init() {
@@ -129,19 +132,64 @@ func ReleaseTap(intf *Interface) {
 }
 
 func ResetNetworking() {
-	if runtime.GOOS != "windows" {
-		return
-	}
+	networkResetLock.Lock()
+	defer networkResetLock.Unlock()
 
-	exec.Command("netsh", "interface", "ip", "delete",
-		"destinationcache").Run()
-	exec.Command("ipconfig", "/release").Run()
-	exec.Command("ipconfig", "/renew").Run()
-	exec.Command("arp", "-d", "*").Run()
-	exec.Command("nbtstat", "-R").Run()
-	exec.Command("nbtstat", "-RR").Run()
-	exec.Command("ipconfig", "/flushdns").Run()
-	exec.Command("nbtstat", "/registerdns").Run()
+	if runtime.GOOS != "windows" {
+		exec.Command("netsh", "interface", "ip", "delete",
+			"destinationcache").Run()
+		exec.Command("ipconfig", "/release").Run()
+		exec.Command("ipconfig", "/renew").Run()
+		exec.Command("arp", "-d", "*").Run()
+		exec.Command("nbtstat", "-R").Run()
+		exec.Command("nbtstat", "-RR").Run()
+		exec.Command("ipconfig", "/flushdns").Run()
+		exec.Command("nbtstat", "/registerdns").Run()
+	} else if runtime.GOOS == "darwin" {
+		cmd := exec.Command("/usr/sbin/networksetup", "-getcurrentlocation")
+
+		output, err := cmd.CombinedOutput()
+		if err != nil {
+			err = &CommandError{
+				errors.Wrap(err, "utils: Failed to exec networksetup"),
+			}
+			return
+		}
+
+		location := strings.TrimSpace(string(output))
+
+		if location == "pritunl-reset" {
+			return
+		}
+
+		cmd = exec.Command(
+			"/usr/sbin/networksetup",
+			"-createlocation",
+			"pritunl-reset",
+		)
+		cmd.Output()
+
+		cmd = exec.Command(
+			"/usr/sbin/networksetup",
+			"-switchtolocation",
+			"pritunl-reset",
+		)
+		cmd.Output()
+
+		cmd = exec.Command(
+			"/usr/sbin/networksetup",
+			"-switchtolocation",
+			location,
+		)
+		cmd.Output()
+
+		cmd = exec.Command(
+			"/usr/sbin/networksetup",
+			"-deletelocation",
+			"pritunl-reset",
+		)
+		cmd.Output()
+	}
 }
 
 func Uuid() (id string) {
