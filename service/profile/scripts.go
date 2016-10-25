@@ -2,7 +2,22 @@ package profile
 
 const (
 	blockScript = "#!/bin/bash\n"
-	upScript = `#!/bin/bash -e
+	upScript    = `#!/bin/bash -e
+# Copyright (C) 2013-2016 The Tunnelblick Project
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; version 2 of the License.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
 # Note: must be bash; uses bash-specific tricks
 #
 # ******************************************************************************************************************
@@ -1522,6 +1537,21 @@ logMessage "**********************************************"
 
 exit $EXIT_CODE`
 	downScript = `#!/bin/bash -e
+# Copyright (C) 2013-2016 The Tunnelblick Project
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; version 2 of the License.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
 # Note: must be bash; uses bash-specific tricks
 #
 # ******************************************************************************************************************
@@ -1563,7 +1593,7 @@ restore_ipv6() {
     # This routine outputs log messages describing its activities.
 
     if [ "$1" = "" ] ; then
-        exit
+        return
     fi
 
     printf %s "$1
@@ -1947,6 +1977,21 @@ logMessage "**********************************************"
 
 exit 0`
 	preDownScript = `#!/bin/bash -e
+# Copyright (C) 2013-2016 The Tunnelblick Project
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; version 2 of the License.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
 # Note: must be bash; uses bash-specific tricks
 #
 # ******************************************************************************************************************
