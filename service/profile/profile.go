@@ -235,8 +235,8 @@ func (p *Profile) parseLine(line string) {
 		p.Timestamp = time.Now().Unix() - 1
 		p.update()
 		go func() {
-			for i := 0; i < 3; i++ {
-				time.Sleep(1 * time.Second)
+			for i := 0; i < 10; i++ {
+				time.Sleep(3 * time.Second)
 				utils.ClearDNSCache()
 			}
 		}()
