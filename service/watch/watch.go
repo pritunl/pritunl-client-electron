@@ -10,8 +10,10 @@ import (
 )
 
 var (
-	wake     = time.Now()
-	wakeLock = sync.Mutex{}
+	lastRestart = time.Now()
+	restartLock = sync.Mutex{}
+	wake        = time.Now()
+	wakeLock    = sync.Mutex{}
 )
 
 func wakeWatch(delay time.Duration) {
@@ -31,7 +33,14 @@ func wakeWatch(delay time.Duration) {
 			wakeLock.Unlock()
 
 			if reset {
-				profile.ResetProfiles()
+				restartLock.Lock()
+				if time.Since(lastRestart) > 60*time.Second {
+					lastRestart = time.Now()
+					restartLock.Unlock()
+					profile.ResetProfiles()
+				} else {
+					restartLock.Unlock()
+				}
 			}
 		}
 		curTime = time.Now()
@@ -62,8 +71,15 @@ func dnsWatch() {
 
 		if openvpn != global {
 			if reset {
-				profile.RestartProfiles()
-				time.Sleep(60 * time.Second)
+				restartLock.Lock()
+				if time.Since(lastRestart) > 60*time.Second {
+					lastRestart = time.Now()
+					restartLock.Unlock()
+					profile.ResetProfiles()
+				} else {
+					restartLock.Unlock()
+				}
+				reset = false
 			} else {
 				reset = true
 			}
