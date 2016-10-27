@@ -206,6 +206,14 @@ func ResetNetworking() {
 	}
 }
 
+func ClearDNSCache() {
+	if runtime.GOOS == "windows" {
+		exec.Command("ipconfig", "/flushdns").Run()
+	} else if runtime.GOOS != "darwin" {
+		exec.Command("killall", "-HUP", "mDNSResponder").Run()
+	}
+}
+
 func Uuid() (id string) {
 	idByte := make([]byte, 16)
 
