@@ -5,6 +5,7 @@ Version
 -------
 
 Stability improvements
+Fix dns issues when reconnecting
 
 Version 1.0.1116.6 2016-10-01
 -----------------------------
