@@ -180,33 +180,29 @@ func ResetNetworking() {
 			return
 		}
 
-		cmd = exec.Command(
+		exec.Command(
 			"/usr/sbin/networksetup",
 			"-createlocation",
 			"pritunl-reset",
-		)
-		cmd.Output()
+		).Run()
 
-		cmd = exec.Command(
+		exec.Command(
 			"/usr/sbin/networksetup",
 			"-switchtolocation",
 			"pritunl-reset",
-		)
-		cmd.Output()
+		).Run()
 
-		cmd = exec.Command(
+		exec.Command(
 			"/usr/sbin/networksetup",
 			"-switchtolocation",
 			location,
-		)
-		cmd.Output()
+		).Run()
 
-		cmd = exec.Command(
+		exec.Command(
 			"/usr/sbin/networksetup",
 			"-deletelocation",
 			"pritunl-reset",
-		)
-		cmd.Output()
+		).Run()
 	}
 }
 
