@@ -235,8 +235,10 @@ func (p *Profile) parseLine(line string) {
 		p.Timestamp = time.Now().Unix() - 1
 		p.update()
 		go func() {
-			time.Sleep(2 * time.Second)
-			utils.ClearDNSCache()
+			for i := 0; i < 3; i++ {
+				time.Sleep(3 * time.Second)
+				utils.ClearDNSCache()
+			}
 		}()
 	} else if strings.Contains(line, "Inactivity timeout") {
 		p.Status = "reconnecting"
