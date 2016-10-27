@@ -236,7 +236,7 @@ func (p *Profile) parseLine(line string) {
 		p.update()
 		go func() {
 			for i := 0; i < 3; i++ {
-				time.Sleep(3 * time.Second)
+				time.Sleep(1 * time.Second)
 				utils.ClearDNSCache()
 			}
 		}()
