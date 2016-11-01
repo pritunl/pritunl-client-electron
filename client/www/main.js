@@ -74,11 +74,15 @@ var checkService = function(callback) {
             tray.setImage(disconnTray);
             dialog.showMessageBox(null, {
               type: 'warning',
-              buttons: ['Ok'],
-              //icon: icon,
+              buttons: ['Exit', 'Retry'],
+              defaultId: 1,
               title: 'Pritunl - Service Error',
               message: 'Unable to communicate with helper service, ' +
                 'try restarting'
+            }, function(state) {
+              if (state === 0) {
+                app.quit();
+              }
             });
           }
 
