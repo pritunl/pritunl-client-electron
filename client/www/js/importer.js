@@ -256,6 +256,13 @@ var importProfile = function(pth, callback) {
 };
 
 var importProfileUri = function(prflUri, callback) {
+  if (!prflUri) {
+    if (callback) {
+      callback();
+    }
+    return;
+  }
+
   if (prflUri.startsWith('pritunl:')) {
     prflUri = prflUri.replace('pritunl:', 'https:');
   } else if (prflUri.startsWith('pts:')) {
