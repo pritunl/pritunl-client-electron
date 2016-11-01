@@ -459,8 +459,7 @@ input:active {
   text-transform: uppercase;
 }
 .editor,
-.profile .info .server-addr,
-.profile .info .client-addr {
+.alerts div {
   -webkit-touch-callout: default;
   -webkit-user-select: text;
   user-select: text;
