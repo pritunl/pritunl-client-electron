@@ -297,11 +297,9 @@ input:active {
 .header {
   -webkit-app-region: drag;
   background-color: #1c2126;
-  position: relative;
-  padding-bottom: 13px;
+  height: 45px;
 }
 .header .btns {
-  display: inline-block;
   margin: 14px 0 0 12px;
 }
 .header .btns .btn {
@@ -313,22 +311,17 @@ input:active {
   margin: 0 2px;
 }
 .header .version {
-  position: absolute;
   color: #969696;
-  top: 15px;
-  right: 110px;
+  margin: 15px 8px 0 0;
   display: none;
 }
 .header .logo {
   -webkit-app-region: no-drag;
   color: #fff;
-  display: inline-block;
   font-family: 'Fredoka One', cursive;
-  position: absolute;
-  top: 8px;
-  right: 14px;
   font-size: 24px;
   cursor: pointer;
+  margin: 8px 14px 0 0;
 }
 
 
