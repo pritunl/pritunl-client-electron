@@ -156,7 +156,8 @@ var openMainWin = function() {
       minWidth: 340,
       minHeight: 440,
       maxWidth: maxWidth,
-      maxHeight: maxHeight
+      maxHeight: maxHeight,
+      backgroundColor: '#151719'
     });
     main.maximizedPrev = null;
 
