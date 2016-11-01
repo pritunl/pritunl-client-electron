@@ -11,7 +11,7 @@ module.exports = `<div class="profile" flex layout horizontal>
     <div class="label">Client Address</div>
     <div class="client-addr">{{clientAddr}}</div>
   </div>
-  <div class="open-menu no-select">
+  <div class="open-menu">
     <i class="fa fa-bars"></i>
   </div>
   <div class="menu-backdrop"></div>
