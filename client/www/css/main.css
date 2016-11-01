@@ -466,6 +466,7 @@ input:active {
 }
 .profile .logo,
 .profile .info {
+  cursor: default;
   transition: -webkit-filter 125ms linear, filter 125ms linear;
 }
 .profile.menu-open .logo,
