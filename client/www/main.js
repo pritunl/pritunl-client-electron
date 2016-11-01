@@ -165,11 +165,21 @@ var openMainWin = function() {
       main = null;
     });
 
-    // TODO Not working
-    // main.on('ready-to-show', function() {
-    //   main.show();
-    // });
-    main.show();
+    var shown = false;
+    main.on('ready-to-show', function() {
+      if (shown) {
+        return;
+      }
+      shown = true;
+      main.show();
+    });
+    setTimeout(function() {
+      if (shown) {
+        return;
+      }
+      shown = true;
+      main.show();
+    }, 600);
 
     main.loadURL('file://' + path.join(__dirname, 'index.html'));
 
