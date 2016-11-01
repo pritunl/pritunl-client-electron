@@ -23,8 +23,6 @@ if (os.platform() === 'darwin') {
   webFrame.setZoomFactor(0.8);
 }
 
-$(document).on('dblclick mousedown', '.no-select, .btn', false);
-
 $('.header .close').click(function() {
   remote.getCurrentWindow().close();
 });
