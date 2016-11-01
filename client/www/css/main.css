@@ -336,7 +336,6 @@ input:active {
   position: relative;
   padding: 10px;
   color: #fff4f4;
-  cursor: pointer;
   word-wrap: break-word;
 }
 .alerts .close {
@@ -344,6 +343,7 @@ input:active {
   top: 6px;
   right: 9px;
   float: right;
+  cursor: pointer;
 }
 .alerts .close:hover {
   opacity: 0.5;
