@@ -65,7 +65,7 @@ var checkService = function(callback) {
       if (callback) {
         timeout = 1000;
       } else {
-        timeout = 8000;
+        timeout = 6000;
       }
 
       setTimeout(function() {
