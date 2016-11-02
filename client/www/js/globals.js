@@ -8,9 +8,9 @@ global.ErrorInit = function(name, args) {
     message = args[0];
   }
 
-  var s = message.split(': ', 2);
+  var s = message.split(': ');
   this.module = s[0];
-  this.formatted = s[1];
+  this.formatted = s.slice(1).join(': ');
 
   this.name = name;
   this.message = message;
