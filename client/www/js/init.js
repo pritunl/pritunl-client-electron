@@ -56,7 +56,7 @@ $('.header .logo').click(function() {
       label: 'Pritunl v' + constants.version
     },
     {
-      label: 'Close',
+      label: 'Close to Tray',
       role: 'close'
     },
     {
