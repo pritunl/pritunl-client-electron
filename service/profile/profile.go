@@ -61,6 +61,7 @@ type OutputData struct {
 type Profile struct {
 	state       bool             `json:"-"`
 	stateLock   sync.Mutex       `json:"-"`
+	stop        bool             `jons:"-"`
 	waiters     []chan bool      `json:"-"`
 	remPaths    []string         `json:"-"`
 	cmd         *exec.Cmd        `json:"-"`
@@ -525,9 +526,12 @@ func (p *Profile) Start(timeout bool) (err error) {
 		cmd.Wait()
 		running = false
 		p.clearStatus(start)
-		Profiles.Lock()
-		delete(Profiles.m, p.Id)
-		Profiles.Unlock()
+
+		if p.stop {
+			Profiles.Lock()
+			delete(Profiles.m, p.Id)
+			Profiles.Unlock()
+		}
 
 		if p.reset {
 			utils.ResetNetworking()
@@ -583,6 +587,7 @@ func (p *Profile) Stop(reset bool) (err error) {
 		return
 	}
 
+	p.stop = true
 	p.reset = reset
 	p.Status = "disconnecting"
 	p.update()
