@@ -477,7 +477,9 @@ func (p *Profile) Start(timeout bool) (err error) {
 		for {
 			line, _, err := out.ReadLine()
 			if err != nil {
-				if err != io.EOF {
+				if !strings.Contains(
+					err.Error(), "bad file descriptor") && err != io.EOF {
+
 					err = &ExecError{
 						errors.Wrap(err, "profile: Failed to read stdout"),
 					}
@@ -497,7 +499,9 @@ func (p *Profile) Start(timeout bool) (err error) {
 		for {
 			line, _, err := out.ReadLine()
 			if err != nil {
-				if err != io.EOF {
+				if !strings.Contains(
+					err.Error(), "bad file descriptor") && err != io.EOF {
+
 					err = &ExecError{
 						errors.Wrap(err, "profile: Failed to read stderr"),
 					}
