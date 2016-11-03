@@ -542,8 +542,6 @@ func (p *Profile) Start(timeout bool) (err error) {
 		}
 
 		if p.reset {
-			utils.ResetNetworking()
-			time.Sleep(resetWait)
 			RestartProfiles()
 		}
 	}()
