@@ -528,13 +528,13 @@ func (p *Profile) Start(timeout bool) (err error) {
 		p.clearStatus(start)
 
 		if p.stop {
-			logrus.WithFields(logrus.Fields{
-				"profile_id": p.Id,
-			}).Error("profile: Unexpected profile exit, restarting...")
-
 			Profiles.Lock()
 			delete(Profiles.m, p.Id)
 			Profiles.Unlock()
+		} else {
+			logrus.WithFields(logrus.Fields{
+				"profile_id": p.Id,
+			}).Error("profile: Unexpected profile exit, restarting...")
 		}
 
 		if p.reset {
