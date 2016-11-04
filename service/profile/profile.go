@@ -242,8 +242,6 @@ func (p *Profile) parseLine(line string) {
 			}
 		}()
 	} else if strings.Contains(line, "Inactivity timeout") {
-		p.Status = "reconnecting"
-		p.update()
 		RestartProfiles()
 	} else if strings.Contains(line, "AUTH_FAILED") || strings.Contains(
 		line, "auth-failure") {
