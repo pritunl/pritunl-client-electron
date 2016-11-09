@@ -1,6 +1,11 @@
 Pritunl Client Changelog
 ========================
 
+Version
+-------
+
+Fix issue with unhandled exit on macOS
+
 Version 1.0.1149.25 2016-11-04
 ------------------------------
 
