@@ -605,14 +605,7 @@ func (p *Profile) Stop(reset bool) (err error) {
 			return
 		}
 	} else {
-		err = p.cmd.Process.Signal(os.Interrupt)
-		if err != nil {
-			err = &ExecError{
-				errors.Wrap(err, "profile: Failed to interrupt openvpn"),
-			}
-			return
-		}
-
+		p.cmd.Process.Signal(os.Interrupt)
 		done := false
 
 		go func() {
