@@ -29,28 +29,6 @@ func clean() (err error) {
 			"com.pritunl.client.plist"),
 	}
 
-	homesPath := filepath.Join(pathSep, "Users")
-	homes, err := ioutil.ReadDir(homesPath)
-	if err != nil {
-		err = &ParseError{
-			errors.Wrap(err, "autoclean: Failed to read home directories"),
-		}
-		return
-	}
-
-	for _, home := range homes {
-		if !home.IsDir() {
-			continue
-		}
-
-		paths = append(paths, filepath.Join(homesPath, home.Name(),
-			"Library", "Application Support", "pritunl"))
-		paths = append(paths, filepath.Join(homesPath, home.Name(),
-			"Library", "Caches", "pritunl"))
-		paths = append(paths, filepath.Join(homesPath, home.Name(),
-			"Library", "Preferences", "com.electron.pritunl.plist"))
-	}
-
 	paths = append(paths, filepath.Join(pathSep, "usr", "local",
 		"bin", "pritunl-service"))
 	paths = append(paths, filepath.Join(pathSep, "Library", "LaunchDaemons",
