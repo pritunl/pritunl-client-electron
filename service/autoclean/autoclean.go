@@ -5,7 +5,6 @@ import (
 	"github.com/Sirupsen/logrus"
 	"github.com/dropbox/godropbox/errors"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"runtime"
