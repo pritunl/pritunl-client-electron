@@ -149,6 +149,22 @@ func GetScutilKey(key string) (val string, err error) {
 	return
 }
 
+func RemoveScutilKey(key string) (err error) {
+	cmd := exec.Command("/usr/sbin/scutil")
+	cmd.Stdin = strings.NewReader(
+		fmt.Sprintf("open\nremove State:%s\nquit\n", key))
+
+	err = cmd.Run()
+	if err != nil {
+		err = &CommandError{
+			errors.Wrap(err, "utils: Failed to exec scutil"),
+		}
+		return
+	}
+
+	return
+}
+
 func ResetNetworking() {
 	networkResetLock.Lock()
 	defer networkResetLock.Unlock()
@@ -203,6 +219,8 @@ func ResetNetworking() {
 			"-deletelocation",
 			"pritunl-reset",
 		).Run()
+
+		RemoveScutilKey("/Network/Pritunl/DNS")
 	}
 }
 
