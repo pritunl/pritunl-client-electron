@@ -4,15 +4,15 @@
   "main": "www/main.js",
   "dependencies": {
     "jquery": "^2.2.4",
-    "mustache": "^2.2.1",
-    "request": "^2.76.0",
+    "mustache": "^2.3.0",
+    "request": "^2.79.0",
     "tar": "^2.2.1",
     "ws": "^1.1.1"
   },
   "devDependencies": {
-    "electron-rebuild": "^1.3.0",
-    "electron-packager": "^8.2.0",
-    "electron": "^1.4.5",
+    "electron-rebuild": "^1.4.0",
+    "electron-packager": "^8.3.0",
+    "electron": "^1.4.10",
     "rimraf": "^2.5.4",
     "rcedit": "^0.7.0"
   }
