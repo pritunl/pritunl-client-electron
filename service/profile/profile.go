@@ -324,7 +324,7 @@ func (p *Profile) Start(timeout bool) (err error) {
 		return
 	}
 
-	if runtime.GOOS == "darwin" && n != 0 {
+	if runtime.GOOS == "darwin" && n == 0 {
 		utils.RemoveScutilKey("/Network/Pritunl/DNS")
 	}
 
