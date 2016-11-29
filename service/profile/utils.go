@@ -77,6 +77,7 @@ func RestartProfiles() (err error) {
 	prfls2 := map[string]*Profile{}
 
 	if len(prfls) == 0 {
+		utils.ResetNetworking()
 		return
 	}
 
