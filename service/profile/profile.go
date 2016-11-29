@@ -317,10 +317,15 @@ func (p *Profile) Start(timeout bool) (err error) {
 	p.stateLock.Unlock()
 
 	Profiles.RLock()
+	n := len(Profiles.m)
 	_, ok := Profiles.m[p.Id]
 	Profiles.RUnlock()
 	if ok {
 		return
+	}
+
+	if runtime.GOOS == "darwin" && n != 0 {
+		utils.RemoveScutilKey("/Network/Pritunl/DNS")
 	}
 
 	Profiles.Lock()
