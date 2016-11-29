@@ -139,7 +139,7 @@ func GetScutilKey(key string) (val string, err error) {
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		err = &CommandError{
-			errors.Wrap(err, "utils: Failed to exec ipconfig"),
+			errors.Wrap(err, "utils: Failed to exec scutil"),
 		}
 		return
 	}
