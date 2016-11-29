@@ -116,44 +116,6 @@ func (p *Profile) writeUp() (pth string, err error) {
 	return
 }
 
-func (p *Profile) writeDown() (pth string, err error) {
-	rootDir, err := utils.GetTempDir()
-	if err != nil {
-		return
-	}
-
-	pth = filepath.Join(rootDir, p.Id+"-down.sh")
-
-	err = ioutil.WriteFile(pth, []byte(downScript), os.FileMode(0755))
-	if err != nil {
-		err = &WriteError{
-			errors.Wrap(err, "profile: Failed to write up down script"),
-		}
-		return
-	}
-
-	return
-}
-
-func (p *Profile) writePreDown() (pth string, err error) {
-	rootDir, err := utils.GetTempDir()
-	if err != nil {
-		return
-	}
-
-	pth = filepath.Join(rootDir, p.Id+"-predown.sh")
-
-	err = ioutil.WriteFile(pth, []byte(preDownScript), os.FileMode(0755))
-	if err != nil {
-		err = &WriteError{
-			errors.Wrap(err, "profile: Failed to write up down script"),
-		}
-		return
-	}
-
-	return
-}
-
 func (p *Profile) writeBlock() (pth string, err error) {
 	rootDir, err := utils.GetTempDir()
 	if err != nil {
@@ -409,22 +371,6 @@ func (p *Profile) Start(timeout bool) (err error) {
 		}
 		p.remPaths = append(p.remPaths, upPath)
 
-		downPath, e := p.writeDown()
-		if e != nil {
-			err = e
-			p.clearStatus(start)
-			return
-		}
-		p.remPaths = append(p.remPaths, downPath)
-
-		preDownPath, e := p.writePreDown()
-		if e != nil {
-			err = e
-			p.clearStatus(start)
-			return
-		}
-		p.remPaths = append(p.remPaths, preDownPath)
-
 		blockPath, e := p.writeBlock()
 		if e != nil {
 			err = e
@@ -435,8 +381,8 @@ func (p *Profile) Start(timeout bool) (err error) {
 
 		args = append(args, "--script-security", "2",
 			"--up", upPath,
-			"--down", downPath,
-			"--route-pre-down", preDownPath,
+			"--down", blockPath,
+			"--route-pre-down", blockPath,
 			"--tls-verify", blockPath,
 			"--ipchange", blockPath,
 			"--route-up", blockPath,
