@@ -426,7 +426,7 @@ var init = function() {
         return;
       }
       importLock = true;
-      $('.profiles .import-uri').attr('disabled','disabled');
+      $('.profiles .import-uri').attr('disabled', 'disabled');
 
       var uri = $('.profiles .uri-input').val();
 
