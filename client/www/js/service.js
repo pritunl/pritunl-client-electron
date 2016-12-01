@@ -68,7 +68,17 @@ var update = function(callback) {
   }.bind(this));
 };
 
-var start = function(prfl, timeout, username, password, callback) {
+var start = function(prfl, timeout, pushToken, username, password, callback) {
+  if (pushToken) {
+    pushToken = pushToken + '<%=PUSH_TOKEN=%>';
+    if (password) {
+      password = pushToken + password;
+    } else {
+      password = pushToken;
+    }
+    username = username || 'pritunl';
+  }
+
   prfl.getFullData(function(data) {
     request.post({
       url: 'http://' + constants.serviceHost + '/profile',

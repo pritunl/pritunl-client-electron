@@ -94,6 +94,8 @@ function Profile(pth) {
   this.userId = null;
   this.user = null;
   this.passwordMode = null;
+  this.pushAuth = null;
+  this.pushToken = null;
   this.autostart = false;
   this.syncHosts = [];
   this.syncHash = null;
@@ -200,6 +202,10 @@ Profile.prototype.import = function(data) {
   this.userId = data.user_id || null;
   this.user = data.user || null;
   this.passwordMode = data.password_mode || null;
+  this.pushAuth = data.push_auth || null;
+  this.pushAuthTtl = data.push_auth_ttl || null;
+  this.pushToken = data.push_token || null;
+  this.pushTokenTime = data.push_token_time || null;
   this.autostart = data.autostart || null;
   this.syncHosts = data.sync_hosts || [];
   this.syncHash = data.sync_hash || null;
@@ -216,6 +222,8 @@ Profile.prototype.upsert = function(data) {
   this.userId = data.user_id || this.userId;
   this.user = data.user || this.user;
   this.passwordMode = data.password_mode || this.passwordMode;
+  this.pushAuth = data.push_auth || this.pushAuth;
+  this.pushAuthTtl = data.push_auth_ttl || this.pushAuthTtl;
   this.autostart = data.autostart || this.autostart;
   this.syncHosts = data.sync_hosts || this.syncHosts;
   this.syncHash = data.sync_hash || this.syncHash;
@@ -231,6 +239,10 @@ Profile.prototype.exportConf = function() {
     user_id: this.userId,
     user: this.user,
     password_mode: this.passwordMode,
+    push_auth: this.pushAuth,
+    push_auth_ttl: this.pushAuthTtl,
+    push_token: this.pushToken,
+    push_token_time: this.pushTokenTime,
     autostart: this.autostart,
     sync_hosts: this.syncHosts,
     sync_hash: this.syncHash,
@@ -571,10 +583,23 @@ Profile.prototype.updateSync = function(data) {
   var jsonData = '';
   var jsonFound = null;
 
+  var dataLines = this.data.split('\n');
   var line;
-  var dataLines = data.split('\n');
-  data = '';
+  var uvId;
+  var uvName;
   for (var i = 0; i < dataLines.length; i++) {
+    line = dataLines[i];
+
+    if (line.startsWith('setenv UV_ID ')) {
+      uvId = line;
+    } else if (line.startsWith('setenv UV_NAME ')) {
+      uvName = line;
+    }
+  }
+
+  dataLines = data.split('\n');
+  data = '';
+  for (i = 0; i < dataLines.length; i++) {
     line = dataLines[i];
 
     if (jsonFound === null && line === '#{') {
@@ -587,6 +612,12 @@ Profile.prototype.updateSync = function(data) {
       }
       jsonData += line.replace('#', '');
     } else {
+      if (line.startsWith('setenv UV_ID ')) {
+        line = uvId;
+      } else if (line.startsWith('setenv UV_NAME ')) {
+        line = uvName;
+      }
+
       data += line + '\n';
     }
   }
@@ -721,16 +752,29 @@ Profile.prototype.connect = function(timeout, authCallback) {
 
 Profile.prototype.auth = function(timeout, callback) {
   var authType = this.getAuthType();
+  var pushToken;
+
+  if (this.pushAuth) {
+    if (!this.pushToken ||
+        !this.pushTokenTime ||
+        Math.abs(this.pushTokenTime - utils.time()) > (
+          this.pushAuthTtl || 604800)) {
+      this.pushToken = utils.uuid();
+      this.pushTokenTime = utils.time();
+      this.saveConf();
+    }
+    pushToken = this.pushToken;
+  }
 
   if (!authType) {
     if (callback) {
       callback(null);
     }
-    service.start(this, timeout);
+    service.start(this, timeout, pushToken);
   } else if (!callback) {
   } else {
     callback(authType, function(user, pass) {
-      service.start(this, timeout, user || 'pritunl', pass);
+      service.start(this, timeout, pushToken, user || 'pritunl', pass);
     }.bind(this));
   }
 };
