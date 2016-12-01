@@ -1,6 +1,7 @@
 package watch
 
 import (
+	"github.com/Sirupsen/logrus"
 	"github.com/pritunl/pritunl-client-electron/service/profile"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
 	"runtime"
@@ -71,6 +72,11 @@ func dnsWatch() {
 
 		if openvpn != global {
 			if reset {
+				logrus.WithFields(logrus.Fields{
+					"current":  global,
+					"expected": openvpn,
+				}).Warn("watch: Lost DNS settings restarting...")
+
 				restartLock.Lock()
 				if time.Since(lastRestart) > 60*time.Second {
 					lastRestart = time.Now()
