@@ -12,6 +12,10 @@ var uuid = function() {
   return id;
 };
 
+var time = function() {
+  return Math.floor((new Date).getTime() / 1000);
+};
+
 var getUserDataPath = function() {
   return app.getPath('userData');
 };
@@ -88,6 +92,7 @@ WaitGroup.prototype.wait = function(callback) {
 
 module.exports = {
   uuid: uuid,
+  time: time,
   getUserDataPath: getUserDataPath,
   authRequest: authRequest,
   WaitGroup: WaitGroup
