@@ -55,11 +55,9 @@ var closeEditor = function($profile, typ) {
   var $editor = $profile.find('.' + typ + ' .editor');
   $profile.removeClass('editing-' + typ);
   setTimeout(function() {
-    setTimeout(function() {
-      $editor.empty();
-      $editor.attr('class', 'editor');
-    }, 55);
-  }, 130);
+    $editor.empty();
+    $editor.attr('class', 'editor');
+  }, 185);
 };
 
 var renderProfile = function(prfl) {

@@ -2,6 +2,7 @@ var path = require('path');
 var os = require('os');
 var $ = require('jquery');
 var request = require('request');
+var fs = require('fs');
 var constants = require('./constants.js');
 var profile = require('./profile.js');
 var service = require('./service.js');
@@ -9,6 +10,7 @@ var editor = require('./editor.js');
 var errors = require('./errors.js');
 var logger = require('./logger.js');
 var config = require('./config.js');
+var utils = require('./utils.js');
 var profileView = require('./profileView.js');
 var remote = require('electron').remote;
 var webFrame = require('electron').webFrame;
@@ -18,6 +20,58 @@ var app = remoteRequire().app;
 
 constants.key = getGlobal('key');
 profileView.init();
+
+var systemEdtr;
+var $systemLogs = $('.system-logs');
+
+var readSystemLogs = function(callback) {
+  var pth = path.join(utils.getUserDataPath(), 'pritunl.log');
+
+  fs.exists(pth, function(exists) {
+    if (!exists) {
+      callback('');
+      return;
+    }
+
+    fs.readFile(pth, 'utf8', function(err, data) {
+      if (err) {
+        err = new errors.ReadError(
+          'config: Failed to read system logs (%s)', err);
+        logger.error(err);
+      } else {
+        callback(data);
+      }
+    });
+  });
+};
+
+var openEditor = function() {
+  readSystemLogs(function(data) {
+    $systemLogs.addClass('open');
+
+    if (systemEdtr) {
+      systemEdtr.destroy();
+    }
+
+    var $editor = $systemLogs.find('.editor');
+    systemEdtr = new editor.Editor('system', $editor);
+    systemEdtr.create();
+    systemEdtr.set(data);
+  });
+};
+var closeEditor = function() {
+  if (systemEdtr) {
+    systemEdtr.destroy();
+    systemEdtr = null;
+  }
+
+  var $editor = $systemLogs.find('.editor');
+  $systemLogs.removeClass('open');
+  setTimeout(function() {
+    $editor.empty();
+    $editor.attr('class', 'editor');
+  }, 185);
+};
 
 if (os.platform() === 'darwin') {
   webFrame.setZoomFactor(0.8);
@@ -60,18 +114,25 @@ $('.header .logo').click(function() {
       role: 'close'
     },
     {
+      label: 'View System Logs',
+      click: openEditor
+    },
+    {
       label: 'Exit',
-      click: function () {
+      click: function() {
         request.post({
           url: 'http://' + constants.serviceHost + '/stop',
           headers: {
             'Auth-Key': constants.key
           }
-        }, function () {
+        }, function() {
           app.quit();
         });
       }
     }
   ]);
   menu.popup(remote.getCurrentWindow());
+  $('.system-logs .close').click(function(){
+    closeEditor();
+  });
 });
