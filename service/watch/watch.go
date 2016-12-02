@@ -38,7 +38,10 @@ func wakeWatch(delay time.Duration) {
 				if time.Since(lastRestart) > 60*time.Second {
 					lastRestart = time.Now()
 					restartLock.Unlock()
-					profile.ResetProfiles()
+
+					logrus.Warn("watch: Wakeup restarting...")
+
+					profile.RestartProfiles()
 				} else {
 					restartLock.Unlock()
 				}
@@ -62,7 +65,7 @@ func dnsWatch() {
 			continue
 		}
 
-		openvpn, _ := utils.GetScutilKey("/Network/OpenVPN/DNS")
+		openvpn, _ := utils.GetScutilKey("/Network/Pritunl/DNS")
 		global, _ := utils.GetScutilKey("/Network/Global/DNS")
 
 		if strings.Contains(openvpn, "No such key") ||
@@ -72,16 +75,17 @@ func dnsWatch() {
 
 		if openvpn != global {
 			if reset {
-				logrus.WithFields(logrus.Fields{
-					"current":  global,
-					"expected": openvpn,
-				}).Warn("watch: Lost DNS settings restarting...")
-
 				restartLock.Lock()
 				if time.Since(lastRestart) > 60*time.Second {
 					lastRestart = time.Now()
 					restartLock.Unlock()
-					profile.ResetProfiles()
+
+					logrus.WithFields(logrus.Fields{
+						"current":  global,
+						"expected": openvpn,
+					}).Warn("watch: Lost DNS settings restarting...")
+
+					profile.RestartProfiles()
 				} else {
 					restartLock.Unlock()
 				}
