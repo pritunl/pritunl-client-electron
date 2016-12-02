@@ -1,8 +1,8 @@
 Pritunl Client Changelog
 ========================
 
-Version
--------
+Version 1.0.1177.2 2016-12-01
+-----------------------------
 
 Add system logs view to interface
 Add support for push authentication cache
