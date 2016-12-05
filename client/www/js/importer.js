@@ -292,10 +292,7 @@ var importProfileUri = function(prflUri, callback) {
 
   request.get({
     url: prflUri,
-    strictSSL: false,
-    headers: {
-      'Auth-Key': constants.key
-    }
+    strictSSL: false
   }, function(err, resp, body) {
     var data;
 
