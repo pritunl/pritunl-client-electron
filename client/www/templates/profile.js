@@ -62,13 +62,15 @@ module.exports = `<div class="profile" flex layout horizontal>
   <div class="config">
     <pre class="editor"></pre>
     <div class="btns">
-      <div class="btn btn-danger cancel">Cancel</div><div class="btn btn-success save">Save Profile</div>
+      <div class="btn btn-danger cancel">Cancel</div><div
+        class="btn btn-success save">Save Profile</div>
     </div>
   </div>
   <div class="logs">
     <pre class="editor"></pre>
     <div class="btns">
-      <div class="btn btn-danger close">Close</div><div class="btn btn-info clear">Clear</div>
+      <div class="btn btn-danger close">Close</div><div
+        class="btn btn-info clear">Clear</div>
     </div>
   </div>
 </div>`
