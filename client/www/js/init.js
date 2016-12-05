@@ -45,6 +45,27 @@ var readSystemLogs = function(callback) {
   });
 };
 
+var clearSystemLogs = function(callback) {
+  var pth = path.join(utils.getUserDataPath(), 'pritunl.log');
+
+  fs.exists(pth, function(exists) {
+    if (!exists) {
+      callback();
+      return;
+    }
+
+    fs.unlink(pth, function(err) {
+      if (err) {
+        err = new errors.ReadError(
+          'config: Failed to clear system logs (%s)', err);
+        logger.error(err);
+      } else {
+        callback();
+      }
+    });
+  });
+};
+
 var openEditor = function() {
   readSystemLogs(function(data) {
     $systemLogs.addClass('open');
@@ -75,6 +96,14 @@ var closeEditor = function() {
 
 $('.system-logs .close').click(function(){
   closeEditor();
+});
+
+$('.system-logs .clear').click(function(){
+  clearSystemLogs(function() {
+    if (systemEdtr) {
+      systemEdtr.set('');
+    }
+  });
 });
 
 if (os.platform() === 'darwin') {
