@@ -36,7 +36,7 @@ var readSystemLogs = function(callback) {
     fs.readFile(pth, 'utf8', function(err, data) {
       if (err) {
         err = new errors.ReadError(
-          'config: Failed to read system logs (%s)', err);
+          'init: Failed to read system logs (%s)', err);
         logger.error(err);
       } else {
         callback(data);
@@ -57,7 +57,7 @@ var clearSystemLogs = function(callback) {
     fs.unlink(pth, function(err) {
       if (err) {
         err = new errors.ReadError(
-          'config: Failed to clear system logs (%s)', err);
+          'init: Failed to clear system logs (%s)', err);
         logger.error(err);
       } else {
         callback();
