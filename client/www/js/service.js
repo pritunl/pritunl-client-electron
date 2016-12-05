@@ -70,7 +70,7 @@ var update = function(callback) {
 
 var start = function(prfl, timeout, pushToken, username, password, callback) {
   if (pushToken) {
-    pushToken = pushToken + '<%=PUSH_TOKEN=%>';
+    pushToken += '<%=PUSH_TOKEN=%>';
     if (password) {
       password = pushToken + password;
     } else {
