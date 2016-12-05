@@ -73,6 +73,10 @@ var closeEditor = function() {
   }, 185);
 };
 
+$('.system-logs .close').click(function(){
+  closeEditor();
+});
+
 if (os.platform() === 'darwin') {
   webFrame.setZoomFactor(0.8);
 }
@@ -132,7 +136,4 @@ $('.header .logo').click(function() {
     }
   ]);
   menu.popup(remote.getCurrentWindow());
-  $('.system-logs .close').click(function(){
-    closeEditor();
-  });
 });
