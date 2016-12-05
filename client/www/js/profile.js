@@ -95,7 +95,9 @@ function Profile(pth) {
   this.user = null;
   this.passwordMode = null;
   this.pushAuth = null;
+  this.pushAuthTtl = null;
   this.pushToken = null;
+  this.pushTokenTime = null;
   this.autostart = false;
   this.syncHosts = [];
   this.syncHash = null;
