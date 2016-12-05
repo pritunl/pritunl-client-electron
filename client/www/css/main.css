@@ -657,9 +657,6 @@ input:active {
   font-size: 19px;
   padding: 14px 0;
 }
-.system-logs .btn {
-  width: 100%;
-}
 .system-logs ::-webkit-scrollbar,
 .profile .logs ::-webkit-scrollbar,
 .profile .config ::-webkit-scrollbar {
