@@ -217,8 +217,45 @@ var renderProfile = function(prfl) {
           setTimeout(function() {
             $profile.find('.connect-pin-input').focus();
           }, 150);
+        } else if (authType.indexOf('duo') !== -1) {
+          authType.splice(authType.indexOf('duo'), 1);
+          authType.splice(authType.indexOf('otp'), 1);
+
+          $profile.find('.connect-otp-input').attr(
+            'placeholder', 'Enter Duo Passcode');
+
+          handler = function(evt) {
+            if (evt.type === 'keypress' && evt.which !== 13) {
+              return;
+            }
+            unbindAll($profile);
+
+            var otpCode = $profile.find('.connect-otp-input').val();
+            if (otpCode) {
+              password += otpCode;
+
+              if (!authType.length) {
+                callback(username, password);
+                closeMenu($profile);
+              } else {
+                authHandler();
+              }
+            } else {
+              closeMenu($profile);
+            }
+          };
+
+          $profile.find('.menu .connect-confirm').bind('click', handler);
+          $profile.find('.connect-otp-input').bind('keypress', handler);
+          $profile.find('.menu').addClass('authenticating-otp');
+          setTimeout(function() {
+            $profile.find('.connect-otp-input').focus();
+          }, 150);
         } else if (authType.indexOf('otp') !== -1) {
           authType.splice(authType.indexOf('otp'), 1);
+
+          $profile.find('.connect-otp-input').attr(
+            'placeholder', 'Enter OTP Code');
 
           handler = function(evt) {
             if (evt.type === 'keypress' && evt.which !== 13) {
