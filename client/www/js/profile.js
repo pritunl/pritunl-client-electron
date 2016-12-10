@@ -223,12 +223,12 @@ Profile.prototype.upsert = function(data) {
   this.server = data.server || this.server;
   this.userId = data.user_id || this.userId;
   this.user = data.user || this.user;
-  this.passwordMode = data.password_mode || this.passwordMode;
-  this.pushAuth = data.push_auth || this.pushAuth;
-  this.pushAuthTtl = data.push_auth_ttl || this.pushAuthTtl;
+  this.passwordMode = data.password_mode;
+  this.pushAuth = data.push_auth;
+  this.pushAuthTtl = data.push_auth_ttl;
   this.autostart = data.autostart || this.autostart;
-  this.syncHosts = data.sync_hosts || this.syncHosts;
-  this.syncHash = data.sync_hash || this.syncHash;
+  this.syncHosts = data.sync_hosts;
+  this.syncHash = data.sync_hash;
 };
 
 Profile.prototype.exportConf = function() {
