@@ -11,8 +11,8 @@
   },
   "devDependencies": {
     "electron-rebuild": "^1.4.0",
-    "electron-packager": "^8.3.0",
-    "electron": "^1.4.10",
+    "electron-packager": "^8.4.0",
+    "electron": "^1.4.12",
     "rimraf": "^2.5.4",
     "rcedit": "^0.7.0"
   }
