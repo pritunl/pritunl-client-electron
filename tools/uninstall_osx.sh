@@ -1,4 +1,6 @@
-# Stop Service
+# Stop Pritunl
+kill -2 $(ps aux | grep Pritunl.app | awk '{print $2}')
+sudo launchctl unload /Library/LaunchAgents/com.pritunl.client.plist
 sudo launchctl unload /Library/LaunchDaemons/com.pritunl.service.plist
 
 # Pritunl
