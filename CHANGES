@@ -4,7 +4,9 @@ Pritunl Client Changelog
 Version
 -------
 
+Add support for Duo passcodes
 Add clear system logs
+Improve configuration sync
 
 Version 1.0.1177.2 2016-12-01
 -----------------------------
