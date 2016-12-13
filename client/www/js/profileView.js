@@ -442,7 +442,7 @@ var init = function() {
       case 'auth_error':
         prfl = service.get(evt.data.id);
         err = new errors.AuthError(
-          'profile_view: Failed to authenicate to %s',
+          'profile_view: Failed to authenticate to %s',
           prfl.formatedNameLogo()[0]);
         logger.error(err);
         break;
