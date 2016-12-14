@@ -7,6 +7,7 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"fmt"
+	"github.com/Sirupsen/logrus"
 	"github.com/dropbox/godropbox/container/set"
 	"github.com/dropbox/godropbox/errors"
 	"io"
@@ -185,8 +186,11 @@ func ResetNetworking() {
 		output, err := cmd.CombinedOutput()
 		if err != nil {
 			err = &CommandError{
-				errors.Wrap(err, "utils: Failed to exec networksetup"),
+				errors.Wrap(err, "utils: Failed to get network location"),
 			}
+			logrus.WithFields(logrus.Fields{
+				"error": err,
+			}).Error("utils: Reset networking error")
 			return
 		}
 
@@ -196,29 +200,61 @@ func ResetNetworking() {
 			return
 		}
 
-		exec.Command(
+		err = exec.Command(
 			"/usr/sbin/networksetup",
 			"-createlocation",
 			"pritunl-reset",
 		).Run()
+		if err != nil {
+			err = &CommandError{
+				errors.Wrap(err, "utils: Failed to create network location"),
+			}
+			logrus.WithFields(logrus.Fields{
+				"error": err,
+			}).Error("utils: Reset networking error")
+		}
 
-		exec.Command(
+		err = exec.Command(
 			"/usr/sbin/networksetup",
 			"-switchtolocation",
 			"pritunl-reset",
 		).Run()
+		if err != nil {
+			err = &CommandError{
+				errors.Wrap(err, "utils: Failed to set network location"),
+			}
+			logrus.WithFields(logrus.Fields{
+				"error": err,
+			}).Error("utils: Reset networking error")
+		}
 
-		exec.Command(
+		err = exec.Command(
 			"/usr/sbin/networksetup",
 			"-switchtolocation",
 			location,
 		).Run()
+		if err != nil {
+			err = &CommandError{
+				errors.Wrap(err, "utils: Failed to set network location"),
+			}
+			logrus.WithFields(logrus.Fields{
+				"error": err,
+			}).Error("utils: Reset networking error")
+		}
 
-		exec.Command(
+		err = exec.Command(
 			"/usr/sbin/networksetup",
 			"-deletelocation",
 			"pritunl-reset",
 		).Run()
+		if err != nil {
+			err = &CommandError{
+				errors.Wrap(err, "utils: Failed to delete network location"),
+			}
+			logrus.WithFields(logrus.Fields{
+				"error": err,
+			}).Error("utils: Reset networking error")
+		}
 
 		RemoveScutilKey("/Network/Pritunl/DNS")
 	}
