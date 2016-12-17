@@ -6,6 +6,7 @@ Version
 
 Add service logs view to interface
 Improve logging
+Fix autostart on macOS
 
 Version 1.0.1187.7 2016-12-11
 -----------------------------
