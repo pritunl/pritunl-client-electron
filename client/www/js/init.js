@@ -22,7 +22,9 @@ constants.key = getGlobal('key');
 profileView.init();
 
 var systemEdtr;
+var serviceEdtr;
 var $systemLogs = $('.system-logs');
+var $serviceLogs = $('.service-logs');
 
 var readSystemLogs = function(callback) {
   var pth = path.join(utils.getUserDataPath(), 'pritunl.log');
@@ -66,7 +68,37 @@ var clearSystemLogs = function(callback) {
   });
 };
 
-var openEditor = function() {
+var readServiceLogs = function(callback) {
+  var pth;
+  if (os.platform() === 'win32') {
+    pth = path.join('C:\\', 'ProgramData', 'Pritunl', 'pritunl.log');
+  } else {
+    pth = path.join(path.sep, 'var', 'log', 'pritunl.log');
+  }
+
+  fs.exists(pth, function(exists) {
+    if (!exists) {
+      callback('');
+      return;
+    }
+
+    fs.readFile(pth, 'utf8', function(err, data) {
+      if (err) {
+        err = new errors.ReadError(
+          'init: Failed to read service logs (%s)', err);
+        logger.error(err);
+      } else {
+        callback(data);
+      }
+    });
+  });
+};
+
+var openSystemEditor = function() {
+  if (systemEdtr) {
+    return;
+  }
+
   readSystemLogs(function(data) {
     $systemLogs.addClass('open');
 
@@ -80,7 +112,7 @@ var openEditor = function() {
     systemEdtr.set(data);
   });
 };
-var closeEditor = function() {
+var closeSystemEditor = function() {
   if (systemEdtr) {
     systemEdtr.destroy();
     systemEdtr = null;
@@ -94,8 +126,40 @@ var closeEditor = function() {
   }, 185);
 };
 
+var openServiceEditor = function() {
+  if (serviceEdtr) {
+    return;
+  }
+
+  readServiceLogs(function(data) {
+    $serviceLogs.addClass('open');
+
+    if (serviceEdtr) {
+      serviceEdtr.destroy();
+    }
+
+    var $editor = $serviceLogs.find('.editor');
+    serviceEdtr = new editor.Editor('service', $editor);
+    serviceEdtr.create();
+    serviceEdtr.set(data);
+  });
+};
+var closeServiceEditor = function() {
+  if (serviceEdtr) {
+    serviceEdtr.destroy();
+    serviceEdtr = null;
+  }
+
+  var $editor = $serviceLogs.find('.editor');
+  $serviceLogs.removeClass('open');
+  setTimeout(function() {
+    $editor.empty();
+    $editor.attr('class', 'editor');
+  }, 185);
+};
+
 $('.system-logs .close').click(function(){
-  closeEditor();
+  closeSystemEditor();
 });
 
 $('.system-logs .clear').click(function(){
@@ -104,6 +168,10 @@ $('.system-logs .clear').click(function(){
       systemEdtr.set('');
     }
   });
+});
+
+$('.service-logs .close').click(function(){
+  closeServiceEditor();
 });
 
 if (os.platform() === 'darwin') {
@@ -148,7 +216,17 @@ $('.header .logo').click(function() {
     },
     {
       label: 'View System Logs',
-      click: openEditor
+      click: function() {
+        closeServiceEditor();
+        openSystemEditor();
+      }
+    },
+    {
+      label: 'View Service Logs',
+      click: function() {
+        closeSystemEditor();
+        openServiceEditor();
+      }
     },
     {
       label: 'Exit',
