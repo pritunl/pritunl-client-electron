@@ -256,7 +256,12 @@ func ResetNetworking() {
 			}).Error("utils: Reset networking error")
 		}
 
-		RemoveScutilKey("/Network/Pritunl/DNS")
+		err = RemoveScutilKey("/Network/Pritunl/DNS")
+		if err != nil {
+			logrus.WithFields(logrus.Fields{
+				"error": err,
+			}).Error("utils: Reset networking error")
+		}
 	}
 }
 
