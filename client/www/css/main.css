@@ -390,6 +390,7 @@ input:active {
   overflow-y: auto;
 }
 .system-logs .btn,
+.service-logs .btn,
 .profiles .btns .btn {
   padding: 18px 0;
   text-align: center;
@@ -622,6 +623,7 @@ input:active {
 }
 
 .system-logs,
+.service-logs,
 .profile .logs,
 .profile .config {
   position: absolute;
@@ -634,6 +636,7 @@ input:active {
   transition: opacity 200ms linear;
 }
 .system-logs.open,
+.service-logs.open,
 .profile.editing-logs .logs,
 .profile.editing-config .config {
   visibility: visible;
@@ -642,6 +645,7 @@ input:active {
   top: 45px;
 }
 .system-logs .editor,
+.service-logs .editor,
 .profile .logs .editor,
 .profile .config .editor {
   width: 100%;
@@ -649,6 +653,7 @@ input:active {
   margin: 0;
 }
 .system-logs .btn,
+.service-logs .btn,
 .profile .logs .btn,
 .profile .config .btn {
   width: 50%;
@@ -657,7 +662,11 @@ input:active {
   font-size: 19px;
   padding: 14px 0;
 }
+.service-logs .btn {
+  width: 100%;
+}
 .system-logs ::-webkit-scrollbar,
+.service-logs ::-webkit-scrollbar,
 .profile .logs ::-webkit-scrollbar,
 .profile .config ::-webkit-scrollbar {
   width: 9px;
@@ -665,6 +674,7 @@ input:active {
   background: #042b4d;
 }
 .system-logs ::-webkit-scrollbar-thumb,
+.service-logs ::-webkit-scrollbar-thumb,
 .profile .logs ::-webkit-scrollbar-thumb,
 .profile .config ::-webkit-scrollbar-thumb {
   background: #1b6bb0;
