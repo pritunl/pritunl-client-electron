@@ -27,7 +27,3 @@ type ParseError struct {
 type ExecError struct {
 	errors.DropboxError
 }
-
-type DatabaseError struct {
-	errors.DropboxError
-}
