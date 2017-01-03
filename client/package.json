@@ -10,9 +10,9 @@
     "ws": "^1.1.1"
   },
   "devDependencies": {
-    "electron-rebuild": "^1.4.0",
+    "electron-rebuild": "^1.5.5",
     "electron-packager": "^8.4.0",
-    "electron": "^1.4.12",
+    "electron": "^1.4.13",
     "rimraf": "^2.5.4",
     "rcedit": "^0.7.0"
   }
