@@ -1,8 +1,8 @@
 Pritunl Client Changelog
 ========================
 
-Version
--------
+Version 1.0.1209.98 2017-01-03
+------------------------------
 
 Add service logs view to interface
 Improve logging
