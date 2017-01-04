@@ -30,7 +30,7 @@ func formatLevel(lvl logrus.Level) string {
 }
 
 func formatTime(timestamp time.Time) string {
-	return timestamp.Format("[01/02/06-15:04:05]")
+	return timestamp.Format("[2006-01-02 15:04:05]")
 }
 
 func initSender() {
