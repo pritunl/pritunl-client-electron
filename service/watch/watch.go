@@ -4,6 +4,7 @@ import (
 	"github.com/Sirupsen/logrus"
 	"github.com/pritunl/pritunl-client-electron/service/profile"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
+	"reflect"
 	"runtime"
 	"strings"
 	"sync"
@@ -16,6 +17,43 @@ var (
 	wake        = time.Now()
 	wakeLock    = sync.Mutex{}
 )
+
+func parseDns(data string) (searchDomains, searchAddresses []string) {
+	dataSpl := strings.Split(data, "\n")
+	key := ""
+	searchDomains = []string{}
+	searchAddresses = []string{}
+
+	if len(dataSpl) < 2 {
+		return
+	}
+
+	for _, line := range dataSpl[1 : len(dataSpl)-1] {
+		if key == "" {
+			key = strings.TrimSpace(strings.SplitN(line, ":", 2)[0])
+		} else {
+			line = strings.TrimSpace(line)
+
+			if strings.HasPrefix(line, "}") {
+				key = ""
+			} else {
+				lineSpl := strings.SplitN(line, ":", 2)
+				if len(lineSpl) > 1 {
+					val := strings.TrimSpace(lineSpl[1])
+
+					switch key {
+					case "SearchDomains":
+						searchDomains = append(searchDomains, val)
+					case "ServerAddresses":
+						searchAddresses = append(searchAddresses, val)
+					}
+				}
+			}
+		}
+	}
+
+	return
+}
 
 func wakeWatch(delay time.Duration) {
 	curTime := time.Now()
@@ -65,15 +103,20 @@ func dnsWatch() {
 			continue
 		}
 
-		openvpn, _ := utils.GetScutilKey("/Network/Pritunl/DNS")
+		vpn, _ := utils.GetScutilKey("/Network/Pritunl/DNS")
 		global, _ := utils.GetScutilKey("/Network/Global/DNS")
 
-		if strings.Contains(openvpn, "No such key") ||
+		if strings.Contains(vpn, "No such key") ||
 			strings.Contains(global, "No such key") {
 			continue
 		}
 
-		if openvpn != global {
+		vpnDomains, vpnAddresses := parseDns(vpn)
+		globalDomains, globalAddresses := parseDns(global)
+
+		if !reflect.DeepEqual(vpnDomains, globalDomains) ||
+			!reflect.DeepEqual(vpnAddresses, globalAddresses) {
+
 			if reset {
 				restartLock.Lock()
 				if time.Since(lastRestart) > 60*time.Second {
@@ -81,8 +124,10 @@ func dnsWatch() {
 					restartLock.Unlock()
 
 					logrus.WithFields(logrus.Fields{
-						"current":  global,
-						"expected": openvpn,
+						"vpn_domains":      vpnDomains,
+						"vpn_addresses":    vpnAddresses,
+						"global_domains":   globalDomains,
+						"global_addresses": globalAddresses,
 					}).Warn("watch: Lost DNS settings restarting...")
 
 					profile.RestartProfiles()
