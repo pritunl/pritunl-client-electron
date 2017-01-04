@@ -110,7 +110,7 @@ func main() {
 		panic(err)
 	}
 
-	cmd = exec.Command("go", "build", "-v", "-a")
+	cmd = exec.Command("go", "build", "-v")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err = cmd.Run()
@@ -123,7 +123,7 @@ func main() {
 		panic(err)
 	}
 
-	cmd = exec.Command("go", "build", "-v", "-a")
+	cmd = exec.Command("go", "build", "-v")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err = cmd.Run()
