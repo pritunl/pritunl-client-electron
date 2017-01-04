@@ -88,7 +88,8 @@ func main() {
 		panic(err)
 	}
 
-	cmd = exec.Command(".\\node_modules\\.bin\\electron-packager",
+	cmd = exec.Command(
+		".\\node_modules\\.bin\\electron-packager",
 		".\\",
 		"pritunl",
 		"--platform=win32",
@@ -97,7 +98,8 @@ func main() {
 		"--icon=www\\img\\logo.ico",
 		"--out=..\\build\\win",
 		"--prune",
-		"--asar")
+		"--asar",
+	)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err = cmd.Run()
