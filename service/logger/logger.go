@@ -4,6 +4,7 @@ package logger
 import (
 	"github.com/Sirupsen/logrus"
 	"os"
+	"time"
 )
 
 var (
@@ -26,6 +27,10 @@ func formatLevel(lvl logrus.Level) string {
 	}
 
 	return ""
+}
+
+func formatTime(timestamp time.Time) string {
+	return timestamp.Format("[01/02/06-15:04:05]")
 }
 
 func initSender() {

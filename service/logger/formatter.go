@@ -8,7 +8,8 @@ import (
 type formatter struct{}
 
 func (f *formatter) Format(entry *logrus.Entry) (output []byte, err error) {
-	msg := fmt.Sprintf("%s ▶ %s", formatLevel(entry.Level), entry.Message)
+	msg := fmt.Sprintf("%s%s ▶ %s",
+		formatTime(entry.Time), formatLevel(entry.Level), entry.Message)
 
 	var errStr string
 	for key, val := range entry.Data {
