@@ -1,6 +1,11 @@
 Pritunl Client Changelog
 ========================
 
+Version
+-------
+
+Fix issue with unexpected disconnect
+
 Version 1.0.1210.1 2017-01-03
 -----------------------------
 
