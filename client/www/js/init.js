@@ -211,10 +211,6 @@ $('.header .logo').click(function() {
       label: 'Pritunl v' + constants.version
     },
     {
-      label: 'Close to Tray',
-      role: 'close'
-    },
-    {
       label: 'View System Logs',
       click: function() {
         closeServiceEditor();
@@ -227,6 +223,10 @@ $('.header .logo').click(function() {
         closeSystemEditor();
         openServiceEditor();
       }
+    },
+    {
+      label: 'Close to Tray',
+      role: 'close'
     },
     {
       label: 'Exit',
