@@ -166,6 +166,42 @@ func RemoveScutilKey(key string) (err error) {
 	return
 }
 
+func CopyScutilDns() (err error) {
+	data, err := GetScutilKey("/Network/Global/IPv4")
+	if err != nil {
+		return
+	}
+
+	dataSpl := strings.Split(data, "PrimaryService :")
+	if len(dataSpl) < 2 {
+		err = &CommandError{
+			errors.New("utils: Failed to find primary service from scutil"),
+		}
+		return
+	}
+	serviceId := strings.Split(dataSpl[1], "\n")[0]
+	serviceId = strings.TrimSpace(serviceId)
+
+	cmd := exec.Command("/usr/sbin/scutil")
+	cmd.Stdin = strings.NewReader(
+		fmt.Sprintf("open\n"+
+			"get State:/Network/Pritunl/DNS\n"+
+			"set State:/Network/Service/%s/DNS\n"+
+			"get State:/Network/Pritunl/DNS\n"+
+			"set Setup:/Network/Service/%s/DNS\n"+
+			"quit\n", serviceId, serviceId))
+
+	err = cmd.Run()
+	if err != nil {
+		err = &CommandError{
+			errors.Wrap(err, "utils: Failed to exec scutil"),
+		}
+		return
+	}
+
+	return
+}
+
 func ResetNetworking() {
 	networkResetLock.Lock()
 	defer networkResetLock.Unlock()
