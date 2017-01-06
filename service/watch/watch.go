@@ -136,8 +136,10 @@ func dnsWatch() {
 
 				utils.ClearDNSCache()
 				go func() {
-					time.Sleep(1 * time.Second)
-					utils.ClearDNSCache()
+					for i := 0; i < 3; i++ {
+						time.Sleep(1 * time.Second)
+						utils.ClearDNSCache()
+					}
 				}()
 
 				restartLock.Unlock()
