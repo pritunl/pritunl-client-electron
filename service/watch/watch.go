@@ -119,21 +119,22 @@ func dnsWatch() {
 
 			if reset {
 				restartLock.Lock()
-				if time.Since(lastRestart) > 60*time.Second {
-					lastRestart = time.Now()
-					restartLock.Unlock()
 
+				logrus.WithFields(logrus.Fields{
+					"vpn_domains":      vpnDomains,
+					"vpn_addresses":    vpnAddresses,
+					"global_domains":   globalDomains,
+					"global_addresses": globalAddresses,
+				}).Warn("watch: Lost DNS settings updating...")
+
+				err := utils.CopyScutilDns()
+				if err != nil {
 					logrus.WithFields(logrus.Fields{
-						"vpn_domains":      vpnDomains,
-						"vpn_addresses":    vpnAddresses,
-						"global_domains":   globalDomains,
-						"global_addresses": globalAddresses,
-					}).Warn("watch: Lost DNS settings restarting...")
-
-					profile.RestartProfiles()
-				} else {
-					restartLock.Unlock()
+						"error": err,
+					}).Error("watch: Failed to update DNS settings")
 				}
+
+				restartLock.Unlock()
 				reset = false
 			} else {
 				reset = true
