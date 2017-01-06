@@ -80,6 +80,14 @@ func main() {
 		panic(err)
 	}
 
+	cmd = exec.Command("npm", "update")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err = cmd.Run()
+	if err != nil {
+		panic(err)
+	}
+
 	cmd = exec.Command(".\\node_modules\\.bin\\electron-rebuild")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
