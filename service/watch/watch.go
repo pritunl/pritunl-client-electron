@@ -134,6 +134,12 @@ func dnsWatch() {
 					}).Error("watch: Failed to update DNS settings")
 				}
 
+				utils.ClearDNSCache()
+				go func() {
+					time.Sleep(1 * time.Second)
+					utils.ClearDNSCache()
+				}()
+
 				restartLock.Unlock()
 				reset = false
 			} else {
