@@ -1,6 +1,11 @@
 Pritunl Client Changelog
 ========================
 
+Version
+-------
+
+Fix issues with reconnecting
+
 Version 1.0.1212.27 2017-01-06
 ------------------------------
 
