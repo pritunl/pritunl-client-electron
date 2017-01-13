@@ -3,6 +3,9 @@ package profile
 const (
 	blockScript = "#!/bin/bash\n"
 	upScript    = `#!/bin/bash -e
+
+CONN_ID="$(echo ${config} | /sbin/md5)"
+
 case $script_type in
 up)
   for optionname in ${!foreign_option_*} ; do
@@ -21,7 +24,7 @@ up)
     fi
   done
 
-  SERVICE_ID="$( /usr/sbin/scutil <<-EOF |
+  SERVICE_ID="$(/usr/sbin/scutil <<-EOF |
 open
 show State:/Network/Global/IPv4
 quit
@@ -29,19 +32,34 @@ EOF
 grep PrimaryService | sed -e 's/.*PrimaryService : //'
 )"
 
+  SERVICE_ORIG="$(/usr/sbin/scutil <<-EOF |
+open
+show State:/Network/Service/${SERVICE_ID}/DNS
+quit
+EOF
+grep Pritunl | sed -e 's/.*Pritunl : //'
+)"
+
+  if [ "$SERVICE_ORIG" != "true" ]; then
+    /usr/sbin/scutil <<-EOF > /dev/null
+open
+get State:/Network/Service/${SERVICE_ID}/DNS
+set State:/Network/Pritunl/Restore/${SERVICE_ID}
+quit
+EOF
+  fi
+
   if [ "$DNS_SERVERS" ] && [ "$DNS_SEARCH" ]; then
 	/usr/sbin/scutil <<-EOF > /dev/null
 open
 d.init
 d.add ServerAddresses * ${DNS_SERVERS}
 d.add SearchDomains * ${DNS_SEARCH}
+d.add Pritunl true
 set State:/Network/Service/${SERVICE_ID}/DNS
-d.init
-d.add ServerAddresses * ${DNS_SERVERS}
-d.add SearchDomains * ${DNS_SEARCH}
 set Setup:/Network/Service/${SERVICE_ID}/DNS
-get State:/Network/Service/${SERVICE_ID}/DNS
 set State:/Network/Pritunl/DNS
+set State:/Network/Pritunl/Connection/${CONN_ID}
 quit
 EOF
   elif [ "$DNS_SERVERS" ]; then
@@ -49,12 +67,11 @@ EOF
 open
 d.init
 d.add ServerAddresses * ${DNS_SERVERS}
+d.add Pritunl true
 set State:/Network/Service/${SERVICE_ID}/DNS
-d.init
-d.add ServerAddresses * ${DNS_SERVERS}
 set Setup:/Network/Service/${SERVICE_ID}/DNS
-get State:/Network/Service/${SERVICE_ID}/DNS
 set State:/Network/Pritunl/DNS
+set State:/Network/Pritunl/Connection/${CONN_ID}
 quit
 EOF
   elif [ "$DNS_SEARCH" ]; then
@@ -62,17 +79,30 @@ EOF
 open
 d.init
 d.add SearchDomains * ${DNS_SEARCH}
+d.add Pritunl true
 set State:/Network/Service/${SERVICE_ID}/DNS
-d.init
-d.add SearchDomains * ${DNS_SEARCH}
 set Setup:/Network/Service/${SERVICE_ID}/DNS
-get State:/Network/Service/${SERVICE_ID}/DNS
 set State:/Network/Pritunl/DNS
+set State:/Network/Pritunl/Connection/${CONN_ID}
 quit
 EOF
   fi
   ;;
 esac
+
+killall -HUP mDNSResponder | true
+
+exit 0`
+	downScript = `#!/bin/bash -e
+
+CONN_ID="$(echo ${config} | /sbin/md5)"
+
+/usr/sbin/scutil <<-EOF > /dev/null
+open
+remove State:/Network/Pritunl/Connection/${CONN_ID}
+remove State:/Network/Pritunl/DNS
+quit
+EOF
 
 exit 0`
 )
