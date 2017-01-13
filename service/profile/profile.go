@@ -3,6 +3,7 @@ package profile
 
 import (
 	"bufio"
+	"fmt"
 	"github.com/Sirupsen/logrus"
 	"github.com/dropbox/godropbox/errors"
 	"github.com/pritunl/pritunl-client-electron/service/event"
