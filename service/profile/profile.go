@@ -113,6 +113,25 @@ func (p *Profile) writeUp() (pth string, err error) {
 	return
 }
 
+func (p *Profile) writeDown() (pth string, err error) {
+	rootDir, err := utils.GetTempDir()
+	if err != nil {
+		return
+	}
+
+	pth = filepath.Join(rootDir, p.Id+"-down.sh")
+
+	err = ioutil.WriteFile(pth, []byte(downScript), os.FileMode(0755))
+	if err != nil {
+		err = &WriteError{
+			errors.Wrap(err, "profile: Failed to write down script"),
+		}
+		return
+	}
+
+	return
+}
+
 func (p *Profile) writeBlock() (pth string, err error) {
 	rootDir, err := utils.GetTempDir()
 	if err != nil {
@@ -194,14 +213,27 @@ func (p *Profile) parseLine(line string) {
 		p.Status = "connected"
 		p.Timestamp = time.Now().Unix() - 1
 		p.update()
-		go func() {
-			for i := 0; i < 10; i++ {
-				time.Sleep(3 * time.Second)
-				utils.ClearDNSCache()
-			}
-		}()
+		go utils.ClearDNSCache()
 	} else if strings.Contains(line, "Inactivity timeout") {
-		RestartProfiles()
+		prfl := p.Copy()
+
+		err := p.Stop(false)
+		if err != nil {
+			logrus.WithFields(logrus.Fields{
+				"error": err,
+			}).Error("profile: Stop error")
+			return
+		}
+
+		p.Wait()
+
+		err = prfl.Start(false)
+		if err != nil {
+			logrus.WithFields(logrus.Fields{
+				"error": err,
+			}).Error("profile: Restart error")
+			return
+		}
 	} else if strings.Contains(line, "AUTH_FAILED") || strings.Contains(
 		line, "auth-failure") {
 
@@ -276,6 +308,18 @@ func (p *Profile) clearStatus(start time.Time) {
 			os.Remove(path)
 		}
 
+		Profiles.Lock()
+		delete(Profiles.m, p.Id)
+		if runtime.GOOS == "darwin" && len(Profiles.m) == 0 {
+			err := utils.ClearScutilKeys()
+			if err != nil {
+				logrus.WithFields(logrus.Fields{
+					"error": err,
+				}).Error("profile: Failed to clear scutil keys")
+			}
+		}
+		Profiles.Unlock()
+
 		p.stateLock.Lock()
 		p.state = false
 		for _, waiter := range p.waiters {
@@ -322,7 +366,7 @@ func (p *Profile) Start(timeout bool) (err error) {
 	}
 
 	if runtime.GOOS == "darwin" && n == 0 {
-		utils.RemoveScutilKey("/Network/Pritunl/DNS")
+		utils.ClearScutilKeys()
 	}
 
 	Profiles.Lock()
@@ -356,6 +400,7 @@ func (p *Profile) Start(timeout bool) (err error) {
 	if runtime.GOOS == "windows" {
 		p.intf, err = utils.AcquireTap()
 		if err != nil {
+			p.clearStatus(start)
 			return
 		}
 
@@ -373,6 +418,14 @@ func (p *Profile) Start(timeout bool) (err error) {
 		}
 		p.remPaths = append(p.remPaths, upPath)
 
+		downPath, e := p.writeDown()
+		if e != nil {
+			err = e
+			p.clearStatus(start)
+			return
+		}
+		p.remPaths = append(p.remPaths, downPath)
+
 		blockPath, e := p.writeBlock()
 		if e != nil {
 			err = e
@@ -383,7 +436,7 @@ func (p *Profile) Start(timeout bool) (err error) {
 
 		args = append(args, "--script-security", "2",
 			"--up", upPath,
-			"--down", blockPath,
+			"--down", downPath,
 			"--route-pre-down", blockPath,
 			"--tls-verify", blockPath,
 			"--ipchange", blockPath,
@@ -475,7 +528,15 @@ func (p *Profile) Start(timeout bool) (err error) {
 	go func() {
 		cmd.Wait()
 		running = false
-		p.clearStatus(start)
+
+		if runtime.GOOS == "darwin" {
+			err = utils.RestoreScutilDns()
+			if err != nil {
+				logrus.WithFields(logrus.Fields{
+					"error": err,
+				}).Error("profile: Failed to restore DNS")
+			}
+		}
 
 		if !p.stop {
 			logrus.WithFields(logrus.Fields{
@@ -483,13 +544,7 @@ func (p *Profile) Start(timeout bool) (err error) {
 			}).Error("profile: Unexpected profile exit")
 		}
 
-		Profiles.Lock()
-		delete(Profiles.m, p.Id)
-		Profiles.Unlock()
-
-		if p.reset {
-			RestartProfiles()
-		}
+		p.clearStatus(start)
 	}()
 
 	if timeout {
