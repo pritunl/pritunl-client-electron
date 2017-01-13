@@ -1,8 +1,8 @@
 Pritunl Client Changelog
 ========================
 
-Version
--------
+Version 1.0.1219.32 2017-01-13
+------------------------------
 
 Improve connection reliability
 Improve DNS management on macOS
