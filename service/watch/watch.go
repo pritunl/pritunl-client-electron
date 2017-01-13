@@ -1,6 +1,7 @@
 package watch
 
 import (
+	"fmt"
 	"github.com/Sirupsen/logrus"
 	"github.com/pritunl/pritunl-client-electron/service/profile"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
@@ -110,8 +111,34 @@ func dnsWatch() {
 		vpn, _ := utils.GetScutilKey("/Network/Pritunl/DNS")
 		global, _ := utils.GetScutilKey("/Network/Global/DNS")
 
-		if strings.Contains(vpn, "No such key") ||
-			strings.Contains(global, "No such key") {
+		if strings.Contains(global, "No such key") {
+			continue
+		}
+
+		if strings.Contains(vpn, "No such key") {
+			connIds, err := utils.GetScutilConnIds()
+			if err != nil {
+				logrus.WithFields(logrus.Fields{
+					"error": err,
+				}).Error("watch: Failed to get DNS connection IDs")
+				continue
+			}
+
+			if len(connIds) == 0 {
+				continue
+			}
+
+			err = utils.CopyScutilKey(
+				fmt.Sprintf("/Network/Pritunl/Connection/%s", connIds[0]),
+				"/Network/Pritunl/DNS",
+			)
+			if err != nil {
+				logrus.WithFields(logrus.Fields{
+					"error": err,
+				}).Error("watch: Failed to copy DNS settings")
+				continue
+			}
+
 			continue
 		}
 
@@ -131,20 +158,19 @@ func dnsWatch() {
 					"global_addresses": globalAddresses,
 				}).Warn("watch: Lost DNS settings updating...")
 
-				err := utils.CopyScutilDns()
+				err := utils.BackupScutilDns()
 				if err != nil {
 					logrus.WithFields(logrus.Fields{
 						"error": err,
-					}).Error("watch: Failed to update DNS settings")
-				}
-
-				utils.ClearDNSCache()
-				go func() {
-					for i := 0; i < 3; i++ {
-						time.Sleep(1 * time.Second)
-						utils.ClearDNSCache()
+					}).Error("watch: Failed to backup DNS settings")
+				} else {
+					err = utils.CopyScutilDns("/Network/Pritunl/DNS")
+					if err != nil {
+						logrus.WithFields(logrus.Fields{
+							"error": err,
+						}).Error("watch: Failed to update DNS settings")
 					}
-				}()
+				}
 
 				restartLock.Unlock()
 				reset = false
