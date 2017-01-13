@@ -34,23 +34,6 @@ var (
 	Ping = time.Now()
 )
 
-func init() {
-	go func() {
-		for {
-			fmt.Println(Profiles.m)
-
-			if time.Since(Ping) > 1*time.Minute {
-				prfls := GetProfiles()
-				for _, prfl := range prfls {
-					prfl.Stop()
-				}
-			}
-
-			time.Sleep(10 * time.Second)
-		}
-	}()
-}
-
 type OutputData struct {
 	Id     string `json:"id"`
 	Output string `json:"output"`
