@@ -21,7 +21,6 @@ import (
 
 const (
 	connTimeout = 60 * time.Second
-	resetWait   = 3000 * time.Millisecond
 )
 
 var (
@@ -42,7 +41,7 @@ func init() {
 			if time.Since(Ping) > 1*time.Minute {
 				prfls := GetProfiles()
 				for _, prfl := range prfls {
-					prfl.Stop(false)
+					prfl.Stop()
 				}
 			}
 
@@ -65,7 +64,6 @@ type Profile struct {
 	cmd         *exec.Cmd        `json:"-"`
 	intf        *utils.Interface `json:"-"`
 	lastAuthErr time.Time        `json:"-"`
-	reset       bool             `json:"-"`
 	Id          string           `json:"id"`
 	Data        string           `json:"-"`
 	Username    string           `json:"-"`
@@ -218,7 +216,7 @@ func (p *Profile) parseLine(line string) {
 	} else if strings.Contains(line, "Inactivity timeout") {
 		prfl := p.Copy()
 
-		err := p.Stop(false)
+		err := p.Stop()
 		if err != nil {
 			logrus.WithFields(logrus.Fields{
 				"error": err,
@@ -590,13 +588,12 @@ func (p *Profile) Start(timeout bool) (err error) {
 	return
 }
 
-func (p *Profile) Stop(reset bool) (err error) {
+func (p *Profile) Stop() (err error) {
 	if p.cmd == nil || p.cmd.Process == nil {
 		return
 	}
 
 	p.stop = true
-	p.reset = reset
 	p.Status = "disconnecting"
 	p.update()
 
