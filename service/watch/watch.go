@@ -31,6 +31,10 @@ func parseDns(data string) (searchDomains, searchAddresses []string) {
 	for _, line := range dataSpl[1 : len(dataSpl)-1] {
 		if key == "" {
 			key = strings.TrimSpace(strings.SplitN(line, ":", 2)[0])
+			if key == "Pritunl" {
+				key = ""
+				continue
+			}
 		} else {
 			line = strings.TrimSpace(line)
 
