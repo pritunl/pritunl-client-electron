@@ -76,11 +76,6 @@ func RestartProfiles() (err error) {
 	prfls := GetProfiles()
 	prfls2 := map[string]*Profile{}
 
-	if len(prfls) == 0 {
-		utils.ResetNetworking()
-		return
-	}
-
 	for _, prfl := range prfls {
 		prfl2 := prfl.Copy()
 		prfls2[prfl2.Id] = prfl2
@@ -95,7 +90,6 @@ func RestartProfiles() (err error) {
 		prfl.Wait()
 	}
 
-	utils.ResetNetworking()
 	time.Sleep(resetWait)
 
 	for _, prfl := range prfls2 {
