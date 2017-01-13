@@ -18,6 +18,7 @@ import (
 	"sort"
 	"strings"
 	"sync"
+	"time"
 )
 
 var (
@@ -166,7 +167,26 @@ func RemoveScutilKey(key string) (err error) {
 	return
 }
 
-func CopyScutilDns() (err error) {
+func CopyScutilKey(src, dst string) (err error) {
+	cmd := exec.Command("/usr/sbin/scutil")
+	cmd.Stdin = strings.NewReader(
+		fmt.Sprintf("open\n"+
+			"get State:%s\n"+
+			"set State:%s\n"+
+			"quit\n", src, dst))
+
+	err = cmd.Run()
+	if err != nil {
+		err = &CommandError{
+			errors.Wrap(err, "utils: Failed to exec scutil"),
+		}
+		return
+	}
+
+	return
+}
+
+func GetScutilService() (serviceId string, err error) {
 	data, err := GetScutilKey("/Network/Global/IPv4")
 	if err != nil {
 		return
@@ -179,17 +199,153 @@ func CopyScutilDns() (err error) {
 		}
 		return
 	}
-	serviceId := strings.Split(dataSpl[1], "\n")[0]
+	serviceId = strings.Split(dataSpl[1], "\n")[0]
 	serviceId = strings.TrimSpace(serviceId)
+
+	return
+}
+
+func RestoreScutilDns() (err error) {
+	serviceId, err := GetScutilService()
+	if err != nil {
+		return
+	}
+
+	serviceKey := fmt.Sprintf("/Network/Pritunl/Restore/%s", serviceId)
+
+	data, err := GetScutilKey(serviceKey)
+	if err != nil {
+		return
+	}
+
+	if strings.Contains(data, "No such key") {
+		return
+	}
+
+	err = CopyScutilDns(serviceKey)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+func CopyScutilDns(src string) (err error) {
+	serviceId, err := GetScutilService()
+	if err != nil {
+		return
+	}
 
 	cmd := exec.Command("/usr/sbin/scutil")
 	cmd.Stdin = strings.NewReader(
 		fmt.Sprintf("open\n"+
-			"get State:/Network/Pritunl/DNS\n"+
+			"get State:%s\n"+
 			"set State:/Network/Service/%s/DNS\n"+
-			"get State:/Network/Pritunl/DNS\n"+
 			"set Setup:/Network/Service/%s/DNS\n"+
-			"quit\n", serviceId, serviceId))
+			"quit\n", src, serviceId, serviceId))
+
+	err = cmd.Run()
+	if err != nil {
+		err = &CommandError{
+			errors.Wrap(err, "utils: Failed to exec scutil"),
+		}
+		return
+	}
+
+	ClearDNSCache()
+
+	return
+}
+
+func BackupScutilDns() (err error) {
+	serviceId, err := GetScutilService()
+	if err != nil {
+		return
+	}
+
+	serviceKey := fmt.Sprintf("/Network/Service/%s/DNS", serviceId)
+
+	data, err := GetScutilKey(serviceKey)
+	if err != nil {
+		return
+	}
+
+	if strings.Contains(data, "No such key") ||
+		strings.Contains(data, "Pritunl : true") {
+		return
+	}
+
+	err = CopyScutilKey(serviceKey,
+		fmt.Sprintf("/Network/Pritunl/Restore/%s", serviceId))
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+func GetScutilConnIds() (ids []string, err error) {
+	ids = []string{}
+
+	cmd := exec.Command("/usr/sbin/scutil")
+	cmd.Stdin = strings.NewReader("open\nlist\nquit\n")
+
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		err = &CommandError{
+			errors.Wrap(err, "utils: Failed to exec scutil"),
+		}
+		return
+	}
+
+	for _, line := range strings.Split(string(output), "\n") {
+		if !strings.Contains(line, "State:/Network/Pritunl/Connection/") {
+			continue
+		}
+
+		spl := strings.Split(line, "State:/Network/Pritunl/Connection/")
+		if len(spl) == 2 {
+			ids = append(ids, strings.TrimSpace(spl[1]))
+		}
+	}
+
+	return
+}
+
+func ClearScutilKeys() (err error) {
+	remove := ""
+
+	cmd := exec.Command("/usr/sbin/scutil")
+	cmd.Stdin = strings.NewReader("open\nlist\nquit\n")
+
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		err = &CommandError{
+			errors.Wrap(err, "utils: Failed to exec scutil"),
+		}
+		return
+	}
+
+	for _, line := range strings.Split(string(output), "\n") {
+		if !strings.Contains(line, "State:/Network/Pritunl") {
+			continue
+		}
+
+		spl := strings.Split(line, "State:")
+		if len(spl) != 2 {
+			continue
+		}
+
+		key := strings.TrimSpace(spl[1])
+		remove += fmt.Sprintf("remove State:%s\n", key)
+	}
+
+	if remove == "" {
+		return
+	}
+
+	cmd = exec.Command("/usr/sbin/scutil")
+	cmd.Stdin = strings.NewReader("open\n" + remove + "quit\n")
 
 	err = cmd.Run()
 	if err != nil {
