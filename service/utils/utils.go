@@ -7,7 +7,6 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"fmt"
-	"github.com/Sirupsen/logrus"
 	"github.com/dropbox/godropbox/container/set"
 	"github.com/dropbox/godropbox/errors"
 	"io"
@@ -372,88 +371,6 @@ func ResetNetworking() {
 		exec.Command("nbtstat", "-RR").Run()
 		exec.Command("ipconfig", "/flushdns").Run()
 		exec.Command("nbtstat", "/registerdns").Run()
-	} else if runtime.GOOS == "darwin" {
-		cmd := exec.Command("/usr/sbin/networksetup", "-getcurrentlocation")
-
-		output, err := cmd.CombinedOutput()
-		if err != nil {
-			err = &CommandError{
-				errors.Wrap(err, "utils: Failed to get network location"),
-			}
-			logrus.WithFields(logrus.Fields{
-				"error": err,
-			}).Error("utils: Reset networking error")
-			return
-		}
-
-		location := strings.TrimSpace(string(output))
-
-		if location == "pritunl-reset" {
-			return
-		}
-
-		err = exec.Command(
-			"/usr/sbin/networksetup",
-			"-createlocation",
-			"pritunl-reset",
-		).Run()
-		if err != nil {
-			err = &CommandError{
-				errors.Wrap(err, "utils: Failed to create network location"),
-			}
-			logrus.WithFields(logrus.Fields{
-				"error": err,
-			}).Error("utils: Reset networking error")
-		}
-
-		err = exec.Command(
-			"/usr/sbin/networksetup",
-			"-switchtolocation",
-			"pritunl-reset",
-		).Run()
-		if err != nil {
-			err = &CommandError{
-				errors.Wrap(err, "utils: Failed to set network location"),
-			}
-			logrus.WithFields(logrus.Fields{
-				"error": err,
-			}).Error("utils: Reset networking error")
-		}
-
-		err = exec.Command(
-			"/usr/sbin/networksetup",
-			"-switchtolocation",
-			location,
-		).Run()
-		if err != nil {
-			err = &CommandError{
-				errors.Wrap(err, "utils: Failed to set network location"),
-			}
-			logrus.WithFields(logrus.Fields{
-				"error": err,
-			}).Error("utils: Reset networking error")
-		}
-
-		err = exec.Command(
-			"/usr/sbin/networksetup",
-			"-deletelocation",
-			"pritunl-reset",
-		).Run()
-		if err != nil {
-			err = &CommandError{
-				errors.Wrap(err, "utils: Failed to delete network location"),
-			}
-			logrus.WithFields(logrus.Fields{
-				"error": err,
-			}).Error("utils: Reset networking error")
-		}
-
-		err = RemoveScutilKey("/Network/Pritunl/DNS")
-		if err != nil {
-			logrus.WithFields(logrus.Fields{
-				"error": err,
-			}).Error("utils: Reset networking error")
-		}
 	}
 }
 
