@@ -35,20 +35,18 @@ var (
 
 func init() {
 	go func() {
-		if time.Since(Ping) > 1*time.Minute {
-			prfls := GetProfiles()
-			for _, prfl := range prfls {
-				prfl.Stop(false)
-			}
-			for _, prfl := range prfls {
-				prfl.Wait()
-			}
-			if len(prfls) > 0 {
-				utils.ResetNetworking()
-			}
-		}
+		for {
+			fmt.Println(Profiles.m)
 
-		time.Sleep(2 * time.Minute)
+			if time.Since(Ping) > 1*time.Minute {
+				prfls := GetProfiles()
+				for _, prfl := range prfls {
+					prfl.Stop(false)
+				}
+			}
+
+			time.Sleep(10 * time.Second)
+		}
 	}()
 }
 
