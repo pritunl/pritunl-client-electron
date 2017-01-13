@@ -591,7 +591,7 @@ func (p *Profile) Start(timeout bool) (err error) {
 }
 
 func (p *Profile) Stop(reset bool) (err error) {
-	if p.cmd == nil {
+	if p.cmd == nil || p.cmd.Process == nil {
 		return
 	}
 
