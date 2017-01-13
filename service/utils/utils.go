@@ -460,8 +460,20 @@ func ResetNetworking() {
 func ClearDNSCache() {
 	if runtime.GOOS == "windows" {
 		exec.Command("ipconfig", "/flushdns").Run()
+		go func() {
+			for i := 0; i < 3; i++ {
+				time.Sleep(1 * time.Second)
+				exec.Command("ipconfig", "/flushdns").Run()
+			}
+		}()
 	} else if runtime.GOOS == "darwin" {
 		exec.Command("killall", "-HUP", "mDNSResponder").Run()
+		go func() {
+			for i := 0; i < 3; i++ {
+				time.Sleep(1 * time.Second)
+				exec.Command("killall", "-HUP", "mDNSResponder").Run()
+			}
+		}()
 	}
 }
 
