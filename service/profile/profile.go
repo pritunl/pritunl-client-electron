@@ -295,8 +295,8 @@ func (p *Profile) clearStatus(start time.Time) {
 
 	go func() {
 		diff := time.Since(start)
-		if diff < 3*time.Second {
-			time.Sleep((5 * time.Second) - diff)
+		if diff < 1*time.Second {
+			time.Sleep((2 * time.Second) - diff)
 		}
 
 		p.Status = "disconnected"
