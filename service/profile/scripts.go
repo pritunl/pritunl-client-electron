@@ -22,6 +22,10 @@ for optionname in ${!foreign_option_*} ; do
   fi
 done
 
+if [ -z "$DNS_SERVERS" ] && [ -z "$DNS_SEARCH" ]; then
+  exit 0
+fi
+
 SERVICE_ID="$(/usr/sbin/scutil <<-EOF |
 open
 show State:/Network/Global/IPv4
