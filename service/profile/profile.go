@@ -106,7 +106,7 @@ func (p *Profile) writeUp() (pth string, err error) {
 	err = ioutil.WriteFile(pth, []byte(upScript), os.FileMode(0755))
 	if err != nil {
 		err = &WriteError{
-			errors.Wrap(err, "profile: Failed to write up down script"),
+			errors.Wrap(err, "profile: Failed to write up script"),
 		}
 		return
 	}
