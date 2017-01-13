@@ -9,7 +9,7 @@ import (
 func stopPost(c *gin.Context) {
 	prfls := profile.GetProfiles()
 	for _, prfl := range prfls {
-		prfl.Stop(false)
+		prfl.Stop()
 	}
 
 	autoclean.CheckAndCleanWatch()

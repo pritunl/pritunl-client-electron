@@ -80,7 +80,7 @@ func RestartProfiles() (err error) {
 		prfl2 := prfl.Copy()
 		prfls2[prfl2.Id] = prfl2
 
-		err = prfl.Stop(false)
+		err = prfl.Stop()
 		if err != nil {
 			return
 		}
