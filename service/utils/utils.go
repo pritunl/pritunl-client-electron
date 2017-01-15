@@ -330,6 +330,10 @@ func ClearScutilKeys() (err error) {
 			continue
 		}
 
+		if strings.Contains(line, "State:/Network/Pritunl/Restore") {
+			continue
+		}
+
 		spl := strings.Split(line, "State:")
 		if len(spl) != 2 {
 			continue
