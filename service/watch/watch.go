@@ -100,11 +100,22 @@ func dnsWatch() {
 	}
 
 	reset := false
+	dnsState := false
 
 	for {
 		time.Sleep(1 * time.Second)
 
 		if !profile.GetStatus() {
+			if dnsState {
+				dnsState = false
+				err := utils.RestoreScutilDns()
+				if err != nil {
+					logrus.WithFields(logrus.Fields{
+						"error": err,
+					}).Error("watch: Failed to restore DNS")
+				}
+			}
+
 			continue
 		}
 
@@ -114,6 +125,8 @@ func dnsWatch() {
 		if strings.Contains(global, "No such key") {
 			continue
 		}
+
+		dnsState = true
 
 		if strings.Contains(vpn, "No such key") {
 			connIds, err := utils.GetScutilConnIds()
