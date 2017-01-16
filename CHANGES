@@ -1,6 +1,11 @@
 Pritunl Client Changelog
 ========================
 
+Version
+-------
+
+Fix reconnection issues on macOS
+
 Version 1.0.1219.32 2017-01-13
 ------------------------------
 
