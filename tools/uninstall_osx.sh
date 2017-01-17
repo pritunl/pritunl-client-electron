@@ -4,7 +4,8 @@ sudo launchctl unload /Library/LaunchAgents/com.pritunl.client.plist
 sudo launchctl unload /Library/LaunchDaemons/com.pritunl.service.plist
 
 # Pritunl
-sudo rm -rf /private/tmp/pritunl
+sudo rm -rf /var/lib/pritunl
+sudo rm -f /var/log/pritunl.log
 sudo rm -rf /Applications/Pritunl.app
 sudo rm -f /private/var/db/receipts/com.pritunl.pkg.Pritunl.bom
 sudo rm -f /private/var/db/receipts/com.pritunl.pkg.Pritunl.plist
