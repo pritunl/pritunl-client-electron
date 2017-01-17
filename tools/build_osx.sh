@@ -56,6 +56,10 @@ mkdir -p build/osx/usr/local/bin
 cp openvpn_osx/openvpn build/osx/usr/local/bin/pritunl-openvpn
 codesign -s "Developer ID Application: Zachary Huff (73CNTLZRFJ)" build/osx/usr/local/bin/pritunl-openvpn
 
+# Files
+mkdir -p build/osx/var/lib/pritunl
+touch build/osx/var/lib/pritunl/auth
+
 # Package
 chmod +x resources_osx/scripts/postinstall
 chmod +x resources_osx/scripts/preinstall
