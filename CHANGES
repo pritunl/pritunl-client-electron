@@ -1,6 +1,11 @@
 Pritunl Client Changelog
 ========================
 
+Version
+-------
+
+Fix startup issues on macOS
+
 Version 1.0.1222.48 2017-01-16
 ------------------------------
 
