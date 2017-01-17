@@ -59,6 +59,8 @@ codesign -s "Developer ID Application: Zachary Huff (73CNTLZRFJ)" build/osx/usr/
 # Files
 mkdir -p build/osx/var/lib/pritunl
 touch build/osx/var/lib/pritunl/auth
+mkdir -p build/osx/var/log
+touch build/osx/var/log/pritunl.log
 
 # Package
 chmod +x resources_osx/scripts/postinstall
