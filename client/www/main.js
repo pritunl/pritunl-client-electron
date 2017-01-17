@@ -26,7 +26,7 @@ var authPath;
 if (process.platform === 'win32') {
   authPath = path.join('C:\\', 'ProgramData', 'Pritunl', 'auth');
 } else {
-  authPath = path.join(path.sep, 'tmp', 'pritunl_auth');
+  authPath = path.join(path.sep, 'var', 'lib', 'pritunl', 'auth');
 }
 
 global.key = fs.readFileSync(authPath, 'utf8');

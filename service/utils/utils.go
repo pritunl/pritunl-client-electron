@@ -437,7 +437,18 @@ func GetAuthPath() (pth string) {
 
 		pth = filepath.Join(pth, "auth")
 	} else {
-		pth = filepath.Join(string(filepath.Separator), "tmp", "pritunl_auth")
+		pth = filepath.Join(string(filepath.Separator),
+			"var", "lib", "pritunl")
+
+		err := os.MkdirAll(pth, 0755)
+		if err != nil {
+			err = &IoError{
+				errors.Wrap(err, "utils: Failed to create data directory"),
+			}
+			panic(err)
+		}
+
+		pth = filepath.Join(pth, "auth")
 	}
 
 	return
