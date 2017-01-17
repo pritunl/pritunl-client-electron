@@ -22,7 +22,7 @@ func clean() (err error) {
 			"com.pritunl.pkg.Pritunl.bom"),
 		filepath.Join(pathSep, "private", "var", "db", "receipts",
 			"com.pritunl.pkg.Pritunl.plist"),
-		filepath.Join(pathSep, "private", "tmp", "pritunl"),
+		filepath.Join(pathSep, "var", "lib", "pritunl"),
 		filepath.Join(pathSep, "Applications", "Pritunl.app"),
 		filepath.Join(pathSep, "Library", "LaunchAgents",
 			"com.pritunl.client.plist"),
