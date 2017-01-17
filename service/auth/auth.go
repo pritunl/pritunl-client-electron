@@ -5,6 +5,7 @@ import (
 	"github.com/pritunl/pritunl-client-electron/service/utils"
 	"io/ioutil"
 	"os"
+	"strings"
 )
 
 var Key = ""
@@ -31,7 +32,18 @@ func Init() (err error) {
 			return
 		}
 
-		Key = string(data)
+		Key = strings.TrimSpace(string(data))
+
+		if Key == "" {
+			err = os.Remove(pth)
+			if err != nil {
+				err = &WriteError{
+					errors.Wrap(err, "auth: Failed to reset auth key"),
+				}
+				return
+			}
+			Init()
+		}
 	}
 
 	return
