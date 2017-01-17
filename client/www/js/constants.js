@@ -1,5 +1,5 @@
 module.exports = {
   key: '',
-  version: '1.0.1222.48',
+  version: '1.0.1223.14',
   serviceHost: 'localhost:9770'
 };
