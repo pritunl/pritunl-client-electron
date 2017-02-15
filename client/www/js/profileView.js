@@ -20,6 +20,7 @@ var unbindAll = function($profile) {
   $profile.find('.menu .connect-confirm').unbind('click');
   $profile.find('.connect-pin-input').unbind('keypress');
   $profile.find('.connect-otp-input').unbind('keypress');
+  $profile.find('.connect-yubikey-input').unbind('keypress');
   $profile.find('.connect-user-input').unbind('keypress');
   $profile.find('.connect-pass-input').unbind('keypress');
 };
@@ -30,6 +31,7 @@ var closeMenu = function($profile) {
   $menu.removeClass('authenticating-pass');
   $menu.removeClass('authenticating-pin');
   $menu.removeClass('authenticating-otp');
+  $menu.removeClass('authenticating-yubikey');
   $menu.removeClass('renaming');
   $menu.removeClass('deleting');
   $menu.removeClass('autostarting');
@@ -251,6 +253,36 @@ var renderProfile = function(prfl) {
           setTimeout(function() {
             $profile.find('.connect-otp-input').focus();
           }, 150);
+        }  else if (authType.indexOf('yubikey') !== -1) {
+          authType.splice(authType.indexOf('yubikey'), 1);
+
+          handler = function(evt) {
+            if (evt.type === 'keypress' && evt.which !== 13) {
+              return;
+            }
+            unbindAll($profile);
+
+            var otpCode = $profile.find('.connect-yubikey-input').val();
+            if (otpCode) {
+              password += otpCode;
+
+              if (!authType.length) {
+                callback(username, password);
+                closeMenu($profile);
+              } else {
+                authHandler();
+              }
+            } else {
+              closeMenu($profile);
+            }
+          };
+
+          $profile.find('.menu .connect-confirm').bind('click', handler);
+          $profile.find('.connect-yubikey-input').bind('keypress', handler);
+          $profile.find('.menu').addClass('authenticating-yubikey');
+          setTimeout(function() {
+            $profile.find('.connect-yubikey-input').focus();
+          }, 150);
         } else if (authType.indexOf('otp') !== -1) {
           authType.splice(authType.indexOf('otp'), 1);
 
@@ -295,6 +327,7 @@ var renderProfile = function(prfl) {
     $menu.removeClass('authenticating-pass');
     $menu.removeClass('authenticating-pin');
     $menu.removeClass('authenticating-otp');
+    $menu.removeClass('authenticating-yubikey');
     $profile.find('.menu .connect').removeClass('disabled');
     $profile.find('.menu .connect-user-input').blur();
     $profile.find('.menu .connect-user-input').val('');
