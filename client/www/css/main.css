@@ -520,6 +520,7 @@ input:active {
 .profile .menu .connect-pass-input,
 .profile .menu .connect-pin-input,
 .profile .menu .connect-otp-input,
+.profile .menu .connect-yubikey-input,
 .profile .menu .connect-confirm,
 .profile .menu .connect-cancel {
   position: absolute;
@@ -533,26 +534,30 @@ input:active {
 .profile .menu .connect-user-input,
 .profile .menu .connect-pass-input,
 .profile .menu .connect-pin-input,
-.profile .menu .connect-otp-input {
+.profile .menu .connect-otp-input,
+.profile .menu .connect-yubikey-input {
   font-size: 16px;
   width: 190px;
 }
 .profile .menu.authenticating-user .connect-user-input,
 .profile .menu.authenticating-pass .connect-pass-input,
 .profile .menu.authenticating-pin .connect-pin-input,
-.profile .menu.authenticating-otp .connect-otp-input {
+.profile .menu.authenticating-otp .connect-otp-input,
+.profile .menu.authenticating-yubikey .connect-yubikey-input {
   left: -190px;
 }
 .profile .menu.authenticating-user .connect-confirm,
 .profile .menu.authenticating-pass .connect-confirm,
 .profile .menu.authenticating-pin .connect-confirm,
-.profile .menu.authenticating-otp .connect-confirm {
+.profile .menu.authenticating-otp .connect-confirm,
+.profile .menu.authenticating-yubikey .connect-confirm {
   left: 0;
 }
 .profile .menu.authenticating-user .connect-cancel,
 .profile .menu.authenticating-pass .connect-cancel,
 .profile .menu.authenticating-pin .connect-cancel,
-.profile .menu.authenticating-otp .connect-cancel {
+.profile .menu.authenticating-otp .connect-cancel,
+.profile .menu.authenticating-yubikey .connect-cancel {
   left: 63px;
 }
 
