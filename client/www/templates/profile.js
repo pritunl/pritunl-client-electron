@@ -26,6 +26,8 @@ module.exports = `<div class="profile" flex layout horizontal>
       placeholder="Enter Pin">
     <input class="connect-otp-input" type="text" tabindex="-1"
       placeholder="Enter OTP Code">
+    <input class="connect-yubikey-input" type="password" tabindex="-1"
+      placeholder="YubiKey">
     <div class="connect-confirm item btn btn-success"
       layout vertical center>Ok</div>
     <div class="connect-cancel item btn btn-danger"
