@@ -94,10 +94,10 @@ function Profile(pth) {
   this.userId = null;
   this.user = null;
   this.passwordMode = null;
-  this.pushAuth = null;
-  this.pushAuthTtl = null;
-  this.pushToken = null;
-  this.pushTokenTime = null;
+  this.token = null;
+  this.tokenTtl = null;
+  this.authToken = null;
+  this.authTokenTime = null;
   this.autostart = false;
   this.syncHosts = [];
   this.syncHash = null;
@@ -204,10 +204,10 @@ Profile.prototype.import = function(data) {
   this.userId = data.user_id || null;
   this.user = data.user || null;
   this.passwordMode = data.password_mode || null;
-  this.pushAuth = data.push_auth || null;
-  this.pushAuthTtl = data.push_auth_ttl || null;
-  this.pushToken = data.push_token || null;
-  this.pushTokenTime = data.push_token_time || null;
+  this.token = data.token || null;
+  this.tokenTtl = data.token_ttl || null;
+  this.authToken = data.auth_token || null;
+  this.authTokenTime = data.auth_token_time || null;
   this.autostart = data.autostart || null;
   this.syncHosts = data.sync_hosts || [];
   this.syncHash = data.sync_hash || null;
@@ -224,8 +224,8 @@ Profile.prototype.upsert = function(data) {
   this.userId = data.user_id || this.userId;
   this.user = data.user || this.user;
   this.passwordMode = data.password_mode;
-  this.pushAuth = data.push_auth;
-  this.pushAuthTtl = data.push_auth_ttl;
+  this.token = data.token;
+  this.tokenTtl = data.token_ttl;
   this.autostart = data.autostart || this.autostart;
   this.syncHosts = data.sync_hosts;
   this.syncHash = data.sync_hash;
@@ -241,10 +241,10 @@ Profile.prototype.exportConf = function() {
     user_id: this.userId,
     user: this.user,
     password_mode: this.passwordMode,
-    push_auth: this.pushAuth,
-    push_auth_ttl: this.pushAuthTtl,
-    push_token: this.pushToken,
-    push_token_time: this.pushTokenTime,
+    token: this.token,
+    token_ttl: this.tokenTtl,
+    auth_token: this.authToken,
+    auth_token_time: this.authTokenTime,
     autostart: this.autostart,
     sync_hosts: this.syncHosts,
     sync_hash: this.syncHash,
@@ -754,29 +754,29 @@ Profile.prototype.connect = function(timeout, authCallback) {
 
 Profile.prototype.auth = function(timeout, callback) {
   var authType = this.getAuthType();
-  var pushToken;
+  var authToken;
 
-  if (this.pushAuth) {
-    if (!this.pushToken ||
-        !this.pushTokenTime ||
-        Math.abs(this.pushTokenTime - utils.time()) > (
-          this.pushAuthTtl || 604800)) {
-      this.pushToken = utils.uuid();
-      this.pushTokenTime = utils.time();
+  if (this.token) {
+    if (!this.authToken ||
+        !this.authTokenTime ||
+        Math.abs(this.authTokenTime - utils.time()) > (
+          this.tokenTtl || 604800)) {
+      this.authToken = utils.uuid();
+      this.authTokenTime = utils.time();
       this.saveConf();
     }
-    pushToken = this.pushToken;
+    authToken = this.authToken;
   }
 
   if (!authType) {
     if (callback) {
       callback(null);
     }
-    service.start(this, timeout, pushToken);
+    service.start(this, timeout, authToken);
   } else if (!callback) {
   } else {
     callback(authType, function(user, pass) {
-      service.start(this, timeout, pushToken, user || 'pritunl', pass);
+      service.start(this, timeout, authToken, user || 'pritunl', pass);
     }.bind(this));
   }
 };

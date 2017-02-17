@@ -68,13 +68,13 @@ var update = function(callback) {
   }.bind(this));
 };
 
-var start = function(prfl, timeout, pushToken, username, password, callback) {
-  if (pushToken) {
-    pushToken += '<%=PUSH_TOKEN=%>';
+var start = function(prfl, timeout, authToken, username, password, callback) {
+  if (authToken) {
+    authToken += '<%=AUTH_TOKEN=%>';
     if (password) {
-      password = pushToken + password;
+      password = authToken + password;
     } else {
-      password = pushToken;
+      password = authToken;
     }
     username = username || 'pritunl';
   }
