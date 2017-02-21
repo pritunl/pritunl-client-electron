@@ -788,15 +788,50 @@ Profile.prototype.disconnect = function() {
 var getProfiles = function(callback, waitAll) {
   var root = path.join(utils.getUserDataPath(), 'profiles');
 
+  var _callback = function(err, prfls) {
+    if (prfls) {
+      var i;
+      var j;
+      var name;
+      var indexes;
+      var newPrfls = [];
+      var prflsMap = {};
+
+      for (i = 0; i < prfls.length; i++) {
+        name = prfls[i].formatedNameLogo()[0] || 'ZZZZZZZZ';
+
+        if (!prflsMap[name]) {
+          prflsMap[name] = [i];
+        } else {
+          prflsMap[name].push(i);
+        }
+      }
+
+      var prflsName = Object.keys(prflsMap);
+      prflsName.sort();
+
+      for (i = 0; i < prflsName.length; i++) {
+        indexes = prflsMap[prflsName[i]];
+        for (j = 0; j < indexes.length; j++) {
+          newPrfls.push(prfls[indexes[j]]);
+        }
+      }
+
+      prfls = newPrfls;
+    }
+
+    callback(err, prfls);
+  };
+
   fs.exists(root, function(exists) {
     if (!exists) {
-      callback(null, []);
+      _callback(null, []);
       return;
     }
 
     fs.readdir(root, function(err, paths) {
       if (err) {
-        callback(err, null);
+        _callback(err, null);
         return
       }
       paths = paths || [];
@@ -820,7 +855,7 @@ var getProfiles = function(callback, waitAll) {
       }
 
       if (!profilePaths.length) {
-        callback(null, []);
+        _callback(null, []);
       }
 
       for (i = 0; i < profilePaths.length; i++) {
@@ -833,7 +868,7 @@ var getProfiles = function(callback, waitAll) {
           loaded += 1;
 
           if (loaded >= profilePaths.length) {
-            callback(null, profiles);
+            _callback(null, profiles);
           }
         }, waitAll);
       }
