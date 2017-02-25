@@ -790,34 +790,7 @@ var getProfiles = function(callback, waitAll) {
 
   var _callback = function(err, prfls) {
     if (prfls) {
-      var i;
-      var j;
-      var name;
-      var indexes;
-      var newPrfls = [];
-      var prflsMap = {};
-
-      for (i = 0; i < prfls.length; i++) {
-        name = prfls[i].formatedNameLogo()[0] || 'ZZZZZZZZ';
-
-        if (!prflsMap[name]) {
-          prflsMap[name] = [i];
-        } else {
-          prflsMap[name].push(i);
-        }
-      }
-
-      var prflsName = Object.keys(prflsMap);
-      prflsName.sort();
-
-      for (i = 0; i < prflsName.length; i++) {
-        indexes = prflsMap[prflsName[i]];
-        for (j = 0; j < indexes.length; j++) {
-          newPrfls.push(prfls[indexes[j]]);
-        }
-      }
-
-      prfls = newPrfls;
+      prfls = sortProfiles(prfls);
     }
 
     callback(err, prfls);
@@ -876,7 +849,39 @@ var getProfiles = function(callback, waitAll) {
   });
 };
 
+var sortProfiles = function(prfls) {
+  var i;
+  var j;
+  var name;
+  var indexes;
+  var newPrfls = [];
+  var prflsMap = {};
+
+  for (i = 0; i < prfls.length; i++) {
+    name = prfls[i].formatedNameLogo()[0] || 'ZZZZZZZZ';
+
+    if (!prflsMap[name]) {
+      prflsMap[name] = [i];
+    } else {
+      prflsMap[name].push(i);
+    }
+  }
+
+  var prflsName = Object.keys(prflsMap);
+  prflsName.sort();
+
+  for (i = 0; i < prflsName.length; i++) {
+    indexes = prflsMap[prflsName[i]];
+    for (j = 0; j < indexes.length; j++) {
+      newPrfls.push(prfls[indexes[j]]);
+    }
+  }
+
+  return newPrfls;
+};
+
 module.exports = {
   Profile: Profile,
-  getProfiles: getProfiles
+  getProfiles: getProfiles,
+  sortProfiles: sortProfiles
 };
