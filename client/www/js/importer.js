@@ -217,7 +217,7 @@ Importer.prototype.parse = function(callback) {
 
     waiter.wait(function() {
       if (callback) {
-        callback(this.profiles);
+        callback(profile.sortProfiles(this.profiles));
       }
     }.bind(this));
   }.bind(this));
