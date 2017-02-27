@@ -196,6 +196,12 @@ func (p *Profile) parseLine(line string) {
 		p.Timestamp = time.Now().Unix() - 1
 		p.update()
 		go utils.ClearDNSCache()
+	} else if strings.Contains(line, "Inactivity timeout (--inactive)") {
+		evt := event.Event{
+			Type: "inactive",
+			Data: p,
+		}
+		evt.Init()
 	} else if strings.Contains(line, "Inactivity timeout") {
 		prfl := p.Copy()
 
