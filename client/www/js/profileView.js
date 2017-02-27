@@ -479,6 +479,13 @@ var init = function() {
           prfl.formatedNameLogo()[0]);
         logger.error(err);
         break;
+      case 'inactive':
+        prfl = service.get(evt.data.id);
+        err = new errors.AuthError(
+          'profile_view: Disconnected due to inactivity on %s',
+          prfl.formatedNameLogo()[0]);
+        logger.error(err);
+        break;
       case 'timeout_error':
         prfl = service.get(evt.data.id);
         err = new errors.AuthError(
