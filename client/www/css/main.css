@@ -327,7 +327,7 @@ input:active {
 
 .alerts div {
   position: relative;
-  padding: 10px;
+  padding: 10px 18px 10px 10px;
   color: #fff4f4;
   word-wrap: break-word;
 }
