@@ -17,12 +17,12 @@ sudo rm -rf /usr/local/bin/pritunl-service
 sudo rm -f /Library/LaunchDaemons/com.pritunl.service.plist
 
 # Tuntap
+sudo kextunload -b net.sf.tuntaposx.tap || true
+sudo kextunload -b net.sf.tuntaposx.tun || true
 sudo rm -rf /Library/Extensions/tap.kext
 sudo rm -rf /Library/Extensions/tun.kext
 sudo rm -f /Library/LaunchDaemons/net.sf.tuntaposx.tap.plist
 sudo rm -f /Library/LaunchDaemons/net.sf.tuntaposx.tun.plist
-sudo kextunload -b net.sf.tuntaposx.tap || true
-sudo kextunload -b net.sf.tuntaposx.tun || true
 
 # Openvpn
 sudo rm -rf /usr/local/bin/pritunl-openvpn
