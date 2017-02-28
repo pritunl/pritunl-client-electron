@@ -360,8 +360,5 @@ app.on('ready', function() {
     }, true);
 
     sync();
-    setInterval(function() {
-      sync();
-    }, 10000);
   });
 });
