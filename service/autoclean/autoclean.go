@@ -6,6 +6,7 @@ import (
 	"github.com/dropbox/godropbox/errors"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"runtime"
 	"time"
@@ -16,6 +17,9 @@ const (
 )
 
 func clean() (err error) {
+	exec.Command("kextunload", "-b", "net.sf.tuntaposx.tap").Run()
+	exec.Command("kextunload", "-b", "net.sf.tuntaposx.tun").Run()
+
 	paths := []string{
 		filepath.Join(pathSep, "usr", "local", "bin", "pritunl-openvpn"),
 		filepath.Join(pathSep, "private", "var", "db", "receipts",
@@ -25,6 +29,12 @@ func clean() (err error) {
 		filepath.Join(pathSep, "var", "lib", "pritunl"),
 		filepath.Join(pathSep, "var", "log", "pritunl.log"),
 		filepath.Join(pathSep, "Applications", "Pritunl.app"),
+		filepath.Join(pathSep, "Library", "Extensions", "tap.kext"),
+		filepath.Join(pathSep, "Library", "Extensions", "tun.kext"),
+		filepath.Join(pathSep, "Library", "LaunchDaemons",
+			"net.sf.tuntaposx.tap.plist"),
+		filepath.Join(pathSep, "Library", "LaunchDaemons",
+			"net.sf.tuntaposx.tun.plist"),
 		filepath.Join(pathSep, "Library", "LaunchAgents",
 			"com.pritunl.client.plist"),
 	}
@@ -35,10 +45,6 @@ func clean() (err error) {
 		"com.pritunl.service.plist"))
 
 	for _, path := range paths {
-		if len(path) < 20 {
-			panic("autoclean: Bad path " + path)
-		}
-
 		err = os.RemoveAll(path)
 		if err != nil {
 			err = &RemoveError{
