@@ -37,12 +37,10 @@ func clean() (err error) {
 			"net.sf.tuntaposx.tun.plist"),
 		filepath.Join(pathSep, "Library", "LaunchAgents",
 			"com.pritunl.client.plist"),
+		filepath.Join(pathSep, "Library", "LaunchDaemons",
+			"com.pritunl.service.plist"),
+		filepath.Join(pathSep, "usr", "local", "bin", "pritunl-service"),
 	}
-
-	paths = append(paths, filepath.Join(pathSep, "usr", "local",
-		"bin", "pritunl-service"))
-	paths = append(paths, filepath.Join(pathSep, "Library", "LaunchDaemons",
-		"com.pritunl.service.plist"))
 
 	for _, path := range paths {
 		err = os.RemoveAll(path)
