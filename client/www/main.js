@@ -276,32 +276,6 @@ app.on('ready', function() {
       openMainWin();
     });
 
-    var trayMenu = Menu.buildFromTemplate([
-      {
-        label: 'Pritunl v' + constants.version
-      },
-      {
-        label: 'Open',
-        click: function () {
-          openMainWin();
-        }
-      },
-      {
-        label: 'Exit',
-        click: function () {
-          request.post({
-            url: 'http://' + constants.serviceHost + '/stop',
-            headers: {
-              'Auth-Key': constants.key
-            }
-          }, function () {
-            app.quit();
-          });
-        }
-      }
-    ]);
-    tray.setContextMenu(trayMenu);
-
     var appMenu = Menu.buildFromTemplate([
       {
         label: 'Pritunl',
