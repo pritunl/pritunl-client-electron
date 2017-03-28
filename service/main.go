@@ -13,6 +13,15 @@ import (
 func main() {
 	logger.Init()
 
+	defer func() {
+		err := recover()
+		if err != nil {
+			logrus.WithFields(logrus.Fields{
+				"error": err,
+			}).Error("main: Panic")
+		}
+	}()
+
 	err := auth.Init()
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
