@@ -8,7 +8,6 @@ import (
 )
 
 var (
-	buffer  = make(chan *logrus.Entry, 32)
 	senders = []sender{}
 )
 
@@ -37,20 +36,6 @@ func initSender() {
 	for _, sndr := range senders {
 		sndr.Init()
 	}
-
-	go func() {
-		for {
-			entry := <-buffer
-
-			if len(entry.Message) > 7 && entry.Message[:7] == "logger:" {
-				continue
-			}
-
-			for _, sndr := range senders {
-				sndr.Parse(entry)
-			}
-		}
-	}()
 }
 
 func Init() {

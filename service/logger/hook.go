@@ -7,8 +7,12 @@ import (
 type logHook struct{}
 
 func (h *logHook) Fire(entry *logrus.Entry) (err error) {
-	if len(buffer) <= 125 {
-		buffer <- entry
+	if len(entry.Message) > 7 && entry.Message[:7] == "logger:" {
+		return
+	}
+
+	for _, sndr := range senders {
+		sndr.Parse(entry)
 	}
 
 	return
