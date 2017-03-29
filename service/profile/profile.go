@@ -307,7 +307,12 @@ func (p *Profile) clearStatus(start time.Time) {
 			}
 		}()
 
-		//diff := time.Since(start)
+		diff := time.Since(start)
+		logrus.WithFields(logrus.Fields{
+			"start": start,
+			"now":   time.Now(),
+			"diff":  diff,
+		}).Error("profile: Sleep")
 		//if diff < 1*time.Second {
 		//	time.Sleep((2 * time.Second) - diff)
 		//}
