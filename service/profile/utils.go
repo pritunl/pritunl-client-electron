@@ -1,7 +1,6 @@
 package profile
 
 import (
-	"github.com/Sirupsen/logrus"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
 	"os"
 	"path/filepath"
@@ -87,13 +86,9 @@ func RestartProfiles() (err error) {
 		}
 	}
 
-	logrus.Info("profile: Stopped")
-
 	for _, prfl := range prfls {
 		prfl.Wait()
 	}
-
-	logrus.Info("profile: Starting")
 
 	time.Sleep(resetWait)
 
