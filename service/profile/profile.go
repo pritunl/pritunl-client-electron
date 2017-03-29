@@ -3,7 +3,6 @@ package profile
 
 import (
 	"bufio"
-	"fmt"
 	"github.com/Sirupsen/logrus"
 	"github.com/dropbox/godropbox/errors"
 	"github.com/pritunl/pritunl-client-electron/service/errortypes"
@@ -219,24 +218,39 @@ func (p *Profile) parseLine(line string) {
 		}
 		evt.Init()
 	} else if strings.Contains(line, "Inactivity timeout") {
-		prfl := p.Copy()
+		if !p.stop {
+			go func() {
+				defer func() {
+					panc := recover()
+					if panc != nil {
+						logrus.WithFields(logrus.Fields{
+							"stack": string(debug.Stack()),
+							"panic": panc,
+						}).Error("profile: Panic")
+						panic(panc)
+					}
+				}()
 
-		err := p.Stop()
-		if err != nil {
-			logrus.WithFields(logrus.Fields{
-				"error": err,
-			}).Error("profile: Stop error")
-			return
-		}
+				prfl := p.Copy()
 
-		p.Wait()
+				err := p.Stop()
+				if err != nil {
+					logrus.WithFields(logrus.Fields{
+						"error": err,
+					}).Error("profile: Stop error")
+					return
+				}
 
-		err = prfl.Start(false)
-		if err != nil {
-			logrus.WithFields(logrus.Fields{
-				"error": err,
-			}).Error("profile: Restart error")
-			return
+				p.Wait()
+
+				err = prfl.Start(false)
+				if err != nil {
+					logrus.WithFields(logrus.Fields{
+						"error": err,
+					}).Error("profile: Restart error")
+					return
+				}
+			}()
 		}
 	} else if strings.Contains(line, "AUTH_FAILED") || strings.Contains(
 		line, "auth-failure") {
@@ -309,14 +323,9 @@ func (p *Profile) clearStatus(start time.Time) {
 		}()
 
 		diff := time.Since(start)
-		logrus.WithFields(logrus.Fields{
-			"start": start,
-			"now":   time.Now(),
-			"diff":  diff,
-		}).Error("profile: Sleep")
-		//if diff < 1*time.Second {
-		//	time.Sleep((2 * time.Second) - diff)
-		//}
+		if diff < 1*time.Second {
+			time.Sleep(1 * time.Second)
+		}
 
 		logrus.Info("profile: Update")
 
@@ -541,8 +550,6 @@ func (p *Profile) Start(timeout bool) (err error) {
 
 			lineStr := string(line)
 			if lineStr != "" {
-				fmt.Println(len(output))
-				fmt.Println(lineStr)
 				output <- lineStr
 			}
 		}
