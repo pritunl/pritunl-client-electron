@@ -188,20 +188,32 @@ func CopyScutilKey(src, dst string) (err error) {
 }
 
 func GetScutilService() (serviceId string, err error) {
-	data, err := GetScutilKey("/Network/Global/IPv4")
-	if err != nil {
-		return
-	}
-
-	dataSpl := strings.Split(data, "PrimaryService :")
-	if len(dataSpl) < 2 {
-		err = &CommandError{
-			errors.New("utils: Failed to find primary service from scutil"),
+	for i := 0; i < 20; i++ {
+		data, e := GetScutilKey("/Network/Global/IPv4")
+		if e != nil {
+			err = e
+			return
 		}
-		return
+
+		dataSpl := strings.Split(data, "PrimaryService :")
+		if len(dataSpl) < 2 {
+			if i < 19 {
+				time.Sleep(250 * time.Millisecond)
+				continue
+			}
+
+			err = &CommandError{
+				errors.New(
+					"utils: Failed to find primary service from scutil"),
+			}
+			return
+		}
+
+		serviceId = strings.Split(dataSpl[1], "\n")[0]
+		serviceId = strings.TrimSpace(serviceId)
+
+		break
 	}
-	serviceId = strings.Split(dataSpl[1], "\n")[0]
-	serviceId = strings.TrimSpace(serviceId)
 
 	return
 }
