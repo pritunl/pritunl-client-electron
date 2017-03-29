@@ -7,6 +7,7 @@ import (
 	"github.com/pritunl/pritunl-client-electron/service/utils"
 	"reflect"
 	"runtime"
+	"runtime/debug"
 	"strings"
 	"sync"
 	"time"
@@ -61,6 +62,17 @@ func parseDns(data string) (searchDomains, searchAddresses []string) {
 }
 
 func wakeWatch(delay time.Duration) {
+	defer func() {
+		panc := recover()
+		if panc != nil {
+			logrus.WithFields(logrus.Fields{
+				"stack": string(debug.Stack()),
+				"panic": panc,
+			}).Error("watch: Panic")
+			panic(panc)
+		}
+	}()
+
 	curTime := time.Now()
 	delay += 1 * time.Second
 
@@ -95,6 +107,17 @@ func wakeWatch(delay time.Duration) {
 }
 
 func dnsWatch() {
+	defer func() {
+		panc := recover()
+		if panc != nil {
+			logrus.WithFields(logrus.Fields{
+				"stack": string(debug.Stack()),
+				"panic": panc,
+			}).Error("watch: Panic")
+			panic(panc)
+		}
+	}()
+
 	if runtime.GOOS != "darwin" {
 		return
 	}

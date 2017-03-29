@@ -7,6 +7,7 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"fmt"
+	"github.com/Sirupsen/logrus"
 	"github.com/dropbox/godropbox/container/set"
 	"github.com/dropbox/godropbox/errors"
 	"io"
@@ -14,6 +15,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"runtime/debug"
 	"sort"
 	"strings"
 	"sync"
@@ -382,6 +384,17 @@ func ClearDNSCache() {
 	if runtime.GOOS == "windows" {
 		exec.Command("ipconfig", "/flushdns").Run()
 		go func() {
+			defer func() {
+				panc := recover()
+				if panc != nil {
+					logrus.WithFields(logrus.Fields{
+						"stack": string(debug.Stack()),
+						"panic": panc,
+					}).Error("watch: Panic")
+					panic(panc)
+				}
+			}()
+
 			for i := 0; i < 3; i++ {
 				time.Sleep(1 * time.Second)
 				exec.Command("ipconfig", "/flushdns").Run()
@@ -390,6 +403,17 @@ func ClearDNSCache() {
 	} else if runtime.GOOS == "darwin" {
 		exec.Command("killall", "-HUP", "mDNSResponder").Run()
 		go func() {
+			defer func() {
+				panc := recover()
+				if panc != nil {
+					logrus.WithFields(logrus.Fields{
+						"stack": string(debug.Stack()),
+						"panic": panc,
+					}).Error("watch: Panic")
+					panic(panc)
+				}
+			}()
+
 			for i := 0; i < 3; i++ {
 				time.Sleep(1 * time.Second)
 				exec.Command("killall", "-HUP", "mDNSResponder").Run()

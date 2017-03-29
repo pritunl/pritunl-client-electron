@@ -14,6 +14,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"runtime/debug"
 	"strings"
 	"sync"
 	"time"
@@ -196,7 +197,20 @@ func (p *Profile) parseLine(line string) {
 		p.Status = "connected"
 		p.Timestamp = time.Now().Unix() - 1
 		p.update()
-		go utils.ClearDNSCache()
+		go func() {
+			defer func() {
+				panc := recover()
+				if panc != nil {
+					logrus.WithFields(logrus.Fields{
+						"stack": string(debug.Stack()),
+						"panic": panc,
+					}).Error("watch: Panic")
+					panic(panc)
+				}
+			}()
+
+			utils.ClearDNSCache()
+		}()
 	} else if strings.Contains(line, "Inactivity timeout (--inactive)") {
 		evt := event.Event{
 			Type: "inactive",
@@ -282,6 +296,17 @@ func (p *Profile) clearStatus(start time.Time) {
 	}
 
 	go func() {
+		defer func() {
+			panc := recover()
+			if panc != nil {
+				logrus.WithFields(logrus.Fields{
+					"stack": string(debug.Stack()),
+					"panic": panc,
+				}).Error("watch: Panic")
+				panic(panc)
+			}
+		}()
+
 		diff := time.Since(start)
 		if diff < 1*time.Second {
 			time.Sleep((2 * time.Second) - diff)
@@ -465,6 +490,17 @@ func (p *Profile) Start(timeout bool) (err error) {
 	outputWait.Add(1)
 
 	go func() {
+		defer func() {
+			panc := recover()
+			if panc != nil {
+				logrus.WithFields(logrus.Fields{
+					"stack": string(debug.Stack()),
+					"panic": panc,
+				}).Error("watch: Panic")
+				panic(panc)
+			}
+		}()
+
 		defer stdout.Close()
 		defer func() {
 			output <- ""
@@ -497,6 +533,17 @@ func (p *Profile) Start(timeout bool) (err error) {
 	}()
 
 	go func() {
+		defer func() {
+			panc := recover()
+			if panc != nil {
+				logrus.WithFields(logrus.Fields{
+					"stack": string(debug.Stack()),
+					"panic": panc,
+				}).Error("watch: Panic")
+				panic(panc)
+			}
+		}()
+
 		defer stderr.Close()
 
 		out := bufio.NewReader(stderr)
@@ -526,6 +573,17 @@ func (p *Profile) Start(timeout bool) (err error) {
 	}()
 
 	go func() {
+		defer func() {
+			panc := recover()
+			if panc != nil {
+				logrus.WithFields(logrus.Fields{
+					"stack": string(debug.Stack()),
+					"panic": panc,
+				}).Error("watch: Panic")
+				panic(panc)
+			}
+		}()
+
 		defer outputWait.Done()
 
 		for {
@@ -549,6 +607,17 @@ func (p *Profile) Start(timeout bool) (err error) {
 
 	running := true
 	go func() {
+		defer func() {
+			panc := recover()
+			if panc != nil {
+				logrus.WithFields(logrus.Fields{
+					"stack": string(debug.Stack()),
+					"panic": panc,
+				}).Error("watch: Panic")
+				panic(panc)
+			}
+		}()
+
 		cmd.Wait()
 		outputWait.Wait()
 		running = false
@@ -573,6 +642,17 @@ func (p *Profile) Start(timeout bool) (err error) {
 
 	if timeout {
 		go func() {
+			defer func() {
+				panc := recover()
+				if panc != nil {
+					logrus.WithFields(logrus.Fields{
+						"stack": string(debug.Stack()),
+						"panic": panc,
+					}).Error("watch: Panic")
+					panic(panc)
+				}
+			}()
+
 			time.Sleep(connTimeout)
 			if p.Status != "connected" && running {
 				if runtime.GOOS == "windows" {
@@ -590,6 +670,17 @@ func (p *Profile) Start(timeout bool) (err error) {
 					done := false
 
 					go func() {
+						defer func() {
+							panc := recover()
+							if panc != nil {
+								logrus.WithFields(logrus.Fields{
+									"stack": string(debug.Stack()),
+									"panic": panc,
+								}).Error("watch: Panic")
+								panic(panc)
+							}
+						}()
+
 						time.Sleep(3 * time.Second)
 						if done {
 							return
@@ -635,6 +726,17 @@ func (p *Profile) Stop() (err error) {
 		done := false
 
 		go func() {
+			defer func() {
+				panc := recover()
+				if panc != nil {
+					logrus.WithFields(logrus.Fields{
+						"stack": string(debug.Stack()),
+						"panic": panc,
+					}).Error("watch: Panic")
+					panic(panc)
+				}
+			}()
+
 			time.Sleep(5 * time.Second)
 			if done {
 				return

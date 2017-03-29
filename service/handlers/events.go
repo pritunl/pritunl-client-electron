@@ -1,12 +1,14 @@
 package handlers
 
 import (
+	"github.com/Sirupsen/logrus"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"github.com/pritunl/pritunl-client-electron/service/event"
 	"github.com/pritunl/pritunl-client-electron/service/profile"
 	"io/ioutil"
 	"net/http"
+	"runtime/debug"
 	"time"
 )
 
@@ -51,6 +53,17 @@ func eventsGet(c *gin.Context) {
 	}()
 
 	go func() {
+		defer func() {
+			panc := recover()
+			if panc != nil {
+				logrus.WithFields(logrus.Fields{
+					"stack": string(debug.Stack()),
+					"panic": panc,
+				}).Error("watch: Panic")
+				panic(panc)
+			}
+		}()
+
 		for {
 			_, msgByt, err := conn.NextReader()
 			if err != nil {

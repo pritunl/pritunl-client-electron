@@ -8,17 +8,20 @@ import (
 	"github.com/pritunl/pritunl-client-electron/service/handlers"
 	"github.com/pritunl/pritunl-client-electron/service/logger"
 	"github.com/pritunl/pritunl-client-electron/service/watch"
+	"runtime/debug"
 )
 
 func main() {
 	logger.Init()
 
 	defer func() {
-		err := recover()
-		if err != nil {
+		panc := recover()
+		if panc != nil {
 			logrus.WithFields(logrus.Fields{
-				"error": err,
-			}).Error("main: Panic")
+				"stack": string(debug.Stack()),
+				"panic": panc,
+			}).Error("watch: Panic")
+			panic(panc)
 		}
 	}()
 

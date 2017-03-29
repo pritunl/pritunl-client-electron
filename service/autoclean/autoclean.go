@@ -9,6 +9,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"runtime/debug"
 	"time"
 )
 
@@ -84,6 +85,17 @@ func CheckAndCleanWatch() {
 	}
 
 	go func() {
+		defer func() {
+			panc := recover()
+			if panc != nil {
+				logrus.WithFields(logrus.Fields{
+					"stack": string(debug.Stack()),
+					"panic": panc,
+				}).Error("watch: Panic")
+				panic(panc)
+			}
+		}()
+
 		for i := 0; i < 30; i++ {
 			time.Sleep(10 * time.Second)
 
