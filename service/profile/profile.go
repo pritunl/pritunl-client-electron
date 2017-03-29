@@ -204,7 +204,7 @@ func (p *Profile) parseLine(line string) {
 					logrus.WithFields(logrus.Fields{
 						"stack": string(debug.Stack()),
 						"panic": panc,
-					}).Error("watch: Panic")
+					}).Error("profile: Panic")
 					panic(panc)
 				}
 			}()
@@ -302,7 +302,7 @@ func (p *Profile) clearStatus(start time.Time) {
 				logrus.WithFields(logrus.Fields{
 					"stack": string(debug.Stack()),
 					"panic": panc,
-				}).Error("watch: Panic")
+				}).Error("profile: Panic")
 				panic(panc)
 			}
 		}()
@@ -496,7 +496,7 @@ func (p *Profile) Start(timeout bool) (err error) {
 				logrus.WithFields(logrus.Fields{
 					"stack": string(debug.Stack()),
 					"panic": panc,
-				}).Error("watch: Panic")
+				}).Error("profile: Panic")
 				panic(panc)
 			}
 		}()
@@ -539,7 +539,7 @@ func (p *Profile) Start(timeout bool) (err error) {
 				logrus.WithFields(logrus.Fields{
 					"stack": string(debug.Stack()),
 					"panic": panc,
-				}).Error("watch: Panic")
+				}).Error("profile: Panic")
 				panic(panc)
 			}
 		}()
@@ -579,7 +579,7 @@ func (p *Profile) Start(timeout bool) (err error) {
 				logrus.WithFields(logrus.Fields{
 					"stack": string(debug.Stack()),
 					"panic": panc,
-				}).Error("watch: Panic")
+				}).Error("profile: Panic")
 				panic(panc)
 			}
 		}()
@@ -613,7 +613,7 @@ func (p *Profile) Start(timeout bool) (err error) {
 				logrus.WithFields(logrus.Fields{
 					"stack": string(debug.Stack()),
 					"panic": panc,
-				}).Error("watch: Panic")
+				}).Error("profile: Panic")
 				panic(panc)
 			}
 		}()
@@ -648,7 +648,7 @@ func (p *Profile) Start(timeout bool) (err error) {
 					logrus.WithFields(logrus.Fields{
 						"stack": string(debug.Stack()),
 						"panic": panc,
-					}).Error("watch: Panic")
+					}).Error("profile: Panic")
 					panic(panc)
 				}
 			}()
@@ -676,7 +676,7 @@ func (p *Profile) Start(timeout bool) (err error) {
 								logrus.WithFields(logrus.Fields{
 									"stack": string(debug.Stack()),
 									"panic": panc,
-								}).Error("watch: Panic")
+								}).Error("profile: Panic")
 								panic(panc)
 							}
 						}()
@@ -732,7 +732,7 @@ func (p *Profile) Stop() (err error) {
 					logrus.WithFields(logrus.Fields{
 						"stack": string(debug.Stack()),
 						"panic": panc,
-					}).Error("watch: Panic")
+					}).Error("profile: Panic")
 					panic(panc)
 				}
 			}()

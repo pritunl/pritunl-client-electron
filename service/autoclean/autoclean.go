@@ -91,7 +91,7 @@ func CheckAndCleanWatch() {
 				logrus.WithFields(logrus.Fields{
 					"stack": string(debug.Stack()),
 					"panic": panc,
-				}).Error("watch: Panic")
+				}).Error("autoclean: Panic")
 				panic(panc)
 			}
 		}()

@@ -20,7 +20,7 @@ func main() {
 			logrus.WithFields(logrus.Fields{
 				"stack": string(debug.Stack()),
 				"panic": panc,
-			}).Error("watch: Panic")
+			}).Error("main: Panic")
 			panic(panc)
 		}
 	}()
