@@ -5,44 +5,22 @@ import (
 	"github.com/dropbox/godropbox/errors"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
 	"os"
-	"time"
 )
 
 func init() {
 	senders = append(senders, &fileSender{})
 }
 
-type fileSender struct {
-	limit  limiter
-	buffer chan *logrus.Entry
-}
+type fileSender struct{}
 
-func (s *fileSender) listen() {
-	for {
-		entry := <-s.buffer
-
-		err := s.send(entry)
-		if err != nil {
-			logrus.WithFields(logrus.Fields{
-				"error": err,
-			}).Error("logger: File send error")
-		}
-	}
-}
-
-func (s *fileSender) Init() {
-	s.limit = limiter{}
-	s.buffer = make(chan *logrus.Entry, 128)
-	go s.listen()
-}
+func (s *fileSender) Init() {}
 
 func (s *fileSender) Parse(entry *logrus.Entry) {
-	if !s.limit.Check(entry, 3*time.Second) {
-		return
-	}
-
-	if len(s.buffer) <= 125 {
-		s.buffer <- entry
+	err := s.send(entry)
+	if err != nil {
+		logrus.WithFields(logrus.Fields{
+			"error": err,
+		}).Error("logger: File send error")
 	}
 }
 
