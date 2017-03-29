@@ -541,7 +541,8 @@ func (p *Profile) Start(timeout bool) (err error) {
 
 			lineStr := string(line)
 			if lineStr != "" {
-				fmt.Println(line)
+				fmt.Println(len(output))
+				fmt.Println(lineStr)
 				output <- lineStr
 			}
 		}
