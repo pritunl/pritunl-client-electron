@@ -3,6 +3,7 @@ package profile
 
 import (
 	"bufio"
+	"fmt"
 	"github.com/Sirupsen/logrus"
 	"github.com/dropbox/godropbox/errors"
 	"github.com/pritunl/pritunl-client-electron/service/errortypes"
@@ -512,8 +513,10 @@ func (p *Profile) Start(timeout bool) (err error) {
 			}
 		}()
 
-		defer stdout.Close()
 		defer func() {
+			logrus.Info("profile: Closing output")
+			stdout.Close()
+			logrus.Info("profile: Closing channel")
 			output <- ""
 		}()
 
@@ -538,6 +541,7 @@ func (p *Profile) Start(timeout bool) (err error) {
 
 			lineStr := string(line)
 			if lineStr != "" {
+				fmt.Println(line)
 				output <- lineStr
 			}
 		}
