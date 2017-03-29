@@ -307,10 +307,12 @@ func (p *Profile) clearStatus(start time.Time) {
 			}
 		}()
 
-		diff := time.Since(start)
-		if diff < 1*time.Second {
-			time.Sleep((2 * time.Second) - diff)
-		}
+		//diff := time.Since(start)
+		//if diff < 1*time.Second {
+		//	time.Sleep((2 * time.Second) - diff)
+		//}
+
+		logrus.Info("profile: Update")
 
 		p.Status = "disconnected"
 		p.Timestamp = 0
@@ -321,6 +323,8 @@ func (p *Profile) clearStatus(start time.Time) {
 		for _, path := range p.remPaths {
 			os.Remove(path)
 		}
+
+		logrus.Info("profile: Clear keys")
 
 		Profiles.Lock()
 		delete(Profiles.m, p.Id)
@@ -333,6 +337,8 @@ func (p *Profile) clearStatus(start time.Time) {
 			}
 		}
 		Profiles.Unlock()
+
+		logrus.Info("profile: Exit")
 
 		p.stateLock.Lock()
 		p.state = false
@@ -618,9 +624,13 @@ func (p *Profile) Start(timeout bool) (err error) {
 			}
 		}()
 
+		logrus.Info("profile: Running")
+
 		cmd.Wait()
 		outputWait.Wait()
 		running = false
+
+		logrus.Info("profile: DNS")
 
 		if runtime.GOOS == "darwin" {
 			err = utils.RestoreScutilDns()
@@ -636,6 +646,8 @@ func (p *Profile) Start(timeout bool) (err error) {
 				"profile_id": p.Id,
 			}).Error("profile: Unexpected profile exit")
 		}
+
+		logrus.Info("profile: Clearing")
 
 		p.clearStatus(start)
 	}()
