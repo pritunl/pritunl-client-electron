@@ -5,6 +5,7 @@ import (
 	"bufio"
 	"github.com/Sirupsen/logrus"
 	"github.com/dropbox/godropbox/errors"
+	"github.com/pritunl/pritunl-client-electron/service/errortypes"
 	"github.com/pritunl/pritunl-client-electron/service/event"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
 	"io"
@@ -459,15 +460,25 @@ func (p *Profile) Start(timeout bool) (err error) {
 		return
 	}
 
+	output := make(chan string, 100)
+	outputWait := sync.WaitGroup{}
+	outputWait.Add(1)
+
 	go func() {
+		defer stdout.Close()
+		defer func() {
+			output <- ""
+		}()
+
 		out := bufio.NewReader(stdout)
 		for {
 			line, _, err := out.ReadLine()
 			if err != nil {
-				if !strings.Contains(
-					err.Error(), "bad file descriptor") && err != io.EOF {
+				if err != io.EOF &&
+					!strings.Contains(err.Error(), "file already closed") &&
+					!strings.Contains(err.Error(), "bad file descriptor") {
 
-					err = &ExecError{
+					err = &errortypes.ReadError{
 						errors.Wrap(err, "profile: Failed to read stdout"),
 					}
 					logrus.WithFields(logrus.Fields{
@@ -477,19 +488,26 @@ func (p *Profile) Start(timeout bool) (err error) {
 
 				return
 			}
-			p.parseLine(string(line))
+
+			lineStr := string(line)
+			if lineStr != "" {
+				output <- lineStr
+			}
 		}
 	}()
 
 	go func() {
+		defer stderr.Close()
+
 		out := bufio.NewReader(stderr)
 		for {
 			line, _, err := out.ReadLine()
 			if err != nil {
-				if !strings.Contains(
-					err.Error(), "bad file descriptor") && err != io.EOF {
+				if err != io.EOF &&
+					!strings.Contains(err.Error(), "file already closed") &&
+					!strings.Contains(err.Error(), "bad file descriptor") {
 
-					err = &ExecError{
+					err = &errortypes.ReadError{
 						errors.Wrap(err, "profile: Failed to read stderr"),
 					}
 					logrus.WithFields(logrus.Fields{
@@ -499,7 +517,24 @@ func (p *Profile) Start(timeout bool) (err error) {
 
 				return
 			}
-			p.parseLine(string(line))
+
+			lineStr := string(line)
+			if lineStr != "" {
+				output <- lineStr
+			}
+		}
+	}()
+
+	go func() {
+		defer outputWait.Done()
+
+		for {
+			line := <-output
+			if line == "" {
+				return
+			}
+
+			p.parseLine(line)
 		}
 	}()
 
@@ -515,6 +550,7 @@ func (p *Profile) Start(timeout bool) (err error) {
 	running := true
 	go func() {
 		cmd.Wait()
+		outputWait.Wait()
 		running = false
 
 		if runtime.GOOS == "darwin" {
