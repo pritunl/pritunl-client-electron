@@ -627,6 +627,9 @@ func (p *Profile) Start(timeout bool) (err error) {
 		logrus.Info("profile: Running")
 
 		cmd.Wait()
+
+		logrus.Info("profile: Output")
+
 		outputWait.Wait()
 		running = false
 
