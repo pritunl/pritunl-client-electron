@@ -130,12 +130,13 @@ func dnsWatch() {
 
 		if !profile.GetStatus() {
 			if dnsState {
-				dnsState = false
 				err := utils.RestoreScutilDns()
 				if err != nil {
 					logrus.WithFields(logrus.Fields{
 						"error": err,
 					}).Error("watch: Failed to restore DNS")
+				} else {
+					dnsState = false
 				}
 			}
 
