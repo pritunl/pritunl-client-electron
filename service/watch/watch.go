@@ -136,7 +136,7 @@ func dnsWatch() {
 				if err != nil {
 					logrus.WithFields(logrus.Fields{
 						"error": err,
-					}).Error("watch: Failed to restore DNS")
+					}).Warn("watch: Failed to restore DNS")
 				} else {
 					dnsState = false
 				}
