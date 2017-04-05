@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/pritunl/pritunl-client-electron/service/auth"
 	"github.com/pritunl/pritunl-client-electron/service/autoclean"
+	"github.com/pritunl/pritunl-client-electron/service/constants"
 	"github.com/pritunl/pritunl-client-electron/service/handlers"
 	"github.com/pritunl/pritunl-client-electron/service/logger"
 	"github.com/pritunl/pritunl-client-electron/service/watch"
@@ -13,6 +14,10 @@ import (
 
 func main() {
 	logger.Init()
+
+	logrus.WithFields(logrus.Fields{
+		"version": constants.Version,
+	}).Info("main: Service startin")
 
 	defer func() {
 		panc := recover()
