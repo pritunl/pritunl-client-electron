@@ -356,6 +356,10 @@ func (p *Profile) clearStatus(start time.Time) {
 		}
 		p.waiters = []chan bool{}
 		p.stateLock.Unlock()
+
+		logrus.WithFields(logrus.Fields{
+			"profile_id": p.Id,
+		}).Info("profile: Disconnected")
 	}()
 }
 
@@ -380,6 +384,10 @@ func (p *Profile) Init() {
 func (p *Profile) Start(timeout bool) (err error) {
 	start := time.Now()
 	p.remPaths = []string{}
+
+	logrus.WithFields(logrus.Fields{
+		"profile_id": p.Id,
+	}).Info("profile: Connecting")
 
 	p.Status = "connecting"
 	p.stateLock.Lock()
@@ -723,6 +731,10 @@ func (p *Profile) Stop() (err error) {
 	if p.cmd == nil || p.cmd.Process == nil {
 		return
 	}
+
+	logrus.WithFields(logrus.Fields{
+		"profile_id": p.Id,
+	}).Info("profile: Disconnecting")
 
 	p.stop = true
 	p.Status = "disconnecting"
