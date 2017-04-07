@@ -17,7 +17,7 @@ func main() {
 
 	logrus.WithFields(logrus.Fields{
 		"version": constants.Version,
-	}).Info("main: Service startin")
+	}).Info("main: Service starting")
 
 	defer func() {
 		panc := recover()
