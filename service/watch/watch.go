@@ -145,8 +145,8 @@ func dnsWatch() {
 			continue
 		}
 
-		vpn, _ := utils.GetScutilKey("/Network/Pritunl/DNS")
-		global, _ := utils.GetScutilKey("/Network/Global/DNS")
+		vpn, _ := utils.GetScutilKey("State", "/Network/Pritunl/DNS")
+		global, _ := utils.GetScutilKey("State", "/Network/Global/DNS")
 
 		if strings.Contains(global, "No such key") {
 			continue
@@ -168,6 +168,7 @@ func dnsWatch() {
 			}
 
 			err = utils.CopyScutilKey(
+				"State",
 				fmt.Sprintf("/Network/Pritunl/Connection/%s", connIds[0]),
 				"/Network/Pritunl/DNS",
 			)

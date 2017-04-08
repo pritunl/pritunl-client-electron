@@ -134,10 +134,10 @@ func ReleaseTap(intf *Interface) {
 	lockedInterfaces.Remove(intf.Id)
 }
 
-func GetScutilKey(key string) (val string, err error) {
+func GetScutilKey(typ, key string) (val string, err error) {
 	cmd := exec.Command("/usr/sbin/scutil")
 	cmd.Stdin = strings.NewReader(
-		fmt.Sprintf("open\nshow State:%s\nquit\n", key))
+		fmt.Sprintf("open\nshow %s:%s\nquit\n", typ, key))
 
 	output, err := cmd.CombinedOutput()
 	if err != nil {
@@ -152,10 +152,10 @@ func GetScutilKey(key string) (val string, err error) {
 	return
 }
 
-func RemoveScutilKey(key string) (err error) {
+func RemoveScutilKey(typ, key string) (err error) {
 	cmd := exec.Command("/usr/sbin/scutil")
 	cmd.Stdin = strings.NewReader(
-		fmt.Sprintf("open\nremove State:%s\nquit\n", key))
+		fmt.Sprintf("open\nremove %s:%s\nquit\n", typ, key))
 
 	err = cmd.Run()
 	if err != nil {
@@ -168,13 +168,13 @@ func RemoveScutilKey(key string) (err error) {
 	return
 }
 
-func CopyScutilKey(src, dst string) (err error) {
+func CopyScutilKey(typ, src, dst string) (err error) {
 	cmd := exec.Command("/usr/sbin/scutil")
 	cmd.Stdin = strings.NewReader(
 		fmt.Sprintf("open\n"+
-			"get State:%s\n"+
-			"set State:%s\n"+
-			"quit\n", src, dst))
+			"get %s:%s\n"+
+			"set %s:%s\n"+
+			"quit\n", typ, src, typ, dst))
 
 	err = cmd.Run()
 	if err != nil {
@@ -189,7 +189,7 @@ func CopyScutilKey(src, dst string) (err error) {
 
 func GetScutilService() (serviceId string, err error) {
 	for i := 0; i < 20; i++ {
-		data, e := GetScutilKey("/Network/Global/IPv4")
+		data, e := GetScutilKey("State", "/Network/Global/IPv4")
 		if e != nil {
 			err = e
 			return
@@ -226,7 +226,7 @@ func RestoreScutilDns() (err error) {
 
 	serviceKey := fmt.Sprintf("/Network/Pritunl/Restore/%s", serviceId)
 
-	data, err := GetScutilKey(serviceKey)
+	data, err := GetScutilKey("State", serviceKey)
 	if err != nil {
 		return
 	}
@@ -278,7 +278,7 @@ func BackupScutilDns() (err error) {
 
 	serviceKey := fmt.Sprintf("/Network/Service/%s/DNS", serviceId)
 
-	data, err := GetScutilKey(serviceKey)
+	data, err := GetScutilKey("State", serviceKey)
 	if err != nil {
 		return
 	}
@@ -288,7 +288,7 @@ func BackupScutilDns() (err error) {
 		return
 	}
 
-	err = CopyScutilKey(serviceKey,
+	err = CopyScutilKey("State", serviceKey,
 		fmt.Sprintf("/Network/Pritunl/Restore/%s", serviceId))
 	if err != nil {
 		return
