@@ -674,8 +674,8 @@ input:active {
 .service-logs ::-webkit-scrollbar,
 .profile .logs ::-webkit-scrollbar,
 .profile .config ::-webkit-scrollbar {
-  width: 9px;
-  height: 9px;
+  width: 15px;
+  height: 15px;
   background: #042b4d;
 }
 .system-logs ::-webkit-scrollbar-thumb,
