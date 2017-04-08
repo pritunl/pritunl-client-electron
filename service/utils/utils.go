@@ -224,9 +224,10 @@ func RestoreScutilDns() (err error) {
 		return
 	}
 
-	serviceKey := fmt.Sprintf("/Network/Pritunl/Restore/%s", serviceId)
+	restoreKey := fmt.Sprintf("/Network/Pritunl/Restore/%s", serviceId)
+	serviceKey := fmt.Sprintf("/Network/Service/%s/DNS", serviceId)
 
-	data, err := GetScutilKey("State", serviceKey)
+	data, err := GetScutilKey("State", restoreKey)
 	if err != nil {
 		return
 	}
@@ -235,10 +236,29 @@ func RestoreScutilDns() (err error) {
 		return
 	}
 
-	err = CopyScutilDns(serviceKey)
+	err = CopyScutilKey("State", restoreKey, serviceKey)
 	if err != nil {
 		return
 	}
+
+	data, err = GetScutilKey("Setup", restoreKey)
+	if err != nil {
+		return
+	}
+
+	if strings.Contains(data, "No such key") {
+		err = RemoveScutilKey("Setup", serviceId)
+		if err != nil {
+			return
+		}
+	} else {
+		err = CopyScutilKey("Setup", restoreKey, serviceKey)
+		if err != nil {
+			return
+		}
+	}
+
+	ClearDNSCache()
 
 	return
 }
@@ -276,6 +296,7 @@ func BackupScutilDns() (err error) {
 		return
 	}
 
+	restoreKey := fmt.Sprintf("/Network/Pritunl/Restore/%s", serviceId)
 	serviceKey := fmt.Sprintf("/Network/Service/%s/DNS", serviceId)
 
 	data, err := GetScutilKey("State", serviceKey)
@@ -288,10 +309,26 @@ func BackupScutilDns() (err error) {
 		return
 	}
 
-	err = CopyScutilKey("State", serviceKey,
-		fmt.Sprintf("/Network/Pritunl/Restore/%s", serviceId))
+	err = CopyScutilKey("State", serviceKey, restoreKey)
 	if err != nil {
 		return
+	}
+
+	data, err = GetScutilKey("Setup", serviceKey)
+	if err != nil {
+		return
+	}
+
+	if strings.Contains(data, "No such key") {
+		err = RemoveScutilKey("Setup", restoreKey)
+		if err != nil {
+			return
+		}
+	} else {
+		err = CopyScutilKey("Setup", serviceKey, restoreKey)
+		if err != nil {
+			return
+		}
 	}
 
 	return
