@@ -241,29 +241,34 @@ func RestoreScutilDns() (err error) {
 		return
 	}
 
-	if !strings.Contains(data, "Pritunl : true") {
-		return
-	}
-
-	err = CopyScutilKey("State", restoreKey, serviceKey)
-	if err != nil {
-		return
-	}
-
-	data, err = GetScutilKey("Setup", restoreKey)
-	if err != nil {
-		return
-	}
-
-	if strings.Contains(data, "No such key") {
-		err = RemoveScutilKey("Setup", serviceKey)
+	if strings.Contains(data, "Pritunl : true") {
+		err = CopyScutilKey("State", restoreKey, serviceKey)
 		if err != nil {
 			return
 		}
-	} else {
-		err = CopyScutilKey("Setup", restoreKey, serviceKey)
+	}
+
+	data, err = GetScutilKey("Setup", serviceKey)
+	if err != nil {
+		return
+	}
+
+	if strings.Contains(data, "Pritunl : true") {
+		data, err = GetScutilKey("Setup", restoreKey)
 		if err != nil {
 			return
+		}
+
+		if strings.Contains(data, "No such key") {
+			err = RemoveScutilKey("Setup", serviceKey)
+			if err != nil {
+				return
+			}
+		} else {
+			err = CopyScutilKey("Setup", restoreKey, serviceKey)
+			if err != nil {
+				return
+			}
 		}
 	}
 
