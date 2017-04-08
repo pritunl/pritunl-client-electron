@@ -236,6 +236,15 @@ func RestoreScutilDns() (err error) {
 		return
 	}
 
+	data, err = GetScutilKey("State", serviceKey)
+	if err != nil {
+		return
+	}
+
+	if !strings.Contains(data, "Pritunl : true") {
+		return
+	}
+
 	err = CopyScutilKey("State", restoreKey, serviceKey)
 	if err != nil {
 		return
