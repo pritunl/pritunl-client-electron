@@ -247,7 +247,7 @@ func RestoreScutilDns() (err error) {
 	}
 
 	if strings.Contains(data, "No such key") {
-		err = RemoveScutilKey("Setup", serviceId)
+		err = RemoveScutilKey("Setup", serviceKey)
 		if err != nil {
 			return
 		}
