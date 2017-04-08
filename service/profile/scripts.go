@@ -41,7 +41,7 @@ quit
 EOF
 grep Pritunl | sed -e 's/.*Pritunl : //'
 )"
-SERVICE_SETUP="$(/usr/sbin/scutil <<-EOF |
+SERVICE_SETUP="$(/usr/sbin/scutil <<-EOF
 open
 show Setup:/Network/Service/${SERVICE_ID}/DNS
 quit
