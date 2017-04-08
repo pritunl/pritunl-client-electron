@@ -306,6 +306,7 @@ func BackupScutilDns() (err error) {
 
 	if strings.Contains(data, "No such key") ||
 		strings.Contains(data, "Pritunl : true") {
+
 		return
 	}
 
