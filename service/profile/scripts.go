@@ -41,6 +41,12 @@ quit
 EOF
 grep Pritunl | sed -e 's/.*Pritunl : //'
 )"
+SERVICE_SETUP="$(/usr/sbin/scutil <<-EOF |
+open
+show Setup:/Network/Service/${SERVICE_ID}/DNS
+quit
+EOF
+)"
 
 if [ "$SERVICE_ORIG" != "true" ]; then
   /usr/sbin/scutil <<-EOF > /dev/null
@@ -49,6 +55,21 @@ get State:/Network/Service/${SERVICE_ID}/DNS
 set State:/Network/Pritunl/Restore/${SERVICE_ID}
 quit
 EOF
+
+  if [[ $SERVICE_SETUP == *"No such key"* ]]; then
+    /usr/sbin/scutil <<-EOF > /dev/null
+open
+remove Setup:/Network/Pritunl/Restore/${SERVICE_ID}
+quit
+EOF
+  else
+    /usr/sbin/scutil <<-EOF > /dev/null
+open
+get Setup:/Network/Service/${SERVICE_ID}/DNS
+set Setup:/Network/Pritunl/Restore/${SERVICE_ID}
+quit
+EOF
+  fi
 fi
 
 if [ "$DNS_SERVERS" ] && [ "$DNS_SEARCH" ]; then
