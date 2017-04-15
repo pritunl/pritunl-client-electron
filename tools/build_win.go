@@ -59,7 +59,7 @@ func main() {
 		panic(err)
 	}
 
-	cmd = exec.Command("go", "build", "-v")
+	cmd = exec.Command("go", "build", "-v", "-ldflags", "-H windowsgui")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err = cmd.Run()
@@ -120,7 +120,7 @@ func main() {
 		panic(err)
 	}
 
-	cmd = exec.Command("go", "build", "-v")
+	cmd = exec.Command("go", "build", "-v", "-ldflags", "-H windowsgui")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err = cmd.Run()
@@ -133,7 +133,7 @@ func main() {
 		panic(err)
 	}
 
-	cmd = exec.Command("go", "build", "-v")
+	cmd = exec.Command("go", "build", "-v", "-ldflags", "-H windowsgui")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err = cmd.Run()
