@@ -301,9 +301,6 @@ Profile.prototype.formatedNameLogo = function() {
   if (!name) {
     if (this.user) {
       name = this.user;
-      if (this.organization) {
-        name += '@' + this.organization;
-      }
 
       if (this.server) {
         name += ' (' + this.server + ')';
