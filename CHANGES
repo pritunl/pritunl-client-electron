@@ -5,6 +5,7 @@ Version
 -------
 
 Interface improvements
+Add support for AES GCM ciphers
 
 Version 1.0.1311.6 2017-04-14
 -----------------------------
