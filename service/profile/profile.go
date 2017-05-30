@@ -252,6 +252,10 @@ func (p *Profile) parseLine(line string) {
 				}
 			}()
 		}
+	} else if strings.Contains(
+		line, "Can't assign requested address (code=49)") {
+
+		RestartProfiles(false)
 	} else if strings.Contains(line, "AUTH_FAILED") || strings.Contains(
 		line, "auth-failure") {
 
