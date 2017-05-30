@@ -98,7 +98,7 @@ func wakeWatch(delay time.Duration) {
 
 					logrus.Warn("watch: Wakeup restarting...")
 
-					profile.RestartProfiles()
+					profile.RestartProfiles(false)
 				} else {
 					restartLock.Unlock()
 				}
