@@ -40,6 +40,26 @@ func getOpenvpnPath() (pth string) {
 	return
 }
 
+func getOpenvpnDir() (pth string) {
+	switch runtime.GOOS {
+	case "windows":
+		pth = filepath.Join(utils.GetRootDir(), "openvpn",
+			utils.GetWinArch())
+		if _, err := os.Stat(pth); os.IsNotExist(err) {
+			pth = filepath.Join(utils.GetRootDir(), "..",
+				"openvpn_win", utils.GetWinArch())
+		}
+	case "darwin":
+		pth = ""
+	case "linux":
+		pth = ""
+	default:
+		panic("profile: Not implemented")
+	}
+
+	return
+}
+
 func GetStatus() (status bool) {
 	for _, prfl := range GetProfiles() {
 		if prfl.Status == "connected" {

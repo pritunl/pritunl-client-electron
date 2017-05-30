@@ -492,6 +492,7 @@ func (p *Profile) Start(timeout bool) (err error) {
 	}
 
 	cmd := exec.Command(getOpenvpnPath(), args...)
+	cmd.Dir = getOpenvpnDir()
 	p.cmd = cmd
 
 	stdout, err := cmd.StdoutPipe()
