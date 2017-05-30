@@ -10,7 +10,7 @@
     "ws": "^3.0.0"
   },
   "devDependencies": {
-    "electron-rebuild": "^1.6.10",
+    "electron-rebuild": "^1.5.11",
     "electron-packager": "^8.7.0",
     "electron": "^1.6.10",
     "rimraf": "^2.6.1",
