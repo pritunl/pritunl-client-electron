@@ -1,8 +1,8 @@
 Pritunl Client Changelog
 ========================
 
-Version
--------
+Version 1.0.1356.36 2017-05-30
+------------------------------
 
 Interface improvements
 Add support for AES GCM ciphers
