@@ -1,6 +1,11 @@
 Pritunl Client Changelog
 ========================
 
+Version
+-------
+
+Fix issue with reading archives
+
 Version 1.0.1356.36 2017-05-30
 ------------------------------
 
