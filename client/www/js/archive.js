@@ -2,9 +2,10 @@ var tar = require('tar');
 var fs = require('fs');
 
 var readTarFile = function(pth, callback, endCallback) {
-  // TODO Handle errors
+  var parse = new tar.Parse();
+
   fs.createReadStream(pth)
-    .pipe(tar.Parse())
+    .pipe(parse)
     .on('entry', function (entry) {
       var data = '';
 
