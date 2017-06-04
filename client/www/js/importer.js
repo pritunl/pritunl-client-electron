@@ -292,7 +292,7 @@ var importProfileUri = function(prflUri, callback) {
 
   request.get({
     url: prflUri,
-    strictSSL: false
+    strictSSL: !prflUri.match(/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/g)
   }, function(err, resp, body) {
     var data;
 
