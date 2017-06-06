@@ -676,7 +676,7 @@ input:active {
   visibility: visible;
   opacity: 1;
   z-index: 1000;
-  top: 45px;
+  top: 0;
 }
 .system-logs .editor,
 .service-logs .editor,
