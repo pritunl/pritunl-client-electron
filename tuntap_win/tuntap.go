@@ -1,8 +1,8 @@
 package main
 
 import (
+	"github.com/pritunl/pritunl-client-electron/service/command"
 	"os"
-	"os/exec"
 	"path/filepath"
 )
 
@@ -19,32 +19,32 @@ func main() {
 		tuntapDir = filepath.Join(rootDir, "64")
 	}
 
-	var cmd *exec.Cmd
 	if os.Args[1] == "install" {
-		cmd = &exec.Cmd{
-			Path: "tapinstall.exe",
-			Dir:  tuntapDir,
-			Args: []string{
-				"tapinstall.exe",
-				"install",
-				"OemVista.inf",
-				"tap0901",
-			},
+		args := []string{
+			"tapinstall.exe",
+			"install",
+			"OemVista.inf",
+			"tap0901",
+		}
+		cmd := command.Command("tapinstall.exe", args...)
+		cmd.Dir = tuntapDir
+
+		err = cmd.Run()
+		if err != nil {
+			panic(err)
 		}
 	} else {
-		cmd = &exec.Cmd{
-			Path: "tapinstall.exe",
-			Dir:  tuntapDir,
-			Args: []string{
-				"tapinstall.exe",
-				"remove",
-				"tap0901",
-			},
+		args := []string{
+			"tapinstall.exe",
+			"remove",
+			"tap0901",
 		}
-	}
+		cmd := command.Command("tapinstall.exe", args...)
+		cmd.Dir = tuntapDir
 
-	err = cmd.Run()
-	if err != nil {
-		panic(err)
+		err = cmd.Run()
+		if err != nil {
+			panic(err)
+		}
 	}
 }

@@ -5,8 +5,8 @@ import (
 	"github.com/Sirupsen/logrus"
 	"github.com/dropbox/godropbox/errors"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
+	"github.com/pritunl/pritunl-client-electron/service/command"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"runtime"
 	"runtime/debug"
@@ -18,8 +18,8 @@ const (
 )
 
 func clean() (err error) {
-	exec.Command("kextunload", "-b", "net.sf.tuntaposx.tap").Run()
-	exec.Command("kextunload", "-b", "net.sf.tuntaposx.tun").Run()
+	command.Command("kextunload", "-b", "net.sf.tuntaposx.tap").Run()
+	command.Command("kextunload", "-b", "net.sf.tuntaposx.tun").Run()
 
 	paths := []string{
 		filepath.Join(pathSep, "usr", "local", "bin", "pritunl-openvpn"),

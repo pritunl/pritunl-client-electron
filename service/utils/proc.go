@@ -2,14 +2,14 @@ package utils
 
 import (
 	"github.com/dropbox/godropbox/errors"
+	"github.com/pritunl/pritunl-client-electron/service/command"
 	"github.com/pritunl/pritunl-client-electron/service/errortypes"
 	"io"
 	"os"
-	"os/exec"
 )
 
 func Exec(name string, arg ...string) (err error) {
-	cmd := exec.Command(name, arg...)
+	cmd := command.Command(name, arg...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
@@ -25,7 +25,7 @@ func Exec(name string, arg ...string) (err error) {
 }
 
 func ExecInput(input, name string, arg ...string) (err error) {
-	cmd := exec.Command(name, arg...)
+	cmd := command.Command(name, arg...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
@@ -67,7 +67,7 @@ func ExecInput(input, name string, arg ...string) (err error) {
 }
 
 func ExecOutput(name string, arg ...string) (output string, err error) {
-	cmd := exec.Command(name, arg...)
+	cmd := command.Command(name, arg...)
 	cmd.Stderr = os.Stderr
 
 	outputByt, err := cmd.Output()

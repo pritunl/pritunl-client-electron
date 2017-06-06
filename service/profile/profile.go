@@ -5,6 +5,7 @@ import (
 	"bufio"
 	"github.com/Sirupsen/logrus"
 	"github.com/dropbox/godropbox/errors"
+	"github.com/pritunl/pritunl-client-electron/service/command"
 	"github.com/pritunl/pritunl-client-electron/service/errortypes"
 	"github.com/pritunl/pritunl-client-electron/service/event"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
@@ -491,7 +492,7 @@ func (p *Profile) Start(timeout bool) (err error) {
 		args = append(args, "--auth-user-pass", authPath)
 	}
 
-	cmd := exec.Command(getOpenvpnPath(), args...)
+	cmd := command.Command(getOpenvpnPath(), args...)
 	cmd.Dir = getOpenvpnDir()
 	p.cmd = cmd
 

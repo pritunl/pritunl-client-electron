@@ -10,9 +10,9 @@ import (
 	"github.com/Sirupsen/logrus"
 	"github.com/dropbox/godropbox/container/set"
 	"github.com/dropbox/godropbox/errors"
+	"github.com/pritunl/pritunl-client-electron/service/command"
 	"io"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"runtime"
 	"runtime/debug"
@@ -53,7 +53,7 @@ func (intfs Interfaces) Less(i, j int) bool {
 func GetTaps() (interfaces []*Interface, err error) {
 	interfaces = []*Interface{}
 
-	cmd := exec.Command("ipconfig", "/all")
+	cmd := command.Command("ipconfig", "/all")
 
 	output, err := cmd.CombinedOutput()
 	if err != nil {
@@ -135,7 +135,7 @@ func ReleaseTap(intf *Interface) {
 }
 
 func GetScutilKey(typ, key string) (val string, err error) {
-	cmd := exec.Command("/usr/sbin/scutil")
+	cmd := command.Command("/usr/sbin/scutil")
 	cmd.Stdin = strings.NewReader(
 		fmt.Sprintf("open\nshow %s:%s\nquit\n", typ, key))
 
@@ -153,7 +153,7 @@ func GetScutilKey(typ, key string) (val string, err error) {
 }
 
 func RemoveScutilKey(typ, key string) (err error) {
-	cmd := exec.Command("/usr/sbin/scutil")
+	cmd := command.Command("/usr/sbin/scutil")
 	cmd.Stdin = strings.NewReader(
 		fmt.Sprintf("open\nremove %s:%s\nquit\n", typ, key))
 
@@ -169,7 +169,7 @@ func RemoveScutilKey(typ, key string) (err error) {
 }
 
 func CopyScutilKey(typ, src, dst string) (err error) {
-	cmd := exec.Command("/usr/sbin/scutil")
+	cmd := command.Command("/usr/sbin/scutil")
 	cmd.Stdin = strings.NewReader(
 		fmt.Sprintf("open\n"+
 			"get %s:%s\n"+
@@ -283,7 +283,7 @@ func CopyScutilDns(src string) (err error) {
 		return
 	}
 
-	cmd := exec.Command("/usr/sbin/scutil")
+	cmd := command.Command("/usr/sbin/scutil")
 	cmd.Stdin = strings.NewReader(
 		fmt.Sprintf("open\n"+
 			"get State:%s\n"+
@@ -352,7 +352,7 @@ func BackupScutilDns() (err error) {
 func GetScutilConnIds() (ids []string, err error) {
 	ids = []string{}
 
-	cmd := exec.Command("/usr/sbin/scutil")
+	cmd := command.Command("/usr/sbin/scutil")
 	cmd.Stdin = strings.NewReader("open\nlist\nquit\n")
 
 	output, err := cmd.CombinedOutput()
@@ -380,7 +380,7 @@ func GetScutilConnIds() (ids []string, err error) {
 func ClearScutilKeys() (err error) {
 	remove := ""
 
-	cmd := exec.Command("/usr/sbin/scutil")
+	cmd := command.Command("/usr/sbin/scutil")
 	cmd.Stdin = strings.NewReader("open\nlist\nquit\n")
 
 	output, err := cmd.CombinedOutput()
@@ -413,7 +413,7 @@ func ClearScutilKeys() (err error) {
 		return
 	}
 
-	cmd = exec.Command("/usr/sbin/scutil")
+	cmd = command.Command("/usr/sbin/scutil")
 	cmd.Stdin = strings.NewReader("open\n" + remove + "quit\n")
 
 	err = cmd.Run()
@@ -434,17 +434,17 @@ func ResetNetworking() {
 	defer networkResetLock.Unlock()
 
 	if runtime.GOOS == "windows" {
-		exec.Command("netsh", "interface", "ip", "delete",
+		command.Command("netsh", "interface", "ip", "delete",
 			"destinationcache").Run()
-		exec.Command("ipconfig", "/release").Run()
-		exec.Command("ipconfig", "/renew").Run()
-		exec.Command("arp", "-d", "*").Run()
-		exec.Command("nbtstat", "-R").Run()
-		exec.Command("nbtstat", "-RR").Run()
-		exec.Command("ipconfig", "/flushdns").Run()
-		exec.Command("nbtstat", "/registerdns").Run()
+		command.Command("ipconfig", "/release").Run()
+		command.Command("ipconfig", "/renew").Run()
+		command.Command("arp", "-d", "*").Run()
+		command.Command("nbtstat", "-R").Run()
+		command.Command("nbtstat", "-RR").Run()
+		command.Command("ipconfig", "/flushdns").Run()
+		command.Command("nbtstat", "/registerdns").Run()
 	} else if runtime.GOOS == "darwin" {
-		cmd := exec.Command("/usr/sbin/networksetup", "-getcurrentlocation")
+		cmd := command.Command("/usr/sbin/networksetup", "-getcurrentlocation")
 
 		output, err := cmd.CombinedOutput()
 		if err != nil {
@@ -463,7 +463,7 @@ func ResetNetworking() {
 			return
 		}
 
-		err = exec.Command(
+		err = command.Command(
 			"/usr/sbin/networksetup",
 			"-createlocation",
 			"pritunl-reset",
@@ -477,9 +477,9 @@ func ResetNetworking() {
 			}).Error("utils: Reset networking error")
 		}
 
-		exec.Command("route", "-n", "flush").Run()
+		command.Command("route", "-n", "flush").Run()
 
-		err = exec.Command(
+		err = command.Command(
 			"/usr/sbin/networksetup",
 			"-switchtolocation",
 			"pritunl-reset",
@@ -493,9 +493,9 @@ func ResetNetworking() {
 			}).Error("utils: Reset networking error")
 		}
 
-		exec.Command("route", "-n", "flush").Run()
+		command.Command("route", "-n", "flush").Run()
 
-		err = exec.Command(
+		err = command.Command(
 			"/usr/sbin/networksetup",
 			"-switchtolocation",
 			location,
@@ -509,9 +509,9 @@ func ResetNetworking() {
 			}).Error("utils: Reset networking error")
 		}
 
-		exec.Command("route", "-n", "flush").Run()
+		command.Command("route", "-n", "flush").Run()
 
-		err = exec.Command(
+		err = command.Command(
 			"/usr/sbin/networksetup",
 			"-deletelocation",
 			"pritunl-reset",
@@ -529,7 +529,7 @@ func ResetNetworking() {
 
 func ClearDNSCache() {
 	if runtime.GOOS == "windows" {
-		exec.Command("ipconfig", "/flushdns").Run()
+		command.Command("ipconfig", "/flushdns").Run()
 		go func() {
 			defer func() {
 				panc := recover()
@@ -544,11 +544,11 @@ func ClearDNSCache() {
 
 			for i := 0; i < 3; i++ {
 				time.Sleep(1 * time.Second)
-				exec.Command("ipconfig", "/flushdns").Run()
+				command.Command("ipconfig", "/flushdns").Run()
 			}
 		}()
 	} else if runtime.GOOS == "darwin" {
-		exec.Command("killall", "-HUP", "mDNSResponder").Run()
+		command.Command("killall", "-HUP", "mDNSResponder").Run()
 		go func() {
 			defer func() {
 				panc := recover()
@@ -563,7 +563,7 @@ func ClearDNSCache() {
 
 			for i := 0; i < 3; i++ {
 				time.Sleep(1 * time.Second)
-				exec.Command("killall", "-HUP", "mDNSResponder").Run()
+				command.Command("killall", "-HUP", "mDNSResponder").Run()
 			}
 		}()
 	}
