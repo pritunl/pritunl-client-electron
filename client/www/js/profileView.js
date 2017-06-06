@@ -517,6 +517,7 @@ var init = function() {
         $('.profiles .import-btns').hide();
         $('.profiles .import').show();
         $('.profiles .import-uri').show();
+        $('.profiles .open-main-menu').show();
         $('.profiles .uri-input').slideUp(50, function() {
           $('.profiles .uri-input').val('');
         });
