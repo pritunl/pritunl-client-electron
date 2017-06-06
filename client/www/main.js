@@ -131,16 +131,22 @@ var openMainWin = function() {
 
     var width;
     var height;
+    var minWidth;
+    var minHeight;
     var maxWidth;
     var maxHeight;
     if (process.platform === 'darwin') {
       width = 308;
       height = 413;
+      minWidth = 296;
+      minHeight = 352;
       maxWidth = 520;
       maxHeight = 632;
     } else {
       width = 385;
       height = 518;
+      minWidth = 370;
+      minHeight = 440;
       maxWidth = 650;
       maxHeight = 790;
     }
@@ -153,8 +159,8 @@ var openMainWin = function() {
       width: width,
       height: height,
       show: false,
-      minWidth: 340,
-      minHeight: 440,
+      minWidth: minWidth,
+      minHeight: minHeight,
       maxWidth: maxWidth,
       maxHeight: maxHeight,
       backgroundColor: '#151719'
