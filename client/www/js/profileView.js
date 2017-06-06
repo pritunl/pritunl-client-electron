@@ -529,6 +529,7 @@ var init = function() {
     $('.profiles .import-uri').click(function() {
       $('.profiles .import').hide();
       $('.profiles .import-uri').hide();
+      $('.profiles .open-main-menu').hide();
       $('.profiles .import-btns').show();
       $('.profiles .uri-input').slideDown(50, function() {
         $('.profiles .uri-input').focus();
@@ -549,6 +550,7 @@ var init = function() {
       $('.profiles .import-btns').hide();
       $('.profiles .import').show();
       $('.profiles .import-uri').show();
+      $('.profiles .open-main-menu').show();
       $('.profiles .uri-input').slideUp(50, function() {
         $('.profiles .uri-input').val('');
       });
