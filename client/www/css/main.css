@@ -691,10 +691,6 @@ input:active {
 .profile .logs .btn,
 .profile .config .btn {
   width: 50%;
-  height: 52px;
-  display: inline-block;
-  font-size: 19px;
-  padding: 14px 0;
 }
 .service-logs .btn {
   width: 100%;
