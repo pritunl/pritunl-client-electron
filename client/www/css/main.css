@@ -514,11 +514,12 @@ input:active {
   position: absolute;
   right: 0;
   width: 0;
-  overflow: hidden;
+  visibility: hidden;
   transition: width 125ms linear;
 }
 .profile .menu.show {
   width: 126px;
+  visibility: visible;
 }
 .profile .menu-backdrop {
   position: absolute;
