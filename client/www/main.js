@@ -136,14 +136,14 @@ var openMainWin = function() {
     var maxWidth;
     var maxHeight;
     if (process.platform === 'darwin') {
-      width = 308;
+      width = 320;
       height = 413;
       minWidth = 296;
       minHeight = 352;
       maxWidth = 520;
       maxHeight = 632;
     } else {
-      width = 385;
+      width = 400;
       height = 518;
       minWidth = 370;
       minHeight = 440;
