@@ -431,6 +431,24 @@ input:active {
   display: none;
 }
 
+.main-menu {
+  position: absolute;
+  bottom: 52px;
+  right: 0;
+  height: 0;
+  overflow: hidden;
+  transition: height 125ms linear;
+}
+.main-menu.show {
+  height: 170px;
+}
+.main-menu .btn {
+  color: #fff;
+  width: 190px;
+  height: 34px;
+  justify-content: center;
+}
+
 
 .profile {
   height: 207px;
