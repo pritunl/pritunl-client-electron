@@ -186,8 +186,6 @@ $('.main-menu .menu-version').click(function(evt) {
     remote.getCurrentWindow().openDevTools();
     return;
   }
-
-  $('.main-menu').toggleClass('show');
 });
 $('.main-menu .menu-version').text('Pritunl v' + constants.version);
 $('.main-menu .menu-system-logs').click(function (){
