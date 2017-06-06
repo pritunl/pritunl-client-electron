@@ -178,6 +178,39 @@ if (os.platform() === 'darwin') {
   webFrame.setZoomFactor(0.8);
 }
 
+$('.open-main-menu').click(function() {
+  $('.main-menu').toggleClass('show');
+});
+$('.main-menu .menu-version').text('Pritunl v' + constants.version);
+$('.main-menu .menu-system-logs').click(function (){
+  closeServiceEditor();
+  openSystemEditor();
+  setTimeout(function() {
+    $('.main-menu').removeClass('show');
+  }, 400);
+});
+$('.main-menu .menu-service-logs').click(function (){
+  closeSystemEditor();
+  openServiceEditor();
+  setTimeout(function() {
+    $('.main-menu').removeClass('show');
+  }, 400);
+});
+$('.main-menu .menu-close').click(function (){
+  var win = remote.getCurrentWindow();
+  win.close();
+});
+$('.main-menu .menu-exit').click(function (){
+  request.post({
+    url: 'http://' + constants.serviceHost + '/stop',
+    headers: {
+      'Auth-Key': constants.key
+    }
+  }, function() {
+    app.quit();
+  });
+});
+
 $('.header .close').click(function() {
   remote.getCurrentWindow().close();
 });
