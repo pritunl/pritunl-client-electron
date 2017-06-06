@@ -181,6 +181,14 @@ if (os.platform() === 'darwin') {
 $('.open-main-menu').click(function() {
   $('.main-menu').toggleClass('show');
 });
+$('.main-menu .menu-version').click(function(evt) {
+  if (evt.shiftKey) {
+    remote.getCurrentWindow().openDevTools();
+    return;
+  }
+
+  $('.main-menu').toggleClass('show');
+});
 $('.main-menu .menu-version').text('Pritunl v' + constants.version);
 $('.main-menu .menu-system-logs').click(function (){
   closeServiceEditor();
