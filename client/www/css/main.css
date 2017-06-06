@@ -392,12 +392,24 @@ input:active {
 .system-logs .btn,
 .service-logs .btn,
 .profiles .btns .btn {
-  padding: 18px 0;
+  width: 50%;
+  height: 52px;
+  display: inline-block;
+  font-size: 18px;
+  padding: 16px 0;
   text-align: center;
-  font-size: 19px;
   color: #fff;
   position: relative;
-  width: 50%;
+}
+.profiles .btns .open-main-menu {
+  text-align: left;
+  padding: 0;
+  width: 52px;
+}
+.profiles .btns .open-main-menu i {
+  color: #fff;
+  font-size: 26px;
+  margin: 13px 0 0 15px;
 }
 .profiles .btns .btn .profile-file {
   position: absolute;
