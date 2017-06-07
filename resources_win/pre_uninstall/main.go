@@ -44,4 +44,12 @@ func main() {
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Run()
+	cmd = exec.Command("taskkill.exe", "/F", "/IM", "pritunl.exe")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Run()
+	cmd = exec.Command("taskkill.exe", "/F", "/IM", "pritunl-service.exe")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Run()
 }
