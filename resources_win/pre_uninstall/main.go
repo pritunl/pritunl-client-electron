@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/pritunl/pritunl-client-electron/service/command"
 	"os"
+	"os/exec"
 	"path/filepath"
 )
 
@@ -12,25 +12,34 @@ func main() {
 		panic(err)
 	}
 
-	cmd := command.Command("taskkill.exe", "/F", "/IM", "pritunl.exe")
+	cmd := exec.Command("taskkill.exe", "/F", "/IM", "pritunl.exe")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Run()
-	cmd = command.Command(filepath.Join(rootDir, "nssm.exe"),
-		"remove", "pritunl", "confirm")
+	cmd = exec.Command("taskkill.exe", "/F", "/IM", "pritunl-service.exe")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Run()
-	cmd = command.Command(filepath.Join(rootDir, "nssm.exe"),
+	cmd = exec.Command(filepath.Join(rootDir, "nssm.exe"),
 		"stop", "pritunl")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Run()
-	cmd = command.Command("taskkill.exe", "/F", "/IM", "openvpn.exe")
+	cmd = exec.Command(filepath.Join(rootDir, "nssm.exe"),
+		"remove", "pritunl", "confirm")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Run()
-	cmd = command.Command(filepath.Join(rootDir, "tuntap", "tuntap.exe"),
+	cmd = exec.Command(filepath.Join(rootDir, "nssm.exe"),
+		"stop", "pritunl")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Run()
+	cmd = exec.Command("taskkill.exe", "/F", "/IM", "openvpn.exe")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Run()
+	cmd = exec.Command(filepath.Join(rootDir, "tuntap", "tuntap.exe"),
 		"uninstall")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
