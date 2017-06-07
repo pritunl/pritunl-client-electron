@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 	"os/exec"
+	"path"
 	"path/filepath"
 )
 
@@ -19,9 +20,11 @@ func main() {
 		tuntapDir = filepath.Join(rootDir, "64")
 	}
 
+	tapInstallPath := path.Join(tuntapDir, "tapinstall.exe")
+
 	if os.Args[1] == "install" {
 		cmd := exec.Command(
-			"tapinstall.exe",
+			tapInstallPath,
 			"install",
 			"OemVista.inf",
 			"tap0901",
@@ -34,7 +37,7 @@ func main() {
 		}
 	} else {
 		cmd := exec.Command(
-			"tapinstall.exe",
+			tapInstallPath,
 			"remove",
 			"tap0901",
 		)
