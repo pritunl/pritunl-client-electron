@@ -196,7 +196,7 @@ func (p *Profile) parseLine(line string) {
 
 	if strings.Contains(line, "Initialization Sequence Completed") {
 		p.Status = "connected"
-		p.Timestamp = time.Now().Unix() - 1
+		p.Timestamp = time.Now().Unix() - 5
 		p.update()
 		go func() {
 			defer func() {
