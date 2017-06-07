@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/pritunl/pritunl-client-electron/service/command"
 	"os"
+	"os/exec"
 	"path/filepath"
 )
 
@@ -26,7 +26,7 @@ func main() {
 			"OemVista.inf",
 			"tap0901",
 		}
-		cmd := command.Command("tapinstall.exe", args...)
+		cmd := exec.Command("tapinstall.exe", args...)
 		cmd.Dir = tuntapDir
 
 		err = cmd.Run()
@@ -39,7 +39,7 @@ func main() {
 			"remove",
 			"tap0901",
 		}
-		cmd := command.Command("tapinstall.exe", args...)
+		cmd := exec.Command("tapinstall.exe", args...)
 		cmd.Dir = tuntapDir
 
 		err = cmd.Run()
