@@ -20,13 +20,12 @@ func main() {
 	}
 
 	if os.Args[1] == "install" {
-		args := []string{
+		cmd := exec.Command(
 			"tapinstall.exe",
 			"install",
 			"OemVista.inf",
 			"tap0901",
-		}
-		cmd := exec.Command("tapinstall.exe", args...)
+		)
 		cmd.Dir = tuntapDir
 
 		err = cmd.Run()
@@ -34,12 +33,11 @@ func main() {
 			panic(err)
 		}
 	} else {
-		args := []string{
+		cmd := exec.Command(
 			"tapinstall.exe",
 			"remove",
 			"tap0901",
-		}
-		cmd := exec.Command("tapinstall.exe", args...)
+		)
 		cmd.Dir = tuntapDir
 
 		err = cmd.Run()
