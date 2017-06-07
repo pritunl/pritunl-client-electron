@@ -1,13 +1,13 @@
 package main
 
 import (
-	"github.com/pritunl/pritunl-client-electron/service/command"
 	"os"
+	"os/exec"
 	"path/filepath"
 )
 
 func main() {
-	cmd := command.Command("npm", "cache", "clean")
+	cmd := exec.Command("npm", "cache", "clean")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err := cmd.Run()
@@ -15,7 +15,7 @@ func main() {
 		panic(err)
 	}
 
-	cmd = command.Command("git", "pull")
+	cmd = exec.Command("git", "pull")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err = cmd.Run()
@@ -38,7 +38,7 @@ func main() {
 		panic(err)
 	}
 
-	cmd = command.Command("go", "build", "-v", "-o", "tuntap.exe")
+	cmd = exec.Command("go", "build", "-v", "-o", "tuntap.exe")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err = cmd.Run()
@@ -51,7 +51,7 @@ func main() {
 		panic(err)
 	}
 
-	cmd = command.Command("go", "get", "-u", "-f")
+	cmd = exec.Command("go", "get", "-u", "-f")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err = cmd.Run()
@@ -59,7 +59,7 @@ func main() {
 		panic(err)
 	}
 
-	cmd = command.Command("go", "build", "-v", "-ldflags", "-H windowsgui")
+	cmd = exec.Command("go", "build", "-v", "-ldflags", "-H windowsgui")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err = cmd.Run()
@@ -72,7 +72,7 @@ func main() {
 		panic(err)
 	}
 
-	cmd = command.Command("npm", "install")
+	cmd = exec.Command("npm", "install")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err = cmd.Run()
@@ -80,7 +80,7 @@ func main() {
 		panic(err)
 	}
 
-	cmd = command.Command("npm", "update")
+	cmd = exec.Command("npm", "update")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err = cmd.Run()
@@ -88,7 +88,7 @@ func main() {
 		panic(err)
 	}
 
-	cmd = command.Command(".\\node_modules\\.bin\\electron-rebuild")
+	cmd = exec.Command(".\\node_modules\\.bin\\electron-rebuild")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err = cmd.Run()
@@ -96,7 +96,7 @@ func main() {
 		panic(err)
 	}
 
-	cmd = command.Command(
+	cmd = exec.Command(
 		".\\node_modules\\.bin\\electron-packager",
 		".\\",
 		"pritunl",
@@ -119,7 +119,7 @@ func main() {
 		panic(err)
 	}
 
-	cmd = command.Command("go", "build", "-v")
+	cmd = exec.Command("go", "build", "-v")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err = cmd.Run()
@@ -132,7 +132,7 @@ func main() {
 		panic(err)
 	}
 
-	cmd = command.Command("go", "build", "-v")
+	cmd = exec.Command("go", "build", "-v")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err = cmd.Run()
@@ -145,7 +145,7 @@ func main() {
 		panic(err)
 	}
 
-	cmd = command.Command("C:\\Program Files\\Inno Setup 5\\ISCC.exe",
+	cmd = exec.Command("C:\\Program Files\\Inno Setup 5\\ISCC.exe",
 		"setup.iss")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
