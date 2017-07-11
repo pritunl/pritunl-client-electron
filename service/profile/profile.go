@@ -256,7 +256,20 @@ func (p *Profile) parseLine(line string) {
 	} else if strings.Contains(
 		line, "Can't assign requested address (code=49)") {
 
-		RestartProfiles(false)
+		go func() {
+			defer func() {
+				panc := recover()
+				if panc != nil {
+					logrus.WithFields(logrus.Fields{
+						"stack": string(debug.Stack()),
+						"panic": panc,
+					}).Error("profile: Panic")
+					panic(panc)
+				}
+			}()
+
+			RestartProfiles(false)
+		}()
 	} else if strings.Contains(line, "AUTH_FAILED") || strings.Contains(
 		line, "auth-failure") {
 
