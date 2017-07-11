@@ -118,6 +118,16 @@ app.on('activate', function() {
   openMainWin();
 });
 
+app.on('quit', function() {
+  request.post({
+    url: 'http://' + constants.serviceHost + '/stop',
+    headers: {
+      'Auth-Key': constants.key
+    }
+  });
+});
+
+
 var openMainWin = function() {
   if (main) {
     main.focus();
@@ -298,14 +308,7 @@ app.on('ready', function() {
           {
             label: 'Exit',
             click: function() {
-              request.post({
-                url: 'http://' + constants.serviceHost + '/stop',
-                headers: {
-                  'Auth-Key': constants.key
-                }
-              }, function() {
-                app.quit();
-              });
+              app.quit();
             }
           }
         ]
