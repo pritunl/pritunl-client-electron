@@ -127,7 +127,6 @@ app.on('quit', function() {
   });
 });
 
-
 var openMainWin = function() {
   if (main) {
     main.focus();
