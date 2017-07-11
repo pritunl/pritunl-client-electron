@@ -1,6 +1,11 @@
 Pritunl Client Changelog
 ========================
 
+Version
+-------
+
+Fix issue with client stuck on disconnecting
+
 Version 1.0.1380.37 2017-06-23
 ------------------------------
 
