@@ -626,7 +626,8 @@ func GetAuthPath() (pth string) {
 }
 
 func GetLogPath() (pth string) {
-	if runtime.GOOS == "windows" {
+	switch runtime.GOOS {
+	case "windows":
 		pth = filepath.Join("C:\\", "ProgramData", "Pritunl")
 
 		err := os.MkdirAll(pth, 0755)
@@ -638,9 +639,41 @@ func GetLogPath() (pth string) {
 		}
 
 		pth = filepath.Join(pth, "pritunl.log")
-	} else {
+	case "darwin":
+		pth = filepath.Join(string(os.PathSeparator), "Applications",
+			"Pritunl.app", "Contents", "Resources", "pritunl.log")
+	case "linux":
 		pth = filepath.Join(string(filepath.Separator),
 			"var", "log", "pritunl.log")
+	default:
+		panic("profile: Not implemented")
+	}
+
+	return
+}
+
+func GetLogPath2() (pth string) {
+	switch runtime.GOOS {
+	case "windows":
+		pth = filepath.Join("C:\\", "ProgramData", "Pritunl")
+
+		err := os.MkdirAll(pth, 0755)
+		if err != nil {
+			err = &IoError{
+				errors.Wrap(err, "utils: Failed to create data directory"),
+			}
+			panic(err)
+		}
+
+		pth = filepath.Join(pth, "pritunl.log.1")
+	case "darwin":
+		pth = filepath.Join(string(os.PathSeparator), "Applications",
+			"Pritunl.app", "Contents", "Resources", "pritunl.log.1")
+	case "linux":
+		pth = filepath.Join(string(filepath.Separator),
+			"var", "log", "pritunl.log.1")
+	default:
+		panic("profile: Not implemented")
 	}
 
 	return
