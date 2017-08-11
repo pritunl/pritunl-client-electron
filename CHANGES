@@ -4,6 +4,7 @@ Pritunl Client Changelog
 Version
 -------
 
+Stability improvements
 Fix DNS issues on macOS
 
 Version 1.0.1400.11 2017-07-12
