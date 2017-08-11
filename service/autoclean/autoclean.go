@@ -4,8 +4,8 @@ package autoclean
 import (
 	"github.com/Sirupsen/logrus"
 	"github.com/dropbox/godropbox/errors"
-	"github.com/pritunl/pritunl-client-electron/service/utils"
 	"github.com/pritunl/pritunl-client-electron/service/command"
+	"github.com/pritunl/pritunl-client-electron/service/utils"
 	"os"
 	"path/filepath"
 	"runtime"
