@@ -31,9 +31,8 @@ cd service
 go get -u -f
 go build -v
 cd ..
-mkdir -p build/osx/usr/local/bin
-cp service/service build/osx/usr/local/bin/pritunl-service
-codesign -s "Developer ID Application: Zachary Huff (73CNTLZRFJ)" build/osx/usr/local/bin/pritunl-service
+cp service/service build/osx/Applications/Pritunl.app/Contents/Resources/pritunl-service
+codesign -s "Developer ID Application: Zachary Huff (73CNTLZRFJ)" build/osx/Applications/Pritunl.app/Contents/Resources/pritunl-service
 
 # Service Daemon
 mkdir -p build/osx/Library/LaunchDaemons
@@ -43,24 +42,15 @@ cp service_osx/com.pritunl.service.plist build/osx/Library/LaunchDaemons
 mkdir -p build/osx/Library/LaunchAgents
 cp service_osx/com.pritunl.client.plist build/osx/Library/LaunchAgents
 
-# Tuntap
-mkdir -p build/osx/Library/Extensions
-cp -pR tuntap_osx/tap.kext build/osx/Library/Extensions/
-cp -pR tuntap_osx/tun.kext build/osx/Library/Extensions/
-mkdir -p build/osx/Library/LaunchDaemons
-cp tuntap_osx/net.sf.tuntaposx.tap.plist build/osx/Library/LaunchDaemons/
-cp tuntap_osx/net.sf.tuntaposx.tun.plist build/osx/Library/LaunchDaemons/
-
 # Openvpn
 mkdir -p build/osx/usr/local/bin
-cp openvpn_osx/openvpn build/osx/usr/local/bin/pritunl-openvpn
-codesign -s "Developer ID Application: Zachary Huff (73CNTLZRFJ)" build/osx/usr/local/bin/pritunl-openvpn
+cp openvpn_osx/openvpn build/osx/Applications/Pritunl.app/Contents/Resources/pritunl-openvpn
+codesign -s "Developer ID Application: Zachary Huff (73CNTLZRFJ)" build/osx/Applications/Pritunl.app/Contents/Resources/pritunl-openvpn
 
 # Files
-mkdir -p build/osx/var/lib/pritunl
-touch build/osx/var/lib/pritunl/auth
-mkdir -p build/osx/var/log
-touch build/osx/var/log/pritunl.log
+touch build/osx/Applications/Pritunl.app/Contents/Resources/auth
+touch build/osx/Applications/Pritunl.app/Contents/Resources/pritunl.log
+touch build/osx/Applications/Pritunl.app/Contents/Resources/pritunl.log.1
 
 # Package
 chmod +x resources_osx/scripts/postinstall
