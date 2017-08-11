@@ -43,7 +43,6 @@ mkdir -p build/osx/Library/LaunchAgents
 cp service_osx/com.pritunl.client.plist build/osx/Library/LaunchAgents
 
 # Openvpn
-mkdir -p build/osx/usr/local/bin
 cp openvpn_osx/openvpn build/osx/Applications/Pritunl.app/Contents/Resources/pritunl-openvpn
 codesign -s "Developer ID Application: Zachary Huff (73CNTLZRFJ)" build/osx/Applications/Pritunl.app/Contents/Resources/pritunl-openvpn
 
