@@ -47,7 +47,9 @@ func clean() (err error) {
 // Check for Pritunl.app and uninstall if missing
 func CheckAndClean() (err error) {
 	root := utils.GetRootDir()
-	if runtime.GOOS != "darwin" || root != "/usr/local/bin" {
+	if runtime.GOOS != "darwin" ||
+		root != "/Applications/Pritunl.app/Contents/Resources" {
+
 		return
 	}
 
@@ -69,7 +71,9 @@ func CheckAndClean() (err error) {
 // Watch for Pritunl.app removal for next 10 minutes and uninstall if missing
 func CheckAndCleanWatch() {
 	root := utils.GetRootDir()
-	if runtime.GOOS != "darwin" || root != "/usr/local/bin" {
+	if runtime.GOOS != "darwin" ||
+		root != "/Applications/Pritunl.app/Contents/Resources" {
+
 		return
 	}
 
