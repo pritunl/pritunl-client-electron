@@ -22,25 +22,14 @@ func clean() (err error) {
 	command.Command("kextunload", "-b", "net.sf.tuntaposx.tun").Run()
 
 	paths := []string{
-		filepath.Join(pathSep, "usr", "local", "bin", "pritunl-openvpn"),
 		filepath.Join(pathSep, "private", "var", "db", "receipts",
 			"com.pritunl.pkg.Pritunl.bom"),
 		filepath.Join(pathSep, "private", "var", "db", "receipts",
 			"com.pritunl.pkg.Pritunl.plist"),
-		filepath.Join(pathSep, "var", "lib", "pritunl"),
-		filepath.Join(pathSep, "var", "log", "pritunl.log"),
-		filepath.Join(pathSep, "Applications", "Pritunl.app"),
-		filepath.Join(pathSep, "Library", "Extensions", "tap.kext"),
-		filepath.Join(pathSep, "Library", "Extensions", "tun.kext"),
-		filepath.Join(pathSep, "Library", "LaunchDaemons",
-			"net.sf.tuntaposx.tap.plist"),
-		filepath.Join(pathSep, "Library", "LaunchDaemons",
-			"net.sf.tuntaposx.tun.plist"),
 		filepath.Join(pathSep, "Library", "LaunchAgents",
 			"com.pritunl.client.plist"),
 		filepath.Join(pathSep, "Library", "LaunchDaemons",
 			"com.pritunl.service.plist"),
-		filepath.Join(pathSep, "usr", "local", "bin", "pritunl-service"),
 	}
 
 	for _, path := range paths {
