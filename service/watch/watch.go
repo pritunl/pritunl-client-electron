@@ -53,7 +53,9 @@ func parseDns(data string) (searchDomains, searchAddresses []string) {
 					case "SearchDomains":
 						searchDomains = append(searchDomains, val)
 					case "ServerAddresses":
-						searchAddresses = append(searchAddresses, val)
+						if !strings.Contains(val, ":") {
+							searchAddresses = append(searchAddresses, val)
+						}
 					}
 				}
 			}
