@@ -6,7 +6,7 @@
 	<string>com.pritunl.service</string>
 	<key>ProgramArguments</key>
 	<array>
-		<string>/usr/local/bin/pritunl-service</string>
+		<string>/Applications/Pritunl.app/Contents/Resources/pritunl-service</string>
 	</array>
 	<key>KeepAlive</key>
 	<true/>
