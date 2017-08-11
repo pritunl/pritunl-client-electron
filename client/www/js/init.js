@@ -70,7 +70,10 @@ var clearSystemLogs = function(callback) {
 
 var readServiceLogs = function(callback) {
   var pth;
-  if (os.platform() === 'win32') {
+  if (process.platform === 'darwin') {
+    pth = path.join(path.sep, 'Applications', 'Pritunl.app', 'Contents',
+      'Resources', 'pritunl.log');
+  } else if (process.platform === 'win32') {
     pth = path.join('C:\\', 'ProgramData', 'Pritunl', 'pritunl.log');
   } else {
     pth = path.join(path.sep, 'var', 'log', 'pritunl.log');
