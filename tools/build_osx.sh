@@ -2,13 +2,10 @@
 cd "$( dirname "${BASH_SOURCE[0]}" )"
 cd ../
 
-export APP_VER="$(cat client/package.json | grep version | cut -d '"' -f 4)"
-
-rm -rf build/osx
-rm -f build/Pritunl.pkg
-rm -f build/Pritunl.pkg.zip
-
+rm -rf build
 git pull
+
+export APP_VER="$(cat client/package.json | grep version | cut -d '"' -f 4)"
 
 # Pritunl
 mkdir -p build/osx/Applications
