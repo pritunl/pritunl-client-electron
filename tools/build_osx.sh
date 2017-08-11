@@ -8,8 +8,6 @@ rm -rf build/osx
 rm -f build/Pritunl.pkg
 rm -f build/Pritunl.pkg.zip
 
-npm cache clean
-
 git pull
 
 # Pritunl
@@ -18,8 +16,7 @@ cd client
 npm install
 npm update
 ./node_modules/.bin/electron-rebuild
-export ELECTRON_VER="$(npm ls | grep electron-prebuilt | tr '@' '\n' | tail -n1)"
-./node_modules/.bin/electron-packager ./ Pritunl --platform=darwin --arch=x64 --version=$ELECTRON_VER --icon=./www/img/pritunl.icns --out=../build/osx/Applications
+./node_modules/.bin/electron-packager ./ Pritunl --platform=darwin --arch=x64 --icon=./www/img/pritunl.icns --out=../build/osx/Applications
 cd ../
 mv build/osx/Applications/Pritunl-darwin-x64/Pritunl.app build/osx/Applications/
 rm -rf build/osx/Applications/Pritunl-darwin-x64
