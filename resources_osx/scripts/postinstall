@@ -1,4 +1,2 @@
 #!/bin/sh
-kextload /Library/Extensions/tap.kext || true
-kextload /Library/Extensions/tun.kext || true
 launchctl load /Library/LaunchDaemons/com.pritunl.service.plist

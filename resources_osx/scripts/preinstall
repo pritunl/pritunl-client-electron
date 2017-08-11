@@ -1,6 +1,4 @@
 #!/bin/sh
-kextunload -b net.sf.tuntaposx.tap || true
-kextunload -b net.sf.tuntaposx.tun || true
 kill -2 $(ps aux | grep Pritunl.app | awk '{print $2}') || true
 launchctl unload /Library/LaunchAgents/com.pritunl.client.plist || true
 launchctl unload /Library/LaunchDaemons/com.pritunl.service.plist || true
