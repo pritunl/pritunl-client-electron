@@ -25,8 +25,8 @@ func getOpenvpnPath() (pth string) {
 				"openvpn_win", utils.GetWinArch(), "openvpn.exe")
 		}
 	case "darwin":
-		pth = filepath.Join(string(os.PathSeparator), "usr", "local",
-			"bin", "pritunl-openvpn")
+		pth = filepath.Join(string(os.PathSeparator), "Applications",
+			"Pritunl.app", "Contents", "Resources", "pritunl-openvpn")
 		if _, err := os.Stat(pth); os.IsNotExist(err) {
 			pth = filepath.Join(utils.GetRootDir(), "..",
 				"openvpn_osx", "openvpn")
