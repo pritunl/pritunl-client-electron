@@ -2,12 +2,13 @@ package logger
 
 import (
 	"github.com/Sirupsen/logrus"
+	"strings"
 )
 
 type logHook struct{}
 
 func (h *logHook) Fire(entry *logrus.Entry) (err error) {
-	if len(entry.Message) > 7 && entry.Message[:7] == "logger:" {
+	if strings.HasPrefix(entry.Message, "logger:") {
 		return
 	}
 
