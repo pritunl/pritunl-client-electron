@@ -1,6 +1,7 @@
 package profile
 
 import (
+	"github.com/pritunl/pritunl-client-electron/service/constants"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
 	"os"
 	"path/filepath"
@@ -16,21 +17,30 @@ var (
 )
 
 func getOpenvpnPath() (pth string) {
+	if constants.Development {
+		switch runtime.GOOS {
+		case "windows":
+			pth = filepath.Join(utils.GetRootDir(), "..",
+				"openvpn_win", utils.GetWinArch(), "openvpn.exe")
+		case "darwin":
+			pth = filepath.Join(utils.GetRootDir(), "..",
+				"openvpn_osx", "openvpn")
+		case "linux":
+			pth = "openvpn"
+		default:
+			panic("profile: Not implemented")
+		}
+
+		return
+	}
+
 	switch runtime.GOOS {
 	case "windows":
 		pth = filepath.Join(utils.GetRootDir(), "openvpn",
 			utils.GetWinArch(), "openvpn.exe")
-		if _, err := os.Stat(pth); os.IsNotExist(err) {
-			pth = filepath.Join(utils.GetRootDir(), "..",
-				"openvpn_win", utils.GetWinArch(), "openvpn.exe")
-		}
 	case "darwin":
 		pth = filepath.Join(string(os.PathSeparator), "Applications",
 			"Pritunl.app", "Contents", "Resources", "pritunl-openvpn")
-		if _, err := os.Stat(pth); os.IsNotExist(err) {
-			pth = filepath.Join(utils.GetRootDir(), "..",
-				"openvpn_osx", "openvpn")
-		}
 	case "linux":
 		pth = "openvpn"
 	default:
@@ -41,14 +51,26 @@ func getOpenvpnPath() (pth string) {
 }
 
 func getOpenvpnDir() (pth string) {
+	if constants.Development {
+		switch runtime.GOOS {
+		case "windows":
+			pth = filepath.Join(utils.GetRootDir(), "..",
+				"openvpn_win", utils.GetWinArch())
+		case "darwin":
+			pth = ""
+		case "linux":
+			pth = ""
+		default:
+			panic("profile: Not implemented")
+		}
+
+		return
+	}
+
 	switch runtime.GOOS {
 	case "windows":
 		pth = filepath.Join(utils.GetRootDir(), "openvpn",
 			utils.GetWinArch())
-		if _, err := os.Stat(pth); os.IsNotExist(err) {
-			pth = filepath.Join(utils.GetRootDir(), "..",
-				"openvpn_win", utils.GetWinArch())
-		}
 	case "darwin":
 		pth = ""
 	case "linux":

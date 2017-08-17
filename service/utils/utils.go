@@ -11,6 +11,7 @@ import (
 	"github.com/dropbox/godropbox/container/set"
 	"github.com/dropbox/godropbox/errors"
 	"github.com/pritunl/pritunl-client-electron/service/command"
+	"github.com/pritunl/pritunl-client-electron/service/constants"
 	"io"
 	"os"
 	"path/filepath"
@@ -595,6 +596,22 @@ func GetRootDir() (pth string) {
 }
 
 func GetAuthPath() (pth string) {
+	if constants.Development {
+		pth = filepath.Join(GetRootDir(), "..", "dev")
+
+		err := os.MkdirAll(pth, 0755)
+		if err != nil {
+			err = &IoError{
+				errors.Wrap(err, "utils: Failed to create dev directory"),
+			}
+			panic(err)
+		}
+
+		pth = filepath.Join(pth, "auth")
+
+		return
+	}
+
 	if runtime.GOOS == "windows" {
 		pth = filepath.Join("C:\\", "ProgramData", "Pritunl")
 
@@ -616,6 +633,22 @@ func GetAuthPath() (pth string) {
 }
 
 func GetLogPath() (pth string) {
+	if constants.Development {
+		pth = filepath.Join(GetRootDir(), "..", "dev", "log")
+
+		err := os.MkdirAll(pth, 0755)
+		if err != nil {
+			err = &IoError{
+				errors.Wrap(err, "utils: Failed to create dev directory"),
+			}
+			panic(err)
+		}
+
+		pth = filepath.Join(pth, "pritunl.log")
+
+		return
+	}
+
 	switch runtime.GOOS {
 	case "windows":
 		pth = filepath.Join("C:\\", "ProgramData", "Pritunl")
@@ -643,6 +676,22 @@ func GetLogPath() (pth string) {
 }
 
 func GetLogPath2() (pth string) {
+	if constants.Development {
+		pth = filepath.Join(GetRootDir(), "..", "dev", "log")
+
+		err := os.MkdirAll(pth, 0755)
+		if err != nil {
+			err = &IoError{
+				errors.Wrap(err, "utils: Failed to create dev directory"),
+			}
+			panic(err)
+		}
+
+		pth = filepath.Join(pth, "pritunl.log.1")
+
+		return
+	}
+
 	switch runtime.GOOS {
 	case "windows":
 		pth = filepath.Join("C:\\", "ProgramData", "Pritunl")
@@ -670,6 +719,12 @@ func GetLogPath2() (pth string) {
 }
 
 func GetTempDir() (pth string, err error) {
+	if constants.Development {
+		pth = filepath.Join(GetRootDir(), "..", "dev", "tmp")
+		err = os.MkdirAll(pth, 0755)
+		return
+	}
+
 	if runtime.GOOS == "windows" {
 		pth = filepath.Join("C:\\", "ProgramData", "Pritunl")
 		err = os.MkdirAll(pth, 0755)
