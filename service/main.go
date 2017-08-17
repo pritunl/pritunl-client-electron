@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"github.com/Sirupsen/logrus"
 	"github.com/gin-gonic/gin"
 	"github.com/pritunl/pritunl-client-electron/service/auth"
@@ -13,6 +14,12 @@ import (
 )
 
 func main() {
+	devPtr := flag.Bool("dev", false, "development mode")
+	flag.Parse()
+	if *devPtr {
+		constants.Development = true
+	}
+
 	logger.Init()
 
 	logrus.WithFields(logrus.Fields{
