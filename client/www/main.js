@@ -3,6 +3,7 @@ require('./js/globals.js');
 var app = require('electron').app;
 var path = require('path');
 var fs = require('fs');
+var process = require('process');
 var request = require('request');
 var dialog = require('electron').dialog;
 var BrowserWindow = require('electron').BrowserWindow;
@@ -23,11 +24,15 @@ if (app.dock) {
 }
 
 var authPath;
-if (process.platform === 'win32') {
-  authPath = path.join('C:\\', 'ProgramData', 'Pritunl', 'auth');
+if (process.argv.indexOf('--dev') !== -1) {
+  authPath = path.join('..', 'dev', 'auth');
 } else {
-  authPath = path.join(path.sep, 'Applications', 'Pritunl.app',
-    'Contents', 'Resources', 'auth');
+  if (process.platform === 'win32') {
+    authPath = path.join('C:\\', 'ProgramData', 'Pritunl', 'auth');
+  } else {
+    authPath = path.join(path.sep, 'Applications', 'Pritunl.app',
+      'Contents', 'Resources', 'auth');
+  }
 }
 
 global.key = fs.readFileSync(authPath, 'utf8');
