@@ -10,5 +10,6 @@ Thumbs.db
 *.egg
 *.egg-info
 /build
+/dev
 /client/node_modules
 /service/service
