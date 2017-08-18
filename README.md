@@ -8,3 +8,18 @@
 [Pritunl-client-electron](https://github.com/pritunl/pritunl-client-electron)
 is an open source openvpn client. Documentation and more information can be
 found at the home page [client.pritunl.com](https://client.pritunl.com)
+
+## Install From Source (macOS)
+
+Requires homebrew with git, go and node
+
+```bash
+brew install git go node
+bash <(curl -s https://raw.githubusercontent.com/pritunl/pritunl-client-electron/master/tools/install_macos.sh)
+```
+
+## Uninstall From Source (macOS)
+
+```bash
+bash <(curl -s https://raw.githubusercontent.com/pritunl/pritunl-client-electron/master/tools/uninstall_macos.sh)
+```
