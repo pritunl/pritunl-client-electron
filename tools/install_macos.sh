@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-export APP_VER="1.0.1436.36"
+APP_VER="1.0.1436.36"
 
 wget https://github.com/pritunl/pritunl-client-electron/archive/$APP_VER.tar.gz
 tar xf $APP_VER.tar.gz
@@ -20,9 +20,8 @@ rm -rf build/osx/Applications/Pritunl-darwin-x64
 
 # Service
 cd service
-export GOPATH="$(pwd)/go"
-go get -d
-go build -v
+GOPATH="$(pwd)/go" go get -d
+GOPATH="$(pwd)/go" go build -v
 cd ..
 cp service/service build/osx/Applications/Pritunl.app/Contents/Resources/pritunl-service
 
