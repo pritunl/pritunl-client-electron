@@ -15,7 +15,7 @@ Requires homebrew with git, go and node
 
 ```bash
 brew install git go node
-npm install npm@5.2.0 # Rollback to npm v5.2.0 to fix issue with v5.3.0
+npm install -g npm@5.2.0 # Rollback to npm v5.2.0 to fix issue with v5.3.0
 bash <(curl -s https://raw.githubusercontent.com/pritunl/pritunl-client-electron/master/tools/install_macos.sh)
 ```
 
