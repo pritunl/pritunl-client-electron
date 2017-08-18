@@ -11,7 +11,8 @@ found at the home page [client.pritunl.com](https://client.pritunl.com)
 
 ## Install From Source (macOS)
 
-Requires homebrew with git, go and node
+If the Pritunl package is currently installed run the uninstall command
+below. Requires homebrew with git, go and node.
 
 ```bash
 brew install git go node
