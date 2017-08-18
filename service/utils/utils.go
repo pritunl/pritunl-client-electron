@@ -340,7 +340,7 @@ func BackupScutilDns() (err error) {
 		if err != nil {
 			return
 		}
-	} else {
+	} else if !strings.Contains(data, "Pritunl : true") {
 		err = CopyScutilKey("Setup", serviceKey, restoreKey)
 		if err != nil {
 			return
