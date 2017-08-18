@@ -3,9 +3,7 @@ set -e
 
 APP_VER="1.0.1436.36"
 
-curl -O https://github.com/pritunl/pritunl-client-electron/archive/$APP_VER.tar.gz
-tar xf $APP_VER.tar.gz
-rm $APP_VER.tar.gz
+curl -L https://github.com/pritunl/pritunl-client-electron/archive/$APP_VER.tar.gz | tar x
 cd pritunl-client-electron-$APP_VER
 
 # Pritunl
