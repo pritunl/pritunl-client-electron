@@ -1,6 +1,12 @@
 #!/bin/bash
 set -e
 
+read -r -p "Install Pritunl Client from source? [y/N] " response
+if ! [[ "$response" =~ ^([yY][eE][sS]|[yY])+$ ]]
+then
+    exit
+fi
+
 APP_VER="1.0.1436.36"
 
 curl -L https://github.com/pritunl/pritunl-client-electron/archive/$APP_VER.tar.gz | tar x
