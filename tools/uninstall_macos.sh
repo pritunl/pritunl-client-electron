@@ -1,6 +1,12 @@
 #!/bin/bash
 set -e
 
+read -r -p "Uninstall Pritunl Client? [y/N] " response
+if ! [[ "$response" =~ ^([yY][eE][sS]|[yY])+$ ]]
+then
+    exit
+fi
+
 # Service
 kill -2 $(ps aux | grep Pritunl.app | awk '{print $2}') &> /dev/null || true
 sudo launchctl unload /Library/LaunchAgents/com.pritunl.client.plist &> /dev/null || true
