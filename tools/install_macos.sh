@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-read -r -p "Install Pritunl Client from source? [y/N] " response
+read -r -p "Install Pritunl Client? [y/N] " response
 if ! [[ "$response" =~ ^([yY][eE][sS]|[yY])+$ ]]
 then
     exit
