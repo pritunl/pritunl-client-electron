@@ -7,7 +7,7 @@ then
     exit
 fi
 
-read -r -p "¿Use Local Build? [y/N]" response
+read -r -p "Use Local Build? [y/N]" response
 if [[ "$response" =~ ^([yY][eE][sS]|[yY])+$ ]]
 then
     cd ..
