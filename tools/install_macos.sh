@@ -7,10 +7,17 @@ then
     exit
 fi
 
-APP_VER="1.0.1436.36"
+read -r -p "¿Use Local Build? [y/N]" response
+if [[ "$response" =~ ^([yY][eE][sS]|[yY])+$ ]]
+then
+    cd ..
+else
+    curl -L https://github.com/pritunl/pritunl-client-electron/archive/$APP_VER.tar.gz | tar x
+    cd pritunl-client-electron-$APP_VER
 
-curl -L https://github.com/pritunl/pritunl-client-electron/archive/$APP_VER.tar.gz | tar x
-cd pritunl-client-electron-$APP_VER
+fi
+
+APP_VER="1.0.1436.36"
 
 # Pritunl
 mkdir -p build/osx/Applications
