@@ -7,6 +7,8 @@ then
     exit
 fi
 
+APP_VER="1.0.1436.36"
+
 read -r -p "Use Local Build? [y/N]" response
 if [[ "$response" =~ ^([yY][eE][sS]|[yY])+$ ]]
 then
@@ -16,8 +18,6 @@ else
     cd pritunl-client-electron-$APP_VER
 
 fi
-
-APP_VER="1.0.1436.36"
 
 # Pritunl
 mkdir -p build/osx/Applications
