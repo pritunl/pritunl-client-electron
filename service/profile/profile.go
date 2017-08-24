@@ -403,10 +403,6 @@ func (p *Profile) Start(timeout bool) (err error) {
 	start := time.Now()
 	p.remPaths = []string{}
 
-	logrus.WithFields(logrus.Fields{
-		"profile_id": p.Id,
-	}).Info("profile: Connecting")
-
 	p.Status = "connecting"
 	p.stateLock.Lock()
 	p.state = true
@@ -419,6 +415,10 @@ func (p *Profile) Start(timeout bool) (err error) {
 	if ok {
 		return
 	}
+
+	logrus.WithFields(logrus.Fields{
+		"profile_id": p.Id,
+	}).Info("profile: Connecting")
 
 	if runtime.GOOS == "darwin" && n == 0 {
 		utils.ClearScutilKeys()
