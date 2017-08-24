@@ -834,7 +834,7 @@ func PidInit() (err error) {
 
 			go func() {
 				defer func() {
-					_ = recover()
+					recover()
 				}()
 
 				time.Sleep(5 * time.Second)
