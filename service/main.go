@@ -9,6 +9,7 @@ import (
 	"github.com/pritunl/pritunl-client-electron/service/constants"
 	"github.com/pritunl/pritunl-client-electron/service/handlers"
 	"github.com/pritunl/pritunl-client-electron/service/logger"
+	"github.com/pritunl/pritunl-client-electron/service/utils"
 	"github.com/pritunl/pritunl-client-electron/service/watch"
 	"runtime/debug"
 )
@@ -18,6 +19,11 @@ func main() {
 	flag.Parse()
 	if *devPtr {
 		constants.Development = true
+	}
+
+	err := utils.PidInit()
+	if err != nil {
+		panic(err)
 	}
 
 	logger.Init()
@@ -37,7 +43,7 @@ func main() {
 		}
 	}()
 
-	err := auth.Init()
+	err = auth.Init()
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
 			"error": err,
