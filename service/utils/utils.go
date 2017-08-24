@@ -12,12 +12,15 @@ import (
 	"github.com/dropbox/godropbox/errors"
 	"github.com/pritunl/pritunl-client-electron/service/command"
 	"github.com/pritunl/pritunl-client-electron/service/constants"
+	"github.com/pritunl/pritunl-client-electron/service/errortypes"
 	"io"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"runtime"
 	"runtime/debug"
 	"sort"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -743,11 +746,110 @@ func GetTempDir() (pth string, err error) {
 	return
 }
 
+func GetPidPath() (pth string) {
+	if constants.Development {
+		pth = filepath.Join(GetRootDir(), "..", "dev")
+
+		err := os.MkdirAll(pth, 0755)
+		if err != nil {
+			err = &IoError{
+				errors.Wrap(err, "utils: Failed to create dev directory"),
+			}
+			panic(err)
+		}
+
+		pth = filepath.Join(pth, "pritunl.pid")
+
+		return
+	}
+
+	switch runtime.GOOS {
+	case "windows":
+		pth = ""
+	case "darwin":
+		pth = filepath.Join(string(os.PathSeparator), "Applications",
+			"Pritunl.app", "Contents", "Resources", "pritunl.pid")
+	case "linux":
+		pth = filepath.Join(string(filepath.Separator),
+			"var", "log", "pritunl.pid")
+	default:
+		panic("profile: Not implemented")
+	}
+
+	return
+}
+
 func GetWinArch() (arch string) {
 	if os.Getenv("PROGRAMFILES(X86)") == "" {
 		arch = "32"
 	} else {
 		arch = "64"
+	}
+
+	return
+}
+
+func PidInit() (err error) {
+	if runtime.GOOS == "windows" {
+		return
+	}
+
+	pth := GetPidPath()
+	pid := 0
+
+	data, err := ioutil.ReadFile(pth)
+	if err != nil {
+		if !os.IsNotExist(err) {
+			err = errortypes.ReadError{
+				errors.Wrapf(err, "utils: Failed to read %s", pth),
+			}
+			return
+		}
+		err = nil
+	} else {
+		pidStr := strings.TrimSpace(string(data))
+		if pidStr != "" {
+			pid, _ = strconv.Atoi(pidStr)
+		}
+	}
+
+	err = ioutil.WriteFile(
+		pth,
+		[]byte(strconv.Itoa(os.Getpid())),
+		0644,
+	)
+	if err != nil {
+		err = errortypes.WriteError{
+			errors.Wrapf(err, "utils: Failed to write pid"),
+		}
+		return
+	}
+
+	if pid != 0 {
+		proc, e := os.FindProcess(pid)
+		if e == nil {
+			proc.Signal(os.Interrupt)
+
+			done := false
+
+			go func() {
+				defer func() {
+					_ = recover()
+				}()
+
+				time.Sleep(5 * time.Second)
+
+				if done {
+					return
+				}
+				proc.Kill()
+			}()
+
+			proc.Wait()
+			done = true
+
+			time.Sleep(2 * time.Second)
+		}
 	}
 
 	return
