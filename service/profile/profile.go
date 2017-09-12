@@ -213,13 +213,13 @@ func (p *Profile) parseLine(line string) {
 
 			utils.ClearDNSCache()
 		}()
-	} else if strings.Contains(line, "Inactivity timeout (--inactive)") {
+	} else if strings.Contains(line, "Inactivity timeout") {
 		evt := event.Event{
 			Type: "inactive",
 			Data: p,
 		}
 		evt.Init()
-	} else if strings.Contains(line, "Inactivity timeout") {
+
 		if !p.stop {
 			go func() {
 				defer func() {
