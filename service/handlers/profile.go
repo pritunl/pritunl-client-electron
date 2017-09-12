@@ -6,11 +6,12 @@ import (
 )
 
 type profileData struct {
-	Id       string `json:"id"`
-	Data     string `json:"data"`
-	Username string `json:"username"`
-	Password string `json:"password"`
-	Timeout  bool   `json:"timeout"`
+	Id        string `json:"id"`
+	Data      string `json:"data"`
+	Username  string `json:"username"`
+	Password  string `json:"password"`
+	Reconnect bool   `json:"reconnect"`
+	Timeout   bool   `json:"timeout"`
 }
 
 func profileGet(c *gin.Context) {
@@ -22,10 +23,11 @@ func profilePost(c *gin.Context) {
 	c.Bind(data)
 
 	prfl := &profile.Profile{
-		Id:       data.Id,
-		Data:     data.Data,
-		Username: data.Username,
-		Password: data.Password,
+		Id:        data.Id,
+		Data:      data.Data,
+		Username:  data.Username,
+		Password:  data.Password,
+		Reconnect: data.Reconnect,
 	}
 	prfl.Init()
 

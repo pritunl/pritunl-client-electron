@@ -54,6 +54,7 @@ type Profile struct {
 	Data        string           `json:"-"`
 	Username    string           `json:"-"`
 	Password    string           `json:"-"`
+	Reconnect   bool             `json:"reconnect"`
 	Status      string           `json:"status"`
 	Timestamp   int64            `json:"timestamp"`
 	ServerAddr  string           `json:"server_addr"`
@@ -383,10 +384,11 @@ func (p *Profile) clearStatus(start time.Time) {
 
 func (p *Profile) Copy() (prfl *Profile) {
 	prfl = &Profile{
-		Id:       p.Id,
-		Data:     p.Data,
-		Username: p.Username,
-		Password: p.Password,
+		Id:        p.Id,
+		Data:      p.Data,
+		Username:  p.Username,
+		Password:  p.Password,
+		Reconnect: p.Reconnect,
 	}
 	prfl.Init()
 

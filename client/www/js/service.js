@@ -90,6 +90,7 @@ var start = function(prfl, timeout, authToken, username, password, callback) {
         id: prfl.id,
         username: username,
         password: password,
+        reconnect: !prfl.disableReconnect,
         timeout: timeout,
         data: data
       }
