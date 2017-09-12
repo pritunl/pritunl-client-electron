@@ -208,6 +208,7 @@ Profile.prototype.import = function(data) {
   this.tokenTtl = data.token_ttl || null;
   this.authToken = data.auth_token || null;
   this.authTokenTime = data.auth_token_time || null;
+  this.disableReconnect = data.disable_reconnect || null;
   this.autostart = data.autostart || null;
   this.syncHosts = data.sync_hosts || [];
   this.syncHash = data.sync_hash || null;
@@ -226,7 +227,7 @@ Profile.prototype.upsert = function(data) {
   this.passwordMode = data.password_mode;
   this.token = data.token;
   this.tokenTtl = data.token_ttl;
-  this.autostart = data.autostart || this.autostart;
+  this.disableReconnect = data.disable_reconnect;
   this.syncHosts = data.sync_hosts;
   this.syncHash = data.sync_hash;
 };
@@ -245,6 +246,7 @@ Profile.prototype.exportConf = function() {
     token_ttl: this.tokenTtl,
     auth_token: this.authToken,
     auth_token_time: this.authTokenTime,
+    disable_reconnect: this.disableReconnect,
     autostart: this.autostart,
     sync_hosts: this.syncHosts,
     sync_hash: this.syncHash,
