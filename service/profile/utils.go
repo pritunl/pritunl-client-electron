@@ -140,9 +140,11 @@ func RestartProfiles(resetNet bool) (err error) {
 	}
 
 	for _, prfl := range prfls2 {
-		err = prfl.Start(false)
-		if err != nil {
-			return
+		if prfl.Reconnect {
+			err = prfl.Start(false)
+			if err != nil {
+				return
+			}
 		}
 	}
 

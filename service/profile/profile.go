@@ -245,12 +245,14 @@ func (p *Profile) parseLine(line string) {
 
 				p.Wait()
 
-				err = prfl.Start(false)
-				if err != nil {
-					logrus.WithFields(logrus.Fields{
-						"error": err,
-					}).Error("profile: Restart error")
-					return
+				if prfl.Reconnect {
+					err = prfl.Start(false)
+					if err != nil {
+						logrus.WithFields(logrus.Fields{
+							"error": err,
+						}).Error("profile: Restart error")
+						return
+					}
 				}
 			}()
 		}
