@@ -6,7 +6,7 @@
     "start:dev": "electron www/main.js",
     "build:osx": "npm run _build -- --platform=darwin",
     "build:win32": "npm run _build -- --platform=win32 --arch=ia32",
-    "build:all": "npm run _build -- --platform=win32,darwin",
+    "build:all": "npm run build:osx && npm run build:win32",
     "_build": "electron-rebuild . && electron-packager . --icon=www/img/pritunl.icns --overwrite --out=../build/client"
   },
   "dependencies": {
