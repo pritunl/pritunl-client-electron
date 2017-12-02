@@ -137,9 +137,9 @@ var ping = function(callback) {
     }
   }, function(err, resp) {
     if (err || !resp || resp.statusCode !== 200) {
-      callback(false);
+      callback(false, resp.statusCode);
     } else {
-      callback(true);
+      callback(true, resp.statusCode);
     }
   });
 };
@@ -152,9 +152,9 @@ var wakeup = function(callback) {
     }
   }, function(err, resp) {
     if (err || !resp || resp.statusCode !== 200) {
-      callback(false);
+      callback(false, resp.statusCode);
     } else {
-      callback(true);
+      callback(true, resp.statusCode);
     }
   });
 };
