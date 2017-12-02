@@ -80,8 +80,19 @@ var checkService = function(callback) {
       }
 
       setTimeout(function() {
-        service.ping(function(status) {
-          if (!status) {
+        service.ping(function(status, statusCode) {
+          if (statusCode === 401) {
+            tray.setImage(disconnTray);
+            dialog.showMessageBox(null, {
+              type: 'warning',
+              buttons: ['Exit'],
+              title: 'Pritunl - Service Error',
+              message: 'Unable to establish communication with helper ' +
+                'service, try restarting computer'
+            }, function() {
+              app.quit();
+            });
+          } else if (!status) {
             tray.setImage(disconnTray);
             dialog.showMessageBox(null, {
               type: 'warning',
