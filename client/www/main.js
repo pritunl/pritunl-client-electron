@@ -89,7 +89,7 @@ var checkService = function(callback) {
               defaultId: 1,
               title: 'Pritunl - Service Error',
               message: 'Unable to communicate with helper service, ' +
-                'try restarting computer'
+              'try restarting computer'
             }, function(state) {
               if (state === 0) {
                 app.quit();
