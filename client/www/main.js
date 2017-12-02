@@ -130,12 +130,14 @@ app.on('activate', function() {
 });
 
 app.on('quit', function() {
-  request.post({
-    url: 'http://' + constants.serviceHost + '/stop',
-    headers: {
-      'Auth-Key': constants.key
-    }
-  });
+  if (constants.key) {
+    request.post({
+      url: 'http://' + constants.serviceHost + '/stop',
+      headers: {
+        'Auth-Key': constants.key
+      }
+    });
+  }
 });
 
 var openMainWin = function() {
