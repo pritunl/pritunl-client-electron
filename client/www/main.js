@@ -35,8 +35,13 @@ if (process.argv.indexOf('--dev') !== -1) {
   }
 }
 
-global.key = fs.readFileSync(authPath, 'utf8');
-constants.key = global.key;
+try {
+  global.key = fs.readFileSync(authPath, 'utf8');
+  constants.key = global.key;
+} catch(err) {
+  global.key = null;
+  constants.key = null;
+}
 
 var connTray;
 var disconnTray;
