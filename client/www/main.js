@@ -248,8 +248,19 @@ var sync =  function() {
 };
 
 app.on('ready', function() {
-  service.wakeup(function(status) {
-    if (status) {
+  service.wakeup(function(status, statusCode) {
+    if (statusCode === 401) {
+      dialog.showMessageBox(null, {
+        type: 'warning',
+        buttons: ['Exit'],
+        title: 'Pritunl - Service Error',
+        message: 'Unable to establish communication with helper ' +
+          'service, try restarting computer'
+      }, function() {
+        app.quit();
+      });
+      return;
+    } else if (status) {
       app.quit();
       return;
     }
