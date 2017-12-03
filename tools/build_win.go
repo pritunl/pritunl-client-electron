@@ -137,7 +137,7 @@ func main() {
 		panic(err)
 	}
 
-	cmd = exec.Command("C:\\Program Files\\Inno Setup 5\\ISCC.exe",
+	cmd = exec.Command("C:\\Program Files (x86)\\Inno Setup 5\\ISCC.exe",
 		"setup.iss")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
