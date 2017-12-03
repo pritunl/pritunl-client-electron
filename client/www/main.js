@@ -52,9 +52,9 @@ if (process.platform === 'darwin') {
     'tray_disconnected_osxTemplate.png');
 } else if (process.platform === 'win32') {
   connTray = path.join(__dirname, 'img',
-    'tray_connected_linux_light.png');
+    'tray_connected_win.png');
   disconnTray = path.join(__dirname, 'img',
-    'tray_disconnected_linux_light.png');
+    'tray_disconnected_win.png');
 } else if (process.platform === 'linux') {
   connTray = path.join(__dirname, 'img',
     'tray_connected_linux_light.png');
