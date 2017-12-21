@@ -765,7 +765,7 @@ Profile.prototype.auth = function(timeout, callback) {
 
   if (!authType) {
     if (callback) {
-      callback(null);
+      callback(null, null);
     }
     service.start(this, timeout, authToken);
   } else if (!callback) {
