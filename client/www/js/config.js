@@ -7,7 +7,9 @@ var fs = require('fs');
 var loaded;
 var waiting = [];
 var pth = path.join(utils.getUserDataPath(), 'pritunl.json');
-var settings = {};
+var settings = {
+  disable_reconnect: false
+};
 
 var onReady = function(callback) {
   if (loaded) {
@@ -18,6 +20,8 @@ var onReady = function(callback) {
 };
 
 var importData = function(data) {
+  settings.disable_reconnect = !!data['disable_reconnect'];
+
   loaded = true;
 
   for (var i = 0; i < waiting.length; i++) {
@@ -55,7 +59,7 @@ var load = function() {
 };
 
 var save = function() {
-  fs.writeFile(pth, JSON.stringify({}), function(err) {
+  fs.writeFile(pth, JSON.stringify(settings), function(err) {
     if (err) {
       err = new errors.WriteError('config: Failed to write config (%s)', err);
       logger.error(err);
