@@ -1,6 +1,11 @@
 Pritunl Client Changelog
 ========================
 
+Version
+-------
+
+Add auto reconnect option
+
 Version 1.0.1543.29 2017-12-03
 ------------------------------
 
