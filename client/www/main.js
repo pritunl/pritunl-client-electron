@@ -18,6 +18,7 @@ var logger = require('./js/logger.js');
 
 var main = null;
 var tray = null;
+var wakeup = false;
 
 if (app.dock) {
   app.dock.hide();
@@ -141,7 +142,7 @@ app.on('activate', function() {
 });
 
 app.on('quit', function() {
-  if (constants.key) {
+  if (constants.key && !wakeup) {
     request.post({
       url: 'http://' + constants.serviceHost + '/stop',
       headers: {
@@ -272,6 +273,7 @@ app.on('ready', function() {
       });
       return;
     } else if (status) {
+      wakeup = true;
       app.quit();
       return;
     }
