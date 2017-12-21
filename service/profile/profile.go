@@ -272,7 +272,11 @@ func (p *Profile) parseLine(line string) {
 				}
 			}()
 
-			RestartProfiles(false)
+			time.Sleep(3 * time.Second)
+
+			if !p.stop {
+				RestartProfiles(true)
+			}
 		}()
 	} else if strings.Contains(line, "AUTH_FAILED") || strings.Contains(
 		line, "auth-failure") {
