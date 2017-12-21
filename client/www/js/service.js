@@ -140,10 +140,11 @@ var ping = function(callback) {
       'Auth-Key': constants.key
     }
   }, function(err, resp) {
-    if (err || !resp || resp.statusCode !== 200) {
-      callback(false, resp.statusCode);
+    var statusCode = resp ? resp.statusCode : null;
+    if (err || statusCode !== 200) {
+      callback(false, statusCode);
     } else {
-      callback(true, resp.statusCode);
+      callback(true, statusCode);
     }
   });
 };
@@ -155,10 +156,11 @@ var wakeup = function(callback) {
       'Auth-Key': constants.key
     }
   }, function(err, resp) {
-    if (err || !resp || resp.statusCode !== 200) {
-      callback(false, resp.statusCode);
+    var statusCode = resp ? resp.statusCode : null;
+    if (err || statusCode !== 200) {
+      callback(false, statusCode);
     } else {
-      callback(true, resp.statusCode);
+      callback(true, statusCode);
     }
   });
 };
