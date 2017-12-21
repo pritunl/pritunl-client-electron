@@ -5,6 +5,7 @@ Version
 -------
 
 Add auto reconnect option
+Fix issue with code 49 error
 
 Version 1.0.1543.29 2017-12-03
 ------------------------------
