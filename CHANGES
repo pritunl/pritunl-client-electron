@@ -1,6 +1,11 @@
 Pritunl Client Changelog
 ========================
 
+Version
+-------
+
+Fix wakeup issue on Windows
+
 Version 1.0.1561.27 2017-12-21
 ------------------------------
 
