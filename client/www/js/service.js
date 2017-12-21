@@ -2,6 +2,7 @@ var os = require('os');
 var request = require('request');
 var constants = require('./constants.js');
 var logger = require('./logger.js');
+var config = require('./config.js');
 var errors = require('./errors.js');
 
 var profiles = [];
@@ -80,6 +81,9 @@ var start = function(prfl, timeout, authToken, username, password, callback) {
   }
 
   prfl.getFullData(function(data) {
+    var reconnect = prfl.disableReconnect ? false :
+      !config.settings.disable_reconnect;
+
     request.post({
       url: 'http://' + constants.serviceHost + '/profile',
       json: true,
@@ -90,7 +94,7 @@ var start = function(prfl, timeout, authToken, username, password, callback) {
         id: prfl.id,
         username: username,
         password: password,
-        reconnect: !prfl.disableReconnect,
+        reconnect: reconnect,
         timeout: timeout,
         data: data
       }
