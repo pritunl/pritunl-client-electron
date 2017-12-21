@@ -22,8 +22,9 @@ import (
 )
 
 const (
-	connTimeout = 60 * time.Second
-	resetWait   = 3000 * time.Millisecond
+	connTimeout  = 60 * time.Second
+	resetWait    = 3000 * time.Millisecond
+	netResetWait = 4000 * time.Millisecond
 )
 
 var (

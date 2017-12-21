@@ -136,7 +136,7 @@ func RestartProfiles(resetNet bool) (err error) {
 
 	if resetNet {
 		utils.ResetNetworking()
-		time.Sleep(resetWait)
+		time.Sleep(netResetWait)
 	}
 
 	for _, prfl := range prfls2 {
