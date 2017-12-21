@@ -161,6 +161,11 @@ var closeServiceEditor = function() {
   }, 185);
 };
 
+config.onReady(function() {
+  $('.auto-reconnect').text('Auto Reconnect ' +
+    (!config.settings.disable_reconnect ? 'On' : 'Off'));
+});
+
 $('.system-logs .close').click(function(){
   closeSystemEditor();
 });
@@ -218,6 +223,12 @@ $('.main-menu .menu-exit').click(function (){
   }, function() {
     app.quit();
   });
+});
+$('.main-menu .auto-reconnect').click(function (){
+  config.settings.disable_reconnect = !config.settings.disable_reconnect;
+  $('.auto-reconnect').text('Auto Reconnect ' +
+    (!config.settings.disable_reconnect ? 'On' : 'Off'));
+  config.save();
 });
 
 $('.header .close').click(function() {
