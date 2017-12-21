@@ -206,6 +206,10 @@ func GetScutilService() (serviceId string, err error) {
 				continue
 			}
 
+			logrus.WithFields(logrus.Fields{
+				"output": data,
+			}).Error("utils: Failed to find primary service from scutil")
+
 			err = &CommandError{
 				errors.New(
 					"utils: Failed to find primary service from scutil"),
