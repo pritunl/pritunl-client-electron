@@ -36,7 +36,7 @@ Importer.prototype.addPath = function(pth) {
 };
 
 Importer.prototype.read = function(pth, data, callback) {
-  data = data.replace('\r', '');
+  data = data.replace(/\r/g, '');
   var line;
   var lines = data.split('\n');
   var jsonFound = null;
