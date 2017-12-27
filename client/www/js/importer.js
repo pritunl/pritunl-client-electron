@@ -123,7 +123,7 @@ Importer.prototype.read = function(pth, data, callback) {
         fs.readFile(filePth, 'utf8', function(err, data) {
           if (err) {
             err = new errors.ReadError(
-              'importer: Failed to read profile ca cert (%s)', err);
+              'importer: Failed to read profile user key (%s)', err);
             logger.error(err);
             return;
           }
