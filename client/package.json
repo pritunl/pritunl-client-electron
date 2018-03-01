@@ -6,14 +6,14 @@
     "jquery": "3.3.1",
     "mustache": "2.3.0",
     "request": "2.83.0",
-    "tar": "4.1.1",
-    "ws": "3.3.3"
+    "tar": "4.4.0",
+    "ws": "4.1.0"
   },
   "devDependencies": {
-    "electron-rebuild": "1.6.0",
-    "electron-packager": "10.1.0",
-    "electron": "1.7.11",
-    "rimraf": "2.6.1",
-    "rcedit": "0.9.0"
+    "electron-rebuild": "1.7.3",
+    "electron-packager": "11.0.1",
+    "electron": "1.8.2",
+    "rimraf": "2.6.2",
+    "rcedit": "1.0.0"
   }
 }
