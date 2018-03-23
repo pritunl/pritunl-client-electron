@@ -290,9 +290,12 @@ var importProfileUri = function(prflUri, callback) {
     });
   };
 
+  var strictSsl = !prflUri.match(/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/) &&
+    !prflUri.match(/\[[a-fA-F0-9:]*\]/);
+
   request.get({
     url: prflUri,
-    strictSSL: !prflUri.match(/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/)
+    strictSSL: strictSsl
   }, function(err, resp, body) {
     var data;
 
