@@ -3,7 +3,7 @@ var $ = require('jquery');
 var append = function(typ, msg) {
   var removed;
   var $alerts = $('.alerts');
-  var count = $alerts.find('div').size();
+  var count = $alerts.find('div').length;
 
   if (count > 2) {
     removed = true;
