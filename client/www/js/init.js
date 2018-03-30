@@ -218,7 +218,8 @@ $('.main-menu .menu-exit').click(function (){
   request.post({
     url: 'http://' + constants.serviceHost + '/stop',
     headers: {
-      'Auth-Key': constants.key
+      'Auth-Key': constants.key,
+      'User-Agent': 'pritunl'
     }
   }, function() {
     app.quit();
@@ -287,7 +288,8 @@ $('.header .logo').click(function() {
         request.post({
           url: 'http://' + constants.serviceHost + '/stop',
           headers: {
-            'Auth-Key': constants.key
+            'Auth-Key': constants.key,
+            'User-Agent': 'pritunl'
           }
         }, function() {
           app.quit();

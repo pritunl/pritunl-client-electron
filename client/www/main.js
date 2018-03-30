@@ -146,7 +146,8 @@ app.on('quit', function() {
     request.post({
       url: 'http://' + constants.serviceHost + '/stop',
       headers: {
-        'Auth-Key': constants.key
+        'Auth-Key': constants.key,
+        'User-Agent': 'pritunl'
       }
     });
   }
@@ -234,7 +235,8 @@ var sync =  function() {
   request.get({
     url: 'http://' + constants.serviceHost + '/status',
     headers: {
-      'Auth-Key': constants.key
+      'Auth-Key': constants.key,
+      'User-Agent': 'pritunl'
     }
   }, function(err, resp, body) {
     if (!body || !tray) {

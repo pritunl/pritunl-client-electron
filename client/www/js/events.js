@@ -5,7 +5,8 @@ var connect = function(callback) {
   var reconnected = false;
   var socket = new WebSocket('ws://' + constants.serviceHost + '/events', {
     headers: {
-      'Auth-Key': constants.key
+      'Auth-Key': constants.key,
+      'User-Agent': 'pritunl'
     }
   });
 

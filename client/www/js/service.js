@@ -43,7 +43,8 @@ var update = function(callback) {
   request.get({
     url: 'http://' + constants.serviceHost + '/profile',
     headers: {
-      'Auth-Key': constants.key
+      'Auth-Key': constants.key,
+      'User-Agent': 'pritunl'
     }
   }, function(err, resp, body) {
     if (err) {
@@ -88,7 +89,8 @@ var start = function(prfl, timeout, authToken, username, password, callback) {
       url: 'http://' + constants.serviceHost + '/profile',
       json: true,
       headers: {
-        'Auth-Key': constants.key
+        'Auth-Key': constants.key,
+        'User-Agent': 'pritunl'
       },
       body: {
         id: prfl.id,
@@ -116,7 +118,8 @@ var stop = function(prfl, callback) {
     url: 'http://' + constants.serviceHost + '/profile',
     json: true,
     headers: {
-      'Auth-Key': constants.key
+      'Auth-Key': constants.key,
+      'User-Agent': 'pritunl'
     },
     body: {
       id: prfl.id
@@ -137,7 +140,8 @@ var ping = function(callback) {
   request.get({
     url: 'http://' + constants.serviceHost + '/ping',
     headers: {
-      'Auth-Key': constants.key
+      'Auth-Key': constants.key,
+      'User-Agent': 'pritunl'
     }
   }, function(err, resp) {
     var statusCode = resp ? resp.statusCode : null;
@@ -153,7 +157,8 @@ var wakeup = function(callback) {
   request.post({
     url: 'http://' + constants.serviceHost + '/wakeup',
     headers: {
-      'Auth-Key': constants.key
+      'Auth-Key': constants.key,
+      'User-Agent': 'pritunl'
     }
   }, function(err, resp) {
     var statusCode = resp ? resp.statusCode : null;
