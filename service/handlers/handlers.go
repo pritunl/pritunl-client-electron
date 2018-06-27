@@ -2,6 +2,7 @@
 package handlers
 
 import (
+	"crypto/subtle"
 	"fmt"
 	"github.com/Sirupsen/logrus"
 	"github.com/dropbox/godropbox/errors"
@@ -39,7 +40,9 @@ func Auth(c *gin.Context) {
 	if c.Request.Header.Get("Origin") != "" ||
 		c.Request.Header.Get("Referer") != "" ||
 		c.Request.Header.Get("User-Agent") != "pritunl" ||
-		c.Request.Header.Get("Auth-Key") != auth.Key {
+		subtle.ConstantTimeCompare(
+			[]byte(c.Request.Header.Get("Auth-Key")),
+			[]byte(auth.Key)) != 1 {
 
 		c.AbortWithStatus(401)
 		return
