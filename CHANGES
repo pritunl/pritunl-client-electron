@@ -1,6 +1,10 @@
 Pritunl Client Changelog
 ========================
 
+<%= version %>
+
+Add Linux support
+
 Version 1.0.1653.28 2018-03-23
 ------------------------------
 
