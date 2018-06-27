@@ -14,7 +14,10 @@ func Init() (err error) {
 	pth := utils.GetAuthPath()
 
 	if _, e := os.Stat(pth); os.IsNotExist(e) {
-		Key = utils.Uuid()
+		Key, err = utils.RandStr(64)
+		if err != nil {
+			return
+		}
 
 		err = ioutil.WriteFile(pth, []byte(Key), os.FileMode(0644))
 		if err != nil {
