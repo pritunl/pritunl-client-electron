@@ -89,7 +89,35 @@ func (p *Profile) writeUp() (pth string, err error) {
 
 	pth = filepath.Join(rootDir, p.Id+"-up.sh")
 
-	err = ioutil.WriteFile(pth, []byte(upScript), os.FileMode(0755))
+	script := ""
+	switch runtime.GOOS {
+	case "darwin":
+		script = upScriptDarwin
+		break
+	case "linux":
+		resolved := true
+
+		resolvData, _ := ioutil.ReadFile("/etc/resolv.conf")
+		if resolvData != nil {
+			resolvDataStr := string(resolvData)
+			if !strings.Contains(resolvDataStr, "systemd-resolved") &&
+				!strings.Contains(resolvDataStr, "127.0.0.53") {
+
+				resolved = false
+			}
+		}
+
+		if resolved {
+			script = resolvedScript
+		} else {
+			script = resolvScript
+		}
+		break
+	default:
+		panic("profile: Not implemented")
+	}
+
+	err = ioutil.WriteFile(pth, []byte(script), os.FileMode(0755))
 	if err != nil {
 		err = &WriteError{
 			errors.Wrap(err, "profile: Failed to write up script"),
@@ -108,7 +136,35 @@ func (p *Profile) writeDown() (pth string, err error) {
 
 	pth = filepath.Join(rootDir, p.Id+"-down.sh")
 
-	err = ioutil.WriteFile(pth, []byte(downScript), os.FileMode(0755))
+	script := ""
+	switch runtime.GOOS {
+	case "darwin":
+		script = downScriptDarwin
+		break
+	case "linux":
+		resolved := true
+
+		resolvData, _ := ioutil.ReadFile("/etc/resolv.conf")
+		if resolvData != nil {
+			resolvDataStr := string(resolvData)
+			if !strings.Contains(resolvDataStr, "systemd-resolved") &&
+				!strings.Contains(resolvDataStr, "127.0.0.53") {
+
+				resolved = false
+			}
+		}
+
+		if resolved {
+			script = resolvedScript
+		} else {
+			script = resolvScript
+		}
+		break
+	default:
+		panic("profile: Not implemented")
+	}
+
+	err = ioutil.WriteFile(pth, []byte(script), os.FileMode(0755))
 	if err != nil {
 		err = &WriteError{
 			errors.Wrap(err, "profile: Failed to write down script"),
@@ -473,7 +529,19 @@ func (p *Profile) Start(timeout bool) (err error) {
 		}
 	}
 
-	if runtime.GOOS == "darwin" {
+	blockPath, e := p.writeBlock()
+	if e != nil {
+		err = e
+		p.clearStatus(start)
+		return
+	}
+	p.remPaths = append(p.remPaths, blockPath)
+
+	switch runtime.GOOS {
+	case "windows":
+		args = append(args, "--script-security", "1")
+		break
+	case "darwin":
 		upPath, e := p.writeUp()
 		if e != nil {
 			err = e
@@ -490,13 +558,31 @@ func (p *Profile) Start(timeout bool) (err error) {
 		}
 		p.remPaths = append(p.remPaths, downPath)
 
-		blockPath, e := p.writeBlock()
+		args = append(args, "--script-security", "2",
+			"--up", upPath,
+			"--down", downPath,
+			"--route-pre-down", blockPath,
+			"--tls-verify", blockPath,
+			"--ipchange", blockPath,
+			"--route-up", blockPath,
+		)
+		break
+	case "linux":
+		upPath, e := p.writeUp()
 		if e != nil {
 			err = e
 			p.clearStatus(start)
 			return
 		}
-		p.remPaths = append(p.remPaths, blockPath)
+		p.remPaths = append(p.remPaths, upPath)
+
+		downPath, e := p.writeDown()
+		if e != nil {
+			err = e
+			p.clearStatus(start)
+			return
+		}
+		p.remPaths = append(p.remPaths, downPath)
 
 		args = append(args, "--script-security", "2",
 			"--up", upPath,
@@ -506,8 +592,9 @@ func (p *Profile) Start(timeout bool) (err error) {
 			"--ipchange", blockPath,
 			"--route-up", blockPath,
 		)
-	} else {
-		args = append(args, "--script-security", "1")
+		break
+	default:
+		panic("profile: Not implemented")
 	}
 
 	if authPath != "" {
