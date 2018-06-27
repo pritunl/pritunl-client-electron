@@ -297,7 +297,7 @@ if cmd == 'set-version':
             sys.exit(1)
 
 
-    Generate changelog
+    # Generate changelog
     version = None
     release_body = ''
     with open(CHANGES_PATH, 'r') as changelog_file:
