@@ -85,7 +85,9 @@ var checkService = function(callback) {
       setTimeout(function() {
         service.ping(function(status, statusCode) {
           if (statusCode === 401) {
-            tray.setImage(disconnTray);
+            if (tray) {
+              tray.setImage(disconnTray);
+            }
             dialog.showMessageBox(null, {
               type: 'warning',
               buttons: ['Exit'],
@@ -96,7 +98,9 @@ var checkService = function(callback) {
               app.quit();
             });
           } else if (!status) {
-            tray.setImage(disconnTray);
+            if (tray) {
+              tray.setImage(disconnTray);
+            }
             dialog.showMessageBox(null, {
               type: 'warning',
               buttons: ['Exit', 'Retry'],
@@ -125,10 +129,14 @@ var checkService = function(callback) {
 };
 
 app.on('window-all-closed', function() {
-  if (app.dock) {
-    app.dock.hide();
+  if (process.platform === 'linux') {
+    app.quit();
+  } else {
+    if (app.dock) {
+      app.dock.hide();
+    }
+    checkService();
   }
-  checkService();
 });
 
 app.on('open-file', function() {
@@ -144,15 +152,7 @@ app.on('activate', function() {
 });
 
 app.on('quit', function() {
-  if (constants.key && !wakeup) {
-    request.post({
-      url: 'http://' + constants.serviceHost + '/stop',
-      headers: {
-        'Auth-Key': constants.key,
-        'User-Agent': 'pritunl'
-      }
-    });
-  }
+  app.quit();
 });
 
 var openMainWin = function() {
@@ -206,6 +206,9 @@ var openMainWin = function() {
     main.maximizedPrev = null;
 
     main.on('closed', function() {
+      if (process.platform === 'linux') {
+        app.quit();
+      }
       main = null;
     });
 
@@ -251,14 +254,18 @@ var sync =  function() {
       err = new errors.ParseError(
         'main: Failed to parse service status (%s)', e);
       logger.error(err);
-      tray.setImage(disconnTray);
+      if (tray) {
+        tray.setImage(disconnTray);
+      }
       return;
     }
 
-    if (data.status) {
-      tray.setImage(connTray);
-    } else {
-      tray.setImage(disconnTray);
+    if (tray) {
+      if (data.status) {
+        tray.setImage(connTray);
+      } else {
+        tray.setImage(disconnTray);
+      }
     }
   });
 };
@@ -325,13 +332,15 @@ app.on('ready', function() {
       openMainWin();
     }
 
-    tray = new Tray(disconnTray);
-    tray.on('click', function() {
-      openMainWin();
-    });
-    tray.on('double-click', function() {
-      openMainWin();
-    });
+    if (process.platform !== 'linux') {
+      tray = new Tray(disconnTray);
+      tray.on('click', function() {
+        openMainWin();
+      });
+      tray.on('double-click', function() {
+        openMainWin();
+      });
+    }
 
     var appMenu = Menu.buildFromTemplate([
       {
