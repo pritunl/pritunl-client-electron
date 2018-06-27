@@ -279,11 +279,7 @@ $('.header .logo').click(function() {
       }
     },
     {
-      label: 'Close to Tray',
-      role: 'close'
-    },
-    {
-      label: 'Exit',
+      label: 'Shutdown',
       click: function() {
         request.post({
           url: 'http://' + constants.serviceHost + '/stop',
@@ -295,6 +291,10 @@ $('.header .logo').click(function() {
           app.quit();
         });
       }
+    },
+    {
+      label: 'Close',
+      role: 'close'
     }
   ]);
   menu.popup(remote.getCurrentWindow());
