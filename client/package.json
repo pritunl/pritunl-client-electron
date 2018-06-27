@@ -5,15 +5,15 @@
   "dependencies": {
     "jquery": "3.3.1",
     "mustache": "2.3.0",
-    "request": "2.85.0",
-    "tar": "4.4.1",
-    "ws": "5.1.0"
+    "request": "2.87.0",
+    "tar": "4.4.4",
+    "ws": "5.2.1"
   },
   "devDependencies": {
-    "electron": "1.8.4",
-    "electron-packager": "11.1.0",
+    "electron": "1.8.7",
+    "electron-packager": "12.1.0",
     "electron-rebuild": "1.7.3",
-    "rcedit": "1.0.0",
+    "rcedit": "1.1.0",
     "rimraf": "2.6.2"
   }
 }
