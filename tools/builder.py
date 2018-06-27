@@ -14,6 +14,7 @@ import base64
 import Crypto.Cipher.AES
 import Crypto.Protocol.KDF
 
+CHANGES_PATH = 'CHANGES'
 CONSTANTS_PATH = 'service/constants/constants.go'
 CONSTANTS_PATH2 = 'client/package.json'
 CONSTANTS_PATH3 = 'client/www/js/constants.js'
@@ -218,6 +219,19 @@ if cmd == 'version':
 if cmd == 'set-version':
     new_version = get_ver(sys.argv[2])
 
+    # Update changes
+    with open(CHANGES_PATH, 'r') as changes_file:
+        changes_data = changes_file.read()
+
+    with open(CHANGES_PATH, 'w') as changes_file:
+        ver_date_str = 'Version ' + new_version.replace(
+            'v', '') + cur_date.strftime(' %Y-%m-%d')
+        changes_file.write(changes_data.replace(
+            '<%= version %>',
+            '%s\n%s' % (ver_date_str, '-' * len(ver_date_str)),
+        ))
+
+
     with open(CONSTANTS_PATH, 'r') as constants_file:
         constants_data = constants_file.read()
 
@@ -283,7 +297,35 @@ if cmd == 'set-version':
             sys.exit(1)
 
 
+    Generate changelog
+    version = None
+    release_body = ''
+    with open(CHANGES_PATH, 'r') as changelog_file:
+        for line in changelog_file.readlines()[2:]:
+            line = line.strip()
+
+            if not line or line[0] == '-':
+                continue
+
+            if line[:7] == 'Version':
+                if version:
+                    break
+                version = line.split(' ')[1]
+            elif version:
+                release_body += '* %s\n' % line
+
+    if version != new_version:
+        print 'New version does not exist in changes'
+        sys.exit(1)
+
+    if not release_body:
+        print 'Failed to generate github release body'
+        sys.exit(1)
+    release_body = release_body.rstrip('\n')
+
+
     subprocess.check_call(['git', 'reset', 'HEAD', '.'])
+    subprocess.check_call(['git', 'add', CHANGES_PATH])
     subprocess.check_call(['git', 'add', CONSTANTS_PATH])
     subprocess.check_call(['git', 'add', CONSTANTS_PATH2])
     subprocess.check_call(['git', 'add', CONSTANTS_PATH3])
@@ -303,7 +345,7 @@ if cmd == 'set-version':
         data=json.dumps({
             'tag_name': new_version,
             'name': '%s v%s' % (RELEASE_NAME, new_version),
-            'body': '',
+            'body': release_body,
             'prerelease': False,
             'target_commitish': 'master',
         }),
@@ -321,7 +363,7 @@ if cmd == 'set-version':
 
     # Create gitlab release
     response = requests.post(
-        'https://git.pritunl.com/api/v3/projects' + \
+        'https://git.pritunl.com/api/v4/projects' + \
         '/%s%%2F%s/repository/tags/%s/release' % (
             github_owner, REPO_NAME, new_version),
         headers={
@@ -330,7 +372,7 @@ if cmd == 'set-version':
         },
         data=json.dumps({
             'tag_name': new_version,
-            'description': '',
+            'description': release_body,
         }),
     )
 
