@@ -441,7 +441,8 @@ func ResetNetworking() {
 	networkResetLock.Lock()
 	defer networkResetLock.Unlock()
 
-	if runtime.GOOS == "windows" {
+	switch runtime.GOOS {
+	case "windows":
 		command.Command("netsh", "interface", "ip", "delete",
 			"destinationcache").Run()
 		command.Command("ipconfig", "/release").Run()
@@ -451,7 +452,8 @@ func ResetNetworking() {
 		command.Command("nbtstat", "-RR").Run()
 		command.Command("ipconfig", "/flushdns").Run()
 		command.Command("nbtstat", "/registerdns").Run()
-	} else if runtime.GOOS == "darwin" {
+		break
+	case "darwin":
 		cmd := command.Command("/usr/sbin/networksetup", "-getcurrentlocation")
 
 		output, err := cmd.CombinedOutput()
@@ -532,11 +534,23 @@ func ResetNetworking() {
 				"error": err,
 			}).Error("utils: Reset networking error")
 		}
+		break
+	case "linux":
+		output, _ := ExecOutput("nmcli", "networking")
+		if strings.Contains(output, "enabled") {
+			command.Command("nmcli", "connection", "reload").Run()
+			command.Command("nmcli", "networking", "off").Run()
+			command.Command("nmcli", "networking", "on").Run()
+		}
+		break
+	default:
+		panic("profile: Not implemented")
 	}
 }
 
 func ClearDNSCache() {
-	if runtime.GOOS == "windows" {
+	switch runtime.GOOS {
+	case "windows":
 		command.Command("ipconfig", "/flushdns").Run()
 		go func() {
 			defer func() {
@@ -555,7 +569,8 @@ func ClearDNSCache() {
 				command.Command("ipconfig", "/flushdns").Run()
 			}
 		}()
-	} else if runtime.GOOS == "darwin" {
+		break
+	case "darwin":
 		command.Command("killall", "-HUP", "mDNSResponder").Run()
 		go func() {
 			defer func() {
@@ -574,6 +589,29 @@ func ClearDNSCache() {
 				command.Command("killall", "-HUP", "mDNSResponder").Run()
 			}
 		}()
+		break
+	case "linux":
+		command.Command("systemd-resolve", "--flush-caches").Run()
+		go func() {
+			defer func() {
+				panc := recover()
+				if panc != nil {
+					logrus.WithFields(logrus.Fields{
+						"stack": string(debug.Stack()),
+						"panic": panc,
+					}).Error("utils: Panic")
+					panic(panc)
+				}
+			}()
+
+			for i := 0; i < 3; i++ {
+				time.Sleep(1 * time.Second)
+				command.Command("systemd-resolve", "--flush-caches").Run()
+			}
+		}()
+		break
+	default:
+		panic("profile: Not implemented")
 	}
 }
 
@@ -619,7 +657,8 @@ func GetAuthPath() (pth string) {
 		return
 	}
 
-	if runtime.GOOS == "windows" {
+	switch runtime.GOOS {
+	case "windows":
 		pth = filepath.Join("C:\\", "ProgramData", "Pritunl")
 
 		err := os.MkdirAll(pth, 0755)
@@ -631,9 +670,17 @@ func GetAuthPath() (pth string) {
 		}
 
 		pth = filepath.Join(pth, "auth")
-	} else {
+		break
+	case "darwin":
 		pth = filepath.Join(string(os.PathSeparator), "Applications",
 			"Pritunl.app", "Contents", "Resources", "auth")
+		break
+	case "linux":
+		pth = filepath.Join(string(filepath.Separator),
+			"var", "run", "pritunl.auth")
+		break
+	default:
+		panic("profile: Not implemented")
 	}
 
 	return
@@ -669,12 +716,15 @@ func GetLogPath() (pth string) {
 		}
 
 		pth = filepath.Join(pth, "pritunl.log")
+		break
 	case "darwin":
 		pth = filepath.Join(string(os.PathSeparator), "Applications",
 			"Pritunl.app", "Contents", "Resources", "pritunl.log")
+		break
 	case "linux":
 		pth = filepath.Join(string(filepath.Separator),
 			"var", "log", "pritunl.log")
+		break
 	default:
 		panic("profile: Not implemented")
 	}
@@ -712,12 +762,15 @@ func GetLogPath2() (pth string) {
 		}
 
 		pth = filepath.Join(pth, "pritunl.log.1")
+		break
 	case "darwin":
 		pth = filepath.Join(string(os.PathSeparator), "Applications",
 			"Pritunl.app", "Contents", "Resources", "pritunl.log.1")
+		break
 	case "linux":
 		pth = filepath.Join(string(filepath.Separator),
 			"var", "log", "pritunl.log.1")
+		break
 	default:
 		panic("profile: Not implemented")
 	}
@@ -771,9 +824,11 @@ func GetPidPath() (pth string) {
 	case "darwin":
 		pth = filepath.Join(string(os.PathSeparator), "Applications",
 			"Pritunl.app", "Contents", "Resources", "pritunl.pid")
+		break
 	case "linux":
 		pth = filepath.Join(string(filepath.Separator),
-			"var", "log", "pritunl.pid")
+			"var", "run", "pritunl.pid")
+		break
 	default:
 		panic("profile: Not implemented")
 	}
