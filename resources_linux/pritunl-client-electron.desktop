@@ -7,4 +7,4 @@ Type=Application
 StartupNotify=false
 Icon=pritunl_client_electron
 Categories=Network;TrayIcon;
-StartupWMClass=Pritunl
+StartupWMClass=pritunl
