@@ -2,7 +2,7 @@ package profile
 
 const (
 	blockScript = "#!/bin/bash\n"
-	upScript    = `#!/bin/bash -e
+	upScriptDarwin    = `#!/bin/bash -e
 
 CONN_ID="$(echo ${config} | /sbin/md5)"
 
@@ -114,7 +114,7 @@ fi
 killall -HUP mDNSResponder | true
 
 exit 0`
-	downScript = `#!/bin/bash -e
+	downScriptDarwin = `#!/bin/bash -e
 
 CONN_ID="$(echo ${config} | /sbin/md5)"
 
