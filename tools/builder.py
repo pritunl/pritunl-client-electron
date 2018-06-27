@@ -22,7 +22,7 @@ CONSTANTS_PATH4 = 'resources_win/setup.iss'
 STABLE_PACUR_PATH = '../pritunl-pacur'
 TEST_PACUR_PATH = '../pritunl-pacur-test'
 BUILD_KEYS_PATH = 'tools/build_keys.json'
-BUILD_TARGETS = ('pritunl-client-electron')
+BUILD_TARGETS = ('pritunl-client-electron',)
 REPO_NAME = 'pritunl-client-electron'
 RELEASE_NAME = 'Pritunl Client'
 
