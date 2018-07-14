@@ -172,26 +172,60 @@ Importer.prototype.read = function(pth, data, callback) {
   }
 
   waiter.wait(function() {
-    data = ovpnData.trim() + '\n' + keyData;
+    profile.getProfiles(function(err, curProfiles) {
+      if (err) {
+        err = new errors.ReadError(
+          'importer: Failed to read profiles (%s)', err);
+        logger.error(err);
+        return;
+      }
 
-    var pth = path.join(utils.getUserDataPath(), 'profiles', utils.uuid());
-    var prfl = new profile.Profile(pth);
+      data = ovpnData.trim() + '\n' + keyData;
 
-    if (confData) {
-      prfl.import(confData);
-    } else {
-      prfl.name = fileName;
-    }
-    prfl.data = data;
+      var pth = path.join(utils.getUserDataPath(), 'profiles', utils.uuid());
+      var prfl = new profile.Profile(pth);
 
-    prfl.saveData();
-    prfl.saveConf();
+      if (confData) {
+        prfl.import(confData);
+      } else {
+        prfl.name = fileName;
+      }
+      prfl.data = data;
 
-    this.profiles.push(prfl);
+      var exists = false;
+      var curPrfl;
+      for (var i = 0; i < curProfiles.length; i++) {
+        curPrfl = curProfiles[i];
 
-    if (callback) {
-      callback();
-    }
+        if (prfl.organizationId === curPrfl.organizationId &&
+            prfl.serverId === curPrfl.serverId &&
+            prfl.userId === curPrfl.userId) {
+
+          curPrfl.import(confData);
+          curPrfl.data = data;
+
+          curPrfl.saveData();
+          curPrfl.saveConf();
+
+          exists = true;
+
+          break;
+        }
+      }
+
+      if (!exists) {
+        prfl.saveData();
+        prfl.saveConf();
+
+        this.profiles.push(prfl);
+      }
+
+      if (callback) {
+        callback();
+      }
+    }.bind(this), true);
+
+
   }.bind(this));
 };
 
