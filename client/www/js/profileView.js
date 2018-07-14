@@ -452,6 +452,28 @@ var renderProfile = function(prfl) {
   $('.profiles .list').append($profile);
 };
 
+var refreshProfiles = function() {
+  profile.getProfiles(function(err, prfls) {
+    if (err) {
+      err = new errors.ReadError(
+        'importer: Failed to read profiles (%s)', err);
+      logger.error(err);
+      return;
+    }
+
+    var prfl;
+    var curPrfl;
+    for (var i = 0; i < prfls.length; i++) {
+      prfl = prfls[i];
+
+      curPrfl = service.get(prfl.id);
+      if (curPrfl) {
+        curPrfl.refresh(prfl);
+      }
+    }
+  });
+};
+
 var init = function() {
   $('.version').text('v' + constants.version);
 
