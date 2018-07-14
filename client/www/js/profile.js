@@ -192,6 +192,26 @@ Profile.prototype.update = function(data) {
   }
 };
 
+Profile.prototype.refresh = function(prfl) {
+  this.name = prfl.name || this.name;
+  this.organizationId = prfl.organizationId || this.organizationId;
+  this.organization = prfl.organization || this.organization;
+  this.serverId = prfl.serverId || this.serverId;
+  this.server = prfl.server || this.server;
+  this.userId = prfl.userId || this.userId;
+  this.user = prfl.user || this.user;
+  this.passwordMode = prfl.passwordMode;
+  this.token = prfl.token;
+  this.tokenTtl = prfl.tokenTtl;
+  this.disableReconnect = prfl.disableReconnect;
+  this.syncHosts = prfl.syncHosts;
+  this.syncHash = prfl.syncHash;
+
+  if (this.onUpdate) {
+    this.onUpdate();
+  }
+};
+
 Profile.prototype.import = function(data) {
   this.status = 'disconnected';
   this.serverAddr = null;
