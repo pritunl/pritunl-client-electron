@@ -1,7 +1,7 @@
 Pritunl Client Changelog
 ========================
 
-<% version %>
+<%= version %>
 
 Import profile improvements
 
