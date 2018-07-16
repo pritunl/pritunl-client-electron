@@ -535,6 +535,7 @@ var init = function() {
             renderProfile(prfls[i]);
           }
         }
+        refreshProfiles();
 
         $('.profiles .import-btns').hide();
         $('.profiles .import').show();
@@ -593,9 +594,12 @@ var init = function() {
         var pth = evt.originalEvent.dataTransfer.files[0].path;
 
         importer.importProfile(pth, function(prfls) {
-          for (var i = 0; i < prfls.length; i++) {
-            renderProfile(prfls[i]);
+          if (prfls) {
+            for (var i = 0; i < prfls.length; i++) {
+              renderProfile(prfls[i]);
+            }
           }
+          refreshProfiles();
         });
       }
     });
@@ -608,9 +612,12 @@ var init = function() {
       $('.profiles .profile-file').val('');
 
       importer.importProfile(pth, function(prfls) {
-        for (var i = 0; i < prfls.length; i++) {
-          renderProfile(prfls[i]);
+        if (prfls) {
+          for (var i = 0; i < prfls.length; i++) {
+            renderProfile(prfls[i]);
+          }
         }
+        refreshProfiles();
       });
     });
 
