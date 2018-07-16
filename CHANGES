@@ -1,6 +1,10 @@
 Pritunl Client Changelog
 ========================
 
+<% version %>
+
+Import profile improvements
+
 Version 1.0.1749.25 2018-06-27
 ------------------------------
 
