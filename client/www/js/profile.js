@@ -213,9 +213,7 @@ Profile.prototype.refresh = function(prfl) {
 };
 
 Profile.prototype.import = function(data) {
-  this.status = 'disconnected';
-  this.serverAddr = null;
-  this.clientAddr = null;
+  this.status = this.status || 'disconnected';
   this.name = data.name || this.name;
   this.organizationId = data.organization_id || null;
   this.organization = data.organization || null;
