@@ -1,6 +1,10 @@
 Pritunl Client Changelog
 ========================
 
+<%= version %>
+
+Add support for OneLogin and Okta passcodes
+
 Version 1.0.1768.89 2018-07-16
 ------------------------------
 
