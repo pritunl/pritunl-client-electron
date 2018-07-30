@@ -316,6 +316,9 @@ var renderProfile = function(prfl) {
           setTimeout(function() {
             $profile.find('.connect-otp-input').focus();
           }, 150);
+        } else {
+          callback(username, password);
+          closeMenu($profile);
         }
       };
       authHandler();
