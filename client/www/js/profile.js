@@ -93,6 +93,7 @@ function Profile(pth) {
   this.server = null;
   this.userId = null;
   this.user = null;
+  this.preConnectMsg = null;
   this.passwordMode = null;
   this.token = null;
   this.tokenTtl = null;
@@ -200,6 +201,7 @@ Profile.prototype.refresh = function(prfl) {
   this.server = prfl.server || this.server;
   this.userId = prfl.userId || this.userId;
   this.user = prfl.user || this.user;
+  this.preConnectMsg = prfl.preConnectMsg || this.preConnectMsg;
   this.passwordMode = prfl.passwordMode;
   this.token = prfl.token;
   this.tokenTtl = prfl.tokenTtl;
@@ -221,6 +223,7 @@ Profile.prototype.import = function(data) {
   this.server = data.server || null;
   this.userId = data.user_id || null;
   this.user = data.user || null;
+  this.preConnectMsg = data.pre_connect_msg || null;
   this.passwordMode = data.password_mode || null;
   this.token = data.token || null;
   this.tokenTtl = data.token_ttl || null;
@@ -242,6 +245,7 @@ Profile.prototype.upsert = function(data) {
   this.server = data.server || this.server;
   this.userId = data.user_id || this.userId;
   this.user = data.user || this.user;
+  this.preConnectMsg = data.pre_connect_msg;
   this.passwordMode = data.password_mode;
   this.token = data.token;
   this.tokenTtl = data.token_ttl;
@@ -259,6 +263,7 @@ Profile.prototype.exportConf = function() {
     server: this.server,
     user_id: this.userId,
     user: this.user,
+    pre_connect_msg: this.preConnectMsg,
     password_mode: this.passwordMode,
     token: this.token,
     token_ttl: this.tokenTtl,
@@ -306,6 +311,7 @@ Profile.prototype.export = function() {
     server: this.server || '',
     userId: this.userId || '',
     user: this.user || '',
+    pre_connect_msg: this.preConnectMsg || '',
     autostart: this.autostart ? 'On' : 'Off',
     syncHosts: this.syncHosts || [],
     syncHash: this.syncHash || '',
