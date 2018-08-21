@@ -771,6 +771,20 @@ Profile.prototype.connect = function(timeout, authCallback) {
   }
 };
 
+Profile.prototype.preConnect = function(callback) {
+  if (this.syncHosts.length) {
+    this.sync(this.syncHosts.slice(0), function() {
+      callback();
+    }.bind(this));
+  } else {
+    callback();
+  }
+};
+
+Profile.prototype.postConnect = function(timeout, authCallback) {
+  this.auth(timeout, authCallback);
+};
+
 Profile.prototype.auth = function(timeout, callback) {
   var authType = this.getAuthType();
   var authToken;
