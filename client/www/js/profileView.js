@@ -111,13 +111,8 @@ var renderProfile = function(prfl) {
     closeMenu($profile);
   });
 
-  $profile.find('.menu .connect').click(function() {
-    if ($profile.find('.menu .connect').hasClass('disabled')) {
-      return;
-    }
-    $profile.find('.menu .connect').addClass('disabled');
-
-    prfl.connect(true, function(authType, callback) {
+  var prflConnect = function() {
+    prfl.postConnect(true, function(authType, callback) {
       if (!authType) {
         closeMenu($profile);
         return;
@@ -391,7 +386,37 @@ var renderProfile = function(prfl) {
       };
       authHandler();
     });
+  };
+
+  $profile.find('.menu .connect').click(function() {
+    if ($profile.find('.menu .connect').hasClass('disabled')) {
+      return;
+    }
+    $profile.find('.menu .connect').addClass('disabled');
+
+    prfl.preConnect(function() {
+      if (prfl.preConnectMsg) {
+        remote.dialog.showMessageBox(
+          {
+            type: 'none',
+            title: 'Connecting to Server',
+            message: prfl.preConnectMsg,
+            buttons: ['Cancel', 'Connect'],
+          },
+          function(resp) {
+            if (resp === 1) {
+              prflConnect();
+            } else {
+              closeMenu($profile);
+            }
+          },
+        );
+      } else {
+        prflConnect();
+      }
+    });
   });
+
   $profile.find('.menu .connect-cancel').click(function() {
     var $menu = $profile.find('.menu');
     $menu.removeClass('authenticating-user');
