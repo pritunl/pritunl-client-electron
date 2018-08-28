@@ -399,7 +399,7 @@ var renderProfile = function(prfl) {
         remote.dialog.showMessageBox(
           {
             type: 'none',
-            title: 'Connecting to Server',
+            title: 'Pritunl - Connecting to Server',
             message: prfl.preConnectMsg,
             buttons: ['Disconnect', 'Connect'],
           },
