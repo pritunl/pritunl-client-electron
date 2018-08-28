@@ -70,6 +70,8 @@ if (process.platform === 'darwin') {
     'tray_disconnected.png');
 }
 var icon = path.join(__dirname, 'img', 'logo.png');
+global.icon = icon;
+constants.icon = icon;
 
 var checkService = function(callback) {
   service.ping(function(status) {

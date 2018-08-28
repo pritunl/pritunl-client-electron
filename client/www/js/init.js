@@ -19,6 +19,7 @@ var Menu = remoteRequire().Menu;
 var app = remoteRequire().app;
 
 constants.key = getGlobal('key');
+constants.icon = getGlobal('icon');
 profileView.init();
 
 var systemEdtr;
