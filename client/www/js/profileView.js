@@ -401,7 +401,7 @@ var renderProfile = function(prfl) {
             type: 'none',
             title: 'Connecting to Server',
             message: prfl.preConnectMsg,
-            buttons: ['Cancel', 'Connect'],
+            buttons: ['Disconnect', 'Connect'],
           },
           function(resp) {
             if (resp === 1) {
