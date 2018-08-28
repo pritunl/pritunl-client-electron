@@ -395,12 +395,15 @@ var renderProfile = function(prfl) {
     $profile.find('.menu .connect').addClass('disabled');
 
     prfl.preConnect(function() {
+      var data = prfl.export();
+
       if (prfl.preConnectMsg) {
         remote.dialog.showMessageBox(
           {
             type: 'none',
             title: 'Pritunl - Connecting to Server',
-            message: prfl.preConnectMsg,
+            message: 'Connecting to ' + data.name,
+            detail: prfl.preConnectMsg,
             buttons: ['Disconnect', 'Connect'],
           },
           function(resp) {
