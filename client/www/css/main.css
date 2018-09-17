@@ -474,7 +474,6 @@ input:active {
 .profile .info {
   margin: 14px 0 14px 14px;
   white-space: nowrap;
-  overflow: hidden;
 }
 .profile .info .label {
   margin-top: 15px;
