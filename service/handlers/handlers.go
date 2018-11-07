@@ -61,6 +61,7 @@ func Register(engine *gin.Engine) {
 	engine.DELETE("/profile", profileDel)
 	engine.GET("/ping", pingGet)
 	engine.POST("/stop", stopPost)
+	engine.POST("/restart", restartPost)
 	engine.GET("/status", statusGet)
 	engine.POST("/wakeup", wakeupPost)
 }
