@@ -294,7 +294,7 @@ app.on('ready', function() {
     var profilesPth = path.join(app.getPath('userData'), 'profiles');
     fs.exists(profilesPth, function(exists) {
       if (!exists) {
-        fs.mkdir(profilesPth);
+        fs.mkdir(profilesPth, function() {});
       }
     });
 
