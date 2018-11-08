@@ -428,6 +428,11 @@ func (p *Profile) parseLine(line string) {
 
 		p.stop = true
 
+		tokn := p.token
+		if tokn != nil {
+			tokn.Init()
+		}
+
 		if time.Since(p.lastAuthErr) > 10*time.Second {
 			p.lastAuthErr = time.Now()
 
