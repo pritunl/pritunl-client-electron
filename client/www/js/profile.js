@@ -797,7 +797,7 @@ Profile.prototype.auth = function(timeout, callback) {
         return;
       }
 
-      if (valid) {
+      if (valid && authType) {
         authType = authType.split('_');
 
         if (authType.indexOf('pin') !== -1) {
