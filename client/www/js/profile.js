@@ -810,11 +810,12 @@ Profile.prototype.auth = function(timeout, callback) {
     if (callback) {
       callback(null, null);
     }
-    service.start(this, timeout, authToken);
+    service.start(this, timeout, this.serverPublicKey);
   } else if (!callback) {
   } else {
     callback(authType, function(user, pass) {
-      service.start(this, timeout, authToken, user || 'pritunl', pass);
+      service.start(this, timeout, this.serverPublicKey,
+        user || 'pritunl', pass);
     }.bind(this));
   }
 };
