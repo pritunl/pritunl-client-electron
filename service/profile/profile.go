@@ -508,11 +508,12 @@ func (p *Profile) clearStatus(start time.Time) {
 
 func (p *Profile) Copy() (prfl *Profile) {
 	prfl = &Profile{
-		Id:        p.Id,
-		Data:      p.Data,
-		Username:  p.Username,
-		Password:  p.Password,
-		Reconnect: p.Reconnect,
+		Id:              p.Id,
+		Data:            p.Data,
+		Username:        p.Username,
+		Password:        p.Password,
+		ServerPublicKey: p.ServerPublicKey,
+		Reconnect:       p.Reconnect,
 	}
 	prfl.Init()
 
