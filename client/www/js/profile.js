@@ -208,6 +208,7 @@ Profile.prototype.refresh = function(prfl) {
   this.disableReconnect = prfl.disableReconnect;
   this.syncHosts = prfl.syncHosts;
   this.syncHash = prfl.syncHash;
+  this.serverPublicKey = prfl.serverPublicKey;
 
   if (this.onUpdate) {
     this.onUpdate();
@@ -235,6 +236,7 @@ Profile.prototype.import = function(data) {
   this.syncHash = data.sync_hash || null;
   this.syncSecret = data.sync_secret || null;
   this.syncToken = data.sync_token || null;
+  this.serverPublicKey = data.server_public_key || null;
 };
 
 Profile.prototype.upsert = function(data) {
@@ -252,6 +254,7 @@ Profile.prototype.upsert = function(data) {
   this.disableReconnect = data.disable_reconnect;
   this.syncHosts = data.sync_hosts;
   this.syncHash = data.sync_hash;
+  this.serverPublicKey = data.server_public_key;
 };
 
 Profile.prototype.exportConf = function() {
@@ -274,7 +277,8 @@ Profile.prototype.exportConf = function() {
     sync_hosts: this.syncHosts,
     sync_hash: this.syncHash,
     sync_secret: this.syncSecret,
-    sync_token: this.syncToken
+    sync_token: this.syncToken,
+    server_public_key: this.serverPublicKey
   };
 };
 
@@ -316,7 +320,8 @@ Profile.prototype.export = function() {
     syncHosts: this.syncHosts || [],
     syncHash: this.syncHash || '',
     syncSecret: this.syncSecret || '',
-    syncToken: this.syncToken || ''
+    syncToken: this.syncToken || '',
+    serverPublicKey: this.serverPublicKey
   }
 };
 
