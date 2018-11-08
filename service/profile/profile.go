@@ -359,7 +359,7 @@ func (p *Profile) parseLine(line string) {
 
 			utils.ClearDNSCache()
 		}()
-	} else if strings.Contains(line, "Inactivity timeout") {
+	} else if strings.Contains(line, "Inactivity timeout (--inactive)") {
 		evt := event.Event{
 			Type: "inactive",
 			Data: p,
