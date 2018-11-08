@@ -3,6 +3,13 @@ package profile
 
 import (
 	"bufio"
+	"crypto/rand"
+	"crypto/rsa"
+	"crypto/sha512"
+	"crypto/x509"
+	"encoding/base64"
+	"encoding/json"
+	"encoding/pem"
 	"github.com/Sirupsen/logrus"
 	"github.com/dropbox/godropbox/errors"
 	"github.com/pritunl/pritunl-client-electron/service/command"
@@ -43,23 +50,31 @@ type OutputData struct {
 }
 
 type Profile struct {
-	state       bool             `json:"-"`
-	stateLock   sync.Mutex       `json:"-"`
-	stop        bool             `jons:"-"`
-	waiters     []chan bool      `json:"-"`
-	remPaths    []string         `json:"-"`
-	cmd         *exec.Cmd        `json:"-"`
-	intf        *utils.Interface `json:"-"`
-	lastAuthErr time.Time        `json:"-"`
-	Id          string           `json:"id"`
-	Data        string           `json:"-"`
-	Username    string           `json:"-"`
-	Password    string           `json:"-"`
-	Reconnect   bool             `json:"reconnect"`
-	Status      string           `json:"status"`
-	Timestamp   int64            `json:"timestamp"`
-	ServerAddr  string           `json:"server_addr"`
-	ClientAddr  string           `json:"client_addr"`
+	state           bool             `json:"-"`
+	stateLock       sync.Mutex       `json:"-"`
+	stop            bool             `jons:"-"`
+	waiters         []chan bool      `json:"-"`
+	remPaths        []string         `json:"-"`
+	cmd             *exec.Cmd        `json:"-"`
+	intf            *utils.Interface `json:"-"`
+	lastAuthErr     time.Time        `json:"-"`
+	Id              string           `json:"id"`
+	Data            string           `json:"-"`
+	Username        string           `json:"-"`
+	Password        string           `json:"-"`
+	ServerPublicKey string           `json:"-"`
+	Reconnect       bool             `json:"reconnect"`
+	Status          string           `json:"status"`
+	Timestamp       int64            `json:"timestamp"`
+	ServerAddr      string           `json:"server_addr"`
+	ClientAddr      string           `json:"client_addr"`
+}
+
+type AuthData struct {
+	Token     string `json:"token"`
+	Password  string `json:"password"`
+	Nonce     string `json:"nonce"`
+	Timestamp int64  `json:"timestamp"`
 }
 
 func (p *Profile) write() (pth string, err error) {
@@ -200,9 +215,62 @@ func (p *Profile) writeAuth() (pth string, err error) {
 		return
 	}
 
+	password := p.Password
+
+	if p.ServerPublicKey != "" {
+		block, _ := pem.Decode([]byte(p.ServerPublicKey))
+
+		pub, e := x509.ParsePKCS1PublicKey(block.Bytes)
+		if e != nil {
+			err = &errortypes.ParseError{
+				errors.Wrap(e, "profile: Failed to parse public key"),
+			}
+			return
+		}
+
+		nonce, e := utils.RandStr(32)
+		if e != nil {
+			err = e
+			return
+		}
+
+		authData := &AuthData{
+			Token:     "",
+			Password:  password,
+			Nonce:     nonce,
+			Timestamp: time.Now().Unix(),
+		}
+
+		authDataJson, e := json.Marshal(authData)
+		if e != nil {
+			err = &errortypes.ParseError{
+				errors.Wrap(e, "profile: Failed to encode auth data"),
+			}
+			return
+		}
+
+		ciphertext, e := rsa.EncryptOAEP(
+			sha512.New(),
+			rand.Reader,
+			pub,
+			authDataJson,
+			[]byte{},
+		)
+		if e != nil {
+			err = &errortypes.WriteError{
+				errors.Wrap(e, "profile: Failed to encrypt auth data"),
+			}
+			return
+		}
+
+		ciphertext64 := base64.StdEncoding.EncodeToString(ciphertext)
+
+		password = "<%=RSA_ENCRYPTED=%>" + ciphertext64
+	}
+
 	pth = filepath.Join(rootDir, p.Id+".auth")
 
-	err = ioutil.WriteFile(pth, []byte(p.Username+"\n"+p.Password+"\n"),
+	err = ioutil.WriteFile(pth, []byte(p.Username+"\n"+password+"\n"),
 		os.FileMode(0600))
 	if err != nil {
 		err = &WriteError{
