@@ -787,20 +787,50 @@ Profile.prototype.postConnect = function(timeout, authCallback) {
 
 Profile.prototype.auth = function(timeout, callback) {
   var authType = this.getAuthType();
-  var authToken;
 
   if (this.token) {
-    if (!this.authToken ||
-        !this.authTokenTime ||
-        Math.abs(this.authTokenTime - utils.time()) > (
-          this.tokenTtl || 604800)) {
-      this.authToken = utils.uuid();
-      this.authTokenTime = utils.time();
-      this.saveConf();
-    }
-    authToken = this.authToken;
-  }
+    service.tokenUpdate(this, function(err, valid) {
+      if (err) {
+        if (callback) {
+          callback(null, null);
+        }
+        return;
+      }
 
+      if (valid) {
+        authType = authType.split('_');
+
+        if (authType.indexOf('pin') !== -1) {
+          authType.splice(authType.indexOf('pin'), 1);
+        }
+        if (authType.indexOf('duo') !== -1) {
+          authType.splice(authType.indexOf('duo'), 1);
+        }
+        if (authType.indexOf('onelogin') !== -1) {
+          authType.splice(authType.indexOf('onelogin'), 1);
+        }
+        if (authType.indexOf('okta') !== -1) {
+          authType.splice(authType.indexOf('okta'), 1);
+        }
+        if (authType.indexOf('yubikey') !== -1) {
+          authType.splice(authType.indexOf('yubikey'), 1);
+        }
+        if (authType.indexOf('otp') !== -1) {
+          authType.splice(authType.indexOf('otp'), 1);
+        }
+
+        authType = authType.join('_');
+      }
+
+      this._auth(authType, timeout, callback);
+    }.bind(this));
+  } else {
+    service.tokenDelete(this);
+    this._auth(authType, timeout, callback);
+  }
+};
+
+Profile.prototype._auth = function(authType, timeout, callback) {
   if (!authType) {
     if (callback) {
       callback(null, null);
