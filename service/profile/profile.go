@@ -367,6 +367,43 @@ func (p *Profile) parseLine(line string) {
 		evt.Init()
 
 		p.stop = true
+	} else if strings.Contains(line, "Inactivity timeout") {
+		go func() {
+			defer func() {
+				panc := recover()
+				if panc != nil {
+					logrus.WithFields(logrus.Fields{
+						"stack": string(debug.Stack()),
+						"panic": panc,
+					}).Error("profile: Panic")
+					panic(panc)
+				}
+			}()
+
+			prfl := p.Copy()
+
+			stop := p.stop
+
+			err := p.Stop()
+			if err != nil {
+				logrus.WithFields(logrus.Fields{
+					"error": err,
+				}).Error("profile: Stop error")
+				return
+			}
+
+			p.Wait()
+
+			if !stop && prfl.Reconnect {
+				err = prfl.Start(false)
+				if err != nil {
+					logrus.WithFields(logrus.Fields{
+						"error": err,
+					}).Error("profile: Restart error")
+					return
+				}
+			}
+		}()
 	} else if strings.Contains(
 		line, "Can't assign requested address (code=49)") {
 
