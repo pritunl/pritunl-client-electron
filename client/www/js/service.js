@@ -136,6 +136,59 @@ var stop = function(prfl, callback) {
   });
 };
 
+var tokenUpdate = function(prfl, callback) {
+  request.put({
+    url: 'http://' + constants.serviceHost + '/token',
+    json: true,
+    headers: {
+      'Auth-Key': constants.key,
+      'User-Agent': 'pritunl'
+    },
+    body: {
+      profile: prfl.id,
+      ttl: prfl.tokenTtl,
+    }
+  }, function(err, resp, body) {
+    if (err) {
+      err = new errors.NetworkError(
+        'service: Failed to update token (%s)', err);
+      logger.error(err);
+    } else {
+      if (callback) {
+        callback(null, body.valid);
+      }
+      return;
+    }
+
+    if (callback) {
+      callback(err);
+    }
+  });
+};
+
+var tokenDelete = function(prfl, callback) {
+  request.del({
+    url: 'http://' + constants.serviceHost + '/token',
+    json: true,
+    headers: {
+      'Auth-Key': constants.key,
+      'User-Agent': 'pritunl'
+    },
+    body: {
+      profile: prfl.id
+    }
+  }, function(err) {
+    if (err) {
+      err = new errors.NetworkError(
+        'service: Failed to delete token (%s)', err);
+      logger.error(err);
+    }
+    if (callback) {
+      callback(err);
+    }
+  });
+};
+
 var ping = function(callback) {
   request.get({
     url: 'http://' + constants.serviceHost + '/ping',
@@ -176,6 +229,8 @@ module.exports = {
   get: get,
   iter: iter,
   update: update,
+  tokenUpdate: tokenUpdate,
+  tokenDelete: tokenDelete,
   start: start,
   stop: stop,
   ping: ping,
