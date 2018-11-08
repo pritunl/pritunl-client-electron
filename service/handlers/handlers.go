@@ -59,6 +59,8 @@ func Register(engine *gin.Engine) {
 	engine.GET("/profile", profileGet)
 	engine.POST("/profile", profilePost)
 	engine.DELETE("/profile", profileDel)
+	engine.PUT("/token", tokenPut)
+	engine.DELETE("/token", tokenDelete)
 	engine.GET("/ping", pingGet)
 	engine.POST("/stop", stopPost)
 	engine.POST("/restart", restartPost)
