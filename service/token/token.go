@@ -14,6 +14,8 @@ type Token struct {
 }
 
 func (t *Token) Init() (err error) {
+	t.Valid = false
+
 	token, err := utils.RandStr(64)
 	if err != nil {
 		return
@@ -21,7 +23,6 @@ func (t *Token) Init() (err error) {
 
 	t.Token = token
 	t.Timestamp = time.Now()
-	t.Valid = false
 
 	return
 }
