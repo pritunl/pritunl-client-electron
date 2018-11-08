@@ -426,6 +426,8 @@ func (p *Profile) parseLine(line string) {
 	} else if strings.Contains(line, "AUTH_FAILED") || strings.Contains(
 		line, "auth-failure") {
 
+		p.stop = true
+
 		if time.Since(p.lastAuthErr) > 10*time.Second {
 			p.lastAuthErr = time.Now()
 
