@@ -563,7 +563,7 @@ func (p *Profile) Start(timeout bool) (err error) {
 	p.remPaths = append(p.remPaths, confPath)
 
 	var authPath string
-	if p.Username != "" || p.Password != "" {
+	if (p.Username != "" && p.Password != "") || p.ServerPublicKey != "" {
 		authPath, err = p.writeAuth()
 		if err != nil {
 			p.clearStatus(start)
