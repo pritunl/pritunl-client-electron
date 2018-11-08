@@ -95,7 +95,7 @@ var start = function(prfl, timeout, serverPubKey,
         id: prfl.id,
         username: username,
         password: password,
-        server_public_key: serverPubKey,
+        server_public_key: prfl.token ? serverPubKey : null,
         reconnect: reconnect,
         timeout: timeout,
         data: data
