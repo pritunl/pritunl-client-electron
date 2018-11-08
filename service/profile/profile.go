@@ -15,6 +15,7 @@ import (
 	"github.com/pritunl/pritunl-client-electron/service/command"
 	"github.com/pritunl/pritunl-client-electron/service/errortypes"
 	"github.com/pritunl/pritunl-client-electron/service/event"
+	"github.com/pritunl/pritunl-client-electron/service/token"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
 	"io"
 	"io/ioutil"
@@ -58,6 +59,7 @@ type Profile struct {
 	cmd             *exec.Cmd        `json:"-"`
 	intf            *utils.Interface `json:"-"`
 	lastAuthErr     time.Time        `json:"-"`
+	token           *token.Token     `json:"-"`
 	Id              string           `json:"id"`
 	Data            string           `json:"-"`
 	Username        string           `json:"-"`
@@ -234,8 +236,21 @@ func (p *Profile) writeAuth() (pth string, err error) {
 			return
 		}
 
+		tokn := token.Get(p.Id)
+		p.token = tokn
+
+		authToken := ""
+		if tokn != nil {
+			err = tokn.Update()
+			if err != nil {
+				return
+			}
+
+			authToken = tokn.Token
+		}
+
 		authData := &AuthData{
-			Token:     "",
+			Token:     authToken,
 			Password:  password,
 			Nonce:     nonce,
 			Timestamp: time.Now().Unix(),
@@ -324,6 +339,12 @@ func (p *Profile) parseLine(line string) {
 		p.Status = "connected"
 		p.Timestamp = time.Now().Unix() - 5
 		p.update()
+
+		tokn := p.token
+		if tokn != nil {
+			tokn.Valid = true
+		}
+
 		go func() {
 			defer func() {
 				panc := recover()
