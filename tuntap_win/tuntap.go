@@ -13,14 +13,7 @@ func main() {
 		panic(err)
 	}
 
-	tuntapDir := ""
-	if os.Getenv("PROGRAMFILES(X86)") == "" {
-		tuntapDir = filepath.Join(rootDir, "32")
-	} else {
-		tuntapDir = filepath.Join(rootDir, "64")
-	}
-
-	tapInstallPath := path.Join(tuntapDir, "tapinstall.exe")
+	tapInstallPath := path.Join(rootDir, "tapinstall.exe")
 
 	if os.Args[1] == "install" {
 		cmd := exec.Command(
@@ -29,7 +22,7 @@ func main() {
 			"OemVista.inf",
 			"tap0901",
 		)
-		cmd.Dir = tuntapDir
+		cmd.Dir = rootDir
 
 		err = cmd.Run()
 		if err != nil {
@@ -41,7 +34,7 @@ func main() {
 			"remove",
 			"tap0901",
 		)
-		cmd.Dir = tuntapDir
+		cmd.Dir = rootDir
 
 		err = cmd.Run()
 		if err != nil {
