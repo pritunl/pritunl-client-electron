@@ -74,7 +74,7 @@ var start = function(prfl, timeout, serverPubKey,
     username, password, callback) {
   username = username || 'pritunl';
 
-  if (serverPubKey) {
+  if (serverPubKey && (prfl.token || password)) {
     serverPubKey = serverPubKey.join('\n');
   } else {
     serverPubKey = null;
@@ -95,7 +95,7 @@ var start = function(prfl, timeout, serverPubKey,
         id: prfl.id,
         username: username,
         password: password,
-        server_public_key: prfl.token ? serverPubKey : null,
+        server_public_key: serverPubKey,
         reconnect: reconnect,
         timeout: timeout,
         data: data
