@@ -21,7 +21,7 @@ func getOpenvpnPath() (pth string) {
 		switch runtime.GOOS {
 		case "windows":
 			pth = filepath.Join(utils.GetRootDir(), "..",
-				"openvpn_win", utils.GetWinArch(), "openvpn.exe")
+				"openvpn_win", "openvpn.exe")
 		case "darwin":
 			pth = filepath.Join(utils.GetRootDir(), "..",
 				"openvpn_osx", "openvpn")
@@ -36,8 +36,7 @@ func getOpenvpnPath() (pth string) {
 
 	switch runtime.GOOS {
 	case "windows":
-		pth = filepath.Join(utils.GetRootDir(), "openvpn",
-			utils.GetWinArch(), "openvpn.exe")
+		pth = filepath.Join(utils.GetRootDir(), "openvpn", "openvpn.exe")
 	case "darwin":
 		pth = filepath.Join(string(os.PathSeparator), "Applications",
 			"Pritunl.app", "Contents", "Resources", "pritunl-openvpn")
@@ -54,8 +53,7 @@ func getOpenvpnDir() (pth string) {
 	if constants.Development {
 		switch runtime.GOOS {
 		case "windows":
-			pth = filepath.Join(utils.GetRootDir(), "..",
-				"openvpn_win", utils.GetWinArch())
+			pth = filepath.Join(utils.GetRootDir(), "..", "openvpn_win")
 		case "darwin":
 			pth = ""
 		case "linux":
@@ -69,8 +67,7 @@ func getOpenvpnDir() (pth string) {
 
 	switch runtime.GOOS {
 	case "windows":
-		pth = filepath.Join(utils.GetRootDir(), "openvpn",
-			utils.GetWinArch())
+		pth = filepath.Join(utils.GetRootDir(), "openvpn")
 	case "darwin":
 		pth = ""
 	case "linux":
