@@ -836,16 +836,6 @@ func GetPidPath() (pth string) {
 	return
 }
 
-func GetWinArch() (arch string) {
-	if os.Getenv("PROGRAMFILES(X86)") == "" {
-		arch = "32"
-	} else {
-		arch = "64"
-	}
-
-	return
-}
-
 func PidInit() (err error) {
 	if runtime.GOOS == "windows" {
 		return
