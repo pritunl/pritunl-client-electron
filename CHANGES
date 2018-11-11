@@ -1,7 +1,8 @@
 Pritunl Client Changelog
 ========================
 
-<%= version %>
+Version 1.0.1886.21 2018-11-11
+------------------------------
 
 Authentication cache improvements
 
