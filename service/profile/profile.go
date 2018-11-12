@@ -236,7 +236,7 @@ func (p *Profile) writeAuth() (pth string, err error) {
 			return
 		}
 
-		tokn := token.Get(p.Id)
+		tokn := token.Get(p.Id, p.ServerPublicKey)
 		p.token = tokn
 
 		authToken := ""
