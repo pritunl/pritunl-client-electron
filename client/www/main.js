@@ -15,6 +15,7 @@ var profile = require('./js/profile.js');
 var service = require('./js/service.js');
 var errors = require('./js/errors.js');
 var logger = require('./js/logger.js');
+var config = require('./js/config.js');
 
 var main = null;
 var tray = null;
@@ -273,153 +274,155 @@ var sync =  function() {
 };
 
 app.on('ready', function() {
-  service.wakeup(function(status, statusCode) {
-    if (statusCode === 401) {
-      dialog.showMessageBox(null, {
-        type: 'warning',
-        buttons: ['Exit'],
-        title: 'Pritunl - Service Error',
-        message: 'Unable to establish communication with helper ' +
-          'service, try restarting computer'
-      }, function() {
-        app.quit();
-      });
-      return;
-    } else if (status) {
-      wakeup = true;
-      app.quit();
-      return;
-    }
-
-    var profilesPth = path.join(app.getPath('userData'), 'profiles');
-    fs.exists(profilesPth, function(exists) {
-      if (!exists) {
-        fs.mkdir(profilesPth, function() {});
-      }
-    });
-
-    events.subscribe(function(evt) {
-      if (evt.type === 'output') {
-        var pth = path.join(app.getPath('userData'), 'profiles',
-          evt.data.id + '.log');
-
-        fs.appendFile(pth, evt.data.output + '\n', function(err) {
-          if (err) {
-            err = new errors.ParseError(
-              'main: Failed to append profile output (%s)', err);
-            logger.error(err);
-          }
+  config.onReady(function() {
+    service.wakeup(function(status, statusCode) {
+      if (statusCode === 401) {
+        dialog.showMessageBox(null, {
+          type: 'warning',
+          buttons: ['Exit'],
+          title: 'Pritunl - Service Error',
+          message: 'Unable to establish communication with helper ' +
+            'service, try restarting computer'
+        }, function() {
+          app.quit();
         });
-      } else if (evt.type === 'connected') {
-        if (tray) {
-          tray.setImage(connTray);
-        }
-      } else if (evt.type === 'disconnected') {
-        if (tray) {
-          tray.setImage(disconnTray);
-        }
-      } else if (evt.type === 'wakeup') {
-        openMainWin();
-      }
-    });
-
-    var noMain = false;
-    process.argv.forEach(function(val) {
-      if (val === "--no-main") {
-        noMain = true;
-      }
-    });
-
-    if (!noMain) {
-      openMainWin();
-    }
-
-    if (process.platform !== 'linux') {
-      tray = new Tray(disconnTray);
-      tray.on('click', function() {
-        openMainWin();
-      });
-      tray.on('double-click', function() {
-        openMainWin();
-      });
-    }
-
-    var appMenu = Menu.buildFromTemplate([
-      {
-        label: 'Pritunl',
-        submenu: [
-          {
-            label: 'Pritunl v' + constants.version
-          },
-          {
-            label: 'Close',
-            accelerator: 'CmdOrCtrl+Q',
-            role: 'close'
-          },
-          {
-            label: 'Exit',
-            click: function() {
-              app.quit();
-            }
-          }
-        ]
-      },
-      {
-        label: 'Edit',
-        submenu: [
-          {
-            label: 'Undo',
-            accelerator: 'CmdOrCtrl+Z',
-            role: 'undo'
-          },
-          {
-            label: 'Redo',
-            accelerator: 'Shift+CmdOrCtrl+Z',
-            role: 'redo'
-          },
-          {
-            type: 'separator'
-          },
-          {
-            label: 'Cut',
-            accelerator: 'CmdOrCtrl+X',
-            role: 'cut'
-          },
-          {
-            label: 'Copy',
-            accelerator: 'CmdOrCtrl+C',
-            role: 'copy'
-          },
-          {
-            label: 'Paste',
-            accelerator: 'CmdOrCtrl+V',
-            role: 'paste'
-          },
-          {
-            label: 'Select All',
-            accelerator: 'CmdOrCtrl+A',
-            role: 'selectall'
-          }
-        ]
-      }
-    ]);
-    Menu.setApplicationMenu(appMenu);
-
-    profile.getProfiles(function(err, prfls) {
-      if (err) {
+        return;
+      } else if (status) {
+        wakeup = true;
+        app.quit();
         return;
       }
 
-      var prfl;
-      for (var i = 0; i < prfls.length; i++) {
-        prfl = prfls[i];
-
-        if (prfl.autostart) {
-          prfl.connect(false);
+      var profilesPth = path.join(app.getPath('userData'), 'profiles');
+      fs.exists(profilesPth, function(exists) {
+        if (!exists) {
+          fs.mkdir(profilesPth, function() {});
         }
-      }
-    }, true);
+      });
 
-    sync();
+      events.subscribe(function(evt) {
+        if (evt.type === 'output') {
+          var pth = path.join(app.getPath('userData'), 'profiles',
+            evt.data.id + '.log');
+
+          fs.appendFile(pth, evt.data.output + '\n', function(err) {
+            if (err) {
+              err = new errors.ParseError(
+                'main: Failed to append profile output (%s)', err);
+              logger.error(err);
+            }
+          });
+        } else if (evt.type === 'connected') {
+          if (tray) {
+            tray.setImage(connTray);
+          }
+        } else if (evt.type === 'disconnected') {
+          if (tray) {
+            tray.setImage(disconnTray);
+          }
+        } else if (evt.type === 'wakeup') {
+          openMainWin();
+        }
+      });
+
+      var noMain = false;
+      process.argv.forEach(function(val) {
+        if (val === "--no-main") {
+          noMain = true;
+        }
+      });
+
+      if (!noMain) {
+        openMainWin();
+      }
+
+      if (process.platform !== 'linux') {
+        tray = new Tray(disconnTray);
+        tray.on('click', function() {
+          openMainWin();
+        });
+        tray.on('double-click', function() {
+          openMainWin();
+        });
+      }
+
+      var appMenu = Menu.buildFromTemplate([
+        {
+          label: 'Pritunl',
+          submenu: [
+            {
+              label: 'Pritunl v' + constants.version
+            },
+            {
+              label: 'Close',
+              accelerator: 'CmdOrCtrl+Q',
+              role: 'close'
+            },
+            {
+              label: 'Exit',
+              click: function() {
+                app.quit();
+              }
+            }
+          ]
+        },
+        {
+          label: 'Edit',
+          submenu: [
+            {
+              label: 'Undo',
+              accelerator: 'CmdOrCtrl+Z',
+              role: 'undo'
+            },
+            {
+              label: 'Redo',
+              accelerator: 'Shift+CmdOrCtrl+Z',
+              role: 'redo'
+            },
+            {
+              type: 'separator'
+            },
+            {
+              label: 'Cut',
+              accelerator: 'CmdOrCtrl+X',
+              role: 'cut'
+            },
+            {
+              label: 'Copy',
+              accelerator: 'CmdOrCtrl+C',
+              role: 'copy'
+            },
+            {
+              label: 'Paste',
+              accelerator: 'CmdOrCtrl+V',
+              role: 'paste'
+            },
+            {
+              label: 'Select All',
+              accelerator: 'CmdOrCtrl+A',
+              role: 'selectall'
+            }
+          ]
+        }
+      ]);
+      Menu.setApplicationMenu(appMenu);
+
+      profile.getProfiles(function(err, prfls) {
+        if (err) {
+          return;
+        }
+
+        var prfl;
+        for (var i = 0; i < prfls.length; i++) {
+          prfl = prfls[i];
+
+          if (prfl.autostart) {
+            prfl.connect(false);
+          }
+        }
+      }, true);
+
+      sync();
+    });
   });
 });
