@@ -137,6 +137,14 @@ var stop = function(prfl, callback) {
 };
 
 var tokenUpdate = function(prfl, callback) {
+  var serverPubKey = '';
+
+  if (prfl.serverPublicKey) {
+    serverPubKey = prfl.serverPublicKey.join('\n');
+  } else {
+    serverPubKey = null;
+  }
+
   request.put({
     url: 'http://' + constants.serviceHost + '/token',
     json: true,
@@ -146,6 +154,7 @@ var tokenUpdate = function(prfl, callback) {
     },
     body: {
       profile: prfl.id,
+      server_public_key: serverPubKey,
       ttl: prfl.tokenTtl,
     }
   }, function(err, resp, body) {
