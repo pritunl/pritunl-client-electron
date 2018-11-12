@@ -32,31 +32,29 @@ var importData = function(data) {
 };
 
 var load = function() {
-  fs.exists(pth, function(exists) {
-    if (!exists) {
-      importData({});
-      return;
-    }
-
-    fs.readFile(pth, function(err, data) {
-      if (err) {
-        err = new errors.ReadError(
-          'config: Failed to read config (%s)', err);
-        logger.error(err);
-        data = {}
-      } else {
-        try {
-          data = JSON.parse(data);
-        } catch (e) {
-          err = new errors.ParseError(
-            'config: Failed to parse config (%s)', e);
-          logger.error(err);
-          data = {};
-        }
+  fs.open(pth, 'r', function(err, data) {
+    if (err) {
+      if (err.code === 'ENOENT') {
+        importData({});
+        return;
       }
 
-      importData(data);
-    });
+      err = new errors.ReadError(
+        'config: Failed to read config (%s)', err);
+      logger.error(err);
+      data = {};
+    } else {
+      try {
+        data = JSON.parse(data);
+      } catch (e) {
+        err = new errors.ParseError(
+          'config: Failed to parse config (%s)', e);
+        logger.error(err);
+        data = {};
+      }
+    }
+
+    importData(data);
   });
 };
 
