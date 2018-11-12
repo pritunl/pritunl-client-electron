@@ -2,15 +2,26 @@ package token
 
 var store = map[string]*Token{}
 
-func Get(profile string) *Token {
-	return store[profile]
+func Get(profile, pubKey string) *Token {
+	tokn := store[profile]
+
+	if profile == "" || pubKey == "" {
+		return nil
+	}
+
+	if tokn != nil && pubKey == tokn.ServerPublicKey {
+		return tokn
+	}
+
+	return nil
 }
 
-func Update(profile string, ttl int) (tokn *Token, err error) {
-	tokn = store[profile]
+func Update(profile, pubKey string, ttl int) (tokn *Token, err error) {
+	tokn = Get(profile, pubKey)
 	if tokn == nil {
 		tokn = &Token{
-			Profile: profile,
+			Profile:         profile,
+			ServerPublicKey: pubKey,
 		}
 
 		err = tokn.Init()
