@@ -446,7 +446,7 @@ input:active {
   transition: height 125ms linear;
 }
 .main-menu.show {
-  height: 205px;
+  height: 238px;
 }
 .main-menu .btn {
   color: #fff;
