@@ -21,6 +21,25 @@ var main = null;
 var tray = null;
 var wakeup = false;
 
+process.on('uncaughtException', function (error) {
+  var errorMsg;
+  if (error && error.stack) {
+    errorMsg = error.stack;
+  } else {
+    errorMsg = error;
+  }
+
+  dialog.showMessageBox(null, {
+    type: 'error',
+    buttons: ['Exit'],
+    defaultId: 1,
+    title: 'Pritunl - Process Error',
+    message: 'Error occured in main process:\n\n' + errorMsg,
+  }, function(state) {
+    app.quit();
+  });
+});
+
 if (app.dock) {
   app.dock.hide();
 }
