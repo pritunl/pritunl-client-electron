@@ -165,6 +165,8 @@ var closeServiceEditor = function() {
 config.onReady(function() {
   $('.auto-reconnect').text('Auto Reconnect ' +
     (!config.settings.disable_reconnect ? 'On' : 'Off'));
+  $('.tray-icon').text('Tray Icon ' +
+    (!config.settings.disable_tray_icon ? 'On' : 'Off'));
 });
 
 $('.system-logs .close').click(function(){
@@ -239,6 +241,12 @@ $('.main-menu .auto-reconnect').click(function (){
   config.settings.disable_reconnect = !config.settings.disable_reconnect;
   $('.auto-reconnect').text('Auto Reconnect ' +
     (!config.settings.disable_reconnect ? 'On' : 'Off'));
+  config.save();
+});
+$('.main-menu .tray-icon').click(function (){
+  config.settings.disable_tray_icon = !config.settings.disable_tray_icon;
+  $('.auto-reconnect').text('Tray Icon ' +
+    (!config.settings.disable_tray_icon ? 'On' : 'Off'));
   config.save();
 });
 
