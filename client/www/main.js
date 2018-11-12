@@ -32,10 +32,9 @@ process.on('uncaughtException', function (error) {
   dialog.showMessageBox(null, {
     type: 'error',
     buttons: ['Exit'],
-    defaultId: 1,
     title: 'Pritunl - Process Error',
     message: 'Error occured in main process:\n\n' + errorMsg,
-  }, function(state) {
+  }, function() {
     app.quit();
   });
 });
@@ -195,19 +194,19 @@ var openMainWin = function() {
     var maxWidth;
     var maxHeight;
     if (process.platform === 'darwin') {
-      width = 320;
-      height = 413;
+      width = 340;
+      height = 423;
       minWidth = 304;
       minHeight = 352;
-      maxWidth = 520;
-      maxHeight = 632;
+      maxWidth = 540;
+      maxHeight = 642;
     } else {
-      width = 400;
-      height = 518;
+      width = 420;
+      height = 528;
       minWidth = 380;
       minHeight = 440;
-      maxWidth = 650;
-      maxHeight = 790;
+      maxWidth = 670;
+      maxHeight = 800;
     }
 
     main = new BrowserWindow({
