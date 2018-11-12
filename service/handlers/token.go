@@ -6,15 +6,16 @@ import (
 )
 
 type tokenData struct {
-	Profile string `json:"profile"`
-	Ttl     int    `json:"ttl"`
+	Profile         string `json:"profile"`
+	ServerPublicKey string `json:"server_public_key"`
+	Ttl             int    `json:"ttl"`
 }
 
 func tokenPut(c *gin.Context) {
 	data := &tokenData{}
 	c.Bind(data)
 
-	tokn, err := token.Update(data.Profile, data.Ttl)
+	tokn, err := token.Update(data.Profile, data.ServerPublicKey, data.Ttl)
 	if err != nil {
 		c.AbortWithError(500, err)
 		return
