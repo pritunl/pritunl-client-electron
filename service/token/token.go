@@ -6,11 +6,12 @@ import (
 )
 
 type Token struct {
-	Profile   string    `json:"profile"`
-	Token     string    `json:"-"`
-	Timestamp time.Time `json:"timestamp"`
-	Ttl       int       `json:"ttl"`
-	Valid     bool      `json:"valid"`
+	Profile         string    `json:"profile"`
+	ServerPublicKey string    `json:"-"`
+	Token           string    `json:"-"`
+	Timestamp       time.Time `json:"timestamp"`
+	Ttl             int       `json:"ttl"`
+	Valid           bool      `json:"valid"`
 }
 
 func (t *Token) Init() (err error) {
