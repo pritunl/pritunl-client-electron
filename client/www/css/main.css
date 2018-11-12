@@ -259,6 +259,12 @@ input:active {
 .btn.btn-default:hover {
   background-color: #414141;
 }
+.btn.btn-default2 {
+  background-color: #3b3b3b;
+}
+.btn.btn-default2:hover {
+  background-color: #2f2f2f;
+}
 .btn.btn-success {
   background-color: #5cb85c;
 }
