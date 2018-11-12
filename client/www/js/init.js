@@ -213,10 +213,6 @@ $('.main-menu .menu-service-logs').click(function (){
     $('.main-menu').removeClass('show');
   }, 400);
 });
-$('.main-menu .menu-close').click(function (){
-  var win = remote.getCurrentWindow();
-  win.close();
-});
 $('.main-menu .menu-restart').click(function (){
   request.post({
     url: 'http://' + constants.serviceHost + '/restart',
