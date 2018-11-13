@@ -1,6 +1,10 @@
 Pritunl Client Changelog
 ========================
 
+<%= version %>
+
+Add option to disable tray icon
+
 Version 1.0.1886.21 2018-11-11
 ------------------------------
 
