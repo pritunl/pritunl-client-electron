@@ -356,8 +356,7 @@ app.on('ready', function() {
       if (!noMain) {
         openMainWin();
       } else if (process.platform === 'linux' ||
-        config.settings.disable_tray_icon) {
-
+          config.settings.disable_tray_icon) {
         app.quit();
         return;
       }
