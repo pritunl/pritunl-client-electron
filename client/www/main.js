@@ -361,7 +361,8 @@ app.on('ready', function() {
         return;
       }
 
-      if (process.platform !== 'linux') {
+      if (process.platform !== 'linux' &&
+          !config.settings.disable_tray_icon) {
         tray = new Tray(disconnTray);
         tray.on('click', function() {
           openMainWin();
