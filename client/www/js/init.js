@@ -280,24 +280,6 @@ $('.header .logo').click(function() {
         closeSystemEditor();
         openServiceEditor();
       }
-    },
-    {
-      label: 'Shutdown',
-      click: function() {
-        request.post({
-          url: 'http://' + constants.serviceHost + '/stop',
-          headers: {
-            'Auth-Key': constants.key,
-            'User-Agent': 'pritunl'
-          }
-        }, function() {
-          app.quit();
-        });
-      }
-    },
-    {
-      label: 'Close',
-      role: 'close'
     }
   ]);
   menu.popup(remote.getCurrentWindow());
