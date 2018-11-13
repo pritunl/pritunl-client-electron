@@ -150,14 +150,17 @@ var checkService = function(callback) {
 };
 
 app.on('window-all-closed', function() {
-  if (process.platform === 'linux' || config.settings.disable_tray_icon) {
-    app.quit();
-  } else {
-    if (app.dock) {
-      app.dock.hide();
+  config.reload(function() {
+    if (process.platform === 'linux' ||
+        config.settings.disable_tray_icon || !tray) {
+      app.quit();
+    } else {
+      if (app.dock) {
+        app.dock.hide();
+      }
+      checkService();
     }
-    checkService();
-  }
+  });
 });
 
 app.on('open-file', function() {
