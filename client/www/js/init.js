@@ -222,17 +222,6 @@ $('.main-menu .menu-restart').click(function (){
     }
   });
 });
-$('.main-menu .menu-exit').click(function (){
-  request.post({
-    url: 'http://' + constants.serviceHost + '/stop',
-    headers: {
-      'Auth-Key': constants.key,
-      'User-Agent': 'pritunl'
-    }
-  }, function() {
-    app.quit();
-  });
-});
 $('.main-menu .auto-reconnect').click(function (){
   config.settings.disable_reconnect = !config.settings.disable_reconnect;
   $('.auto-reconnect').text('Auto Reconnect ' +
