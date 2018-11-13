@@ -38,7 +38,6 @@ cp service_osx/com.pritunl.client.plist build/osx/Library/LaunchAgents
 
 # Openvpn
 cp openvpn_osx/openvpn build/osx/Applications/Pritunl.app/Contents/Resources/pritunl-openvpn
-codesign -s "Developer ID Application: Zachary Huff (73CNTLZRFJ)" build/osx/Applications/Pritunl.app/Contents/Resources/pritunl-openvpn
 
 # Files
 touch build/osx/Applications/Pritunl.app/Contents/Resources/auth
