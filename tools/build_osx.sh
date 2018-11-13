@@ -15,7 +15,7 @@ npm update
 ./node_modules/.bin/electron-rebuild
 ./node_modules/.bin/electron-packager ./ Pritunl --platform=darwin --arch=x64 --icon=./www/img/pritunl.icns --out=../build/osx/Applications
 cd ../
-gsed -i "s|</dict>|    <key>NSRequiresAquaSystemAppearance</key>\n    <string>NO</string>\n</dict>|" build/osx/Applications/Pritunl-darwin-x64/Pritunl.app/Contents/Info.plist
+gsed -i "s|</dict>|  <key>NSRequiresAquaSystemAppearance</key>\n    <string>NO</string>\n  </dict>|" build/osx/Applications/Pritunl-darwin-x64/Pritunl.app/Contents/Info.plist
 mv build/osx/Applications/Pritunl-darwin-x64/Pritunl.app build/osx/Applications/
 rm -rf build/osx/Applications/Pritunl-darwin-x64
 sleep 3
