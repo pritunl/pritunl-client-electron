@@ -31,8 +31,8 @@ var importData = function(data) {
   }
 };
 
-var load = function() {
-  fs.open(pth, 'r', function(err, data) {
+var load = function(callback) {
+  fs.readFile(pth, function(err, data) {
     if (err) {
       if (err.code === 'ENOENT') {
         importData({});
