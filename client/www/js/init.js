@@ -230,7 +230,7 @@ $('.main-menu .auto-reconnect').click(function (){
 });
 $('.main-menu .tray-icon').click(function (){
   config.settings.disable_tray_icon = !config.settings.disable_tray_icon;
-  $('.auto-reconnect').text('Tray Icon ' +
+  $('.tray-icon').text('Tray Icon ' +
     (!config.settings.disable_tray_icon ? 'On' : 'Off'));
   config.save();
 });
