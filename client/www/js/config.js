@@ -20,14 +20,19 @@ var onReady = function(callback) {
   waiting.push(callback);
 };
 
-var importData = function(data) {
+var importData = function(data, callback) {
   settings.disable_reconnect = !!data['disable_reconnect'];
   settings.disable_tray_icon = !!data['disable_tray_icon'];
 
-  loaded = true;
+  if (callback) {
+    callback();
+  } else {
+    loaded = true;
 
-  for (var i = 0; i < waiting.length; i++) {
-    waiting[i]();
+    for (var i = 0; i < waiting.length; i++) {
+      waiting[i]();
+    }
+    waiting = [];
   }
 };
 
@@ -35,7 +40,7 @@ var load = function(callback) {
   fs.readFile(pth, function(err, data) {
     if (err) {
       if (err.code === 'ENOENT') {
-        importData({});
+        importData({}, callback);
         return;
       }
 
@@ -54,8 +59,15 @@ var load = function(callback) {
       }
     }
 
-    importData(data);
+    importData(data, callback);
   });
+};
+
+var reload = function(callback) {
+  if (!callback) {
+    throw new Error('Callback required for reload');
+  }
+  load(callback);
 };
 
 var save = function() {
@@ -72,5 +84,6 @@ load();
 module.exports = {
   settings: settings,
   onReady: onReady,
+  reload: reload,
   save: save
 };
