@@ -6,7 +6,7 @@ class Autoconf < Formula
   sha256 "954bd69b391edc12d6a4a51a2dd1476543da5c6bbf05a95b59dc0dd6fd4c2969"
 
   def install
-    ENV["MACOSX_DEPLOYMENT_TARGET"] "10.6"
+    ENV["MACOSX_DEPLOYMENT_TARGET"] = "10.8"
     ENV["PERL"] = "/usr/bin/perl"
 
     # force autoreconf to look for and use our glibtoolize

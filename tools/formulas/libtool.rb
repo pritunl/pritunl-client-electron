@@ -20,7 +20,7 @@ class Libtool < Formula
   end
 
   def install
-    ENV["MACOSX_DEPLOYMENT_TARGET"] "10.6"
+    ENV["MACOSX_DEPLOYMENT_TARGET"] = "10.8"
     ENV["SED"] = "sed" # prevent libtool from hardcoding sed path from superenv
     system "./configure", "--disable-dependency-tracking",
                           "--prefix=#{prefix}",

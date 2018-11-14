@@ -16,7 +16,7 @@ class Openvpn < Formula
   depends_on "openssl"
 
   def install
-    ENV["MACOSX_DEPLOYMENT_TARGET"] "10.6"
+    ENV["MACOSX_DEPLOYMENT_TARGET"] = "10.8"
     ENV["OPENSSL_CFLAGS"] = "-I/usr/local/opt/openssl/include"
     ENV["OPENSSL_SSL_CFLAGS"] = "-I/usr/local/opt/openssl/include"
     ENV["OPENSSL_CRYPTO_CFLAGS"] = "-I/usr/local/opt/openssl/include"

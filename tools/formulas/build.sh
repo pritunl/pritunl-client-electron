@@ -1,4 +1,4 @@
-export MACOSX_DEPLOYMENT_TARGET="10.6"
+export MACOSX_DEPLOYMENT_TARGET="10.8"
 brew install --build-from-source libtool.rb
 brew install --build-from-source autoconf.rb
 brew install --build-from-source automake.rb
