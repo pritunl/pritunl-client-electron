@@ -1,6 +1,5 @@
 make clean
-CFLAGS=" -arch x86_64" \
-  OPENSSL_CFLAGS="-I/usr/local/opt/openssl/include" \
+OPENSSL_CFLAGS="-I/usr/local/opt/openssl/include" \
   OPENSSL_SSL_CFLAGS="-I/usr/local/opt/openssl/include" \
   OPENSSL_CRYPTO_CFLAGS="-I/usr/local/opt/openssl/include" \
   OPENSSL_LIBS="/usr/local/opt/openssl/lib/libssl.a -lz /usr/local/opt/openssl/lib/libcrypto.a -lz" \
