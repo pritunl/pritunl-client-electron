@@ -39,8 +39,8 @@ class Openssl < Formula
   end
 
   def install
-    ENV.append_to_cflags "-mmacosx-version-min=10.6"
     ENV["CCFLAGS"] = "-mmacosx-version-min=10.6"
+    ENV["CPPFLAGS"] = "-mmacosx-version-min=10.6"
     ENV["LINKFLAGS"] = "-mmacosx-version-min=10.6"
 
     # OpenSSL will prefer the PERL environment variable if set over $PATH

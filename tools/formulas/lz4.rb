@@ -6,8 +6,8 @@ class Lz4 < Formula
   head "https://github.com/lz4/lz4.git"
 
   def install
-    ENV.append_to_cflags "-mmacosx-version-min=10.6"
     ENV["CCFLAGS"] = "-mmacosx-version-min=10.6"
+    ENV["CPPFLAGS"] = "-mmacosx-version-min=10.6"
     ENV["LINKFLAGS"] = "-mmacosx-version-min=10.6"
 
     system "make", "install", "PREFIX=#{prefix}"
