@@ -7,7 +7,9 @@ class PkgConfig < Formula
   sha256 "6fc69c01688c9458a57eb9a1664c9aba372ccda420a02bf4429fe610e7e7d591"
 
   def install
-    ENV["CFLAGS"] = "-mmacosx-version-min=10.6"
+    ENV.append_to_cflags "-mmacosx-version-min=10.6"
+    ENV["CCFLAGS"] = "-mmacosx-version-min=10.6"
+    ENV["LINKFLAGS"] = "-mmacosx-version-min=10.6"
 
     pc_path = %W[
       #{HOMEBREW_PREFIX}/lib/pkgconfig

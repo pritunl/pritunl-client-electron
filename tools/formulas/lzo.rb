@@ -5,7 +5,10 @@ class Lzo < Formula
   sha256 "c0f892943208266f9b6543b3ae308fab6284c5c90e627931446fb49b4221a072"
 
   def install
-    ENV["CFLAGS"] = "-mmacosx-version-min=10.6"
+    ENV.append_to_cflags "-mmacosx-version-min=10.6"
+    ENV["CCFLAGS"] = "-mmacosx-version-min=10.6"
+    ENV["LINKFLAGS"] = "-mmacosx-version-min=10.6"
+
     system "./configure", "--disable-dependency-tracking",
                           "--prefix=#{prefix}",
                           "--enable-static",

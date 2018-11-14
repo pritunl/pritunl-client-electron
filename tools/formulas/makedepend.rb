@@ -20,9 +20,11 @@ class Makedepend < Formula
   end
 
   def install
-    resource("xproto").stage do
-      ENV["CFLAGS"] = "-mmacosx-version-min=10.6"
+    ENV.append_to_cflags "-mmacosx-version-min=10.6"
+    ENV["CCFLAGS"] = "-mmacosx-version-min=10.6"
+    ENV["LINKFLAGS"] = "-mmacosx-version-min=10.6"
 
+    resource("xproto").stage do
       system "./configure", "--disable-dependency-tracking",
                             "--disable-silent-rules",
                             "--prefix=#{buildpath}/xproto"
@@ -30,13 +32,10 @@ class Makedepend < Formula
     end
 
     resource("xorg-macros").stage do
-      ENV["CFLAGS"] = "-mmacosx-version-min=10.6"
-
       system "./configure", "--prefix=#{buildpath}/xorg-macros"
       system "make", "install"
     end
 
-    ENV["CFLAGS"] = "-mmacosx-version-min=10.6"
     ENV.append_path "PKG_CONFIG_PATH", "#{buildpath}/xproto/lib/pkgconfig"
     ENV.append_path "PKG_CONFIG_PATH", "#{buildpath}/xorg-macros/share/pkgconfig"
 

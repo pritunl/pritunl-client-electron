@@ -6,7 +6,10 @@ class Autoconf < Formula
   sha256 "954bd69b391edc12d6a4a51a2dd1476543da5c6bbf05a95b59dc0dd6fd4c2969"
 
   def install
-    ENV["CFLAGS"] = "-mmacosx-version-min=10.6"
+    ENV.append_to_cflags "-mmacosx-version-min=10.6"
+    ENV["CCFLAGS"] = "-mmacosx-version-min=10.6"
+    ENV["LINKFLAGS"] = "-mmacosx-version-min=10.6"
+
     ENV["PERL"] = "/usr/bin/perl"
 
     # force autoreconf to look for and use our glibtoolize

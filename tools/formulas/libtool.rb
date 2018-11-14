@@ -10,7 +10,10 @@ class Libtool < Formula
   revision 1
 
   def install
-    ENV["CFLAGS"] = "-mmacosx-version-min=10.6"
+    ENV.append_to_cflags "-mmacosx-version-min=10.6"
+    ENV["CCFLAGS"] = "-mmacosx-version-min=10.6"
+    ENV["LINKFLAGS"] = "-mmacosx-version-min=10.6"
+
     ENV["SED"] = "sed" # prevent libtool from hardcoding sed path from superenv
     system "./configure", "--disable-dependency-tracking",
                           "--prefix=#{prefix}",

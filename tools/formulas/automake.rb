@@ -16,7 +16,10 @@ class Automake < Formula
   end
 
   def install
-    ENV["CFLAGS"] = "-mmacosx-version-min=10.6"
+    ENV.append_to_cflags "-mmacosx-version-min=10.6"
+    ENV["CCFLAGS"] = "-mmacosx-version-min=10.6"
+    ENV["LINKFLAGS"] = "-mmacosx-version-min=10.6"
+
     ENV["PERL"] = "/usr/bin/perl"
 
     system "./configure", "--prefix=#{prefix}"
