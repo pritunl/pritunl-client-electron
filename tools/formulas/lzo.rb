@@ -5,7 +5,7 @@ class Lzo < Formula
   sha256 "c0f892943208266f9b6543b3ae308fab6284c5c90e627931446fb49b4221a072"
 
   def install
-    ENV["MACOSX_DEPLOYMENT_TARGET"] = "10.8"
+    ENV["CFLAGS"] = "-mmacosx-version-min=10.6"
     system "./configure", "--disable-dependency-tracking",
                           "--prefix=#{prefix}",
                           "--enable-static",

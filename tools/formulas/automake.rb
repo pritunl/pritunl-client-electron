@@ -16,7 +16,7 @@ class Automake < Formula
   end
 
   def install
-    ENV["MACOSX_DEPLOYMENT_TARGET"] = "10.8"
+    ENV["CFLAGS"] = "-mmacosx-version-min=10.6"
     ENV["PERL"] = "/usr/bin/perl"
 
     system "./configure", "--prefix=#{prefix}"
