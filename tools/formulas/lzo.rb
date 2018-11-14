@@ -5,7 +5,8 @@ class Lzo < Formula
   sha256 "c0f892943208266f9b6543b3ae308fab6284c5c90e627931446fb49b4221a072"
 
   def install
-    ENV["CCFLAGS"] = "-mmacosx-version-min=10.6"
+    ENV["CFLAGS"] = "-mmacosx-version-min=10.6"
+    ENV["CXXFLAGS"] = "-mmacosx-version-min=10.6"
     ENV["CPPFLAGS"] = "-mmacosx-version-min=10.6"
     ENV["LINKFLAGS"] = "-mmacosx-version-min=10.6"
 

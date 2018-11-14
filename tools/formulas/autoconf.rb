@@ -6,7 +6,8 @@ class Autoconf < Formula
   sha256 "954bd69b391edc12d6a4a51a2dd1476543da5c6bbf05a95b59dc0dd6fd4c2969"
 
   def install
-    ENV["CCFLAGS"] = "-mmacosx-version-min=10.6"
+    ENV["CFLAGS"] = "-mmacosx-version-min=10.6"
+    ENV["CXXFLAGS"] = "-mmacosx-version-min=10.6"
     ENV["CPPFLAGS"] = "-mmacosx-version-min=10.6"
     ENV["LINKFLAGS"] = "-mmacosx-version-min=10.6"
 

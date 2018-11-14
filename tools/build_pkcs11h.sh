@@ -1,5 +1,9 @@
 make clean
-OPENSSL_CFLAGS="-I/usr/local/opt/openssl/include" \
+CFLAGS="-mmacosx-version-min=10.6 -D __APPLE_USE_RFC_3542" \
+  CXXFLAGS="-mmacosx-version-min=10.6 -D __APPLE_USE_RFC_3542" \
+  CPPFLAGS="-mmacosx-version-min=10.6 -D __APPLE_USE_RFC_3542" \
+  LINKFLAGS="-mmacosx-version-min=10.6 -D __APPLE_USE_RFC_3542" \
+  OPENSSL_CFLAGS="-I/usr/local/opt/openssl/include" \
   OPENSSL_LIBS="-L/usr/local/opt/openssl/lib -lssl -lcrypto -lz" \
   ./configure \
     --prefix=`pwd`/../pkcs11-helper \

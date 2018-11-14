@@ -16,9 +16,10 @@ class Openvpn < Formula
   depends_on "openssl"
 
   def install
-    ENV["CCFLAGS"] = "-mmacosx-version-min=10.6"
-    ENV["CPPFLAGS"] = "-mmacosx-version-min=10.6"
-    ENV["LINKFLAGS"] = "-mmacosx-version-min=10.6"
+    ENV["CFLAGS"] = "-mmacosx-version-min=10.6 -D __APPLE_USE_RFC_3542"
+    ENV["CXXFLAGS"] = "-mmacosx-version-min=10.6 -D __APPLE_USE_RFC_3542"
+    ENV["CPPFLAGS"] = "-mmacosx-version-min=10.6 -D __APPLE_USE_RFC_3542"
+    ENV["LINKFLAGS"] = "-mmacosx-version-min=10.6 -D __APPLE_USE_RFC_3542"
 
     ENV["OPENSSL_CFLAGS"] = "-I/usr/local/opt/openssl/include"
     ENV["OPENSSL_SSL_CFLAGS"] = "-I/usr/local/opt/openssl/include"
@@ -43,6 +44,7 @@ class Openvpn < Formula
                           "--disable-plugin-auth-pam",
                           "--disable-plugin-down-root",
                           "--with-crypto-library=openssl",
+                          "--build=x86_64-apple-darwin",
                           "--enable-pkcs11",
                           "--enable-static",
                           "--disable-shared",

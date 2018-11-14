@@ -39,7 +39,8 @@ class Openssl < Formula
   end
 
   def install
-    ENV["CCFLAGS"] = "-mmacosx-version-min=10.6"
+    ENV["CFLAGS"] = "-mmacosx-version-min=10.6"
+    ENV["CXXFLAGS"] = "-mmacosx-version-min=10.6"
     ENV["CPPFLAGS"] = "-mmacosx-version-min=10.6"
     ENV["LINKFLAGS"] = "-mmacosx-version-min=10.6"
 
