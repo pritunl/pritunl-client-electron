@@ -12,6 +12,10 @@ class Pkcs11Helper < Formula
   depends_on "openssl"
 
   def install
+    ENV["MACOSX_DEPLOYMENT_TARGET"] "10.6"
+    ENV["OPENSSL_CFLAGS"] = "-I/usr/local/opt/openssl/include"
+    ENV["OPENSSL_LIBS"] = "-L/usr/local/opt/openssl/lib -lssl -lcrypto -lz"
+
     args = %W[
       --disable-debug
       --disable-dependency-tracking

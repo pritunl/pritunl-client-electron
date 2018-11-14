@@ -6,6 +6,7 @@ class Lz4 < Formula
   head "https://github.com/lz4/lz4.git"
 
   def install
+    ENV["MACOSX_DEPLOYMENT_TARGET"] "10.6"
     system "make", "install", "PREFIX=#{prefix}"
   end
 

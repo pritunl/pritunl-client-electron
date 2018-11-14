@@ -16,18 +16,20 @@ class Openvpn < Formula
   depends_on "openssl"
 
   def install
-    ENV.prepend "OPENSSL_CFLAGS", "-I/usr/local/opt/openssl/include"
-    ENV.prepend "OPENSSL_SSL_CFLAGS", "-I/usr/local/opt/openssl/include"
-    ENV.prepend "OPENSSL_LIBS", "/usr/local/opt/openssl/lib/libssl.a -lz /usr/local/opt/openssl/lib/libcrypto.a -lz"
-    ENV.prepend "OPENSSL_SSL_LIBS", "/usr/local/opt/openssl/lib/libssl.a"
-    ENV.prepend "OPENSSL_CRYPTO_LIBS", "/usr/local/opt/openssl/lib/libcrypto.a -lz"
-    ENV.prepend "PKCS11_HELPER_CFLAGS", "-I/usr/local/opt/pkcs11-helper/include"
-    ENV.prepend "PKCS11_HELPER_LIBS", "-L/usr/local/opt/pkcs11-helper/lib -lpkcs11-helper"
-    ENV.prepend "LZO_CFLAGS", "-I/usr/local/opt/lzo/include"
-    ENV.prepend "LZO_LIBS", "/usr/local/opt/lzo/lib/liblzo2.a"
-    ENV.prepend "OPTIONAL_LZO_LIBS", "/usr/local/opt/lzo/lib/liblzo2.a"
-    ENV.prepend "LZ4_CFLAGS", "-I/usr/local/opt/lz4/include"
-    ENV.prepend "LZ4_LIBS", "/usr/local/opt/lz4/lib/liblz4.a"
+    ENV["MACOSX_DEPLOYMENT_TARGET"] "10.6"
+    ENV["OPENSSL_CFLAGS"] = "-I/usr/local/opt/openssl/include"
+    ENV["OPENSSL_SSL_CFLAGS"] = "-I/usr/local/opt/openssl/include"
+    ENV["OPENSSL_CRYPTO_CFLAGS"] = "-I/usr/local/opt/openssl/include"
+    ENV["OPENSSL_LIBS"] = "/usr/local/opt/openssl/lib/libssl.a -lz /usr/local/opt/openssl/lib/libcrypto.a -lz"
+    ENV["OPENSSL_SSL_LIBS"] = "/usr/local/opt/openssl/lib/libssl.a"
+    ENV["OPENSSL_CRYPTO_LIBS"] = "/usr/local/opt/openssl/lib/libcrypto.a -lz"
+    ENV["PKCS11_HELPER_CFLAGS"] = "-I/usr/local/opt/pkcs11-helper/include"
+    ENV["PKCS11_HELPER_LIBS"] = "-L/usr/local/opt/pkcs11-helper/lib -lpkcs11-helper"
+    ENV["LZO_CFLAGS"] = "-I/usr/local/opt/lzo/include"
+    ENV["LZO_LIBS"] = "/usr/local/opt/lzo/lib/liblzo2.a"
+    ENV["OPTIONAL_LZO_LIBS"] = "/usr/local/opt/lzo/lib/liblzo2.a"
+    ENV["LZ4_CFLAGS"] = "-I/usr/local/opt/lz4/include"
+    ENV["LZ4_LIBS"] = "/usr/local/opt/lz4/lib/liblz4.a"
 
     system "./configure", "--disable-debug",
                           "--disable-dependency-tracking",

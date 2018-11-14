@@ -21,6 +21,8 @@ class Makedepend < Formula
 
   def install
     resource("xproto").stage do
+      ENV["MACOSX_DEPLOYMENT_TARGET"] "10.6"
+
       system "./configure", "--disable-dependency-tracking",
                             "--disable-silent-rules",
                             "--prefix=#{buildpath}/xproto"
@@ -28,10 +30,13 @@ class Makedepend < Formula
     end
 
     resource("xorg-macros").stage do
+      ENV["MACOSX_DEPLOYMENT_TARGET"] "10.6"
+
       system "./configure", "--prefix=#{buildpath}/xorg-macros"
       system "make", "install"
     end
 
+    ENV["MACOSX_DEPLOYMENT_TARGET"] "10.6"
     ENV.append_path "PKG_CONFIG_PATH", "#{buildpath}/xproto/lib/pkgconfig"
     ENV.append_path "PKG_CONFIG_PATH", "#{buildpath}/xorg-macros/share/pkgconfig"
 
