@@ -1,6 +1,10 @@
 Pritunl Client Changelog
 ========================
 
+<%= version %>
+
+Fix macOS compatibility issue
+
 Version 1.0.1888.35 2018-11-13
 ------------------------------
 
