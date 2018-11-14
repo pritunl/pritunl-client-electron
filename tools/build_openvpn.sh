@@ -14,12 +14,14 @@ OPENSSL_CFLAGS="-I/usr/local/opt/openssl/include" \
   LZ4_LIBS="/usr/local/opt/lz4/lib/liblz4.a" \
   ./configure \
     --disable-debug \
+    --disable-dependency-tracking \
     --disable-silent-rules \
     --disable-server \
     --disable-management \
     --disable-plugins \
     --disable-plugin-auth-pam \
     --disable-plugin-down-root \
+    --with-crypto-library=openssl \
     --enable-pkcs11 \
     --enable-static \
     --disable-shared
