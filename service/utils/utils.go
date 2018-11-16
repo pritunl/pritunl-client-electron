@@ -536,11 +536,11 @@ func ResetNetworking() {
 		}
 		break
 	case "linux":
-		output, _ := ExecOutput("nmcli", "networking")
+		output, _ := ExecOutput("/usr/bin/nmcli", "networking")
 		if strings.Contains(output, "enabled") {
-			command.Command("nmcli", "connection", "reload").Run()
-			command.Command("nmcli", "networking", "off").Run()
-			command.Command("nmcli", "networking", "on").Run()
+			command.Command("/usr/bin/nmcli", "connection", "reload").Run()
+			command.Command("/usr/bin/nmcli", "networking", "off").Run()
+			command.Command("/usr/bin/nmcli", "networking", "on").Run()
 		}
 		break
 	default:
