@@ -469,7 +469,8 @@ Profile.prototype.delete = function() {
   this.disconnect();
 
   if (os.platform() === 'darwin') {
-    childProcess.exec('security delete-generic-password -s pritunl -a ' +
+    childProcess.exec(
+      '/usr/bin/security delete-generic-password -s pritunl -a ' +
       this.id, function() {}.bind(this));
   }
 
@@ -540,9 +541,11 @@ Profile.prototype.extractKey = function() {
 
   if (os.platform() === 'darwin') {
     // -U not working
-    childProcess.exec('security delete-generic-password -s pritunl -a ' +
+    childProcess.exec(
+      '/usr/bin/security delete-generic-password -s pritunl -a ' +
       this.id, function () {
-      childProcess.exec('security add-generic-password -U -s pritunl -a ' +
+      childProcess.exec(
+        '/usr/bin/security add-generic-password -U -s pritunl -a ' +
         this.id + ' -w ' + keyData + ' login-keychain',
         function (err, stdout, stderr) {
           if (err) {
@@ -561,7 +564,8 @@ Profile.prototype.getFullData = function(callback) {
     return;
   }
 
-  childProcess.exec('security find-generic-password -w -s pritunl -a ' +
+  childProcess.exec(
+    '/usr/bin/security find-generic-password -w -s pritunl -a ' +
     this.id, function(err, stdout, stderr) {
       if (err) {
         err = new errors.ProcessError(
