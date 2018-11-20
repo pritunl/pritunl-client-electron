@@ -197,7 +197,8 @@ Importer.prototype.read = function(pth, data, callback) {
       for (var i = 0; i < curProfiles.length; i++) {
         curPrfl = curProfiles[i];
 
-        if (prfl.organizationId === curPrfl.organizationId &&
+        if (prfl.organizationId && prfl.serverId && prfl.userId &&
+            prfl.organizationId === curPrfl.organizationId &&
             prfl.serverId === curPrfl.serverId &&
             prfl.userId === curPrfl.userId) {
 
