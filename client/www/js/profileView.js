@@ -398,12 +398,17 @@ var renderProfile = function(prfl) {
       var data = prfl.export();
 
       if (prfl.preConnectMsg) {
+        var preConnectMsg = prfl.preConnectMsg;
+        if (preConnectMsg.isArray()) {
+          preConnectMsg = preConnectMsg.join('\n');
+        }
+
         remote.dialog.showMessageBox(
           {
             type: 'none',
             title: 'Pritunl - Connecting to Server',
             message: 'Connecting to ' + data.name,
-            detail: prfl.preConnectMsg,
+            detail: preConnectMsg,
             buttons: ['Disconnect', 'Connect'],
           },
           function(resp) {
