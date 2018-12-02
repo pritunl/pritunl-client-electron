@@ -1,6 +1,10 @@
 Pritunl Client Changelog
 ========================
 
+<%= version %>
+
+Fix issue importing profiles
+
 Version 1.0.1889.51 2018-11-14
 ------------------------------
 
