@@ -1,6 +1,10 @@
 Pritunl Client Changelog
 ========================
 
+<%= version %>
+
+Fix issue with pre connection message
+
 Version 1.0.1907.2 2018-12-02
 -----------------------------
 
