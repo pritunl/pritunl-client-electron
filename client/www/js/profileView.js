@@ -399,7 +399,7 @@ var renderProfile = function(prfl) {
 
       if (prfl.preConnectMsg) {
         var preConnectMsg = prfl.preConnectMsg;
-        if (preConnectMsg.isArray()) {
+        if (preConnectMsg instanceof Array) {
           preConnectMsg = preConnectMsg.join('\n');
         }
 
