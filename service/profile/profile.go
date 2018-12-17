@@ -53,7 +53,7 @@ type OutputData struct {
 type Profile struct {
 	state           bool             `json:"-"`
 	stateLock       sync.Mutex       `json:"-"`
-	stop            bool             `jons:"-"`
+	stop            bool             `json:"-"`
 	waiters         []chan bool      `json:"-"`
 	remPaths        []string         `json:"-"`
 	cmd             *exec.Cmd        `json:"-"`
