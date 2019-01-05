@@ -6,6 +6,8 @@ import (
 	"path/filepath"
 )
 
+const signtool = "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.17763.0\\x64\\signtool.exe"
+
 func main() {
 	cmd := exec.Command("git", "pull")
 	cmd.Stdout = os.Stdout
@@ -38,6 +40,23 @@ func main() {
 		panic(err)
 	}
 
+	cmd = exec.Command(signtool,
+		"sign",
+		"/a",
+		"/n", "Pritunl Inc.",
+		"/tr", "http://timestamp.digicert.com",
+		"/td", "sha256",
+		"/fd", "sha256",
+		"/d", "Pritunl",
+		"tuntap.exe",
+	)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err = cmd.Run()
+	if err != nil {
+		panic(err)
+	}
+
 	err = os.Chdir(filepath.Join("..", "service"))
 	if err != nil {
 		panic(err)
@@ -52,6 +71,23 @@ func main() {
 	}
 
 	cmd = exec.Command("go", "build", "-v", "-ldflags", "-H windowsgui")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err = cmd.Run()
+	if err != nil {
+		panic(err)
+	}
+
+	cmd = exec.Command(signtool,
+		"sign",
+		"/a",
+		"/n", "Pritunl Inc.",
+		"/tr", "http://timestamp.digicert.com",
+		"/td", "sha256",
+		"/fd", "sha256",
+		"/d", "Pritunl",
+		"service.exe",
+	)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err = cmd.Run()
@@ -106,12 +142,53 @@ func main() {
 		panic(err)
 	}
 
-	err = os.Chdir(filepath.Join("..", "resources_win", "post_install"))
+	err = os.Chdir(filepath.Join("..", "build", "win",
+		"pritunl-win32-x64"))
+	if err != nil {
+		panic(err)
+	}
+
+	cmd = exec.Command(signtool,
+		"sign",
+		"/a",
+		"/n", "Pritunl Inc.",
+		"/tr", "http://timestamp.digicert.com",
+		"/td", "sha256",
+		"/fd", "sha256",
+		"/d", "Pritunl",
+		"pritunl.exe",
+	)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err = cmd.Run()
+	if err != nil {
+		panic(err)
+	}
+
+	err = os.Chdir(filepath.Join("..", "..", "..",
+		"resources_win", "post_install"))
 	if err != nil {
 		panic(err)
 	}
 
 	cmd = exec.Command("go", "build", "-v")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err = cmd.Run()
+	if err != nil {
+		panic(err)
+	}
+
+	cmd = exec.Command(signtool,
+		"sign",
+		"/a",
+		"/n", "Pritunl Inc.",
+		"/tr", "http://timestamp.digicert.com",
+		"/td", "sha256",
+		"/fd", "sha256",
+		"/d", "Pritunl",
+		"post_install.exe",
+	)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err = cmd.Run()
@@ -132,7 +209,46 @@ func main() {
 		panic(err)
 	}
 
-	err = os.Chdir(filepath.Join(".."))
+	cmd = exec.Command(signtool,
+		"sign",
+		"/a",
+		"/n", "Pritunl Inc.",
+		"/tr", "http://timestamp.digicert.com",
+		"/td", "sha256",
+		"/fd", "sha256",
+		"/d", "Pritunl",
+		"pre_uninstall.exe",
+	)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err = cmd.Run()
+	if err != nil {
+		panic(err)
+	}
+
+	err = os.Chdir(filepath.Join("..", "..", "service_win"))
+	if err != nil {
+		panic(err)
+	}
+
+	cmd = exec.Command(signtool,
+		"sign",
+		"/a",
+		"/n", "Pritunl Inc.",
+		"/tr", "http://timestamp.digicert.com",
+		"/td", "sha256",
+		"/fd", "sha256",
+		"/d", "Pritunl",
+		"nssm.exe",
+	)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err = cmd.Run()
+	if err != nil {
+		panic(err)
+	}
+
+	err = os.Chdir(filepath.Join("..", "resources_win"))
 	if err != nil {
 		panic(err)
 	}
