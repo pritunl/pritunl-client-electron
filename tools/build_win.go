@@ -17,6 +17,18 @@ func main() {
 		panic(err)
 	}
 
+	err = os.Remove(filepath.Join("openvpn_win",
+		"openvpn-install-2.4.6-I602.exe"))
+	if err != nil && !os.IsNotExist(err) {
+		panic(err)
+	}
+
+	err = os.Remove(filepath.Join("openvpn_win",
+		"openvpn-install-2.4.6-I602.exe.asc"))
+	if err != nil && !os.IsNotExist(err) {
+		panic(err)
+	}
+
 	err = os.Remove(filepath.Join("build", "win", "Pritunl.exe"))
 	if err != nil && !os.IsNotExist(err) {
 		panic(err)
