@@ -471,13 +471,14 @@ input:active {
   border-top: 1px solid #242a30;
 }
 .profile .logo {
+  flex: 0 0 25px;
   justify-content: center;
-  width: 50px;
-  height: 50px;
-  font-size: 27px;
-  text-transform: uppercase;
+  width: 25px;
+  height: 100%;
+  opacity: 0.45;
 }
 .profile .info {
+  overflow: hidden;
   margin: 14px 0 14px 14px;
   white-space: nowrap;
 }
@@ -508,8 +509,9 @@ input:active {
   margin-top: 0;
 }
 .profile .open-menu {
-  padding: 7px 13px 0 13px;
-  font-size: 24px;
+  flex: 0 0 43px;
+  padding: 7px 12px 0 12px;
+  font-size: 22px;
 }
 .profile .open-menu i {
   cursor: pointer;
