@@ -1,6 +1,6 @@
 {
   "name": "pritunl",
-  "version": "1.0.1909.80",
+  "version": "1.0.1951.33",
   "main": "www/main.js",
   "dependencies": {
     "jquery": "3.3.1",
@@ -10,7 +10,7 @@
     "ws": "6.1.0"
   },
   "devDependencies": {
-    "electron": "1.8.8",
+    "electron": "4.0.1",
     "electron-packager": "12.2.0",
     "electron-rebuild": "1.8.2",
     "rcedit": "1.1.1",
