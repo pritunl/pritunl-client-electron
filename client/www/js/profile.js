@@ -278,11 +278,7 @@ Profile.prototype.exportConf = function() {
 };
 
 Profile.prototype.export = function() {
-  var nameLogo = this.formatedNameLogo();
-
-  var hash = crypto.createHash('md5');
-  hash.update(nameLogo[0]);
-  hash = hash.digest('base64');
+  var formatedName = this.formatedName();
 
   var status;
   if (this.status === 'connected') {
@@ -298,12 +294,10 @@ Profile.prototype.export = function() {
   }
 
   return {
-    logo: nameLogo[1],
-    logoColor: colors[hash.substr(0, 1)],
     status: status,
     serverAddr: this.serverAddr || '-',
     clientAddr: this.clientAddr || '-',
-    name: nameLogo[0],
+    name: formatedName,
     organizationId: this.organizationId || '',
     organization: this.organization || '',
     serverId: this.serverId || '',
@@ -320,35 +314,26 @@ Profile.prototype.export = function() {
   }
 };
 
-Profile.prototype.formatedNameLogo = function() {
-  var logo;
+Profile.prototype.formatedName = function() {
   var name = this.name;
 
   if (!name) {
     if (this.user) {
-      name = this.user;
+      name = this.user.split('@')[0];
 
       if (this.server) {
         name += ' (' + this.server + ')';
-        logo = this.server.substr(0, 1);
-      } else {
-        logo = this.user.substr(0, 1);
       }
     } else if (this.server) {
       name = this.server;
-      logo = this.server.substr(0, 1);
     } else if (this.uvName) {
       name = this.uvName;
-      logo = this.uvName.substr(0, 1);
     } else {
       name = 'Unknown Profile';
-      logo = 'U';
     }
-  } else {
-    logo = name.substr(0, 1);
   }
 
-  return [name, logo];
+  return name;
 };
 
 Profile.prototype.pushOutput = function(output) {
@@ -926,7 +911,7 @@ var sortProfiles = function(prfls) {
   var prflsMap = {};
 
   for (i = 0; i < prfls.length; i++) {
-    name = prfls[i].formatedNameLogo()[0] || 'ZZZZZZZZ';
+    name = prfls[i].formatedName() || 'ZZZZZZZZ';
 
     if (!prflsMap[name]) {
       prflsMap[name] = [i];
