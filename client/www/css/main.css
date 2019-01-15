@@ -479,7 +479,7 @@ input:active {
 }
 .profile .info {
   overflow: hidden;
-  margin: 14px 0 14px 14px;
+  padding: 13px 0 13px 13px;
   white-space: nowrap;
 }
 .profile .info .label {
