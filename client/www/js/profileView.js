@@ -12,6 +12,14 @@ var errors = require('./errors.js');
 var logger = require('./logger.js');
 var template = require('../templates/profile.js');
 
+var colors = [
+  '#D32F2F',
+  '#2196F3',
+  '#795548',
+  '#66BB6A',
+  '#5C6BC0',
+];
+
 var openMenu = function($profile) {
   $profile.addClass('menu-open');
   $profile.find('.menu').addClass('show');
@@ -62,18 +70,20 @@ var closeEditor = function($profile, typ) {
   }, 185);
 };
 
-var renderProfile = function(prfl) {
+var renderProfile = function(index, prfl) {
   var edtr;
   var edtrType;
-  var $profile = $(Mustache.render(template, prfl.export()));
+
+  var data = prfl.export();
+  data['logoColor'] = colors[index % 5];
+  var $profile = $(Mustache.render(template, data));
 
   service.add(prfl);
 
   prfl.onUpdate = function() {
     var data = prfl.export();
     $profile.find('.info .name').text(data.name);
-    $profile.find('.logo').text(data.logo);
-    $profile.find('.logo').css('background-color', data.logoColor);
+    $profile.find('.logo').css('background-color', colors[index % 5]);
     $profile.find('.info .uptime').text(data.status);
     $profile.find('.menu .autostart').text('Autostart ' + data.autostart);
     $profile.find('.info .server-addr').text(data.serverAddr);
@@ -602,21 +612,21 @@ var init = function() {
         prfl = service.get(evt.data.id);
         err = new errors.AuthError(
           'profile_view: Failed to authenticate to %s',
-          prfl.formatedNameLogo()[0]);
+          prfl.formatedName());
         logger.error(err);
         break;
       case 'inactive':
         prfl = service.get(evt.data.id);
         err = new errors.AuthError(
           'profile_view: Disconnected due to inactivity on %s',
-          prfl.formatedNameLogo()[0]);
+          prfl.formatedName());
         logger.error(err);
         break;
       case 'timeout_error':
         prfl = service.get(evt.data.id);
         err = new errors.AuthError(
           'profile_view: Connection timed out to %s',
-          prfl.formatedNameLogo()[0]);
+          prfl.formatedName());
         logger.error(err);
         break;
     }
@@ -636,7 +646,7 @@ var init = function() {
       importer.importProfileUri(uri, function(prfls) {
         if (prfls) {
           for (var i = 0; i < prfls.length; i++) {
-            renderProfile(prfls[i]);
+            renderProfile(i, prfls[i]);
           }
         }
         refreshProfiles();
@@ -700,7 +710,7 @@ var init = function() {
         importer.importProfile(pth, function(prfls) {
           if (prfls) {
             for (var i = 0; i < prfls.length; i++) {
-              renderProfile(prfls[i]);
+              renderProfile(i, prfls[i]);
             }
           }
           refreshProfiles();
@@ -718,7 +728,7 @@ var init = function() {
       importer.importProfile(pth, function(prfls) {
         if (prfls) {
           for (var i = 0; i < prfls.length; i++) {
-            renderProfile(prfls[i]);
+            renderProfile(i, prfls[i]);
           }
         }
         refreshProfiles();
@@ -726,7 +736,7 @@ var init = function() {
     });
 
     for (var i = 0; i < prfls.length; i++) {
-      renderProfile(prfls[i]);
+      renderProfile(i, prfls[i]);
     }
 
     service.update();
