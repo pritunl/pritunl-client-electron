@@ -1,6 +1,6 @@
 module.exports = `<div class="profile" flex layout horizontal>
   <div class="logo" layout vertical center
-    style="background-color: {{logoColor}};">{{logo}}</div>
+    style="background-color: {{logoColor}};"></div>
   <div class="info" flex>
     <div class="label">Name</div>
     <div class="name">{{name}}</div>
