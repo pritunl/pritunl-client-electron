@@ -1,6 +1,10 @@
 Pritunl Client Changelog
 ========================
 
+<%= version %>
+
+Redesign interface
+
 Version 1.0.1909.80 2018-12-04
 ------------------------------
 
