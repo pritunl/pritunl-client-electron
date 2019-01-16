@@ -16,8 +16,8 @@ var colors = [
   '#D32F2F',
   '#2196F3',
   '#795548',
-  '#66BB6A',
   '#5C6BC0',
+  '#66BB6A',
 ];
 
 var openMenu = function($profile) {
