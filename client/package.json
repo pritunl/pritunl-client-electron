@@ -4,16 +4,16 @@
   "main": "www/main.js",
   "dependencies": {
     "jquery": "3.3.1",
-    "mustache": "3.0.0",
+    "mustache": "3.0.1",
     "request": "2.88.0",
-    "tar": "4.4.7",
-    "ws": "6.1.0"
+    "tar": "4.4.8",
+    "ws": "6.1.2"
   },
   "devDependencies": {
     "electron": "4.0.1",
-    "electron-packager": "12.2.0",
+    "electron-packager": "13.0.1",
     "electron-rebuild": "1.8.2",
     "rcedit": "1.1.1",
-    "rimraf": "2.6.2"
+    "rimraf": "2.6.3"
   }
 }
