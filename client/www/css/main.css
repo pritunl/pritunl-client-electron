@@ -266,34 +266,34 @@ input:active {
   background-color: #2f2f2f;
 }
 .btn.btn-success {
-  background-color: #5cb85c;
+  background-color: #2f692f;
 }
 .btn.btn-success:hover {
-  background-color: #449d44;
+  background-color: #245424;
 }
 .btn.btn-info {
-  background-color: #5bc0de;
+  background-color: #2d7084;
 }
 .btn.btn-info:hover {
-  background-color: #31b0d5;
+  background-color: #225767;
 }
 .btn.btn-warning {
-  background-color: #f0ad4e;
+  background-color: #975d23;
 }
 .btn.btn-warning:hover {
-  background-color: #ec971f;
+  background-color: #70451a;
 }
 .btn.btn-danger {
-  background-color: #d9534f;
+  background-color: #933734;
 }
 .btn.btn-danger:hover {
-  background-color: #c9302c;
+  background-color: #6a2624;
 }
 .btn.btn-action {
-  background-color: #5229b5;
+  background-color: #59317d;
 }
 .btn.btn-action:hover {
-  background-color: #3b1c84;
+  background-color: #482766;
 }
 
 
