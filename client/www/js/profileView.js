@@ -633,6 +633,8 @@ var init = function() {
   });
 
   profile.getProfiles(function(err, prfls) {
+    var profileCount = 0;
+
     var importLock = false;
     var importUri = function() {
       if (importLock) {
@@ -646,7 +648,8 @@ var init = function() {
       importer.importProfileUri(uri, function(prfls) {
         if (prfls) {
           for (var i = 0; i < prfls.length; i++) {
-            renderProfile(i, prfls[i]);
+            renderProfile(profileCount, prfls[i]);
+            profileCount += 1;
           }
         }
         refreshProfiles();
@@ -710,7 +713,8 @@ var init = function() {
         importer.importProfile(pth, function(prfls) {
           if (prfls) {
             for (var i = 0; i < prfls.length; i++) {
-              renderProfile(i, prfls[i]);
+              renderProfile(profileCount, prfls[i]);
+              profileCount += 1;
             }
           }
           refreshProfiles();
@@ -728,7 +732,8 @@ var init = function() {
       importer.importProfile(pth, function(prfls) {
         if (prfls) {
           for (var i = 0; i < prfls.length; i++) {
-            renderProfile(i, prfls[i]);
+            renderProfile(profileCount, prfls[i]);
+            profileCount += 1;
           }
         }
         refreshProfiles();
@@ -736,7 +741,8 @@ var init = function() {
     });
 
     for (var i = 0; i < prfls.length; i++) {
-      renderProfile(i, prfls[i]);
+      renderProfile(profileCount, prfls[i]);
+      profileCount += 1;
     }
 
     service.update();
