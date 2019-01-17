@@ -399,10 +399,10 @@ input:active {
 .service-logs .btn,
 .profiles .btns .btn {
   width: 50%;
-  height: 52px;
+  height: 44px;
   display: inline-block;
   font-size: 18px;
-  padding: 16px 0;
+  padding: 12px 0;
   text-align: center;
   color: #fff;
   position: relative;
@@ -410,12 +410,12 @@ input:active {
 .profiles .btns .open-main-menu {
   text-align: left;
   padding: 0;
-  width: 52px;
+  width: 44px;
 }
 .profiles .btns .open-main-menu i {
   color: #fff;
   font-size: 26px;
-  margin: 13px 0 0 15px;
+  margin: 9px 0 0 11px;
 }
 .profiles .btns .btn .profile-file {
   position: absolute;
@@ -439,7 +439,7 @@ input:active {
 
 .main-menu {
   position: absolute;
-  bottom: 52px;
+  bottom: 44px;
   right: 0;
   height: 0;
   overflow: hidden;
@@ -471,11 +471,11 @@ input:active {
   border-top: 1px solid #242a30;
 }
 .profile .logo {
-  flex: 0 0 25px;
+  flex: 0 0 23px;
   justify-content: center;
-  width: 25px;
+  width: 23px;
   height: 100%;
-  opacity: 0.45;
+  opacity: 0.6;
 }
 .profile .info {
   overflow: hidden;
@@ -691,7 +691,7 @@ input:active {
 .profile .logs .editor,
 .profile .config .editor {
   width: 100%;
-  height: calc(100% - 52px);
+  height: calc(100% - 44px);
   margin: 0;
 }
 .system-logs .btn,
