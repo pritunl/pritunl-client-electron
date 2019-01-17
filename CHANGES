@@ -1,6 +1,10 @@
 Pritunl Client Changelog
 ========================
 
+<%= version %>
+
+Interface improvements
+
 Version 1.0.1952.30 2019-01-16
 ------------------------------
 
