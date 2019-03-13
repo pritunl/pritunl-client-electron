@@ -192,7 +192,7 @@ func CopyScutilKey(typ, src, dst string) (err error) {
 }
 
 func GetScutilService() (serviceId string, err error) {
-	for i := 0; i < 20; i++ {
+	for i := 0; i < 80; i++ {
 		data, e := GetScutilKey("State", "/Network/Global/IPv4")
 		if e != nil {
 			err = e
@@ -201,7 +201,7 @@ func GetScutilService() (serviceId string, err error) {
 
 		dataSpl := strings.Split(data, "PrimaryService :")
 		if len(dataSpl) < 2 {
-			if i < 19 {
+			if i < 79 {
 				time.Sleep(250 * time.Millisecond)
 				continue
 			}
