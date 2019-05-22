@@ -3,7 +3,7 @@
   "version": "1.0.1953.32",
   "main": "www/main.js",
   "dependencies": {
-    "jquery": "3.3.1",
+    "jquery": "3.4.0",
     "mustache": "3.0.1",
     "request": "2.88.0",
     "tar": "4.4.8",
