@@ -225,7 +225,10 @@ var openMainWin = function() {
       minHeight: minHeight,
       maxWidth: maxWidth,
       maxHeight: maxHeight,
-      backgroundColor: '#151719'
+      backgroundColor: '#151719',
+      webPreferences: {
+        nodeIntegration: true
+      }
     });
     main.maximizedPrev = null;
 
