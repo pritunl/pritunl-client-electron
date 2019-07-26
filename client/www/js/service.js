@@ -70,7 +70,7 @@ var update = function(callback) {
   }.bind(this));
 };
 
-var start = function(prfl, timeout, serverPubKey,
+var start = function(prfl, timeout, serverPubKey, serverBoxPubKey,
     username, password, callback) {
   username = username || 'pritunl';
 
@@ -78,6 +78,7 @@ var start = function(prfl, timeout, serverPubKey,
     serverPubKey = serverPubKey.join('\n');
   } else {
     serverPubKey = null;
+    serverBoxPubKey = null;
   }
 
   prfl.getFullData(function(data) {
@@ -96,6 +97,8 @@ var start = function(prfl, timeout, serverPubKey,
         username: username,
         password: password,
         server_public_key: serverPubKey,
+        server_box_public_key: serverBoxPubKey,
+        token_ttl: prfl.tokenTtl,
         reconnect: reconnect,
         timeout: timeout,
         data: data
@@ -155,6 +158,7 @@ var tokenUpdate = function(prfl, callback) {
     body: {
       profile: prfl.id,
       server_public_key: serverPubKey,
+      server_box_public_key: prfl.serverBoxPublicKey,
       ttl: prfl.tokenTtl,
     }
   }, function(err, resp, body) {
