@@ -18,7 +18,7 @@ type Token struct {
 func (t *Token) Init() (err error) {
 	t.Valid = false
 
-	token, err := utils.RandStr(64)
+	token, err := utils.RandStrComplex(16)
 	if err != nil {
 		return
 	}
