@@ -489,9 +489,10 @@ func (p *Profile) parseLine(line string) {
 			}
 		}()
 	} else if strings.Contains(line, "AUTH_FAILED") || strings.Contains(
-		line, "auth-failure") {
+		line, "auth-failure") && !p.authFailed {
 
 		p.stop = true
+		p.authFailed = true
 
 		tokn := p.token
 		if tokn != nil {
