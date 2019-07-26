@@ -769,7 +769,7 @@ Profile.prototype._auth = function(authType, timeout, callback) {
   } else {
     callback(authType, function(user, pass) {
       service.start(this, timeout, this.serverPublicKey,
-        user || 'pritunl', pass);
+        this.serverBoxPublicKey, user || 'pritunl', pass);
     }.bind(this));
   }
 };
