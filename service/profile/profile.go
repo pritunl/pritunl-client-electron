@@ -348,7 +348,7 @@ func (p *Profile) writeAuth() (pth string, err error) {
 
 	pth = filepath.Join(rootDir, p.Id+".auth")
 
-	err = ioutil.WriteFile(pth, []byte(p.Username+"\n"+password+"\n"),
+	err = ioutil.WriteFile(pth, []byte(username+"\n"+password+"\n"),
 		os.FileMode(0600))
 	if err != nil {
 		err = &WriteError{
