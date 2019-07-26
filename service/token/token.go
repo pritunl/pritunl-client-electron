@@ -1,8 +1,10 @@
 package token
 
 import (
-	"github.com/pritunl/pritunl-client-electron/service/utils"
 	"time"
+
+	"github.com/Sirupsen/logrus"
+	"github.com/pritunl/pritunl-client-electron/service/utils"
 )
 
 type Token struct {
@@ -16,6 +18,10 @@ type Token struct {
 }
 
 func (t *Token) Init() (err error) {
+	logrus.WithFields(logrus.Fields{
+		"profile": t.Profile,
+	}).Info("token: Token init")
+
 	t.Valid = false
 
 	token, err := utils.RandStrComplex(16)
