@@ -36,6 +36,7 @@ function Profile(pth) {
   this.syncSecret = null;
   this.syncToken = null;
   this.serverPublicKey = null;
+  this.serverBoxPublicKey = null;
   this.log = null;
 }
 
@@ -141,6 +142,7 @@ Profile.prototype.refresh = function(prfl) {
   this.syncHosts = prfl.syncHosts;
   this.syncHash = prfl.syncHash;
   this.serverPublicKey = prfl.serverPublicKey;
+  this.serverBoxPublicKey = prfl.serverBoxPublicKey;
 
   if (this.onUpdate) {
     this.onUpdate();
@@ -167,6 +169,7 @@ Profile.prototype.import = function(data) {
   this.syncSecret = data.sync_secret || null;
   this.syncToken = data.sync_token || null;
   this.serverPublicKey = data.server_public_key || null;
+  this.serverBoxPublicKey = data.server_box_public_key || null;
 };
 
 Profile.prototype.upsert = function(data) {
@@ -185,6 +188,7 @@ Profile.prototype.upsert = function(data) {
   this.syncHosts = data.sync_hosts;
   this.syncHash = data.sync_hash;
   this.serverPublicKey = data.server_public_key;
+  this.serverBoxPublicKey = data.server_box_public_key;
 };
 
 Profile.prototype.exportConf = function() {
@@ -206,7 +210,8 @@ Profile.prototype.exportConf = function() {
     sync_hash: this.syncHash,
     sync_secret: this.syncSecret,
     sync_token: this.syncToken,
-    server_public_key: this.serverPublicKey
+    server_public_key: this.serverPublicKey,
+    server_box_public_key: this.serverBoxPublicKey
   };
 };
 
@@ -243,7 +248,8 @@ Profile.prototype.export = function() {
     syncHash: this.syncHash || '',
     syncSecret: this.syncSecret || '',
     syncToken: this.syncToken || '',
-    serverPublicKey: this.serverPublicKey
+    serverPublicKey: this.serverPublicKey,
+    serverBoxPublicKey: this.serverBoxPublicKey
   }
 };
 
@@ -757,7 +763,8 @@ Profile.prototype._auth = function(authType, timeout, callback) {
     if (callback) {
       callback(null, null);
     }
-    service.start(this, timeout, this.serverPublicKey);
+    service.start(this, timeout, this.serverPublicKey,
+      this.serverBoxPublicKey);
   } else if (!callback) {
   } else {
     callback(authType, function(user, pass) {
