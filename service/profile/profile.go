@@ -5,18 +5,12 @@ import (
 	"bufio"
 	"crypto/rand"
 	"crypto/rsa"
+	"crypto/sha256"
 	"crypto/sha512"
 	"crypto/x509"
 	"encoding/base64"
 	"encoding/json"
 	"encoding/pem"
-	"github.com/Sirupsen/logrus"
-	"github.com/dropbox/godropbox/errors"
-	"github.com/pritunl/pritunl-client-electron/service/command"
-	"github.com/pritunl/pritunl-client-electron/service/errortypes"
-	"github.com/pritunl/pritunl-client-electron/service/event"
-	"github.com/pritunl/pritunl-client-electron/service/token"
-	"github.com/pritunl/pritunl-client-electron/service/utils"
 	"io"
 	"io/ioutil"
 	"os"
@@ -24,9 +18,19 @@ import (
 	"path/filepath"
 	"runtime"
 	"runtime/debug"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/Sirupsen/logrus"
+	"github.com/dropbox/godropbox/errors"
+	"github.com/pritunl/pritunl-client-electron/service/command"
+	"github.com/pritunl/pritunl-client-electron/service/errortypes"
+	"github.com/pritunl/pritunl-client-electron/service/event"
+	"github.com/pritunl/pritunl-client-electron/service/token"
+	"github.com/pritunl/pritunl-client-electron/service/utils"
+	"golang.org/x/crypto/nacl/box"
 )
 
 const (
@@ -51,25 +55,28 @@ type OutputData struct {
 }
 
 type Profile struct {
-	state           bool             `json:"-"`
-	stateLock       sync.Mutex       `json:"-"`
-	stop            bool             `json:"-"`
-	waiters         []chan bool      `json:"-"`
-	remPaths        []string         `json:"-"`
-	cmd             *exec.Cmd        `json:"-"`
-	intf            *utils.Interface `json:"-"`
-	lastAuthErr     time.Time        `json:"-"`
-	token           *token.Token     `json:"-"`
-	Id              string           `json:"id"`
-	Data            string           `json:"-"`
-	Username        string           `json:"-"`
-	Password        string           `json:"-"`
-	ServerPublicKey string           `json:"-"`
-	Reconnect       bool             `json:"reconnect"`
-	Status          string           `json:"status"`
-	Timestamp       int64            `json:"timestamp"`
-	ServerAddr      string           `json:"server_addr"`
-	ClientAddr      string           `json:"client_addr"`
+	state              bool             `json:"-"`
+	stateLock          sync.Mutex       `json:"-"`
+	stop               bool             `json:"-"`
+	authFailed         bool             `json:"-"`
+	waiters            []chan bool      `json:"-"`
+	remPaths           []string         `json:"-"`
+	cmd                *exec.Cmd        `json:"-"`
+	intf               *utils.Interface `json:"-"`
+	lastAuthErr        time.Time        `json:"-"`
+	token              *token.Token     `json:"-"`
+	Id                 string           `json:"id"`
+	Data               string           `json:"-"`
+	Username           string           `json:"-"`
+	Password           string           `json:"-"`
+	ServerPublicKey    string           `json:"-"`
+	ServerBoxPublicKey string           `json:"-"`
+	TokenTtl           int              `json:"-"`
+	Reconnect          bool             `json:"reconnect"`
+	Status             string           `json:"status"`
+	Timestamp          int64            `json:"timestamp"`
+	ServerAddr         string           `json:"server_addr"`
+	ClientAddr         string           `json:"client_addr"`
 }
 
 type AuthData struct {
@@ -217,9 +224,65 @@ func (p *Profile) writeAuth() (pth string, err error) {
 		return
 	}
 
+	username := p.Username
 	password := p.Password
 
-	if p.ServerPublicKey != "" {
+	if p.ServerBoxPublicKey != "" {
+		var serverPubKey [32]byte
+		serverPubKeySlic, e := base64.StdEncoding.DecodeString(
+			p.ServerBoxPublicKey)
+		if e != nil {
+			err = &errortypes.ParseError{
+				errors.Wrap(e, "profile: Failed to decode server box key"),
+			}
+			return
+		}
+		copy(serverPubKey[:], serverPubKeySlic)
+
+		tokn := token.Get(p.Id, p.ServerPublicKey, p.ServerBoxPublicKey)
+		p.token = tokn
+
+		authToken := ""
+		if tokn != nil {
+			err = tokn.Update()
+			if err != nil {
+				return
+			}
+
+			authToken = tokn.Token
+		} else {
+			authToken, err = utils.RandStrComplex(16)
+			if err != nil {
+				return
+			}
+		}
+
+		authData := strings.Join([]string{
+			authToken,
+			strconv.Itoa(int(time.Now().Unix())),
+			password,
+		}, "")
+
+		senderPubKey, senderPrivKey, e := box.GenerateKey(rand.Reader)
+		if e != nil {
+			err = &errortypes.ReadError{
+				errors.Wrap(e, "profile: Failed to generate nacl key"),
+			}
+			return
+		}
+
+		var nonce [24]byte
+		nonceHash := sha256.Sum256(senderPubKey[:])
+		copy(nonce[:], nonceHash[:24])
+
+		username = base64.RawStdEncoding.EncodeToString(senderPubKey[:])
+
+		encrypted := box.Seal([]byte{}, []byte(authData),
+			&nonce, &serverPubKey, senderPrivKey)
+
+		ciphertext64 := base64.RawStdEncoding.EncodeToString(encrypted)
+		password = "$x$" + ciphertext64
+	} else if p.ServerPublicKey != "" {
 		block, _ := pem.Decode([]byte(p.ServerPublicKey))
 
 		pub, e := x509.ParsePKCS1PublicKey(block.Bytes)
@@ -236,7 +299,7 @@ func (p *Profile) writeAuth() (pth string, err error) {
 			return
 		}
 
-		tokn := token.Get(p.Id, p.ServerPublicKey)
+		tokn := token.Get(p.Id, p.ServerPublicKey, p.ServerBoxPublicKey)
 		p.token = tokn
 
 		authToken := ""
