@@ -35,6 +35,24 @@ func (t *Token) Init() (err error) {
 	return
 }
 
+func (t *Token) Reset() (err error) {
+	logrus.WithFields(logrus.Fields{
+		"profile": t.Profile,
+	}).Info("token: Token reset")
+
+	t.Valid = false
+
+	token, err := utils.RandStrComplex(16)
+	if err != nil {
+		return
+	}
+
+	t.Token = token
+	t.Timestamp = time.Now()
+
+	return
+}
+
 func (t *Token) Update() (err error) {
 	if time.Since(t.Timestamp) > time.Duration(t.Ttl)*time.Second {
 		err = t.Init()
