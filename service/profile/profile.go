@@ -11,6 +11,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"encoding/pem"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
@@ -18,7 +19,6 @@ import (
 	"path/filepath"
 	"runtime"
 	"runtime/debug"
-	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -259,7 +259,7 @@ func (p *Profile) writeAuth() (pth string, err error) {
 
 		authData := strings.Join([]string{
 			authToken,
-			strconv.Itoa(int(time.Now().Unix())),
+			fmt.Sprintf("%d", time.Now().Unix()),
 			password,
 		}, "")
 
