@@ -2,13 +2,15 @@ package utils
 
 import (
 	"crypto/rand"
+	"encoding/ascii85"
 	"encoding/base64"
-	"github.com/dropbox/godropbox/errors"
-	"github.com/pritunl/pritunl-client-electron/service/errortypes"
 	"math"
 	"math/big"
 	mathrand "math/rand"
 	"regexp"
+
+	"github.com/dropbox/godropbox/errors"
+	"github.com/pritunl/pritunl-client-electron/service/errortypes"
 )
 
 var (
@@ -37,6 +39,35 @@ func RandStr(n int) (str string, err error) {
 	if str == "" {
 		err = &errortypes.UnknownError{
 			errors.Wrap(err, "utils: Random generate error"),
+		}
+		return
+	}
+
+	return
+}
+
+func RandStrComplex(n int) (str string, err error) {
+	for i := 0; i < 10; i++ {
+		input, e := RandBytes(int(math.Ceil(float64(n) * 1.4)))
+		if e != nil {
+			err = e
+			return
+		}
+
+		output := make([]byte, ascii85.MaxEncodedLen(len(input)))
+		_ = ascii85.Encode(output, input)
+
+		if len(string(output)) < n {
+			continue
+		}
+
+		str = string(output)[:n]
+		break
+	}
+
+	if str == "" {
+		err = &errortypes.UnknownError{
+			errors.Wrap(err, "utils: Random complex generate error"),
 		}
 		return
 	}
