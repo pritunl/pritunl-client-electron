@@ -431,7 +431,7 @@ if cmd == 'build' or cmd == 'build-test' or cmd == 'build-upload':
             )
             pkgbuild_data = re.sub(
                 '"[a-f0-9]{64}"',
-                '"%s"' % archive_sha256_sum,
+                '"%s"' % archive_sha256_sum.decode('utf-8'),
                 pkgbuild_data,
                 count=1,
             )
