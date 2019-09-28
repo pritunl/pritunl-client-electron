@@ -738,3 +738,43 @@ input:active {
 .profile .config ::-webkit-scrollbar-thumb {
   background: #1b6bb0;
 }
+
+.loading-ring {
+  display: none;
+}
+.loading-ring.loading {
+  display: inline-block;
+  position: absolute;
+  margin-left: 6px;
+  width: 20px;
+  height: 20px;
+}
+.loading-ring.loading div {
+  box-sizing: border-box;
+  display: block;
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  margin: 2px;
+  border: 5px solid #fff;
+  border-radius: 50%;
+  animation: loading-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  border-color: #fff transparent transparent transparent;
+}
+.loading-ring.loading div:nth-child(1) {
+  animation-delay: -0.45s;
+}
+.loading-ring.loading div:nth-child(2) {
+  animation-delay: -0.3s;
+}
+.loading-ring.loading div:nth-child(3) {
+  animation-delay: -0.15s;
+}
+@keyframes loading-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
