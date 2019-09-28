@@ -641,7 +641,10 @@ var init = function() {
         return;
       }
       importLock = true;
-      $('.profiles .import-uri').attr('disabled', 'disabled');
+      $('.profiles .uri-input').attr('disabled', 'disabled');
+      $('.loading-ring').addClass('loading');
+      $('.profiles .import-uri-confirm').addClass('disabled');
+      $('.profiles .import-uri-cancel').addClass('disabled');
 
       var uri = $('.profiles .uri-input').val();
 
@@ -662,12 +665,16 @@ var init = function() {
           $('.profiles .uri-input').val('');
         });
 
-        $('.profiles .import-uri').removeAttr('disabled');
+        $('.profiles .uri-input').removeAttr('disabled');
+        $('.profiles .import-uri-confirm').removeClass('disabled');
+        $('.profiles .import-uri-cancel').removeClass('disabled');
+        $('.loading-ring').removeClass('loading');
         importLock = false;
       });
     };
 
     $('.profiles .import-uri').click(function() {
+      $('.main-menu').removeClass('show');
       $('.profiles .import').hide();
       $('.profiles .import-uri').hide();
       $('.profiles .open-main-menu').hide();
@@ -684,10 +691,18 @@ var init = function() {
     });
 
     $('.profiles .import-uri-confirm').click(function() {
+      if ($('.profiles .import-uri-confirm').hasClass('disabled')) {
+        return;
+      }
+
       importUri();
     });
 
     $('.profiles .import-uri-cancel').click(function() {
+      if ($('.profiles .import-uri-cancel').hasClass('disabled')) {
+        return;
+      }
+
       $('.profiles .import-btns').hide();
       $('.profiles .import').show();
       $('.profiles .import-uri').show();
