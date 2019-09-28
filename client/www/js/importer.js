@@ -330,7 +330,8 @@ var importProfileUri = function(prflUri, callback) {
 
   request.get({
     url: prflUri,
-    strictSSL: strictSsl
+    strictSSL: strictSsl,
+    timeout: 5000,
   }, function(err, resp, body) {
     var data;
 
