@@ -416,8 +416,8 @@ input:active {
 .profiles .list {
   overflow-y: auto;
 }
-.system-logs .btn,
-.service-logs .btn,
+.system-logs .btns .btn,
+.service-logs .btns .btn,
 .profiles .btns .btn {
   width: 50%;
   height: 44px;
@@ -715,13 +715,13 @@ input:active {
   height: calc(100% - 44px);
   margin: 0;
 }
-.system-logs .btn,
-.service-logs .btn,
+.system-logs .btns .btn,
+.service-logs .btns .btn,
 .profile .logs .btn,
 .profile .config .btn {
   width: 50%;
 }
-.service-logs .btn {
+.service-logs .btns .btn {
   width: 100%;
 }
 .system-logs ::-webkit-scrollbar,
