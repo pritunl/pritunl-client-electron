@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -115,7 +116,8 @@ func main() {
 	cmd.Stderr = os.Stderr
 	cmd.Run()
 	cmd = exec.Command(filepath.Join(rootDir, "nssm.exe"), "install",
-		"pritunl", filepath.Join(rootDir, "pritunl-service.exe"))
+		"pritunl", fmt.Sprintf(`"%s"`, filepath.Join(
+			rootDir, "pritunl-service.exe")))
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Run()
