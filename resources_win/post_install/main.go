@@ -116,7 +116,12 @@ func main() {
 	cmd.Stderr = os.Stderr
 	cmd.Run()
 	cmd = exec.Command(filepath.Join(rootDir, "nssm.exe"), "install",
-		"pritunl", fmt.Sprintf(`"%s"`, filepath.Join(
+		"pritunl", filepath.Join(rootDir, "pritunl-service.exe"))
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Run()
+	cmd = exec.Command("sc.exe", "config", "pritunl",
+		fmt.Sprintf(`binPath= "\"%s\""`, filepath.Join(
 			rootDir, "pritunl-service.exe")))
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
