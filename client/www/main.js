@@ -57,6 +57,11 @@ if (process.argv.indexOf('--dev') !== -1) {
   }
 }
 
+if (process.platform === 'linux') {
+  global.unixSocket = true;
+  constants.unixSocket = true;
+}
+
 try {
   global.key = fs.readFileSync(authPath, 'utf8');
   constants.key = global.key;
@@ -264,12 +269,22 @@ var openMainWin = function() {
 };
 
 var sync =  function() {
+  var url;
+  var headers = {
+    'Auth-Key': constants.key,
+    'User-Agent': 'pritunl'
+  };
+
+  if (constants.unixSocket) {
+    url = 'http://unix:' + constants.unixPath + ':/status';
+    headers['Host'] = 'unix';
+  } else {
+    url = 'http://' + constants.serviceHost + '/status';
+  }
+
   request.get({
-    url: 'http://' + constants.serviceHost + '/status',
-    headers: {
-      'Auth-Key': constants.key,
-      'User-Agent': 'pritunl'
-    }
+    url: url,
+    headers: headers
   }, function(err, resp, body) {
     if (!body || !tray) {
       return;
