@@ -3,22 +3,27 @@ package main
 import (
 	"context"
 	"flag"
+	"net"
+	"net/http"
+	"os"
+	"os/signal"
+	"runtime"
+	"runtime/debug"
+	"syscall"
+	"time"
+
 	"github.com/Sirupsen/logrus"
+	"github.com/dropbox/godropbox/errors"
 	"github.com/gin-gonic/gin"
 	"github.com/pritunl/pritunl-client-electron/service/auth"
 	"github.com/pritunl/pritunl-client-electron/service/autoclean"
 	"github.com/pritunl/pritunl-client-electron/service/constants"
+	"github.com/pritunl/pritunl-client-electron/service/errortypes"
 	"github.com/pritunl/pritunl-client-electron/service/handlers"
 	"github.com/pritunl/pritunl-client-electron/service/logger"
 	"github.com/pritunl/pritunl-client-electron/service/profile"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
 	"github.com/pritunl/pritunl-client-electron/service/watch"
-	"net/http"
-	"os"
-	"os/signal"
-	"runtime/debug"
-	"syscall"
-	"time"
 )
 
 func main() {
@@ -81,16 +86,47 @@ func main() {
 		MaxHeaderBytes: 4096,
 	}
 
+	if runtime.GOOS != "linux" {
+		server.Addr = "127.0.0.1:9770"
+	}
+
 	go func() {
 		defer func() {
 			recover()
 		}()
-		err = server.ListenAndServe()
-		if err != nil {
-			logrus.WithFields(logrus.Fields{
-				"error": err,
-			}).Error("main: Server error")
-			panic(err)
+
+		if runtime.GOOS != "linux" {
+			err = server.ListenAndServe()
+			if err != nil {
+				logrus.WithFields(logrus.Fields{
+					"error": err,
+				}).Error("main: Server error")
+				panic(err)
+			}
+		} else {
+			listener, err := net.Listen("unix", "/var/run/pritunl.sock")
+			if err != nil {
+				err = &errortypes.WriteError{
+					errors.Wrap(err, "main: Failed to create unix socket"),
+				}
+				logrus.WithFields(logrus.Fields{
+					"error": err,
+				}).Error("main: Server error")
+				panic(err)
+			}
+
+			err = os.Chmod("/var/run/pritunl.sock", 0777)
+			if err != nil {
+				err = &errortypes.WriteError{
+					errors.Wrap(err, "main: Failed to chmod unix socket"),
+				}
+				logrus.WithFields(logrus.Fields{
+					"error": err,
+				}).Error("main: Server error")
+				panic(err)
+			}
+
+			server.Serve(listener)
 		}
 	}()
 
