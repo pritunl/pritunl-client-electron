@@ -226,6 +226,7 @@ var openMainWin = function() {
       width: width,
       height: height,
       show: false,
+      sandbox: true,
       minWidth: minWidth,
       minHeight: minHeight,
       maxWidth: maxWidth,
