@@ -19,6 +19,7 @@ var Menu = remoteRequire().Menu;
 var app = remoteRequire().app;
 
 constants.key = getGlobal('key');
+constants.unixSocket = getGlobal('unixSocket');
 constants.icon = getGlobal('icon');
 profileView.init();
 
@@ -214,12 +215,22 @@ $('.main-menu .menu-service-logs').click(function (){
   }, 400);
 });
 $('.main-menu .menu-restart').click(function (){
+  var url;
+  var headers = {
+    'Auth-Key': constants.key,
+    'User-Agent': 'pritunl'
+  };
+
+  if (constants.unixSocket) {
+    url = 'http://unix:' + constants.unixPath + ':/restart';
+    headers['Host'] = 'unix';
+  } else {
+    url = 'http://' + constants.serviceHost + '/restart';
+  }
+
   request.post({
-    url: 'http://' + constants.serviceHost + '/restart',
-    headers: {
-      'Auth-Key': constants.key,
-      'User-Agent': 'pritunl'
-    }
+    url: url,
+    headers: headers
   });
 });
 $('.main-menu .auto-reconnect').click(function (){
