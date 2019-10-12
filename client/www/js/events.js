@@ -3,11 +3,21 @@ var constants = require('./constants.js');
 
 var connect = function(callback) {
   var reconnected = false;
-  var socket = new WebSocket('ws://' + constants.serviceHost + '/events', {
-    headers: {
-      'Auth-Key': constants.key,
-      'User-Agent': 'pritunl'
-    }
+  var url;
+  var headers = {
+    'Auth-Key': constants.key,
+    'User-Agent': 'pritunl'
+  };
+
+  if (constants.unixSocket) {
+    url = 'ws+unix://' + constants.unixPath + ':/events';
+    headers['Host'] = 'unix';
+  } else {
+    url = 'ws://' + constants.serviceHost + '/events';
+  }
+
+  var socket = new WebSocket(url, {
+    headers: headers
   });
 
   var reconnect = function() {
