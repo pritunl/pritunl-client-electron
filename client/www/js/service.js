@@ -40,12 +40,22 @@ var iter = function(callback) {
 };
 
 var update = function(callback) {
+  var url;
+  var headers = {
+    'Auth-Key': constants.key,
+    'User-Agent': 'pritunl'
+  };
+
+  if (constants.unixSocket) {
+    url = 'http://unix:' + constants.unixPath + ':/profile';
+    headers['Host'] = 'unix';
+  } else {
+    url = 'http://' + constants.serviceHost + '/profile';
+  }
+
   request.get({
-    url: 'http://' + constants.serviceHost + '/profile',
-    headers: {
-      'Auth-Key': constants.key,
-      'User-Agent': 'pritunl'
-    }
+    url: url,
+    headers: headers
   }, function(err, resp, body) {
     if (err) {
       err = new errors.NetworkError(
@@ -85,13 +95,23 @@ var start = function(prfl, timeout, serverPubKey, serverBoxPubKey,
     var reconnect = prfl.disableReconnect ? false :
       !config.settings.disable_reconnect;
 
+    var url;
+    var headers = {
+      'Auth-Key': constants.key,
+      'User-Agent': 'pritunl'
+    };
+
+    if (constants.unixSocket) {
+      url = 'http://unix:' + constants.unixPath + ':/profile';
+      headers['Host'] = 'unix';
+    } else {
+      url = 'http://' + constants.serviceHost + '/profile';
+    }
+
     request.post({
-      url: 'http://' + constants.serviceHost + '/profile',
+      url: url,
       json: true,
-      headers: {
-        'Auth-Key': constants.key,
-        'User-Agent': 'pritunl'
-      },
+      headers: headers,
       body: {
         id: prfl.id,
         username: username,
@@ -117,13 +137,23 @@ var start = function(prfl, timeout, serverPubKey, serverBoxPubKey,
 };
 
 var stop = function(prfl, callback) {
+  var url;
+  var headers = {
+    'Auth-Key': constants.key,
+    'User-Agent': 'pritunl'
+  };
+
+  if (constants.unixSocket) {
+    url = 'http://unix:' + constants.unixPath + ':/profile';
+    headers['Host'] = 'unix';
+  } else {
+    url = 'http://' + constants.serviceHost + '/profile';
+  }
+
   request.del({
-    url: 'http://' + constants.serviceHost + '/profile',
+    url: url,
     json: true,
-    headers: {
-      'Auth-Key': constants.key,
-      'User-Agent': 'pritunl'
-    },
+    headers: headers,
     body: {
       id: prfl.id
     }
@@ -148,13 +178,23 @@ var tokenUpdate = function(prfl, callback) {
     serverPubKey = null;
   }
 
+  var url;
+  var headers = {
+    'Auth-Key': constants.key,
+    'User-Agent': 'pritunl'
+  };
+
+  if (constants.unixSocket) {
+    url = 'http://unix:' + constants.unixPath + ':/token';
+    headers['Host'] = 'unix';
+  } else {
+    url = 'http://' + constants.serviceHost + '/token';
+  }
+
   request.put({
-    url: 'http://' + constants.serviceHost + '/token',
+    url: url,
     json: true,
-    headers: {
-      'Auth-Key': constants.key,
-      'User-Agent': 'pritunl'
-    },
+    headers: headers,
     body: {
       profile: prfl.id,
       server_public_key: serverPubKey,
@@ -180,13 +220,23 @@ var tokenUpdate = function(prfl, callback) {
 };
 
 var tokenDelete = function(prfl, callback) {
+  var url;
+  var headers = {
+    'Auth-Key': constants.key,
+    'User-Agent': 'pritunl'
+  };
+
+  if (constants.unixSocket) {
+    url = 'http://unix:' + constants.unixPath + ':/token';
+    headers['Host'] = 'unix';
+  } else {
+    url = 'http://' + constants.serviceHost + '/token';
+  }
+
   request.del({
-    url: 'http://' + constants.serviceHost + '/token',
+    url: url,
     json: true,
-    headers: {
-      'Auth-Key': constants.key,
-      'User-Agent': 'pritunl'
-    },
+    headers: headers,
     body: {
       profile: prfl.id
     }
@@ -203,12 +253,22 @@ var tokenDelete = function(prfl, callback) {
 };
 
 var ping = function(callback) {
+  var url;
+  var headers = {
+    'Auth-Key': constants.key,
+    'User-Agent': 'pritunl'
+  };
+
+  if (constants.unixSocket) {
+    url = 'http://unix:' + constants.unixPath + ':/ping';
+    headers['Host'] = 'unix';
+  } else {
+    url = 'http://' + constants.serviceHost + '/ping';
+  }
+
   request.get({
-    url: 'http://' + constants.serviceHost + '/ping',
-    headers: {
-      'Auth-Key': constants.key,
-      'User-Agent': 'pritunl'
-    }
+    url: url,
+    headers: headers
   }, function(err, resp) {
     var statusCode = resp ? resp.statusCode : null;
     if (err || statusCode !== 200) {
@@ -220,12 +280,22 @@ var ping = function(callback) {
 };
 
 var wakeup = function(callback) {
+  var url;
+  var headers = {
+    'Auth-Key': constants.key,
+    'User-Agent': 'pritunl'
+  };
+
+  if (constants.unixSocket) {
+    url = 'http://unix:' + constants.unixPath + ':/wakeup';
+    headers['Host'] = 'unix';
+  } else {
+    url = 'http://' + constants.serviceHost + '/wakeup';
+  }
+
   request.post({
-    url: 'http://' + constants.serviceHost + '/wakeup',
-    headers: {
-      'Auth-Key': constants.key,
-      'User-Agent': 'pritunl'
-    }
+    url: url,
+    headers: headers
   }, function(err, resp) {
     var statusCode = resp ? resp.statusCode : null;
     if (err || statusCode !== 200) {
