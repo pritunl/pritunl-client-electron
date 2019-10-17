@@ -1,7 +1,8 @@
 Pritunl Client Changelog
 ========================
 
-<%= version %>
+Version 1.0.2226.23 2019-10-17
+------------------------------
 
 Linux improvements
 Fix unquoted service path in Windows service
