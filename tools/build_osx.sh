@@ -53,3 +53,6 @@ pkgbuild --root osx --scripts ../resources_osx/scripts --sign "Developer ID Inst
 productbuild --resources ../resources_osx --distribution ../resources_osx/distribution.xml --sign "Developer ID Installer: Pritunl, Inc. (U22BLATN63)" --version $APP_VER Pritunl.pkg
 zip Pritunl.pkg.zip Pritunl.pkg
 rm -f Build.pkg
+
+# Notarize
+xcrun altool --notarize-app --primary-bundle-id "com.pritunl.client.electron.zip" --username "contact@pritunl.com" --password "@keychain:xcode" --asc-provider U22BLATN63 --file Pritunl.pkg.zip
