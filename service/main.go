@@ -95,7 +95,7 @@ func main() {
 			recover()
 		}()
 
-		if runtime.GOOS != "linux" {
+		if runtime.GOOS != "linux" && runtime.GOOS != "darwin" {
 			err = server.ListenAndServe()
 			if err != nil {
 				logrus.WithFields(logrus.Fields{
