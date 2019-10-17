@@ -55,6 +55,8 @@ zip Pritunl.pkg.zip Pritunl.pkg
 rm -f Build.pkg
 
 # Notarize
+xcrun altool --notarize-app --primary-bundle-id "com.pritunl.client.electron.pkg" --username "contact@pritunl.com" --password "@keychain:xcode" --asc-provider U22BLATN63 --file Pritunl.pkg
+sleep 3
 xcrun altool --notarize-app --primary-bundle-id "com.pritunl.client.electron.zip" --username "contact@pritunl.com" --password "@keychain:xcode" --asc-provider U22BLATN63 --file Pritunl.pkg.zip
 sleep 10
 xcrun altool --notarization-history 0 --username "contact@pritunl.com" --password "@keychain:xcode"
