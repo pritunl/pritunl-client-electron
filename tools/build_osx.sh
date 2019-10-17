@@ -19,7 +19,7 @@ gsed -i "s|</dict>|  <key>NSRequiresAquaSystemAppearance</key>\n    <string>NO</
 mv build/osx/Applications/Pritunl-darwin-x64/Pritunl.app build/osx/Applications/
 rm -rf build/osx/Applications/Pritunl-darwin-x64
 sleep 3
-codesign --force --deep --sign "Developer ID Application: Zachary Huff (73CNTLZRFJ)" build/osx/Applications/Pritunl.app
+codesign --force --deep --sign "Developer ID Application: Pritunl, Inc. (U22BLATN63)" build/osx/Applications/Pritunl.app
 
 # Service
 cd service
@@ -27,7 +27,7 @@ go get -u -f
 go build -v
 cd ..
 cp service/service build/osx/Applications/Pritunl.app/Contents/Resources/pritunl-service
-codesign -s "Developer ID Application: Zachary Huff (73CNTLZRFJ)" build/osx/Applications/Pritunl.app/Contents/Resources/pritunl-service
+codesign -s "Developer ID Application: Pritunl, Inc. (U22BLATN63)" build/osx/Applications/Pritunl.app/Contents/Resources/pritunl-service
 
 # Service Daemon
 mkdir -p build/osx/Library/LaunchDaemons
@@ -49,7 +49,7 @@ touch build/osx/Applications/Pritunl.app/Contents/Resources/pritunl.log.1
 chmod +x resources_osx/scripts/postinstall
 chmod +x resources_osx/scripts/preinstall
 cd build
-pkgbuild --root osx --scripts ../resources_osx/scripts --sign "Developer ID Installer: Zachary Huff (73CNTLZRFJ)" --identifier com.pritunl.pkg.Pritunl --version $APP_VER --ownership recommended --install-location / Build.pkg
-productbuild --resources ../resources_osx --distribution ../resources_osx/distribution.xml --sign "Developer ID Installer: Zachary Huff (73CNTLZRFJ)" --version $APP_VER Pritunl.pkg
+pkgbuild --root osx --scripts ../resources_osx/scripts --sign "Developer ID Installer: Pritunl, Inc. (U22BLATN63)" --identifier com.pritunl.pkg.Pritunl --version $APP_VER --ownership recommended --install-location / Build.pkg
+productbuild --resources ../resources_osx --distribution ../resources_osx/distribution.xml --sign "Developer ID Installer: Pritunl, Inc. (U22BLATN63)" --version $APP_VER Pritunl.pkg
 zip Pritunl.pkg.zip Pritunl.pkg
 rm -f Build.pkg
