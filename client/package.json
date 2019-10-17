@@ -6,11 +6,11 @@
     "jquery": "3.4.1",
     "mustache": "3.1.0",
     "request": "2.88.0",
-    "tar": "4.4.13",
+    "tar": "5.0.5",
     "ws": "7.1.2"
   },
   "devDependencies": {
-    "electron": "6.0.10",
+    "electron": "6.0.12",
     "electron-packager": "14.0.6",
     "electron-rebuild": "1.8.6",
     "rcedit": "2.0.0",
