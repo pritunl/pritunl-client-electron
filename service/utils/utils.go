@@ -788,22 +788,45 @@ func GetTempDir() (pth string, err error) {
 
 	if runtime.GOOS == "windows" {
 		pth = filepath.Join("C:\\", "ProgramData", "Pritunl")
+
 		err = os.MkdirAll(pth, 0755)
+		if err != nil {
+			err = &IoError{
+				errors.Wrap(
+					err, "utils: Failed to create temp directory"),
+			}
+			return
+		}
 	} else {
 		pth = filepath.Join(string(filepath.Separator), "tmp", "pritunl")
-		if _, err := os.Stat(pth); !os.IsNotExist(err) {
-			os.Chown(pth, os.Getuid(), os.Getuid())
-			os.Chmod(pth, 0700)
+		if _, err = os.Stat(pth); !os.IsNotExist(err) {
+			err = os.Chown(pth, os.Getuid(), os.Getuid())
+			if err != nil {
+				err = &IoError{
+					errors.Wrap(
+						err, "utils: Failed to chown temp directory"),
+				}
+				return
+			}
+
+			err = os.Chmod(pth, 0700)
+			if err != nil {
+				err = &IoError{
+					errors.Wrap(
+						err, "utils: Failed to chmod temp directory"),
+				}
+				return
+			}
 		} else {
 			err = os.MkdirAll(pth, 0700)
+			if err != nil {
+				err = &IoError{
+					errors.Wrap(
+						err, "utils: Failed to create temp directory"),
+				}
+				return
+			}
 		}
-	}
-
-	if err != nil {
-		err = &IoError{
-			errors.Wrap(err, "utils: Failed to create temp directory"),
-		}
-		return
 	}
 
 	return
