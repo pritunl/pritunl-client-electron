@@ -791,7 +791,12 @@ func GetTempDir() (pth string, err error) {
 		err = os.MkdirAll(pth, 0755)
 	} else {
 		pth = filepath.Join(string(filepath.Separator), "tmp", "pritunl")
-		err = os.MkdirAll(pth, 0700)
+		if _, err := os.Stat(pth); !os.IsNotExist(err) {
+			os.Chown(pth, os.Getuid(), os.Getuid())
+			os.Chmod(pth, 0700)
+		} else {
+			err = os.MkdirAll(pth, 0700)
+		}
 	}
 
 	if err != nil {
