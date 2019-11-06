@@ -44,7 +44,37 @@ Profile.prototype.load = function(callback, waitAll) {
   var waiter = new utils.WaitGroup();
   waiter.add(3);
 
-  fs.readFile(this.confPath, function (err, data) {
+  if (os.platform() !== 'win32') {
+    fs.stat(this.confPath, function(err, stats) {
+      if (err.code === 'ENOENT') {
+        return;
+      }
+
+      var confMode;
+      try {
+        confMode = (stats.mode & 0o777).toString(8);
+      } catch (e) {
+        err = new errors.ParseError(
+          'profile: Failed to stat config (%s)', e);
+        logger.error(err);
+        return;
+      }
+
+      if (confMode !== '600') {
+        fs.chmod(this.confPath, 0o600, function(err) {
+          if (err) {
+            err = new errors.ParseError(
+              'profile: Failed to chmod config (%s)',
+              err,
+            );
+            logger.error(err);
+          }
+        });
+      }
+    }.bind(this));
+  }
+
+  fs.readFile(this.confPath, function(err, data) {
     var confData;
     try {
       confData = JSON.parse(data);
@@ -63,6 +93,36 @@ Profile.prototype.load = function(callback, waitAll) {
     }
   }.bind(this));
 
+  if (os.platform() !== 'win32') {
+    fs.stat(this.ovpnPath, function(err, stats) {
+      if (err.code === 'ENOENT') {
+        return;
+      }
+
+      var ovpnMode;
+      try {
+        ovpnMode = (stats.mode & 0o777).toString(8);
+      } catch (e) {
+        err = new errors.ParseError(
+          'profile: Failed to stat profile (%s)', e);
+        logger.error(err);
+        return;
+      }
+
+      if (ovpnMode !== '600') {
+        fs.chmod(this.ovpnPath, 0o600, function(err) {
+          if (err) {
+            err = new errors.ParseError(
+              'profile: Failed to chmod profile (%s)',
+              err,
+            );
+            logger.error(err);
+          }
+        });
+      }
+    }.bind(this));
+  }
+
   fs.readFile(this.ovpnPath, function(err, data) {
     if (!data) {
       this.data = null;
@@ -76,6 +136,36 @@ Profile.prototype.load = function(callback, waitAll) {
       waiter.done();
     }
   }.bind(this));
+
+  if (os.platform() !== 'win32') {
+    fs.stat(this.logPath, function(err, stats) {
+      if (err.code === 'ENOENT') {
+        return;
+      }
+
+      var logMode;
+      try {
+        logMode = (stats.mode & 0o777).toString(8);
+      } catch (e) {
+        err = new errors.ParseError(
+          'profile: Failed to stat log (%s)', e);
+        logger.error(err);
+        return;
+      }
+
+      if (logMode !== '600') {
+        fs.chmod(this.logPath, 0o600, function(err) {
+          if (err) {
+            err = new errors.ParseError(
+              'profile: Failed to chmod log (%s)',
+              err,
+            );
+            logger.error(err);
+          }
+        });
+      }
+    }.bind(this));
+  }
 
   fs.readFile(this.logPath, function(err, data) {
     if (!data) {
@@ -355,7 +445,9 @@ Profile.prototype.saveConf = function(callback) {
       if (callback) {
         callback(err);
       }
-    }.bind(this));
+    }.bind(this), {
+      mode: 0o600,
+    });
 };
 
 Profile.prototype.saveData = function(callback) {
@@ -373,7 +465,9 @@ Profile.prototype.saveData = function(callback) {
     if (callback) {
       callback(err);
     }
-  }.bind(this));
+  }.bind(this), {
+    mode: 0o600,
+  });
 };
 
 Profile.prototype.saveLog = function(callback) {
@@ -386,6 +480,8 @@ Profile.prototype.saveLog = function(callback) {
     if (callback) {
       callback(err);
     }
+  }.bind(this), {
+    mode: 0o600,
   });
 };
 
