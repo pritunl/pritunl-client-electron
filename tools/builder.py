@@ -369,10 +369,7 @@ if cmd == 'set-version':
         sys.exit(1)
 
     subprocess.check_call(['git', 'pull'])
-    try:
-        subprocess.check_call(['git', 'push', '--tags'])
-    except:
-        print('TAG ERROR')
+    subprocess.check_call(['git', 'push', '--tags'])
     time.sleep(6)
 
 
