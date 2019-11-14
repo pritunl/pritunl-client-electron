@@ -543,20 +543,23 @@ func (p *Profile) parseLine(line string) {
 			clientAddr = parseBroadcast(line)
 		}
 		if clientAddr != "" {
+			p.ClientAddr = clientAddr
 			p.update()
 		}
 	}
 }
 
 func parsePeer(line string) string {
-	// /sbin/ip addr add dev tun0 local 10.240.0.6 peer 10.240.0.5
+	// Example line:
+	// Thu Nov 14 13:08:41 2019 /sbin/ip addr add dev tun0 local 10.240.0.6 peer 10.240.0.5
 	re := regexp.MustCompile(`(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}`)
+	ipList := re.FindAllString(line, -1)
 
-	submatchall := re.FindAllString(line, -1)
-	if len(submatchall) == 0 {
+	if len(ipList) == 0 {
 		return ""
 	}
-	return submatchall[0]
+
+	return ipList[0]
 }
 
 func parseBroadcast(line string) string {
