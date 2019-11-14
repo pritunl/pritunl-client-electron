@@ -17,6 +17,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"runtime"
 	"runtime/debug"
 	"strings"
@@ -534,19 +535,44 @@ func (p *Profile) parseLine(line string) {
 			p.update()
 		}
 	} else if strings.Contains(line, "ip addr add dev") {
-		sIndex := strings.Index(line, "ip addr add dev") + 16
-		eIndex := strings.Index(line, "broadcast")
-		line = line[sIndex:eIndex]
-		split := strings.Split(line, " ")
-
-		if len(split) > 1 {
-			split := strings.Split(split[1], "/")
-			if len(split) > 1 {
-				p.ClientAddr = split[0]
-				p.update()
-			}
+		clientAddr := ""
+		switch {
+		case strings.Contains(line, "peer"):
+			clientAddr = parsePeer(line)
+		default:
+			clientAddr = parseBroadcast(line)
+		}
+		if clientAddr != "" {
+			p.update()
 		}
 	}
+}
+
+func parsePeer(line string) string {
+	// /sbin/ip addr add dev tun0 local 10.240.0.6 peer 10.240.0.5
+	re := regexp.MustCompile(`(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}`)
+
+	submatchall := re.FindAllString(line, -1)
+	if len(submatchall) == 0 {
+		return ""
+	}
+	return submatchall[0]
+}
+
+func parseBroadcast(line string) string {
+	sIndex := strings.Index(line, "ip addr add dev") + 16
+	eIndex := strings.Index(line, "broadcast")
+	line = line[sIndex:eIndex]
+	split := strings.Split(line, " ")
+
+	if len(split) > 1 {
+		split := strings.Split(split[1], "/")
+		if len(split) > 1 {
+			return split[0]
+		}
+	}
+
+	return ""
 }
 
 func (p *Profile) clearStatus(start time.Time) {
