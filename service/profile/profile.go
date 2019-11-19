@@ -47,7 +47,8 @@ var (
 	}{
 		m: map[string]*Profile{},
 	}
-	Ping = time.Now()
+	Ping  = time.Now()
+	ipReg = regexp.MustCompile(`(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}`)
 )
 
 type OutputData struct {
@@ -536,46 +537,31 @@ func (p *Profile) parseLine(line string) {
 		}
 	} else if strings.Contains(line, "ip addr add dev") {
 		clientAddr := ""
-		switch {
-		case strings.Contains(line, "peer"):
-			clientAddr = parsePeer(line)
-		default:
-			clientAddr = parseBroadcast(line)
+		sIndex := strings.Index(line, "ip addr add dev") + 16
+		eIndex := strings.Index(line, "broadcast")
+
+		if eIndex == -1 {
+			ipList := ipReg.FindAllString(line, -1)
+			if len(ipList) > 0 {
+				clientAddr = ipList[0]
+			}
+		} else {
+			line = line[sIndex:eIndex]
+			split := strings.Split(line, " ")
+
+			if len(split) > 1 {
+				split := strings.Split(split[1], "/")
+				if len(split) > 1 {
+					clientAddr = split[0]
+				}
+			}
 		}
+
 		if clientAddr != "" {
 			p.ClientAddr = clientAddr
 			p.update()
 		}
 	}
-}
-
-func parsePeer(line string) string {
-	// Example line:
-	// Thu Nov 14 13:08:41 2019 /sbin/ip addr add dev tun0 local 10.240.0.6 peer 10.240.0.5
-	re := regexp.MustCompile(`(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}`)
-	ipList := re.FindAllString(line, -1)
-
-	if len(ipList) == 0 {
-		return ""
-	}
-
-	return ipList[0]
-}
-
-func parseBroadcast(line string) string {
-	sIndex := strings.Index(line, "ip addr add dev") + 16
-	eIndex := strings.Index(line, "broadcast")
-	line = line[sIndex:eIndex]
-	split := strings.Split(line, " ")
-
-	if len(split) > 1 {
-		split := strings.Split(split[1], "/")
-		if len(split) > 1 {
-			return split[0]
-		}
-	}
-
-	return ""
 }
 
 func (p *Profile) clearStatus(start time.Time) {
