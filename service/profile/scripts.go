@@ -310,8 +310,8 @@ up() {
   fi
 
   if [[ "${#dns_domain[*]}" -gt 0 \
-     || "${#dns_search[*]}" -gt 0 \
-     || "${#dns_routed[*]}" -gt 0 ]]; then
+      || "${#dns_search[*]}" -gt 0 \
+      || "${#dns_routed[*]}" -gt 0 ]]; then
     dns_count=$((dns_domain_count+dns_search_count+dns_routed_count))
     busctl_params=("$if_index" "$dns_count")
     if [[ "${#dns_domain[*]}" -gt 0 ]]; then
@@ -347,8 +347,8 @@ down() {
 
   info "Link '$link' going down"
   if [[ "$(whoami 2>/dev/null)" != "root" ]]; then
-    # Cleanly handle the priviledge dropped case by not calling RevertLink
-    info "Priviledges dropped in the client: Cannot call RevertLink."
+    # Cleanly handle the privilege dropped case by not calling RevertLink
+    info "Privileges dropped in the client: Cannot call RevertLink."
   else
     busctl_call RevertLink i "$if_index"
   fi
@@ -366,6 +366,10 @@ process_dns() {
     err "Not a valid IPv6 or IPv4 address: '$address'"
     return 1
   fi
+}
+
+process_dns6() {
+  process_dns $1
 }
 
 looks_like_ipv4() {
@@ -448,13 +452,13 @@ parse_ipv6() {
       (( compressed_i = zero_run_i ))
 
       # ` + "`" + `+ 1' because the length of the current segment is counted in
-# ` + "`" + `raw_length'.
+      # ` + "`" + `raw_length'.
       (( tokenized_segments[zero_run_i] = ((length - raw_length) + 1) ))
 
       # If we have an address like ` + "`" + `::1', skip processing the next group to
-# avoid double-counting the zero-run, and increment the number of
-# 0-groups to add since the second empty group is counted in
-# ` + "`" + `raw_length'.
+      # avoid double-counting the zero-run, and increment the number of
+      # 0-groups to add since the second empty group is counted in
+      # ` + "`" + `raw_length'.
       if [[ -z "${raw_segments[i + 1]}" ]]; then
         (( i++ ))
         (( tokenized_segments[zero_run_i]++ ))
@@ -471,149 +475,163 @@ parse_ipv6() {
       (( next_decimal_segment != 0 )) && (( zero_run_i++ ))
     else
       # Prefix the raw segment with ` + "`" + `nonzero_prefix' to mark this as a
-# non-zero field.
-tokenized_segments[zero_run_i]="${nonzero_prefix}${decimal_segment}"
-(( zero_run_i++ ))
-fi
-done
+      # non-zero field.
+      tokenized_segments[zero_run_i]="${nonzero_prefix}${decimal_segment}"
+      (( zero_run_i++ ))
+    fi
+  done
 
-if [[ "$raw_address" == *::* ]]; then
-if (( ${#tokenized_segments[*]} == length )); then
-log_invalid_ipv6 "single '0' fields should not be compressed"
-return 1
-else
-local -i largest_run_i=0 largest_run=0
+  if [[ "$raw_address" == *::* ]]; then
+    if (( ${#tokenized_segments[*]} == length )); then
+      log_invalid_ipv6 "single '0' fields should not be compressed"
+      return 1
+    else
+      local -i largest_run_i=0 largest_run=0
 
-for (( i = 0 ; i < ${#tokenized_segments[@]}; i ++ )); do
-# Skip groups that aren't zero-runs
-[[ "${tokenized_segments[i]:0:1}" == "$nonzero_prefix" ]] && continue
+      for (( i = 0 ; i < ${#tokenized_segments[@]}; i ++ )); do
+        # Skip groups that aren't zero-runs
+        [[ "${tokenized_segments[i]:0:1}" == "$nonzero_prefix" ]] && continue
 
-if (( tokenized_segments[i] > largest_run )); then
-(( largest_run_i = i ))
-largest_run="${tokenized_segments[i]}"
-fi
-done
+        if (( tokenized_segments[i] > largest_run )); then
+          (( largest_run_i = i ))
+          largest_run="${tokenized_segments[i]}"
+        fi
+      done
 
-local -i compressed_run="${tokenized_segments[compressed_i]}"
+      local -i compressed_run="${tokenized_segments[compressed_i]}"
 
-if (( largest_run > compressed_run )); then
-log_invalid_ipv6 "the compressed run of all-zero fields is smaller than the largest such run"
-return 1
-elif (( largest_run == compressed_run )) && (( largest_run_i < compressed_i )); then
-log_invalid_ipv6 "only the leftmost largest run of all-zero fields should be compressed"
-return 1
-fi
-fi
-fi
+      if (( largest_run > compressed_run )); then
+        log_invalid_ipv6 "the compressed run of all-zero fields is smaller than the largest such run"
+        return 1
+      elif (( largest_run == compressed_run )) && (( largest_run_i < compressed_i )); then
+        log_invalid_ipv6 "only the leftmost largest run of all-zero fields should be compressed"
+        return 1
+      fi
+    fi
+  fi
 
-for segment in "${tokenized_segments[@]}"; do
-if [[ "${segment:0:1}" == "$nonzero_prefix" ]]; then
-printf -- '%04x\n' "${segment#${nonzero_prefix}}"
-else
-for (( n = 0 ; n < segment ; n++ )); do
-echo 0000
-done
-fi
-done
+  for segment in "${tokenized_segments[@]}"; do
+    if [[ "${segment:0:1}" == "$nonzero_prefix" ]]; then
+      printf -- '%04x\n' "${segment#${nonzero_prefix}}"
+    else
+      for (( n = 0 ; n < segment ; n++ )); do
+        echo 0000
+      done
+    fi
+  done
 }
 
 process_dns_ipv6() {
-local address="$1"
-shift
+  local address="$1"
+  shift
 
-info "Adding IPv6 DNS Server ${address}"
+  info "Adding IPv6 DNS Server ${address}"
 
-local -a segments=()
-segments=($(parse_ipv6 "$address")) || return $?
+  local -a segments=()
+  segments=($(parse_ipv6 "$address")) || return $?
 
-# Add AF_INET6 and byte count
-dns_servers+=(10 16)
-for segment in "${segments[@]}"; do
-dns_servers+=("$((16#${segment:0:2}))" "$((16#${segment:2:2}))")
-done
+  # Add AF_INET6 and byte count
+  dns_servers+=(10 16)
+  for segment in "${segments[@]}"; do
+    dns_servers+=("$((16#${segment:0:2}))" "$((16#${segment:2:2}))")
+  done
 
-(( dns_server_count += 1 ))
+  (( dns_server_count += 1 ))
 }
 
 process_domain() {
-local domain="$1"
-shift
+  local domain="$1"
+  shift
 
-info "Setting DNS Domain ${domain}"
-(( dns_domain_count = 1 ))
-dns_domain=("${domain}" false)
+  info "Adding DNS Domain ${domain}"
+  if [[ $dns_domain_count -eq 1 ]]; then
+    (( dns_search_count += 1 ))
+    dns_search+=("${domain}" false)
+  else
+    (( dns_domain_count = 1 ))
+    dns_domain+=("${domain}" false)
+  fi
+}
+
+process_adapter_domain_suffix() {
+  # This enables support for ADAPTER_DOMAIN_SUFFIX which is a Microsoft standard
+  # which works in the same way as DOMAIN to set the primary search domain on
+  # this specific link.
+  process_domain "$@"
 }
 
 process_domain_search() {
-local domain="$1"
-shift
+  local domain="$1"
+  shift
 
-info "Adding DNS Search Domain ${domain}"
-(( dns_search_count += 1 ))
-dns_search+=("${domain}" false)
+  info "Adding DNS Search Domain ${domain}"
+  (( dns_search_count += 1 ))
+  dns_search+=("${domain}" false)
 }
 
 process_domain_route() {
-local domain="$1"
-shift
+  local domain="$1"
+  shift
 
-info "Adding DNS Routed Domain ${domain}"
-(( dns_routed_count += 1 ))
-dns_routed+=("${domain}" true)
+  info "Adding DNS Routed Domain ${domain}"
+  (( dns_routed_count += 1 ))
+  dns_routed+=("${domain}" true)
 }
 
 process_dnssec() {
-local option="$1" setting=""
-shift
+  local option="$1" setting=""
+  shift
 
-case "${option,,}" in
-yes|true)
-setting="yes" ;;
-no|false)
-setting="no" ;;
-default)
-setting="default" ;;
-allow-downgrade)
-setting="allow-downgrade" ;;
-*)
-local message="'$option' is not a valid DNSSEC option"
-emerg "${message}"
-return 1 ;;
-esac
+  case "${option,,}" in
+    yes|true)
+      setting="yes" ;;
+    no|false)
+      setting="no" ;;
+    default)
+      setting="default" ;;
+    allow-downgrade)
+      setting="allow-downgrade" ;;
+    *)
+      local message="'$option' is not a valid DNSSEC option"
+      emerg "${message}"
+      return 1 ;;
+  esac
 
-info "Setting DNSSEC to ${setting}"
-dns_sec="${setting}"
+  info "Setting DNSSEC to ${setting}"
+  dns_sec="${setting}"
 }
 
 main() {
-local script_type="$1"
-shift
-local dev="$1"
-shift
+  local script_type="${1}"
+  shift
+  local dev="${1:-$dev}"
+  shift
 
-if [[ -z "$script_type" ]]; then
-usage 'No script type specified'
+  if [[ -z "$script_type" ]]; then
+    usage 'No script type specified'
     return 1
-elif [[ -z "$dev" ]]; then
-usage 'No device name specified'
+  elif [[ -z "$dev" ]]; then
+    usage 'No device name specified'
     return 1
-elif ! declare -f "${script_type}" &>/dev/null; then
-usage "Invalid script type: '${script_type}'"
-return 1
-else
-if ! read -r link if_index _ < <(get_link_info "$dev"); then
-usage "Invalid device name: '$dev'"
-return 1
-fi
+  elif ! declare -f "${script_type}" &>/dev/null; then
+    usage "Invalid script type: '${script_type}'"
+    return 1
+  else
+    if ! read -r link if_index _ < <(get_link_info "$dev"); then
+      usage "Invalid device name: '$dev'"
+      return 1
+    fi
 
-"$script_type" "$link" "$if_index" "$@"
-fi
+    "$script_type" "$link" "$if_index" "$@" || return 1
+    # Flush the DNS cache
+    systemd-resolve --flush-caches
+  fi
 }
 
 if [[ "${BASH_SOURCE[0]}" == "$0" ]] || [[ "$AUTOMATED_TESTING" == 1 ]]; then
-set -o nounset
+  set -o nounset
 
-main "${script_type:-}" "${dev:-}" "$@"
+  main "${script_type:-down}" "$@"
 fi
 `
 )
