@@ -116,6 +116,10 @@ func RestartProfiles(resetNet bool) (err error) {
 	prfls2 := map[string]*Profile{}
 
 	for _, prfl := range prfls {
+		if prfl.stop {
+			continue
+		}
+
 		prfl2 := prfl.Copy()
 		prfls2[prfl2.Id] = prfl2
 
