@@ -445,9 +445,16 @@ func (p *Profile) parseLine(line string) {
 				}
 			}()
 
+			restartLock.Lock()
+			if p.stop {
+				restartLock.Unlock()
+				return
+			}
+
 			prfl := p.Copy()
 
 			stop := p.stop
+			restartLock.Unlock()
 
 			err := p.Stop()
 			if err != nil {
