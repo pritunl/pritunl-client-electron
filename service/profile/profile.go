@@ -452,8 +452,6 @@ func (p *Profile) parseLine(line string) {
 			}
 
 			prfl := p.Copy()
-
-			stop := p.stop
 			restartLock.Unlock()
 
 			err := p.Stop()
@@ -466,7 +464,7 @@ func (p *Profile) parseLine(line string) {
 
 			p.Wait()
 
-			if !stop && prfl.Reconnect {
+			if prfl.Reconnect {
 				err = prfl.Start(false)
 				if err != nil {
 					logrus.WithFields(logrus.Fields{
