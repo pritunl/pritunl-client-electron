@@ -4,6 +4,7 @@ Pritunl Client Changelog
 <%= version %>
 
 Interface improvements
+Linux improvements
 Fix file permissions on Linux and macOS
 
 Version 1.0.2226.23 2019-10-17
