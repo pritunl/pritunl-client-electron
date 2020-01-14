@@ -432,8 +432,11 @@ Profile.prototype.getUptime = function(curTime) {
 };
 
 Profile.prototype.saveConf = function(callback) {
-  fs.writeFile(this.confPath,
-    JSON.stringify(this.exportConf()), function(err) {
+  fs.writeFile(
+    this.confPath,
+    JSON.stringify(this.exportConf()),
+    {mode: 0o600},
+    function(err) {
       if (err) {
         err = new errors.WriteError(
           'config: Failed to save profile conf (%s)', err);
@@ -445,9 +448,8 @@ Profile.prototype.saveConf = function(callback) {
       if (callback) {
         callback(err);
       }
-    }.bind(this), {
-      mode: 0o600,
-    });
+    }.bind(this)
+  );
 };
 
 Profile.prototype.saveData = function(callback) {
@@ -455,34 +457,40 @@ Profile.prototype.saveData = function(callback) {
     this.extractKey(this.data);
   }
 
-  fs.writeFile(this.ovpnPath, this.data, function(err) {
-    if (err) {
-      err = new errors.WriteError(
-        'config: Failed to save profile data (%s)', err);
-      logger.error(err);
-    }
-    this.parseData();
-    if (callback) {
-      callback(err);
-    }
-  }.bind(this), {
-    mode: 0o600,
-  });
+  fs.writeFile(
+    this.ovpnPath,
+    this.data,
+    {mode: 0o600},
+    function(err) {
+      if (err) {
+        err = new errors.WriteError(
+          'config: Failed to save profile data (%s)', err);
+        logger.error(err);
+      }
+      this.parseData();
+      if (callback) {
+        callback(err);
+      }
+    }.bind(this)
+  );
 };
 
 Profile.prototype.saveLog = function(callback) {
-  fs.writeFile(this.logPath, this.log, function(err) {
-    if (err) {
-      err = new errors.WriteError(
-        'config: Failed to save profile log (%s)', err);
-      logger.error(err);
-    }
-    if (callback) {
-      callback(err);
-    }
-  }.bind(this), {
-    mode: 0o600,
-  });
+  fs.writeFile(
+    this.logPath,
+    this.log,
+    {mode: 0o600},
+    function(err) {
+      if (err) {
+        err = new errors.WriteError(
+          'config: Failed to save profile log (%s)', err);
+        logger.error(err);
+      }
+      if (callback) {
+        callback(err);
+      }
+    }.bind(this)
+  );
 };
 
 Profile.prototype.delete = function() {
