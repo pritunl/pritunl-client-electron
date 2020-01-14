@@ -113,7 +113,8 @@ fi
 
 killall -HUP mDNSResponder | true
 
-exit 0`
+exit 0
+`
 	downScriptDarwin = `#!/bin/bash -e
 
 CONN_ID="$(echo ${config} | /sbin/md5)"
@@ -125,7 +126,8 @@ remove State:/Network/Pritunl/DNS
 quit
 EOF
 
-exit 0`
+exit 0
+`
 	resolvScript = `#!/bin/bash
 #
 # Parses DHCP options from openvpn to update resolv.conf
@@ -200,7 +202,8 @@ down)
   $RESOLVCONF -d "${dev}.vpn"
   $RESOLVCONF -u || true
   ;;
-esac`
+esac
+`
 	resolvedScript = `#!/usr/bin/env bash
 #
 # OpenVPN helper to add DHCP information into systemd-resolved via DBus.
@@ -310,8 +313,8 @@ up() {
   fi
 
   if [[ "${#dns_domain[*]}" -gt 0 \
-      || "${#dns_search[*]}" -gt 0 \
-      || "${#dns_routed[*]}" -gt 0 ]]; then
+     || "${#dns_search[*]}" -gt 0 \
+     || "${#dns_routed[*]}" -gt 0 ]]; then
     dns_count=$((dns_domain_count+dns_search_count+dns_routed_count))
     busctl_params=("$if_index" "$dns_count")
     if [[ "${#dns_domain[*]}" -gt 0 ]]; then
@@ -451,14 +454,14 @@ parse_ipv6() {
     if [[ -z "$raw_segment" ]]; then
       (( compressed_i = zero_run_i ))
 
-      # ` + "`" + `+ 1' because the length of the current segment is counted in
-      # ` + "`" + `raw_length'.
+      # '+ 1' because the length of the current segment is counted in
+      # 'raw_length'.
       (( tokenized_segments[zero_run_i] = ((length - raw_length) + 1) ))
 
-      # If we have an address like ` + "`" + `::1', skip processing the next group to
+      # If we have an address like '::1', skip processing the next group to
       # avoid double-counting the zero-run, and increment the number of
       # 0-groups to add since the second empty group is counted in
-      # ` + "`" + `raw_length'.
+      # 'raw_length'.
       if [[ -z "${raw_segments[i + 1]}" ]]; then
         (( i++ ))
         (( tokenized_segments[zero_run_i]++ ))
@@ -474,7 +477,7 @@ parse_ipv6() {
 
       (( next_decimal_segment != 0 )) && (( zero_run_i++ ))
     else
-      # Prefix the raw segment with ` + "`" + `nonzero_prefix' to mark this as a
+      # Prefix the raw segment with 'nonzero_prefix' to mark this as a
       # non-zero field.
       tokenized_segments[zero_run_i]="${nonzero_prefix}${decimal_segment}"
       (( zero_run_i++ ))
