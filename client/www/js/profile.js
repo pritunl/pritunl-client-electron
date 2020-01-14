@@ -46,7 +46,7 @@ Profile.prototype.load = function(callback, waitAll) {
 
   if (os.platform() !== 'win32') {
     fs.stat(this.confPath, function(err, stats) {
-      if (err.code === 'ENOENT') {
+      if (err && err.code === 'ENOENT') {
         return;
       }
 
@@ -95,7 +95,7 @@ Profile.prototype.load = function(callback, waitAll) {
 
   if (os.platform() !== 'win32') {
     fs.stat(this.ovpnPath, function(err, stats) {
-      if (err.code === 'ENOENT') {
+      if (err && err.code === 'ENOENT') {
         return;
       }
 
@@ -139,7 +139,7 @@ Profile.prototype.load = function(callback, waitAll) {
 
   if (os.platform() !== 'win32') {
     fs.stat(this.logPath, function(err, stats) {
-      if (err.code === 'ENOENT') {
+      if (err && err.code === 'ENOENT') {
         return;
       }
 
