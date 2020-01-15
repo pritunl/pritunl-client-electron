@@ -420,15 +420,14 @@ var renderProfile = function(index, prfl) {
             message: 'Connecting to ' + data.name,
             detail: preConnectMsg,
             buttons: ['Disconnect', 'Connect'],
-          },
-          function(resp) {
-            if (resp === 1) {
-              prflConnect();
-            } else {
-              closeMenu($profile);
-            }
-          },
-        );
+          }
+        ).then(function(resp) {
+          if (resp.response === 1) {
+            prflConnect();
+          } else {
+            closeMenu($profile);
+          }
+        });
       } else {
         prflConnect();
       }
