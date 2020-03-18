@@ -66,5 +66,6 @@ func Register(engine *gin.Engine) {
 	engine.POST("/stop", stopPost)
 	engine.POST("/restart", restartPost)
 	engine.GET("/status", statusGet)
+	engine.GET("/state", stateGet)
 	engine.POST("/wakeup", wakeupPost)
 }
