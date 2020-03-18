@@ -475,6 +475,15 @@ input:active {
   height: 34px;
   justify-content: center;
 }
+.main-menu .menu-version.btn {
+  cursor: default;
+}
+.main-menu .menu-version.btn:hover {
+  background-color: #055abb;
+}
+.main-menu .menu-version.btn:active {
+  box-shadow: none;
+}
 
 
 .profile {
@@ -580,7 +589,9 @@ input:active {
 .profile .menu .connect-otp-input,
 .profile .menu .connect-yubikey-input,
 .profile .menu .connect-confirm,
-.profile .menu .connect-cancel {
+.profile .menu .connect-cancel,
+.profile .menu .connect-ovpn,
+.profile .menu .connect-wg {
   position: absolute;
   top: 0;
   left: 126px;
@@ -608,14 +619,16 @@ input:active {
 .profile .menu.authenticating-pass .connect-confirm,
 .profile .menu.authenticating-pin .connect-confirm,
 .profile .menu.authenticating-otp .connect-confirm,
-.profile .menu.authenticating-yubikey .connect-confirm {
+.profile .menu.authenticating-yubikey .connect-confirm,
+.profile .menu.connecting .connect-ovpn {
   left: 0;
 }
 .profile .menu.authenticating-user .connect-cancel,
 .profile .menu.authenticating-pass .connect-cancel,
 .profile .menu.authenticating-pin .connect-cancel,
 .profile .menu.authenticating-otp .connect-cancel,
-.profile .menu.authenticating-yubikey .connect-cancel {
+.profile .menu.authenticating-yubikey .connect-cancel,
+.profile .menu.connecting .connect-wg {
   left: 63px;
 }
 
