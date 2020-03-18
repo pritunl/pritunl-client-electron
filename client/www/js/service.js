@@ -80,11 +80,11 @@ var update = function(callback) {
   }.bind(this));
 };
 
-var start = function(prfl, timeout, serverPubKey, serverBoxPubKey,
+var start = function(prfl, mode, timeout, serverPubKey, serverBoxPubKey,
     username, password, callback) {
   username = username || 'pritunl';
 
-  if (serverPubKey && (prfl.token || password)) {
+  if (serverPubKey && (mode === 'wg' || prfl.token || password)) {
     serverPubKey = serverPubKey.join('\n');
   } else {
     serverPubKey = null;
@@ -114,6 +114,13 @@ var start = function(prfl, timeout, serverPubKey, serverBoxPubKey,
       headers: headers,
       body: {
         id: prfl.id,
+        mode: mode,
+        port_wg: prfl.portWg,
+        org_id: prfl.organizationId,
+        user_id: prfl.userId,
+        server_id: prfl.serverId,
+        sync_token: prfl.syncToken,
+        sync_secret: prfl.syncSecret,
         username: username,
         password: password,
         server_public_key: serverPubKey,
@@ -306,6 +313,51 @@ var wakeup = function(callback) {
   });
 };
 
+var state = function(callback) {
+  var url;
+  var headers = {
+    'Auth-Key': constants.key,
+    'User-Agent': 'pritunl'
+  };
+
+  if (constants.unixSocket) {
+    url = 'http://unix:' + constants.unixPath + ':/state';
+    headers['Host'] = 'unix';
+  } else {
+    url = 'http://' + constants.serviceHost + '/state';
+  }
+
+  request.get({
+    url: url,
+    headers: headers,
+  }, function(err, resp, body) {
+    if (err) {
+      err = new errors.NetworkError(
+        'service: Failed to get state (%s)', err);
+      logger.error(err);
+    } else {
+      try {
+        var data = JSON.parse(body);
+      } catch (e) {
+        err = new errors.NetworkError(
+          'service: Failed to get state (%s)', err);
+        logger.error(err);
+      }
+
+      if (!err) {
+        if (callback) {
+          callback(null, data);
+        }
+        return;
+      }
+    }
+
+    if (callback) {
+      callback(err);
+    }
+  });
+};
+
 module.exports = {
   add: add,
   remove: remove,
@@ -317,5 +369,6 @@ module.exports = {
   start: start,
   stop: stop,
   ping: ping,
-  wakeup: wakeup
+  wakeup: wakeup,
+  state: state
 };
