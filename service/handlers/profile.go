@@ -7,6 +7,13 @@ import (
 
 type profileData struct {
 	Id                 string `json:"id"`
+	Mode               string `json:"mode"`
+	PortWg             int    `json:"port_wg"`
+	OrgId              string `json:"org_id"`
+	UserId             string `json:"user_id"`
+	ServerId           string `json:"server_id"`
+	SyncToken          string `json:"sync_token"`
+	SyncSecret         string `json:"sync_secret"`
 	Data               string `json:"data"`
 	Username           string `json:"username"`
 	Password           string `json:"password"`
@@ -25,8 +32,24 @@ func profilePost(c *gin.Context) {
 	data := &profileData{}
 	c.Bind(data)
 
-	prfl := &profile.Profile{
+	prfl := profile.GetProfile(data.Id)
+	if prfl != nil {
+		err := prfl.Stop()
+		if err != nil {
+			c.AbortWithError(500, err)
+			return
+		}
+	}
+
+	prfl = &profile.Profile{
 		Id:                 data.Id,
+		Mode:               data.Mode,
+		PortWg:             data.PortWg,
+		OrgId:              data.OrgId,
+		UserId:             data.UserId,
+		ServerId:           data.ServerId,
+		SyncToken:          data.SyncToken,
+		SyncSecret:         data.SyncSecret,
 		Data:               data.Data,
 		Username:           data.Username,
 		Password:           data.Password,
