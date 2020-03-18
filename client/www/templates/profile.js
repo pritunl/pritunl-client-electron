@@ -18,6 +18,10 @@ module.exports = `<div class="profile" flex layout horizontal>
   <div class="menu">
     <div class="connect item btn btn-success"
       layout vertical center>Connect</div>
+    <div class="connect-ovpn item btn btn-success"
+      layout vertical center>OVPN</div>
+    <div class="connect-wg item btn btn-action"
+      layout vertical center>WG</div>
     <input class="connect-user-input" type="text" tabindex="-1"
       placeholder="Enter Username">
     <input class="connect-pass-input" type="password" tabindex="-1"
