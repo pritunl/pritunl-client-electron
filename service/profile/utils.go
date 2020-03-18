@@ -1,14 +1,16 @@
 package profile
 
 import (
-	"github.com/pritunl/pritunl-client-electron/service/constants"
-	"github.com/pritunl/pritunl-client-electron/service/utils"
+	"fmt"
 	"os"
 	"path/filepath"
 	"regexp"
 	"runtime"
 	"sync"
 	"time"
+
+	"github.com/pritunl/pritunl-client-electron/service/constants"
+	"github.com/pritunl/pritunl-client-electron/service/utils"
 )
 
 var (
@@ -74,6 +76,24 @@ func getOpenvpnDir() (pth string) {
 		pth = ""
 	default:
 		panic("profile: Not implemented")
+	}
+
+	return
+}
+
+func Clean() (err error) {
+	if runtime.GOOS != "windows" {
+		return
+	}
+
+	for i := 0; i < 10; i++ {
+		_, _ = utils.ExecOutput(
+			"sc.exe", "stop", fmt.Sprintf("WireGuardTunnel$pritunl%d", i),
+		)
+		time.Sleep(100 * time.Millisecond)
+		_, _ = utils.ExecOutput(
+			"sc.exe", "delete", fmt.Sprintf("WireGuardTunnel$pritunl%d", i),
+		)
 	}
 
 	return
