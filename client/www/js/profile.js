@@ -20,6 +20,7 @@ function Profile(pth) {
   this.data = null;
   this.name = null;
   this.uvName = null;
+  this.wg = null;
   this.organizationId = null;
   this.organization = null;
   this.serverId = null;
@@ -218,6 +219,7 @@ Profile.prototype.update = function(data) {
 
 Profile.prototype.refresh = function(prfl) {
   this.name = prfl.name || this.name;
+  this.wg = prfl.wg;
   this.organizationId = prfl.organizationId || this.organizationId;
   this.organization = prfl.organization || this.organization;
   this.serverId = prfl.serverId || this.serverId;
@@ -242,6 +244,7 @@ Profile.prototype.refresh = function(prfl) {
 Profile.prototype.import = function(data) {
   this.status = this.status || 'disconnected';
   this.name = data.name || this.name;
+  this.wg = data.wg || false;
   this.organizationId = data.organization_id || null;
   this.organization = data.organization || null;
   this.serverId = data.server_id || null;
@@ -264,6 +267,7 @@ Profile.prototype.import = function(data) {
 
 Profile.prototype.upsert = function(data) {
   this.name = data.name || this.name;
+  this.wg = data.wg || false;
   this.organizationId = data.organization_id || this.organizationId;
   this.organization = data.organization || this.organization;
   this.serverId = data.server_id || this.serverId;
@@ -284,6 +288,7 @@ Profile.prototype.upsert = function(data) {
 Profile.prototype.exportConf = function() {
   return {
     name: this.name,
+    wg: this.wg,
     organization_id: this.organizationId,
     organization: this.organization,
     server_id: this.serverId,
@@ -326,6 +331,7 @@ Profile.prototype.export = function() {
     serverAddr: this.serverAddr || '-',
     clientAddr: this.clientAddr || '-',
     name: formatedName,
+    wg: this.wg || false,
     organizationId: this.organizationId || '',
     organization: this.organization || '',
     serverId: this.serverId || '',
@@ -793,13 +799,13 @@ Profile.prototype.sync = function(syncHosts, callback) {
     }.bind(this));
 };
 
-Profile.prototype.connect = function(timeout, authCallback) {
+Profile.prototype.connect = function(mode, timeout, authCallback) {
   if (this.syncHosts.length) {
     this.sync(this.syncHosts.slice(0), function() {
-      this.auth(timeout, authCallback);
+      this.auth(mode, timeout, authCallback);
     }.bind(this));
   } else {
-    this.auth(timeout, authCallback);
+    this.auth(mode, timeout, authCallback);
   }
 };
 
@@ -813,11 +819,11 @@ Profile.prototype.preConnect = function(callback) {
   }
 };
 
-Profile.prototype.postConnect = function(timeout, authCallback) {
-  this.auth(timeout, authCallback);
+Profile.prototype.postConnect = function(mode, timeout, authCallback) {
+  this.auth(mode, timeout, authCallback);
 };
 
-Profile.prototype.auth = function(timeout, callback) {
+Profile.prototype.auth = function(mode, timeout, callback) {
   var authType = this.getAuthType();
 
   if (this.token) {
@@ -854,25 +860,25 @@ Profile.prototype.auth = function(timeout, callback) {
         authType = authType.join('_');
       }
 
-      this._auth(authType, timeout, callback);
+      this._auth(authType, mode, timeout, callback);
     }.bind(this));
   } else {
     service.tokenDelete(this);
-    this._auth(authType, timeout, callback);
+    this._auth(authType, mode, timeout, callback);
   }
 };
 
-Profile.prototype._auth = function(authType, timeout, callback) {
+Profile.prototype._auth = function(authType, mode, timeout, callback) {
   if (!authType) {
     if (callback) {
       callback(null, null);
     }
-    service.start(this, timeout, this.serverPublicKey,
+    service.start(this, mode, timeout, this.serverPublicKey,
       this.serverBoxPublicKey);
   } else if (!callback) {
   } else {
     callback(authType, function(user, pass) {
-      service.start(this, timeout, this.serverPublicKey,
+      service.start(this, mode, timeout, this.serverPublicKey,
         this.serverBoxPublicKey, user || 'pritunl', pass);
     }.bind(this));
   }
