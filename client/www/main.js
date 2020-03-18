@@ -129,15 +129,13 @@ var checkService = function(callback) {
             }
             dialog.showMessageBox(null, {
               type: 'warning',
-              buttons: ['Exit', 'Retry'],
+              buttons: ['Exit'],
               defaultId: 1,
               title: 'Pritunl - Service Error',
               message: 'Unable to communicate with helper service, ' +
               'try restarting computer'
-            }, function(state) {
-              if (state === 0) {
-                app.quit();
-              }
+            }, function() {
+              app.quit();
             });
           }
 
