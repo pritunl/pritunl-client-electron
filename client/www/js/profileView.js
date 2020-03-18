@@ -40,6 +40,7 @@ var closeMenu = function($profile) {
   $menu.removeClass('authenticating-pin');
   $menu.removeClass('authenticating-otp');
   $menu.removeClass('authenticating-yubikey');
+  $menu.removeClass('connecting');
   $menu.removeClass('renaming');
   $menu.removeClass('deleting');
   $menu.removeClass('autostarting');
@@ -121,8 +122,8 @@ var renderProfile = function(index, prfl) {
     closeMenu($profile);
   });
 
-  var prflConnect = function() {
-    prfl.postConnect(true, function(authType, callback) {
+  var prflConnect = function(mode) {
+    prfl.postConnect(mode, true, function(authType, callback) {
       if (!authType) {
         closeMenu($profile);
         return;
@@ -407,31 +408,97 @@ var renderProfile = function(index, prfl) {
     prfl.preConnect(function() {
       var data = prfl.export();
 
-      if (prfl.preConnectMsg) {
-        var preConnectMsg = prfl.preConnectMsg;
-        if (preConnectMsg instanceof Array) {
-          preConnectMsg = preConnectMsg.join('\n');
-        }
-
-        remote.dialog.showMessageBox(
-          {
-            type: 'none',
-            title: 'Pritunl - Connecting to Server',
-            message: 'Connecting to ' + data.name,
-            detail: preConnectMsg,
-            buttons: ['Disconnect', 'Connect'],
-          }
-        ).then(function(resp) {
-          if (resp.response === 1) {
-            prflConnect();
-          } else {
-            closeMenu($profile);
-          }
-        });
+      if (constants.wg && data.wg) {
+        $profile.find('.menu').addClass('connecting');
       } else {
-        prflConnect();
+        if (prfl.preConnectMsg) {
+          var preConnectMsg = prfl.preConnectMsg;
+          if (preConnectMsg instanceof Array) {
+            preConnectMsg = preConnectMsg.join('\n');
+          }
+
+          remote.dialog.showMessageBox(
+            {
+              type: 'none',
+              title: 'Pritunl - Connecting to Server',
+              message: 'Connecting to ' + data.name,
+              detail: preConnectMsg,
+              buttons: ['Disconnect', 'Connect'],
+            }
+          ).then(function(resp) {
+            if (resp.response === 1) {
+              prflConnect('ovpn');
+            } else {
+              closeMenu($profile);
+            }
+          });
+        } else {
+          prflConnect('ovpn');
+        }
       }
     });
+  });
+
+  $profile.find('.menu .connect-ovpn').click(function() {
+    $profile.find('.menu').removeClass('connecting');
+
+    var data = prfl.export();
+
+    if (prfl.preConnectMsg) {
+      var preConnectMsg = prfl.preConnectMsg;
+      if (preConnectMsg instanceof Array) {
+        preConnectMsg = preConnectMsg.join('\n');
+      }
+
+      remote.dialog.showMessageBox(
+        {
+          type: 'none',
+          title: 'Pritunl - Connecting to Server',
+          message: 'Connecting to ' + data.name,
+          detail: preConnectMsg,
+          buttons: ['Disconnect', 'Connect'],
+        }
+      ).then(function(resp) {
+        if (resp.response === 1) {
+          prflConnect('ovpn');
+        } else {
+          closeMenu($profile);
+        }
+      });
+    } else {
+      prflConnect('ovpn');
+    }
+  });
+
+  $profile.find('.menu .connect-wg').click(function() {
+    $profile.find('.menu').removeClass('connecting');
+
+    var data = prfl.export();
+
+    if (prfl.preConnectMsg) {
+      var preConnectMsg = prfl.preConnectMsg;
+      if (preConnectMsg instanceof Array) {
+        preConnectMsg = preConnectMsg.join('\n');
+      }
+
+      remote.dialog.showMessageBox(
+        {
+          type: 'none',
+          title: 'Pritunl - Connecting to Server',
+          message: 'Connecting to ' + data.name,
+          detail: preConnectMsg,
+          buttons: ['Disconnect', 'Connect'],
+        }
+      ).then(function(resp) {
+        if (resp.response === 1) {
+          prflConnect('wg');
+        } else {
+          closeMenu($profile);
+        }
+      });
+    } else {
+      prflConnect('wg');
+    }
   });
 
   $profile.find('.menu .connect-cancel').click(function() {
@@ -441,6 +508,7 @@ var renderProfile = function(index, prfl) {
     $menu.removeClass('authenticating-pin');
     $menu.removeClass('authenticating-otp');
     $menu.removeClass('authenticating-yubikey');
+    $menu.removeClass('connecting');
     $profile.find('.menu .connect').removeClass('disabled');
     $profile.find('.menu .connect-user-input').blur();
     $profile.find('.menu .connect-user-input').val('');
@@ -628,9 +696,40 @@ var init = function() {
           prfl.formatedName());
         logger.error(err);
         break;
+      case 'connection_error':
+        prfl = service.get(evt.data.id);
+        err = new errors.AuthError(
+          'profile_view: Failed to connect to %s',
+          prfl.formatedName());
+        logger.error(err);
+        break;
+      case 'configuration_error':
+        prfl = service.get(evt.data.id);
+        err = new errors.AuthError(
+          'profile_view: Failed to configure connection for %s',
+          prfl.formatedName());
+        logger.error(err);
+        break;
+      case 'handshake_timeout':
+        prfl = service.get(evt.data.id);
+        err = new errors.AuthError(
+          'profile_view: Handshake timeout on %s',
+          prfl.formatedName());
+        logger.error(err);
+        break;
     }
   });
 
+  service.state(function(err, state) {
+    if (!err && state && state.wg) {
+      constants.wg = state.wg;
+    }
+
+    initProfiles();
+  });
+};
+
+var initProfiles = function() {
   profile.getProfiles(function(err, prfls) {
     var profileCount = 0;
 
