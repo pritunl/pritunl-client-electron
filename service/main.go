@@ -90,6 +90,14 @@ func main() {
 		server.Addr = "127.0.0.1:9770"
 	}
 
+	err = profile.Clean()
+	if err != nil {
+		logrus.WithFields(logrus.Fields{
+			"error": err,
+		}).Error("main: Failed to clean profiles")
+		panic(err)
+	}
+
 	go func() {
 		defer func() {
 			recover()
