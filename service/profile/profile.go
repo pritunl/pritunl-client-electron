@@ -2090,6 +2090,7 @@ func (p *Profile) confWgMac() (err error) {
 		}
 		return
 	}
+	p.Tuniface = tunIface
 
 	return
 }
