@@ -39,11 +39,14 @@ func getOpenvpnPath() (pth string) {
 	switch runtime.GOOS {
 	case "windows":
 		pth = filepath.Join(utils.GetRootDir(), "openvpn", "openvpn.exe")
+		break
 	case "darwin":
 		pth = filepath.Join(string(os.PathSeparator), "Applications",
 			"Pritunl.app", "Contents", "Resources", "pritunl-openvpn")
+		break
 	case "linux":
 		pth = "openvpn"
+		break
 	default:
 		panic("profile: Not implemented")
 	}
