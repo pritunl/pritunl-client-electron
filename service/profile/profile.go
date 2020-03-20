@@ -830,6 +830,19 @@ func (p *Profile) clearWgLinux() {
 	}
 }
 
+func (p *Profile) clearWgMac() {
+	if p.Iface != "" {
+		utils.ExecOutputLogged(
+			[]string{
+				"Cannot find device",
+			},
+			"wg-quick",
+			"down", p.Iface,
+		)
+		network.InterfaceRelease(p.Iface)
+	}
+}
+
 func (p *Profile) clearWgWin() {
 	if p.Iface != "" {
 		_, _ = utils.ExecOutput(
@@ -847,6 +860,9 @@ func (p *Profile) clearWg() {
 	switch runtime.GOOS {
 	case "linux":
 		p.clearWgLinux()
+		break
+	case "darwin":
+		p.clearWgMac()
 		break
 	case "windows":
 		p.clearWgWin()
