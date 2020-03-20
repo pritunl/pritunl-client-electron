@@ -56,12 +56,12 @@ func init() {
 		break
 	case "darwin":
 		for i := 0; i < 10; i++ {
-			interfaces = append(interfaces, fmt.Sprintf("utun3%d", i))
+			interfaces = append(interfaces, fmt.Sprintf("pritunl%d", i))
 		}
 		break
 	default:
 		for i := 0; i < 10; i++ {
-			interfaces = append(interfaces, fmt.Sprintf("wg3%d", i))
+			interfaces = append(interfaces, fmt.Sprintf("wg%d", i))
 		}
 	}
 }
