@@ -2181,12 +2181,19 @@ func (p *Profile) updateWgHandshake() (err error) {
 		wgPth = "wg"
 	}
 
+	iface := ""
+	if runtime.GOOS == "darwin" {
+		iface = p.Tuniface
+	} else {
+		iface = p.Iface
+	}
+
 	output, err := utils.ExecOutputLogged(
 		[]string{
 			"No such device",
 			"access interface",
 		},
-		wgPth, "show", p.Iface,
+		wgPth, "show", iface,
 		"latest-handshakes",
 	)
 	if err != nil {
