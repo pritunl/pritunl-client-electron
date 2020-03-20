@@ -1,6 +1,7 @@
 package profile
 
 import (
+	"regexp"
 	"text/template"
 )
 
@@ -21,7 +22,10 @@ Endpoint = {{.Endpoint}}
 `
 )
 
-var WgConfTempl = template.Must(template.New("wg_conf").Parse(wgConfTempl))
+var (
+	wgIfaceMacReg = regexp.MustCompile("\\((utun[0-9]+)\\)")
+	WgConfTempl   = template.Must(template.New("wg_conf").Parse(wgConfTempl))
+)
 
 type WgConfData struct {
 	Address    string
