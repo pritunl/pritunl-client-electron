@@ -519,7 +519,7 @@ func (p *Profile) writeConfWgLinux() (pth string, err error) {
 	return
 }
 
-func (p *Profile) writeConfWgWin(data *WgConf) (pth string, err error) {
+func (p *Profile) writeConfWgWinMac(data *WgConf) (pth string, err error) {
 	allowedIps := []string{}
 	if data.Routes != nil {
 		for _, route := range data.Routes {
@@ -554,9 +554,14 @@ func (p *Profile) writeConfWgWin(data *WgConf) (pth string, err error) {
 		return
 	}
 
-	rootDir, err := utils.GetTempDir()
-	if err != nil {
-		return
+	rootDir := ""
+	if runtime.GOOS == "darwin" {
+		rootDir = WgMacConfPath
+	} else {
+		rootDir, err = utils.GetTempDir()
+		if err != nil {
+			return
+		}
 	}
 
 	pth = filepath.Join(rootDir, p.Iface+".conf")
@@ -582,9 +587,11 @@ func (p *Profile) writeWgConf(data *WgConf) (pth string, err error) {
 	case "linux":
 		pth, err = p.writeConfWgLinux()
 		break
-	case "windows":
-		pth, err = p.writeConfWgWin(data)
+	case "darwin", "windows":
+		pth, err = p.writeConfWgWinMac(data)
 		break
+	default:
+		panic("profile: Not implemented")
 	}
 	if err != nil {
 		return
@@ -2027,7 +2034,24 @@ func (p *Profile) confWgLinux(data *WgConf) (err error) {
 	return
 }
 
-func (p *Profile) confWgWin(data *WgConf) (err error) {
+func (p *Profile) confWgMac() (err error) {
+	_, _ = utils.ExecOutput(
+		"wg-quick", "down", p.Iface,
+	)
+
+	_, err = utils.ExecOutputLogged(
+		nil,
+		"wg-quick",
+		"up", p.Iface,
+	)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+func (p *Profile) confWgWin() (err error) {
 	_, _ = utils.ExecOutput(
 		"sc.exe", "stop", fmt.Sprintf("WireGuardTunnel$%s", p.Iface),
 	)
@@ -2057,9 +2081,10 @@ func (p *Profile) confWg(data *WgConf) (err error) {
 
 	switch runtime.GOOS {
 	case "darwin":
+		err = p.confWgMac()
 		break
 	case "windows":
-		err = p.confWgWin(data)
+		err = p.confWgWin()
 		break
 	case "linux":
 		err = p.confWgLinux(data)
@@ -2430,6 +2455,20 @@ func (p *Profile) stopWgLinux() (err error) {
 	return
 }
 
+func (p *Profile) stopWgMac() (err error) {
+	if p.Iface != "" {
+		utils.ExecOutputLogged(
+			[]string{
+				"Cannot find device",
+			},
+			"wg-quick",
+			"down", p.Iface,
+		)
+	}
+
+	return
+}
+
 func (p *Profile) stopWgWin() (err error) {
 	if p.Iface != "" {
 		_, _ = utils.ExecOutput(
@@ -2449,9 +2488,14 @@ func (p *Profile) stopWg() (err error) {
 	case "linux":
 		err = p.stopWgLinux()
 		break
+	case "darwin":
+		err = p.stopWgMac()
+		break
 	case "windows":
 		err = p.stopWgWin()
 		break
+	default:
+		panic("handlers: Not implemented")
 	}
 	if err != nil {
 		return
