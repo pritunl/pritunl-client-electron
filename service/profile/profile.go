@@ -174,6 +174,7 @@ type Profile struct {
 	ServerBoxPublicKey string           `json:"-"`
 	TokenTtl           int              `json:"-"`
 	Iface              string           `json:"iface"`
+	Tuniface           string           `json:"tun_iface"`
 	Routes             []*Route         `json:"routes'"`
 	Routes6            []*Route         `json:"routes6'"`
 	Reconnect          bool             `json:"reconnect"`
@@ -2048,12 +2049,29 @@ func (p *Profile) confWgMac() (err error) {
 		"wg-quick", "down", p.Iface,
 	)
 
-	_, err = utils.ExecOutputLogged(
+	output, err := utils.ExecOutputLogged(
 		nil,
 		"wg-quick",
 		"up", p.Iface,
 	)
 	if err != nil {
+		return
+	}
+
+	tunIface := ""
+	for _, line := range strings.Split(output, "\n") {
+		if strings.Contains(line, "INFO") {
+			match := wgIfaceMacReg.FindStringSubmatch(line)
+			if match != nil && len(match) >= 2 {
+				tunIface = match[1]
+			}
+		}
+	}
+
+	if tunIface == "" {
+		err = &errortypes.ParseError{
+			errors.New("profile: Failed to parse wg interface output"),
+		}
 		return
 	}
 
