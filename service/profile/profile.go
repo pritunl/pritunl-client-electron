@@ -2235,9 +2235,15 @@ func (p *Profile) watchWg() {
 
 	defer p.clearStatus(p.startTime)
 
+	time.Sleep(1 * time.Second)
+
 	for i := 0; i < 30; i++ {
 		if p.stop {
 			return
+		}
+
+		if i%10 == 0 {
+			go p.pingWg(p.GatewayAddr)
 		}
 
 		err := p.updateWgHandshake()
