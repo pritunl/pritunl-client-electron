@@ -48,13 +48,20 @@ func InterfaceRelease(name string) {
 }
 
 func init() {
-	if runtime.GOOS == "windows" {
+	switch runtime.GOOS {
+	case "windows":
 		for i := 0; i < 10; i++ {
 			interfaces = append(interfaces, fmt.Sprintf("pritunl%d", i))
 		}
-	} else {
+		break
+	case "darwin":
 		for i := 0; i < 10; i++ {
-			interfaces = append(interfaces, fmt.Sprintf("wg%d", i))
+			interfaces = append(interfaces, fmt.Sprintf("utun3%d", i))
+		}
+		break
+	default:
+		for i := 0; i < 10; i++ {
+			interfaces = append(interfaces, fmt.Sprintf("wg3%d", i))
 		}
 	}
 }
