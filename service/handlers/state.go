@@ -16,16 +16,34 @@ func stateGet(c *gin.Context) {
 		Wg: false,
 	}
 
-	if runtime.GOOS == "windows" {
+	switch runtime.GOOS {
+	case "windows":
 		path, err := exec.LookPath("wg.exe")
 		if path != "" && err == nil {
 			data.Wg = true
 		}
-	} else {
+
+		break
+	case "darwin":
+		path, err := exec.LookPath("wg")
+		path2, err2 := exec.LookPath("wireguard-go")
+		path3, err3 := exec.LookPath("wireguard-go")
+		if path != "" && path2 != "" && path3 != "" &&
+			err == nil && err2 == nil && err3 == nil {
+
+			data.Wg = true
+		}
+
+		break
+	case "linux":
 		path, err := exec.LookPath("wg")
 		if path != "" && err == nil {
 			data.Wg = true
 		}
+
+		break
+	default:
+		panic("handlers: Not implemented")
 	}
 
 	c.JSON(200, data)
