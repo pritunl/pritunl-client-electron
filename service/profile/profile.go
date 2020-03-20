@@ -557,6 +557,15 @@ func (p *Profile) writeConfWgWinMac(data *WgConf) (pth string, err error) {
 	rootDir := ""
 	if runtime.GOOS == "darwin" {
 		rootDir = WgMacConfPath
+
+		err = os.MkdirAll(WgMacConfPath, 0700)
+		if err != nil {
+			err = &errortypes.WriteError{
+				errors.Wrap(
+					err, "profile: Failed to create wg conf directory"),
+			}
+			return
+		}
 	} else {
 		rootDir, err = utils.GetTempDir()
 		if err != nil {
