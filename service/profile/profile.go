@@ -834,7 +834,7 @@ func (p *Profile) clearWgMac() {
 	if p.Iface != "" {
 		utils.ExecOutputLogged(
 			[]string{
-				"Cannot find device",
+				"is not a",
 			},
 			"wg-quick",
 			"down", p.Iface,
@@ -2502,7 +2502,7 @@ func (p *Profile) stopWgMac() (err error) {
 	if p.Iface != "" {
 		utils.ExecOutputLogged(
 			[]string{
-				"Cannot find device",
+				"is not a",
 			},
 			"wg-quick",
 			"down", p.Iface,
