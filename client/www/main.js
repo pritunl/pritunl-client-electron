@@ -460,7 +460,7 @@ app.on('ready', function() {
           prfl = prfls[i];
 
           if (prfl.autostart) {
-            prfl.connect(false);
+            prfl.connect('ovpn', false);
           }
         }
       }, true);
