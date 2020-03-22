@@ -20,6 +20,7 @@ import (
 	"io"
 	"io/ioutil"
 	mathrand "math/rand"
+	"net"
 	"net/http"
 	"net/url"
 	"os"
@@ -184,6 +185,7 @@ type Profile struct {
 	GatewayAddr6       string           `json:"gateway_addr6"`
 	ServerAddr         string           `json:"server_addr"`
 	ClientAddr         string           `json:"client_addr"`
+	MacAddr            string           `json:"mac_addr"`
 }
 
 type AuthData struct {
@@ -1400,7 +1402,7 @@ func (p *Profile) reqWg(remote string) (wgData *WgData, err error) {
 		DeviceId:    p.DeviceId,
 		DeviceName:  p.DeviceName,
 		Platform:    platform,
-		MacAddr:     "", // TODO
+		MacAddr:     p.MacAddr,
 		Token:       wgToken,
 		Nonce:       tokenNonce,
 		Password:    p.Password,
@@ -1676,7 +1678,7 @@ func (p *Profile) pingWg(remote string) (wgData *WgPingData, err error) {
 		DeviceId:    p.DeviceId,
 		DeviceName:  p.DeviceName,
 		Platform:    platform,
-		MacAddr:     "", // TODO
+		MacAddr:     p.MacAddr,
 		Timestamp:   time.Now().Unix(),
 		WgPublicKey: p.PublicKeyWg,
 	}
@@ -2369,6 +2371,26 @@ func (p *Profile) startWg(timeout bool) (err error) {
 	remotesSet := set.NewSet()
 	remotes := []string{}
 	p.PrivateKey = ""
+
+	ifaces, err := net.Interfaces()
+	if err != nil {
+		err = &errortypes.ReadError{
+			errors.New("profile: Failed to load interfaces"),
+		}
+		return
+	}
+
+	for _, iface := range ifaces {
+		if iface.Flags&net.FlagUp == 0 ||
+			iface.Flags&net.FlagLoopback != 0 ||
+			iface.HardwareAddr == nil ||
+			iface.HardwareAddr.String() == "" {
+
+			continue
+		}
+
+		p.MacAddr = iface.HardwareAddr.String()
+	}
 
 	rangeKey := false
 	for _, line := range strings.Split(p.Data, "\n") {
