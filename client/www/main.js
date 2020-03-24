@@ -49,9 +49,6 @@ if (process.argv.indexOf('--dev') !== -1) {
 } else {
   if (process.platform === 'win32') {
     authPath = path.join('C:\\', 'ProgramData', 'Pritunl', 'auth');
-  } else if (process.platform === 'darwin') {
-    authPath = path.join(path.sep, 'Applications', 'Pritunl.app',
-      'Contents', 'Resources', 'auth');
   } else {
     authPath = path.join(path.sep, 'var', 'run', 'pritunl.auth');
   }
