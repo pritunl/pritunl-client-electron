@@ -842,11 +842,7 @@ func GetPidPath() (pth string) {
 	}
 
 	switch runtime.GOOS {
-	case "darwin":
-		pth = filepath.Join(string(os.PathSeparator), "Applications",
-			"Pritunl.app", "Contents", "Resources", "pritunl.pid")
-		break
-	case "linux":
+	case "linux", "darwin":
 		pth = filepath.Join(string(filepath.Separator),
 			"var", "run", "pritunl.pid")
 		break
