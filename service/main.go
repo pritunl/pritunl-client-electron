@@ -163,5 +163,9 @@ func main() {
 		prfl.Stop()
 	}
 
+	for _, prfl := range prfls {
+		prfl.Wait()
+	}
+
 	time.Sleep(750 * time.Millisecond)
 }
