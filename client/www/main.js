@@ -57,7 +57,7 @@ if (process.argv.indexOf('--dev') !== -1) {
   }
 }
 
-if (process.platform === 'linux' || process.platform === 'darwin') {
+if (process.platform === 'linux' {
   global.unixSocket = true;
   constants.unixSocket = true;
 }
