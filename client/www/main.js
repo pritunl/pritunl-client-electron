@@ -57,7 +57,7 @@ if (process.argv.indexOf('--dev') !== -1) {
   }
 }
 
-if (process.platform === 'linux' {
+if (process.platform === 'linux') {
   global.unixSocket = true;
   constants.unixSocket = true;
 }
