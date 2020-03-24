@@ -523,7 +523,7 @@ func (p *Profile) writeConfWgLinux() (pth string, err error) {
 	return
 }
 
-func (p *Profile) writeConfWgWinMac(data *WgConf) (pth string, err error) {
+func (p *Profile) writeConfWgQuick(data *WgConf) (pth string, err error) {
 	allowedIps := []string{}
 	if data.Routes != nil {
 		for _, route := range data.Routes {
@@ -559,7 +559,19 @@ func (p *Profile) writeConfWgWinMac(data *WgConf) (pth string, err error) {
 	}
 
 	rootDir := ""
-	if runtime.GOOS == "darwin" {
+	switch runtime.GOOS {
+	case "linux":
+		rootDir = WgLinuxConfPath
+
+		err = os.MkdirAll(WgLinuxConfPath, 0700)
+		if err != nil {
+			err = &errortypes.WriteError{
+				errors.Wrap(
+					err, "profile: Failed to create wg conf directory"),
+			}
+			return
+		}
+	case "darwin":
 		rootDir = WgMacConfPath
 
 		err = os.MkdirAll(WgMacConfPath, 0700)
@@ -570,7 +582,7 @@ func (p *Profile) writeConfWgWinMac(data *WgConf) (pth string, err error) {
 			}
 			return
 		}
-	} else {
+	default:
 		rootDir, err = utils.GetTempDir()
 		if err != nil {
 			return
@@ -597,11 +609,8 @@ func (p *Profile) writeConfWgWinMac(data *WgConf) (pth string, err error) {
 
 func (p *Profile) writeWgConf(data *WgConf) (pth string, err error) {
 	switch runtime.GOOS {
-	case "linux":
-		pth, err = p.writeConfWgLinux()
-		break
-	case "darwin", "windows":
-		pth, err = p.writeConfWgWinMac(data)
+	case "linux", "darwin", "windows":
+		pth, err = p.writeConfWgQuick(data)
 		break
 	default:
 		panic("profile: Not implemented")
@@ -2069,6 +2078,26 @@ func (p *Profile) confWgLinux(data *WgConf) (err error) {
 	return
 }
 
+func (p *Profile) confWgLinuxQuick() (err error) {
+	p.wgQuickLock.Lock()
+	defer p.wgQuickLock.Unlock()
+
+	_, _ = utils.ExecOutput(
+		"wg-quick", "down", p.Iface,
+	)
+
+	_, err = utils.ExecOutputLogged(
+		nil,
+		"wg-quick",
+		"up", p.Iface,
+	)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
 func (p *Profile) confWgMac() (err error) {
 	p.wgQuickLock.Lock()
 	defer p.wgQuickLock.Unlock()
@@ -2145,7 +2174,7 @@ func (p *Profile) confWg(data *WgConf) (err error) {
 		err = p.confWgWin()
 		break
 	case "linux":
-		err = p.confWgLinux(data)
+		err = p.confWgLinuxQuick()
 		break
 	default:
 		panic("profile: Not implemented")
@@ -2364,18 +2393,6 @@ func (p *Profile) startWg(timeout bool) (err error) {
 	err = p.generateWgKey()
 	if err != nil {
 		return
-	}
-
-	var authPath string
-	if (p.Username != "" && p.Password != "") ||
-		p.ServerBoxPublicKey != "" || p.ServerPublicKey != "" {
-
-		authPath, err = p.writeAuth()
-		if err != nil {
-			p.clearStatus(start)
-			return
-		}
-		p.remPaths = append(p.remPaths, authPath)
 	}
 
 	p.update()
