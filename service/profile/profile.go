@@ -536,8 +536,13 @@ func (p *Profile) writeConfWgQuick(data *WgConf) (pth string, err error) {
 		}
 	}
 
+	addr := data.Address
+	if data.Address6 != "" {
+		addr += "," + data.Address6
+	}
+
 	templData := WgConfData{
-		Address:    data.Address,
+		Address:    addr,
 		PrivateKey: p.PrivateKeyWg,
 		PublicKey:  data.PublicKey,
 		AllowedIps: strings.Join(allowedIps, ","),
