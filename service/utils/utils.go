@@ -672,11 +672,7 @@ func GetAuthPath() (pth string) {
 
 		pth = filepath.Join(pth, "auth")
 		break
-	case "darwin":
-		pth = filepath.Join(string(os.PathSeparator), "Applications",
-			"Pritunl.app", "Contents", "Resources", "auth")
-		break
-	case "linux":
+	case "linux", "darwin":
 		pth = filepath.Join(string(filepath.Separator),
 			"var", "run", "pritunl.auth")
 		break
@@ -718,11 +714,7 @@ func GetLogPath() (pth string) {
 
 		pth = filepath.Join(pth, "pritunl.log")
 		break
-	case "darwin":
-		pth = filepath.Join(string(os.PathSeparator), "Applications",
-			"Pritunl.app", "Contents", "Resources", "pritunl.log")
-		break
-	case "linux":
+	case "linux", "darwin":
 		pth = filepath.Join(string(filepath.Separator),
 			"var", "log", "pritunl.log")
 		break
