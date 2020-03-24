@@ -143,6 +143,7 @@ type OutputData struct {
 type Profile struct {
 	state              bool             `json:"-"`
 	stateLock          sync.Mutex       `json:"-"`
+	wgQuickLock        sync.Mutex       `json:"-"`
 	stop               bool             `json:"-"`
 	startTime          time.Time        `json:"-"`
 	authFailed         bool             `json:"-"`
@@ -821,19 +822,22 @@ func (p *Profile) parseLine(line string) {
 
 func (p *Profile) clearWgLinux() {
 	if p.Iface != "" {
+		p.wgQuickLock.Lock()
 		utils.ExecOutputLogged(
 			[]string{
-				"Cannot find device",
+				"does not exist",
 			},
-			"ip", "link",
-			"del", p.Iface,
+			"wg-quick",
+			"down", p.Iface,
 		)
+		p.wgQuickLock.Unlock()
 		network.InterfaceRelease(p.Iface)
 	}
 }
 
 func (p *Profile) clearWgMac() {
 	if p.Iface != "" {
+		p.wgQuickLock.Lock()
 		utils.ExecOutputLogged(
 			[]string{
 				"is not a",
@@ -841,12 +845,14 @@ func (p *Profile) clearWgMac() {
 			"wg-quick",
 			"down", p.Iface,
 		)
+		p.wgQuickLock.Unlock()
 		network.InterfaceRelease(p.Iface)
 	}
 }
 
 func (p *Profile) clearWgWin() {
 	if p.Iface != "" {
+		p.wgQuickLock.Lock()
 		_, _ = utils.ExecOutput(
 			"sc.exe", "stop", fmt.Sprintf("WireGuardTunnel$%s", p.Iface),
 		)
@@ -855,6 +861,7 @@ func (p *Profile) clearWgWin() {
 			"sc.exe", "delete", fmt.Sprintf("WireGuardTunnel$%s", p.Iface),
 		)
 		network.InterfaceRelease(p.Iface)
+		p.wgQuickLock.Unlock()
 	}
 }
 
@@ -2063,6 +2070,9 @@ func (p *Profile) confWgLinux(data *WgConf) (err error) {
 }
 
 func (p *Profile) confWgMac() (err error) {
+	p.wgQuickLock.Lock()
+	defer p.wgQuickLock.Unlock()
+
 	_, _ = utils.ExecOutput(
 		"wg-quick", "down", p.Iface,
 	)
@@ -2098,6 +2108,7 @@ func (p *Profile) confWgMac() (err error) {
 }
 
 func (p *Profile) confWgWin() (err error) {
+	p.wgQuickLock.Lock()
 	_, _ = utils.ExecOutput(
 		"sc.exe", "stop", fmt.Sprintf("WireGuardTunnel$%s", p.Iface),
 	)
@@ -2105,6 +2116,7 @@ func (p *Profile) confWgWin() (err error) {
 	_, _ = utils.ExecOutput(
 		"sc.exe", "delete", fmt.Sprintf("WireGuardTunnel$%s", p.Iface),
 	)
+	p.wgQuickLock.Unlock()
 
 	_, err = utils.ExecOutputLogged(
 		nil,
