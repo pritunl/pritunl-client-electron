@@ -3,6 +3,7 @@ package profile
 import (
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"regexp"
 	"runtime"
@@ -17,6 +18,76 @@ var (
 	alphaNumRe  = regexp.MustCompile("[^a-zA-Z0-9]+")
 	restartLock sync.Mutex
 )
+
+func GetWgPath() string {
+	switch runtime.GOOS {
+	case "windows":
+		path, _ := exec.LookPath("wg.exe")
+		if path != "" {
+			return path
+		}
+
+		break
+	case "darwin":
+		path, _ := exec.LookPath("/usr/bin/wg")
+		if path != "" {
+			return path
+		}
+
+		path, _ = exec.LookPath("/usr/local/bin/wg")
+		if path != "" {
+			return path
+		}
+
+		break
+	case "linux":
+		path, _ := exec.LookPath("wg")
+		if path != "" {
+			return path
+		}
+
+		break
+	default:
+		panic("handlers: Not implemented")
+	}
+
+	return ""
+}
+
+func GetWgQuickPath() string {
+	switch runtime.GOOS {
+	case "windows":
+		path, _ := exec.LookPath("wg-quick.exe")
+		if path != "" {
+			return path
+		}
+
+		break
+	case "darwin":
+		path, _ := exec.LookPath("/usr/bin/wg-quick")
+		if path != "" {
+			return path
+		}
+
+		path, _ = exec.LookPath("/usr/local/bin/wg-quick")
+		if path != "" {
+			return path
+		}
+
+		break
+	case "linux":
+		path, _ := exec.LookPath("wg-quick")
+		if path != "" {
+			return path
+		}
+
+		break
+	default:
+		panic("handlers: Not implemented")
+	}
+
+	return ""
+}
 
 func getOpenvpnPath() (pth string) {
 	if constants.Development {

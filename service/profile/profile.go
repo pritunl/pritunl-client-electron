@@ -149,6 +149,8 @@ type Profile struct {
 	authFailed         bool             `json:"-"`
 	waiters            []chan bool      `json:"-"`
 	remPaths           []string         `json:"-"`
+	wgPath             string           `json:"-"`
+	wgQuickPath        string           `json:"-"`
 	wgConfPth          string           `json:"-"`
 	wgHandshake        int              `json:"-"`
 	wgServerPublicKey  string           `json:"-"`
@@ -471,14 +473,7 @@ func (p *Profile) writeAuth() (pth string, err error) {
 }
 
 func (p *Profile) generateWgKey() (err error) {
-	wgPth := ""
-	if runtime.GOOS == "windows" {
-		wgPth = "wg.exe"
-	} else {
-		wgPth = "wg"
-	}
-
-	privateKey, err := utils.ExecOutput(wgPth, "genkey")
+	privateKey, err := utils.ExecOutput(p.wgPath, "genkey")
 	if err != nil {
 		err = &ExecError{
 			errors.Wrap(err, "profile: Failed to generate private key"),
@@ -486,7 +481,7 @@ func (p *Profile) generateWgKey() (err error) {
 		return
 	}
 
-	publicKey, err := utils.ExecInputOutput(privateKey, wgPth, "pubkey")
+	publicKey, err := utils.ExecInputOutput(privateKey, p.wgPath, "pubkey")
 	if err != nil {
 		err = &ExecError{
 			errors.Wrap(err, "profile: Failed to get public key"),
@@ -841,7 +836,7 @@ func (p *Profile) clearWgLinux() {
 			[]string{
 				"does not exist",
 			},
-			"wg-quick",
+			p.wgQuickPath,
 			"down", p.Iface,
 		)
 		p.wgQuickLock.Unlock()
@@ -856,7 +851,7 @@ func (p *Profile) clearWgMac() {
 			[]string{
 				"is not a",
 			},
-			"wg-quick",
+			p.wgQuickPath,
 			"down", p.Iface,
 		)
 		p.wgQuickLock.Unlock()
@@ -981,6 +976,8 @@ func (p *Profile) Init() {
 	p.Id = FilterStr(p.Id)
 	p.stateLock = sync.Mutex{}
 	p.waiters = []chan bool{}
+	p.wgPath = GetWgPath()
+	p.wgQuickPath = GetWgQuickPath()
 }
 
 func (p *Profile) Start(timeout bool) (err error) {
@@ -1984,7 +1981,7 @@ func (p *Profile) confWgLinux(data *WgConf) (err error) {
 	}
 
 	_, err = utils.ExecOutputLogged(nil,
-		"wg",
+		p.wgPath,
 		"set", p.Iface,
 		"private-key", p.wgConfPth,
 		"peer", data.PublicKey,
@@ -2088,12 +2085,12 @@ func (p *Profile) confWgLinuxQuick() (err error) {
 	defer p.wgQuickLock.Unlock()
 
 	_, _ = utils.ExecOutput(
-		"wg-quick", "down", p.Iface,
+		p.wgQuickPath, "down", p.Iface,
 	)
 
 	_, err = utils.ExecOutputLogged(
 		nil,
-		"wg-quick",
+		p.wgQuickPath,
 		"up", p.Iface,
 	)
 	if err != nil {
@@ -2108,12 +2105,12 @@ func (p *Profile) confWgMac() (err error) {
 	defer p.wgQuickLock.Unlock()
 
 	_, _ = utils.ExecOutput(
-		"wg-quick", "down", p.Iface,
+		p.wgQuickPath, "down", p.Iface,
 	)
 
 	output, err := utils.ExecOutputLogged(
 		nil,
-		"wg-quick",
+		p.wgQuickPath,
 		"up", p.Iface,
 	)
 	if err != nil {
@@ -2223,13 +2220,6 @@ func (p *Profile) restart() {
 }
 
 func (p *Profile) updateWgHandshake() (err error) {
-	wgPth := ""
-	if runtime.GOOS == "windows" {
-		wgPth = "wg.exe"
-	} else {
-		wgPth = "wg"
-	}
-
 	iface := ""
 	if runtime.GOOS == "darwin" {
 		iface = p.Tuniface
@@ -2242,7 +2232,7 @@ func (p *Profile) updateWgHandshake() (err error) {
 			"No such device",
 			"access interface",
 		},
-		wgPth, "show", iface,
+		p.wgPath, "show", iface,
 		"latest-handshakes",
 	)
 	if err != nil {
