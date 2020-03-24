@@ -6,11 +6,12 @@ import (
 )
 
 const (
-	WgWinPath     = "C:\\Program Files\\WireGuard\\wireguard.exe"
-	WgMacConfPath = "/usr/local/etc/wireguard"
-	Ovpn          = "ovpn"
-	Wg            = "wg"
-	wgConfTempl   = `[Interface]
+	WgWinPath       = "C:\\Program Files\\WireGuard\\wireguard.exe"
+	WgLinuxConfPath = "/etc/wireguard"
+	WgMacConfPath   = "/usr/local/etc/wireguard"
+	Ovpn            = "ovpn"
+	Wg              = "wg"
+	wgConfTempl     = `[Interface]
 Address = {{.Address}}
 PrivateKey = {{.PrivateKey}}{{if .HasDns}}
 DNS = {{.DnsServers}}{{end}}
