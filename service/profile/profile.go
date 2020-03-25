@@ -2567,7 +2567,7 @@ func (p *Profile) stopWgMac() (err error) {
 	//		[]string{
 	//			"is not a",
 	//		},
-	//		"wg-quick",
+	//		p.wgQuickPath,
 	//		"down", p.Iface,
 	//	)
 	//	p.wgQuickLock.Unlock()
