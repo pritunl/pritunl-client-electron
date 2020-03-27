@@ -239,7 +239,7 @@ var openMainWin = function() {
     main.maximizedPrev = null;
 
     main.on('closed', function() {
-      if (process.platform === 'linux') {
+      if (process.platform === 'linux' || !app.dock) {
         app.quit();
       }
       main = null;
