@@ -144,6 +144,7 @@ type Profile struct {
 	state              bool             `json:"-"`
 	stateLock          sync.Mutex       `json:"-"`
 	wgQuickLock        sync.Mutex       `json:"-"`
+	connected          bool             `json:"-"`
 	stop               bool             `json:"-"`
 	startTime          time.Time        `json:"-"`
 	authFailed         bool             `json:"-"`
@@ -661,6 +662,7 @@ func (p *Profile) parseLine(line string) {
 	p.pushOutput(line)
 
 	if strings.Contains(line, "Initialization Sequence Completed") {
+		p.connected = true
 		p.Status = "connected"
 		p.Timestamp = time.Now().Unix() - 5
 		p.update()
@@ -966,6 +968,7 @@ func (p *Profile) Copy() (prfl *Profile) {
 		ServerPublicKey:    p.ServerPublicKey,
 		ServerBoxPublicKey: p.ServerBoxPublicKey,
 		Reconnect:          p.Reconnect,
+		connected:          p.connected,
 	}
 	prfl.Init()
 
@@ -2299,6 +2302,7 @@ func (p *Profile) watchWg() {
 		}
 
 		if p.wgHandshake != 0 {
+			p.connected = true
 			p.Status = "connected"
 			p.Timestamp = time.Now().Unix() - 5
 			p.update()
@@ -2477,7 +2481,7 @@ func (p *Profile) startWg(timeout bool) (err error) {
 		}).Error("profile: Request wg connection failed")
 		err = nil
 
-		p.clearStatus(start)
+		go p.restart()
 		return
 	}
 
