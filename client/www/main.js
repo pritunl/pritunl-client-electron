@@ -211,6 +211,11 @@ var openMainWin = function() {
       maxHeight = 800;
     }
 
+    var zoomFactor = 1;
+    if (process.platform === 'darwin') {
+      zoomFactor = 0.8;
+    }
+
     main = new BrowserWindow({
       title: 'Pritunl',
       icon: icon,
@@ -227,6 +232,7 @@ var openMainWin = function() {
       maxHeight: maxHeight,
       backgroundColor: '#151719',
       webPreferences: {
+        zoomFactor: zoomFactor,
         nodeIntegration: true
       }
     });
