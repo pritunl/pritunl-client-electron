@@ -13,7 +13,6 @@ var config = require('./config.js');
 var utils = require('./utils.js');
 var profileView = require('./profileView.js');
 var remote = require('electron').remote;
-var webFrame = require('electron').webFrame;
 var getGlobal = remoteRequire().getGlobal;
 var Menu = remoteRequire().Menu;
 var app = remoteRequire().app;
@@ -182,10 +181,6 @@ $('.system-logs .clear').click(function(){
 $('.service-logs .close').click(function(){
   closeServiceEditor();
 });
-
-if (os.platform() === 'darwin') {
-  webFrame.setZoomFactor(0.8);
-}
 
 $('.open-main-menu').click(function() {
   $('.main-menu').toggleClass('show');
