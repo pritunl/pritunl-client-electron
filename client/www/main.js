@@ -404,6 +404,14 @@ app.on('ready', function() {
               role: 'close'
             },
             {
+              label: 'Developer Tools',
+              click: function() {
+                if (main) {
+                  main.openDevTools();
+                }
+              }
+            },
+            {
               label: 'Exit',
               click: function() {
                 app.quit();
