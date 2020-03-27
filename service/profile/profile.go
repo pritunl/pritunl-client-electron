@@ -2481,7 +2481,13 @@ func (p *Profile) startWg(timeout bool) (err error) {
 		}).Error("profile: Request wg connection failed")
 		err = nil
 
+		time.Sleep(3 * time.Second)
+
+		if p.connected && !p.stop {
+			go p.restart()
+		}
 		go p.restart()
+		p.clearStatus(start)
 		return
 	}
 
