@@ -34,7 +34,7 @@ process.on('uncaughtException', function (error) {
     buttons: ['Exit'],
     title: 'Pritunl - Process Error',
     message: 'Error occured in main process:\n\n' + errorMsg,
-  }, function() {
+  }).then(function() {
     app.quit();
   });
 });
@@ -117,7 +117,7 @@ var checkService = function(callback) {
               title: 'Pritunl - Service Error',
               message: 'Unable to establish communication with helper ' +
                 'service, try restarting computer'
-            }, function() {
+            }).then(function() {
               app.quit();
             });
           } else if (!status) {
@@ -127,11 +127,10 @@ var checkService = function(callback) {
             dialog.showMessageBox(null, {
               type: 'warning',
               buttons: ['Exit'],
-              defaultId: 1,
               title: 'Pritunl - Service Error',
               message: 'Unable to communicate with helper service, ' +
               'try restarting computer'
-            }, function() {
+            }).then(function() {
               app.quit();
             });
           }
@@ -318,7 +317,7 @@ app.on('ready', function() {
           title: 'Pritunl - Service Error',
           message: 'Unable to establish communication with helper ' +
             'service, try restarting computer'
-        }, function() {
+        }).then(function() {
           app.quit();
         });
         return;
