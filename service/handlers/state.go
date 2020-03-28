@@ -17,13 +17,13 @@ func stateGet(c *gin.Context) {
 	}
 
 	switch runtime.GOOS {
-	case "darwin":
+	case "linux", "darwin":
 		if profile.GetWgPath() != "" && profile.GetWgQuickPath() != "" {
 			data.Wg = true
 		}
 
 		break
-	case "linux", "windows":
+	case "windows":
 		if profile.GetWgPath() != "" {
 			data.Wg = true
 		}
