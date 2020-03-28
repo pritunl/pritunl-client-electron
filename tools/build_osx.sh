@@ -52,8 +52,8 @@ sleep 3
 #codesign --force --deep --timestamp --options=runtime --entitlements="./resources_osx/entitlements.plist" --sign "Developer ID Application: Pritunl, Inc. (U22BLATN63)" build/osx/Applications/Pritunl.app/Contents/MacOS/Pritunl
 
 # Files
-mkdir -p build/osx/tmp
-touch build/osx/tmp/pritunl_auth
+mkdir -p build/osx/var/run
+touch build/var/run/pritunl_auth
 mkdir -p build/osx/var/log
 touch build/osx/var/log/pritunl.log
 touch build/osx/var/log/pritunl.log.1
