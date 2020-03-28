@@ -2486,7 +2486,6 @@ func (p *Profile) startWg(timeout bool) (err error) {
 		if p.connected && !p.stop {
 			go p.restart()
 		}
-		go p.restart()
 		p.clearStatus(start)
 		return
 	}
