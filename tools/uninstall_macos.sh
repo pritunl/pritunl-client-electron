@@ -24,9 +24,13 @@ rm -rf ~/Library/Application Support/pritunl
 rm -rf ~/Library/Caches/pritunl
 rm -rf ~/Library/Preferences/com.electron.pritunl.plist
 
+# Files
+sudo rm /var/run/pritunl_auth
+sudo rm -f /var/log/pritunl.log
+sudo rm -f /var/log/pritunl.log.1
+
 # Old Files
 sudo rm -rf /var/lib/pritunl
-sudo rm -f /var/log/pritunl.log
 sudo kextunload -b net.sf.tuntaposx.tap &> /dev/null || true
 sudo kextunload -b net.sf.tuntaposx.tun &> /dev/null || true
 sudo rm -rf /Library/Extensions/tap.kext
