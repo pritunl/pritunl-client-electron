@@ -1,7 +1,8 @@
 Pritunl Client Changelog
 ========================
 
-<%= version %>
+Version 1.0.2395.64 2020-04-03
+------------------------------
 
 Improve connection management
 
