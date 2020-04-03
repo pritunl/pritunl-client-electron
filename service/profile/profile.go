@@ -837,6 +837,7 @@ func (p *Profile) clearWgLinux() {
 		utils.ExecOutputLogged(
 			[]string{
 				"does not exist",
+				"is not a",
 			},
 			p.wgQuickPath,
 			"down", p.Iface,
