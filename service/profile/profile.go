@@ -2087,15 +2087,27 @@ func (p *Profile) confWgLinuxQuick() (err error) {
 	p.wgQuickLock.Lock()
 	defer p.wgQuickLock.Unlock()
 
-	_, _ = utils.ExecOutput(
-		p.wgQuickPath, "down", p.Iface,
-	)
+	for i := 0; i < 3; i++ {
+		_, _ = utils.ExecOutput(
+			p.wgQuickPath, "down", p.Iface,
+		)
 
-	_, err = utils.ExecOutputLogged(
-		nil,
-		p.wgQuickPath,
-		"up", p.Iface,
-	)
+		if i == 0 {
+			time.Sleep(100 * time.Millisecond)
+		} else {
+			time.Sleep(500 * time.Millisecond)
+		}
+
+		_, err = utils.ExecOutputLogged(
+			nil,
+			p.wgQuickPath,
+			"up", p.Iface,
+		)
+		if err == nil {
+			break
+		}
+	}
+
 	if err != nil {
 		return
 	}
@@ -2107,15 +2119,28 @@ func (p *Profile) confWgMac() (err error) {
 	p.wgQuickLock.Lock()
 	defer p.wgQuickLock.Unlock()
 
-	_, _ = utils.ExecOutput(
-		p.wgQuickPath, "down", p.Iface,
-	)
+	output := ""
+	for i := 0; i < 3; i++ {
+		_, _ = utils.ExecOutput(
+			p.wgQuickPath, "down", p.Iface,
+		)
 
-	output, err := utils.ExecOutputLogged(
-		nil,
-		p.wgQuickPath,
-		"up", p.Iface,
-	)
+		if i == 0 {
+			time.Sleep(100 * time.Millisecond)
+		} else {
+			time.Sleep(500 * time.Millisecond)
+		}
+
+		output, err = utils.ExecOutputLogged(
+			nil,
+			p.wgQuickPath,
+			"up", p.Iface,
+		)
+		if err == nil {
+			break
+		}
+	}
+
 	if err != nil {
 		return
 	}
@@ -2142,21 +2167,33 @@ func (p *Profile) confWgMac() (err error) {
 }
 
 func (p *Profile) confWgWin() (err error) {
-	p.wgQuickLock.Lock()
-	_, _ = utils.ExecOutput(
-		"sc.exe", "stop", fmt.Sprintf("WireGuardTunnel$%s", p.Iface),
-	)
-	time.Sleep(100 * time.Millisecond)
-	_, _ = utils.ExecOutput(
-		"sc.exe", "delete", fmt.Sprintf("WireGuardTunnel$%s", p.Iface),
-	)
-	p.wgQuickLock.Unlock()
+	for i := 0; i < 3; i++ {
+		p.wgQuickLock.Lock()
+		_, _ = utils.ExecOutput(
+			"sc.exe", "stop", fmt.Sprintf("WireGuardTunnel$%s", p.Iface),
+		)
+		time.Sleep(100 * time.Millisecond)
+		_, _ = utils.ExecOutput(
+			"sc.exe", "delete", fmt.Sprintf("WireGuardTunnel$%s", p.Iface),
+		)
+		p.wgQuickLock.Unlock()
 
-	_, err = utils.ExecOutputLogged(
-		nil,
-		WgWinPath,
-		"/installtunnelservice", p.wgConfPth,
-	)
+		if i == 0 {
+			time.Sleep(100 * time.Millisecond)
+		} else {
+			time.Sleep(500 * time.Millisecond)
+		}
+
+		_, err = utils.ExecOutputLogged(
+			nil,
+			WgWinPath,
+			"/installtunnelservice", p.wgConfPth,
+		)
+		if err == nil {
+			break
+		}
+	}
+
 	if err != nil {
 		return
 	}
