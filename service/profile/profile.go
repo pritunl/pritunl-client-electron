@@ -1864,6 +1864,10 @@ func (p *Profile) pingWg(remote string) (wgData *WgPingData, err error) {
 	defer res.Body.Close()
 
 	if res.StatusCode != 200 {
+		if res.StatusCode < 400 || res.StatusCode >= 500 {
+			retry = true
+		}
+
 		err = &errortypes.RequestError{
 			errors.Wrapf(err, "profile: Bad status %n code from server",
 				res.StatusCode),
@@ -2373,7 +2377,17 @@ func (p *Profile) watchWg() {
 			time.Sleep(1 * time.Second)
 		}
 
-		data, err := p.pingWg(p.GatewayAddr)
+		var data *WgPingData
+		var retry bool
+		var err error
+		for i := 0; i < 3; i++ {
+			data, retry, err = p.pingWg(p.GatewayAddr)
+			if !retry {
+				break
+			}
+
+			time.Sleep(1 * time.Millisecond)
+		}
 		if err != nil {
 			logrus.WithFields(logrus.Fields{
 				"error": err,
