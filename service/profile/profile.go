@@ -1661,7 +1661,9 @@ func (p *Profile) reqWg(remote string) (wgData *WgData, err error) {
 	return
 }
 
-func (p *Profile) pingWg(remote string) (wgData *WgPingData, err error) {
+func (p *Profile) pingWg(remote string) (wgData *WgPingData, retry bool,
+	err error) {
+
 	if p.ServerBoxPublicKey == "" {
 		err = &errortypes.ReadError{
 			errors.Wrap(err, "profile: Server box public key not set"),
