@@ -108,8 +108,6 @@ type Route struct {
 }
 
 type WgConf struct {
-	Allow         bool     `json:"allow"`
-	Reason        string   `json:"reason"`
 	Address       string   `json:"address"`
 	Address6      string   `json:"address6"`
 	Hostname      string   `json:"hostname"`
