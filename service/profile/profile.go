@@ -2542,7 +2542,7 @@ func (p *Profile) startWg(timeout bool) (err error) {
 		return
 	}
 
-	if data == nil || data.Configuration == nil {
+	if data == nil {
 		err = &errortypes.ParseError{
 			errors.Wrap(err, "profile: Request wg returned empty data"),
 		}
@@ -2561,6 +2561,18 @@ func (p *Profile) startWg(timeout bool) (err error) {
 			Data: p,
 		}
 		evt.Init()
+
+		p.clearStatus(start)
+		return
+	}
+
+	if data.Configuration == nil {
+		err = &errortypes.ParseError{
+			errors.Wrap(
+				err,
+				"profile: Request wg returned empty configuration",
+			),
+		}
 
 		p.clearStatus(start)
 		return
