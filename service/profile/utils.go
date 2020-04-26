@@ -64,7 +64,13 @@ func GetWgQuickPath() string {
 
 		break
 	case "darwin":
-		path, _ := exec.LookPath("/usr/bin/wg-quick")
+		path, _ := exec.LookPath(
+			"/Applications/Pritunl.app/Contents/Resources/wg-quick")
+		if path != "" {
+			return path
+		}
+
+		path, _ = exec.LookPath("/usr/bin/wg-quick")
 		if path != "" {
 			return path
 		}
