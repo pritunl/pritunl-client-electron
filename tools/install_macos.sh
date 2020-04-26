@@ -7,7 +7,7 @@ then
     exit
 fi
 
-APP_VER="1.0.1436.36"
+APP_VER="1.0.2404.6"
 
 curl -L https://github.com/pritunl/pritunl-client-electron/archive/$APP_VER.tar.gz | tar x
 cd pritunl-client-electron-$APP_VER
