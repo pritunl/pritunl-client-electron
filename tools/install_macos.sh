@@ -1,13 +1,20 @@
 #!/bin/bash
 set -e
 
-read -r -p "Install Pritunl Client? [y/N] " response
+APP_VER="$(curl -s https://api.github.com/repos/pritunl/pritunl-client-electron/releases/latest | python -c 'import json,sys;print(json.load(sys.stdin)["tag_name"])')"
+
+read -r -p "Install Pritunl Client v$APP_VER? [y/N] " response
 if ! [[ "$response" =~ ^([yY][eE][sS]|[yY])+$ ]]
 then
     exit
 fi
 
-APP_VER="1.0.2404.6"
+ROOT_PATH="$(pwd)/pritunl-client-electron-$APP_VER"
+function clean {
+  rm -rf "$ROOT_PATH"
+}
+
+trap clean EXIT
 
 curl -L https://github.com/pritunl/pritunl-client-electron/archive/$APP_VER.tar.gz | tar x
 cd pritunl-client-electron-$APP_VER
