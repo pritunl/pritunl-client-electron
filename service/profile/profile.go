@@ -852,6 +852,7 @@ func (p *Profile) clearWgMac() {
 			[]string{
 				"is not a",
 			},
+			"/usr/local/bin/bash",
 			p.wgQuickPath,
 			"down", p.Iface,
 		)
@@ -2127,7 +2128,7 @@ func (p *Profile) confWgMac() (err error) {
 	output := ""
 	for i := 0; i < 3; i++ {
 		_, _ = utils.ExecOutput(
-			p.wgQuickPath, "down", p.Iface,
+			"/usr/local/bin/bash", p.wgQuickPath, "down", p.Iface,
 		)
 
 		if i == 0 {
@@ -2138,6 +2139,7 @@ func (p *Profile) confWgMac() (err error) {
 
 		output, err = utils.ExecOutputLogged(
 			nil,
+			"/usr/local/bin/bash",
 			p.wgQuickPath,
 			"up", p.Iface,
 		)
