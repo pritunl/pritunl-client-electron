@@ -41,9 +41,9 @@ cp service_osx/com.pritunl.client.plist build/osx/Library/LaunchAgents
 cp openvpn_osx/openvpn build/osx/Applications/Pritunl.app/Contents/Resources/pritunl-openvpn
 
 # Files
-touch /var/run/pritunl_auth
-touch /var/log/pritunl.log
-touch /var/log/pritunl.log.1
+sudo touch /var/run/pritunl_auth
+sudo touch /var/log/pritunl.log
+sudo touch /var/log/pritunl.log.1
 
 # Preinstall
 echo "###################################################"
