@@ -25,7 +25,7 @@ rm -rf ~/Library/Caches/pritunl
 rm -rf ~/Library/Preferences/com.electron.pritunl.plist
 
 # Files
-sudo rm /var/run/pritunl_auth
+sudo rm -f /var/run/pritunl_auth
 sudo rm -f /var/log/pritunl.log
 sudo rm -f /var/log/pritunl.log.1
 
