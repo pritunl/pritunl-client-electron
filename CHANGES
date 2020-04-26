@@ -98,7 +98,6 @@ Version 1.0.1782.9 2018-07-30
 -----------------------------
 
 Add support for OneLogin and Okta passcodes
-Fix wg support on macOS
 
 Version 1.0.1768.89 2018-07-16
 ------------------------------
