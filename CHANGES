@@ -1,6 +1,10 @@
 Pritunl Client Changelog
 ========================
 
+<%= version %>
+
+Fix connection error message
+
 Version 1.0.2404.6 2020-04-12
 -----------------------------
 
