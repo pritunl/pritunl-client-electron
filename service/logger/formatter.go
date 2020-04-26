@@ -71,6 +71,7 @@ func formatPlain(entry *logrus.Entry) (output []byte) {
 			continue
 		}
 
+		keys = append(keys, key)
 	}
 
 	sort.Strings(keys)
