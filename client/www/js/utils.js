@@ -40,6 +40,7 @@ var authRequest = function(method, host, path, token, secret, jsonData,
     authString).digest('base64');
 
   var headers = {
+    'User-Agent': 'pritunl',
     'Auth-Token': token,
     'Auth-Timestamp': authTimestamp,
     'Auth-Nonce': authNonce,
