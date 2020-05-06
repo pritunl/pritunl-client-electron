@@ -1,6 +1,10 @@
 Pritunl Client Changelog
 ========================
 
+<%= version %>
+
+Add authentication cache for wg
+
 Version 1.0.2418.61 2020-04-26
 ------------------------------
 
