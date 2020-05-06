@@ -1393,9 +1393,22 @@ func (p *Profile) reqWg(remote string) (wgData *WgData, err error) {
 	}
 	copy(serverPubKey[:], serverPubKeySlic)
 
-	wgToken, err := utils.RandStrComplex(16)
-	if err != nil {
-		return
+	tokn := token.Get(p.Id, p.ServerPublicKey, p.ServerBoxPublicKey)
+	p.token = tokn
+
+	authToken := ""
+	if tokn != nil {
+		err = tokn.Update()
+		if err != nil {
+			return
+		}
+
+		authToken = tokn.Token
+	} else {
+		authToken, err = utils.RandStrComplex(16)
+		if err != nil {
+			return
+		}
 	}
 
 	tokenNonce, err := utils.RandStr(16)
@@ -1424,7 +1437,7 @@ func (p *Profile) reqWg(remote string) (wgData *WgData, err error) {
 		DeviceName:  p.DeviceName,
 		Platform:    platform,
 		MacAddr:     p.MacAddr,
-		Token:       wgToken,
+		Token:       authToken,
 		Nonce:       tokenNonce,
 		Password:    p.Password,
 		Timestamp:   time.Now().Unix(),
