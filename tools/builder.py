@@ -481,6 +481,7 @@ if cmd == 'upload' or cmd == 'upload-test' or cmd == 'build-upload':
         'mirror',
         '--remove',
         '--overwrite',
+        '--md5',
         'mirror',
         'repo/stable',
     ], cwd=pacur_path)
