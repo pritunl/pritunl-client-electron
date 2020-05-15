@@ -89,15 +89,16 @@ type WgKeyReq struct {
 }
 
 type WgKeyBox struct {
-	DeviceId    string `json:"device_id"`
-	DeviceName  string `json:"device_name"`
-	Platform    string `json:"platform"`
-	MacAddr     string `json:"mac_addr"`
-	Token       string `json:"token"`
-	Nonce       string `json:"nonce"`
-	Password    string `json:"password"`
-	Timestamp   int64  `json:"timestamp"`
-	WgPublicKey string `json:"wg_public_key"`
+	DeviceId    string   `json:"device_id"`
+	DeviceName  string   `json:"device_name"`
+	Platform    string   `json:"platform"`
+	MacAddr     string   `json:"mac_addr"`
+	MacAddrs    []string `json:"mac_addrs"`
+	Token       string   `json:"token"`
+	Nonce       string   `json:"nonce"`
+	Password    string   `json:"password"`
+	Timestamp   int64    `json:"timestamp"`
+	WgPublicKey string   `json:"wg_public_key"`
 }
 
 type WgKeyResp struct {
@@ -145,55 +146,57 @@ type OutputData struct {
 }
 
 type Profile struct {
-	state              bool             `json:"-"`
-	stateLock          sync.Mutex       `json:"-"`
-	wgQuickLock        sync.Mutex       `json:"-"`
-	connected          bool             `json:"-"`
-	stop               bool             `json:"-"`
-	startTime          time.Time        `json:"-"`
-	authFailed         bool             `json:"-"`
-	waiters            []chan bool      `json:"-"`
-	remPaths           []string         `json:"-"`
-	wgPath             string           `json:"-"`
-	wgQuickPath        string           `json:"-"`
-	wgConfPth          string           `json:"-"`
-	wgHandshake        int              `json:"-"`
-	wgServerPublicKey  string           `json:"-"`
-	cmd                *exec.Cmd        `json:"-"`
-	intf               *utils.Interface `json:"-"`
-	lastAuthErr        time.Time        `json:"-"`
-	token              *token.Token     `json:"-"`
-	Id                 string           `json:"id"`
-	Mode               string           `json:"mode"`
-	PortWg             int              `json:"port_wg"`
-	OrgId              string           `json:"-"`
-	UserId             string           `json:"-"`
-	ServerId           string           `json:"-"`
-	SyncToken          string           `json:"-"`
-	SyncSecret         string           `json:"-"`
-	PrivateKeyWg       string           `json:"-"`
-	PublicKeyWg        string           `json:"-"`
-	PrivateKey         string           `json:"-"`
-	DeviceId           string           `json:"-"`
-	DeviceName         string           `json:"-"`
-	Data               string           `json:"-"`
-	Username           string           `json:"-"`
-	Password           string           `json:"-"`
-	ServerPublicKey    string           `json:"-"`
-	ServerBoxPublicKey string           `json:"-"`
-	TokenTtl           int              `json:"-"`
-	Iface              string           `json:"iface"`
-	Tuniface           string           `json:"tun_iface"`
-	Routes             []*Route         `json:"routes'"`
-	Routes6            []*Route         `json:"routes6'"`
-	Reconnect          bool             `json:"reconnect"`
-	Status             string           `json:"status"`
-	Timestamp          int64            `json:"timestamp"`
-	GatewayAddr        string           `json:"gateway_addr"`
-	GatewayAddr6       string           `json:"gateway_addr6"`
-	ServerAddr         string           `json:"server_addr"`
-	ClientAddr         string           `json:"client_addr"`
-	MacAddr            string           `json:"mac_addr"`
+	state              bool               `json:"-"`
+	stateLock          sync.Mutex         `json:"-"`
+	wgQuickLock        sync.Mutex         `json:"-"`
+	connected          bool               `json:"-"`
+	stop               bool               `json:"-"`
+	startTime          time.Time          `json:"-"`
+	authFailed         bool               `json:"-"`
+	waiters            []chan bool        `json:"-"`
+	remPaths           []string           `json:"-"`
+	wgPath             string             `json:"-"`
+	wgQuickPath        string             `json:"-"`
+	wgConfPth          string             `json:"-"`
+	wgHandshake        int                `json:"-"`
+	wgServerPublicKey  string             `json:"-"`
+	wgReqCancel        context.CancelFunc `json:"-"`
+	cmd                *exec.Cmd          `json:"-"`
+	intf               *utils.Interface   `json:"-"`
+	lastAuthErr        time.Time          `json:"-"`
+	token              *token.Token       `json:"-"`
+	Id                 string             `json:"id"`
+	Mode               string             `json:"mode"`
+	PortWg             int                `json:"port_wg"`
+	OrgId              string             `json:"-"`
+	UserId             string             `json:"-"`
+	ServerId           string             `json:"-"`
+	SyncToken          string             `json:"-"`
+	SyncSecret         string             `json:"-"`
+	PrivateKeyWg       string             `json:"-"`
+	PublicKeyWg        string             `json:"-"`
+	PrivateKey         string             `json:"-"`
+	DeviceId           string             `json:"-"`
+	DeviceName         string             `json:"-"`
+	Data               string             `json:"-"`
+	Username           string             `json:"-"`
+	Password           string             `json:"-"`
+	ServerPublicKey    string             `json:"-"`
+	ServerBoxPublicKey string             `json:"-"`
+	TokenTtl           int                `json:"-"`
+	Iface              string             `json:"iface"`
+	Tuniface           string             `json:"tun_iface"`
+	Routes             []*Route           `json:"routes'"`
+	Routes6            []*Route           `json:"routes6'"`
+	Reconnect          bool               `json:"reconnect"`
+	Status             string             `json:"status"`
+	Timestamp          int64              `json:"timestamp"`
+	GatewayAddr        string             `json:"gateway_addr"`
+	GatewayAddr6       string             `json:"gateway_addr6"`
+	ServerAddr         string             `json:"server_addr"`
+	ClientAddr         string             `json:"client_addr"`
+	MacAddr            string             `json:"mac_addr"`
+	MacAddrs           []string           `json:"mac_addrs"`
 }
 
 type AuthData struct {
@@ -1443,6 +1446,7 @@ func (p *Profile) reqWg(remote string) (wgData *WgData, err error) {
 		DeviceName:  p.DeviceName,
 		Platform:    platform,
 		MacAddr:     p.MacAddr,
+		MacAddrs:    p.MacAddrs,
 		Token:       authToken,
 		Nonce:       tokenNonce,
 		Password:    p.Password,
@@ -1726,6 +1730,7 @@ func (p *Profile) pingWg(remote string) (wgData *WgPingData, retry bool,
 		DeviceName:  p.DeviceName,
 		Platform:    platform,
 		MacAddr:     p.MacAddr,
+		MacAddrs:    p.MacAddrs,
 		Timestamp:   time.Now().Unix(),
 		WgPublicKey: p.PublicKeyWg,
 	}
@@ -2486,6 +2491,8 @@ func (p *Profile) startWg(timeout bool) (err error) {
 		return
 	}
 
+	macAddr := ""
+	macAddrs := []string{}
 	for _, iface := range ifaces {
 		if iface.Flags&net.FlagUp == 0 ||
 			iface.Flags&net.FlagLoopback != 0 ||
@@ -2495,8 +2502,13 @@ func (p *Profile) startWg(timeout bool) (err error) {
 			continue
 		}
 
-		p.MacAddr = iface.HardwareAddr.String()
+		macAddr = iface.HardwareAddr.String()
+		if p.MacAddr == "" {
+			p.MacAddr = macAddr
+		}
+		macAddrs = append(macAddrs, macAddr)
 	}
+	p.MacAddrs = macAddrs
 
 	rangeKey := false
 	for _, line := range strings.Split(p.Data, "\n") {
