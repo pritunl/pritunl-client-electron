@@ -998,6 +998,11 @@ func (p *Profile) Start(timeout bool) (err error) {
 	} else {
 		err = p.startOvpn(timeout)
 	}
+
+	if p.stop {
+		err = nil
+	}
+
 	return
 }
 
@@ -2474,6 +2479,7 @@ func (p *Profile) startWg(timeout bool) (err error) {
 
 	err = p.generateWgKey()
 	if err != nil {
+		p.clearStatus(start)
 		return
 	}
 
@@ -2488,6 +2494,8 @@ func (p *Profile) startWg(timeout bool) (err error) {
 		err = &errortypes.ReadError{
 			errors.New("profile: Failed to load interfaces"),
 		}
+
+		p.clearStatus(start)
 		return
 	}
 
@@ -2558,6 +2566,11 @@ func (p *Profile) startWg(timeout bool) (err error) {
 		if err == nil {
 			break
 		}
+
+		if p.stop {
+			p.clearStatus(start)
+			return
+		}
 	}
 	if err != nil {
 		evt := event.Event{
@@ -2576,6 +2589,11 @@ func (p *Profile) startWg(timeout bool) (err error) {
 		if p.connected && !p.stop {
 			go p.restart()
 		}
+		p.clearStatus(start)
+		return
+	}
+
+	if p.stop {
 		p.clearStatus(start)
 		return
 	}
@@ -2621,6 +2639,8 @@ func (p *Profile) startWg(timeout bool) (err error) {
 		err = &errortypes.ReadError{
 			errors.New("profile: Failed to acquire interface"),
 		}
+
+		p.clearStatus(start)
 		return
 	}
 	p.Iface = iface
