@@ -4,6 +4,7 @@ package profile
 import (
 	"bufio"
 	"bytes"
+	"context"
 	"crypto"
 	"crypto/hmac"
 	"crypto/rand"
@@ -59,18 +60,23 @@ var (
 	}{
 		m: map[string]*Profile{},
 	}
-	Ping           = time.Now()
-	clientInsecure = &http.Client{
-		Transport: &http.Transport{
-			DisableKeepAlives:   true,
-			TLSHandshakeTimeout: 10 * time.Second,
-			TLSClientConfig: &tls.Config{
-				InsecureSkipVerify: true,
-				MinVersion:         tls.VersionTLS12,
-				MaxVersion:         tls.VersionTLS13,
-			},
+	Ping            = time.Now()
+	clientTransport = &http.Transport{
+		DisableKeepAlives:   true,
+		TLSHandshakeTimeout: 5 * time.Second,
+		TLSClientConfig: &tls.Config{
+			InsecureSkipVerify: true,
+			MinVersion:         tls.VersionTLS12,
+			MaxVersion:         tls.VersionTLS13,
 		},
-		Timeout: 10 * time.Second,
+	}
+	clientInsecure = &http.Client{
+		Transport: clientTransport,
+		Timeout:   10 * time.Second,
+	}
+	clientConnInsecure = &http.Client{
+		Transport: clientTransport,
+		Timeout:   45 * time.Second,
 	}
 	ipReg = regexp.MustCompile(`(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}`)
 )
@@ -1551,7 +1557,10 @@ func (p *Profile) reqWg(remote string) (wgData *WgData, err error) {
 		Path:   reqPath,
 	}
 
-	req, err := http.NewRequest(
+	conx, cancel := context.WithCancel(context.Background())
+
+	req, err := http.NewRequestWithContext(
+		conx,
 		"POST",
 		u.String(),
 		bytes.NewBuffer(wgReqData),
@@ -1593,7 +1602,8 @@ func (p *Profile) reqWg(remote string) (wgData *WgData, err error) {
 	req.Header.Set("Auth-Nonce", authNonce)
 	req.Header.Set("Auth-Signature", sig)
 
-	res, err := clientInsecure.Do(req)
+	p.wgReqCancel = cancel
+	res, err := clientConnInsecure.Do(req)
 	if err != nil {
 		err = &errortypes.RequestError{
 			errors.Wrap(err, "profile: Request put error"),
@@ -1601,6 +1611,7 @@ func (p *Profile) reqWg(remote string) (wgData *WgData, err error) {
 		return
 	}
 	defer res.Body.Close()
+	p.wgReqCancel = nil
 
 	if res.StatusCode != 200 {
 		err = &errortypes.RequestError{
@@ -2752,6 +2763,11 @@ func (p *Profile) Stop() (err error) {
 	p.stop = true
 	p.Status = "disconnecting"
 	p.update()
+
+	cancel := p.wgReqCancel
+	if cancel != nil {
+		cancel()
+	}
 
 	diff := time.Since(p.startTime)
 	if diff < 8*time.Second {
