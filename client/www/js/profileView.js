@@ -563,14 +563,16 @@ var renderProfile = function(index, prfl) {
     $profile.find('.menu').addClass('autostarting');
   });
   $profile.find('.menu .autostart-on').click(function() {
-    prfl.autostart = true;
-    prfl.saveConf();
-    $profile.find('.menu').removeClass('autostarting');
+    prfl.autostartOn(function() {
+      closeMenu($profile);
+      refreshProfiles();
+    });
   });
   $profile.find('.menu .autostart-off').click(function() {
-    prfl.autostart = false;
-    prfl.saveConf();
-    $profile.find('.menu').removeClass('autostarting');
+    prfl.autostartOff(function() {
+      closeMenu($profile);
+      refreshProfiles();
+    });
   });
 
   $profile.find('.menu .edit-config').click(function() {
