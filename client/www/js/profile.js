@@ -196,6 +196,58 @@ Profile.prototype.load = function(callback, waitAll) {
   })
 };
 
+Profile.prototype.loadSystem = function(data) {
+  this.id = data.id;
+  this.name = data.name || this.name;
+  this.wg = data.wg || false;
+  this.organizationId = data.organization_id || null;
+  this.organization = data.organization || null;
+  this.serverId = data.server_id || null;
+  this.server = data.server || null;
+  this.userId = data.user_id || null;
+  this.user = data.user || null;
+  this.preConnectMsg = data.pre_connect_msg || null;
+  this.passwordMode = data.password_mode || null;
+  this.token = data.token || false;
+  this.tokenTtl = data.token_ttl || null;
+  this.disableReconnect = data.disable_reconnect || null;
+  this.syncHosts = data.sync_hosts || [];
+  this.syncHash = data.sync_hash || null;
+  this.syncSecret = data.sync_secret || null;
+  this.syncToken = data.sync_token || null;
+  this.serverPublicKey = data.server_public_key || null;
+  this.serverBoxPublicKey = data.server_box_public_key || null;
+
+  this.data = data.ovpn_data;
+  this.parseData();
+};
+
+Profile.prototype.exportSystem = function() {
+  return {
+    id: this.id,
+    name: this.name,
+    wg: this.wg,
+    organization_id: this.organizationId,
+    organization: this.organization,
+    server_id: this.serverId,
+    server: this.server,
+    user_id: this.userId,
+    user: this.user,
+    pre_connect_msg: this.preConnectMsg,
+    password_mode: this.passwordMode,
+    token: this.token,
+    token_ttl: this.tokenTtl,
+    disable_reconnect: this.disableReconnect,
+    sync_hosts: this.syncHosts,
+    sync_hash: this.syncHash,
+    sync_secret: this.syncSecret,
+    sync_token: this.syncToken,
+    server_public_key: this.serverPublicKey,
+    server_box_public_key: this.serverBoxPublicKey,
+    ovpn_data: this.data,
+  };
+};
+
 Profile.prototype.parseData = function() {
   var line;
   var lines = this.data.split('\n');
