@@ -322,7 +322,6 @@ Profile.prototype.import = function(data) {
   this.token = data.token || false;
   this.tokenTtl = data.token_ttl || null;
   this.disableReconnect = data.disable_reconnect || null;
-  this.autostart = data.autostart || null;
   this.syncHosts = data.sync_hosts || [];
   this.syncHash = data.sync_hash || null;
   this.syncSecret = data.sync_secret || null;
@@ -366,7 +365,6 @@ Profile.prototype.exportConf = function() {
     token: this.token,
     token_ttl: this.tokenTtl,
     disable_reconnect: this.disableReconnect,
-    autostart: this.autostart,
     sync_hosts: this.syncHosts,
     sync_hash: this.syncHash,
     sync_secret: this.syncSecret,
@@ -405,7 +403,7 @@ Profile.prototype.export = function() {
     userId: this.userId || '',
     user: this.user || '',
     pre_connect_msg: this.preConnectMsg || '',
-    autostart: this.autostart ? 'On' : 'Off',
+    autostart: this.systemPrfl ? 'On' : 'Off',
     syncHosts: this.syncHosts || [],
     syncHash: this.syncHash || '',
     syncSecret: this.syncSecret || '',
