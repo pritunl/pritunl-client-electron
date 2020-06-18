@@ -499,69 +499,151 @@ Profile.prototype.getUptime = function(curTime) {
 };
 
 Profile.prototype.saveConf = function(callback) {
-  fs.writeFile(
-    this.confPath,
-    JSON.stringify(this.exportConf()),
-    {mode: 0o600},
-    function(err) {
-      if (err) {
-        err = new errors.WriteError(
-          'config: Failed to save profile conf (%s)', err);
-        logger.error(err);
-      }
-      if (this.onUpdate) {
-        this.onUpdate();
-      }
-      if (callback) {
-        callback(err);
-      }
-    }.bind(this)
-  );
+  if (this.systemPrfl) {
+    service.sprofilePut(this.exportSystem());
+  } else {
+    fs.writeFile(
+      this.confPath,
+      JSON.stringify(this.exportConf()),
+      {mode: 0o600},
+      function(err) {
+        if (err) {
+          err = new errors.WriteError(
+            'config: Failed to save profile conf (%s)', err);
+          logger.error(err);
+        }
+        if (this.onUpdate) {
+          this.onUpdate();
+        }
+        if (callback) {
+          callback(err);
+        }
+      }.bind(this)
+    );
+  }
 };
 
 Profile.prototype.saveData = function(callback) {
-  if (os.platform() === 'darwin') {
-    this.extractKey(this.data);
-  }
+  if (this.systemPrfl) {
+    service.sprofilePut(this.exportSystem());
+  } else {
+    if (os.platform() === 'darwin') {
+      this.extractKey(this.data);
+    }
 
-  fs.writeFile(
-    this.ovpnPath,
-    this.data,
-    {mode: 0o600},
-    function(err) {
-      if (err) {
-        err = new errors.WriteError(
-          'config: Failed to save profile data (%s)', err);
-        logger.error(err);
-      }
-      this.parseData();
-      if (callback) {
-        callback(err);
-      }
-    }.bind(this)
-  );
+    fs.writeFile(
+      this.ovpnPath,
+      this.data,
+      {mode: 0o600},
+      function(err) {
+        if (err) {
+          err = new errors.WriteError(
+            'config: Failed to save profile data (%s)', err);
+          logger.error(err);
+        }
+        this.parseData();
+        if (callback) {
+          callback(err);
+        }
+      }.bind(this)
+    );
+  }
 };
 
 Profile.prototype.saveLog = function(callback) {
-  fs.writeFile(
-    this.logPath,
-    this.log,
-    {mode: 0o600},
-    function(err) {
-      if (err) {
-        err = new errors.WriteError(
-          'config: Failed to save profile log (%s)', err);
-        logger.error(err);
-      }
-      if (callback) {
-        callback(err);
-      }
-    }.bind(this)
-  );
+  if (this.systemPrfl) {
+    service.sprofilePut(this.exportSystem());
+  } else {
+    if (os.platform() === 'darwin') {
+      this.extractKey(this.data);
+    }
+
+    fs.writeFile(
+      this.logPath,
+      this.log,
+      {mode: 0o600},
+      function (err) {
+        if (err) {
+          err = new errors.WriteError(
+            'config: Failed to save profile log (%s)', err);
+          logger.error(err);
+        }
+        if (callback) {
+          callback(err);
+        }
+      }.bind(this)
+    );
+  }
+};
+
+Profile.prototype.clearLog = function(callback) {
+  this.log = '';
+  if (this.systemPrfl) {
+    service.sprofilePut(this.exportSystem());
+  } else {
+    fs.writeFile(
+      this.logPath,
+      '',
+      {mode: 0o600},
+      function (err) {
+        if (err) {
+          err = new errors.WriteError(
+            'config: Failed to save profile log (%s)', err);
+          logger.error(err);
+        }
+        if (callback) {
+          callback(err);
+        }
+      }.bind(this)
+    );
+  }
+};
+
+Profile.prototype.autostartOn = function(callback) {
+  if (this.systemPrfl) {
+    callback();
+    return;
+  }
+
+  service.sprofilePut(this.exportSystem(), function(err) {
+    if (!err) {
+      this.systemPrfl = true;
+      this.delete();
+    }
+    callback();
+  }.bind(this));
+};
+
+Profile.prototype.autostartOff = function(callback) {
+  if (!this.systemPrfl) {
+    callback();
+    return;
+  }
+
+  this.path = path.join(utils.getUserDataPath(), 'profiles', this.id);
+  this.confPath = this.path + '.conf';
+  this.ovpnPath = this.path + '.ovpn';
+  this.logPath = this.path + '.log';
+
+  service.sprofileDel(this.id, function(err) {
+    if (!err) {
+      this.systemPrfl = false;
+
+      this.saveData();
+      this.saveConf();
+      this.saveLog();
+    }
+
+    callback();
+  }.bind(this));
 };
 
 Profile.prototype.delete = function() {
   this.disconnect();
+
+  if (this.systemPrfl) {
+    service.sprofileDel(this.id);
+  }
 
   if (os.platform() === 'darwin') {
     childProcess.exec(
