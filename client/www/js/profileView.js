@@ -628,8 +628,7 @@ var renderProfile = function(index, prfl) {
       return;
     }
     edtr.set('');
-    prfl.log = '';
-    prfl.saveLog();
+    prfl.clearLog();
   });
 
   $('.profiles .list').append($profile);
