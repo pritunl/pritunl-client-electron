@@ -35,7 +35,7 @@ Importer.prototype.addPath = function(pth) {
   }.bind(this));
 };
 
-Importer.prototype.read = function(pth, data, callback) {
+Importer.prototype.import = function(pth, data, callback) {
   data = data.replace(/\r/g, '');
   var line;
   var lines = data.split('\n');
@@ -172,7 +172,7 @@ Importer.prototype.read = function(pth, data, callback) {
   }
 
   waiter.wait(function() {
-    profile.getProfiles(function(err, curProfiles) {
+    profile.getProfilesAll(function(err, curProfiles) {
       if (err) {
         err = new errors.ReadError(
           'importer: Failed to read profiles (%s)', err);
@@ -183,7 +183,7 @@ Importer.prototype.read = function(pth, data, callback) {
       data = ovpnData.trim() + '\n' + keyData;
 
       var pth = path.join(utils.getUserDataPath(), 'profiles', utils.uuid());
-      var prfl = new profile.Profile(pth);
+      var prfl = new profile.Profile(false, pth);
 
       if (confData) {
         prfl.import(confData);
@@ -225,8 +225,6 @@ Importer.prototype.read = function(pth, data, callback) {
         callback();
       }
     }.bind(this), true);
-
-
   }.bind(this));
 };
 
@@ -245,7 +243,7 @@ Importer.prototype.parse = function(callback) {
       }
 
       waiter.add();
-      this.read(pth, data, function() {
+      this.import(pth, data, function() {
         waiter.done();
       });
     }
@@ -285,7 +283,8 @@ var importProfile = function(pth, callback) {
       });
       break;
     default:
-      var err = new errors.UnsupportedError('profile: Unsupported file type');
+      var err = new errors.UnsupportedError(
+        'profile: Unsupported file type');
       logger.error(err);
   }
 };
@@ -337,6 +336,10 @@ var importProfileUri = function(prflUri, callback) {
     }
   }, function(err, resp, body) {
     var data;
+
+    if (!err && resp && resp.statusCode !== 200) {
+      err = resp.statusMessage;
+    }
 
     if (err) {
       err = new errors.ParseError(
