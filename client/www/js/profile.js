@@ -51,6 +51,10 @@ function Profile(systemPrfl, pth) {
 }
 
 Profile.prototype.load = function(callback, waitAll) {
+  if (this.systemPrfl) {
+    throw new Error('Load on system profile');
+  }
+
   var waiter = new utils.WaitGroup();
   waiter.add(3);
 
@@ -89,7 +93,8 @@ Profile.prototype.load = function(callback, waitAll) {
     try {
       confData = JSON.parse(data);
     } catch (e) {
-      err = new errors.ParseError('profile: Failed to parse config (%s)', e);
+      err = new errors.ParseError(
+        'profile: Failed to parse config (%s)', e);
       logger.error(err);
       confData = {};
     }
