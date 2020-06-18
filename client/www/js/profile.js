@@ -739,7 +739,7 @@ Profile.prototype.extractKey = function() {
 };
 
 Profile.prototype.getFullData = function(callback) {
-  if (os.platform() !== 'darwin') {
+  if (this.systemPrfl || os.platform() !== 'darwin') {
     callback(this.data);
     return;
   }
@@ -1034,7 +1034,7 @@ Profile.prototype.disconnect = function() {
   service.stop(this);
 };
 
-var getProfiles = function(callback, waitAll) {
+var getProfilesUser = function(callback, waitAll) {
   var root = path.join(utils.getUserDataPath(), 'profiles');
 
   var _callback = function(err, prfls) {
@@ -1078,12 +1078,13 @@ var getProfiles = function(callback, waitAll) {
 
       if (!profilePaths.length) {
         _callback(null, []);
+        return;
       }
 
       for (i = 0; i < profilePaths.length; i++) {
         pth = profilePaths[i];
 
-        var prfl = new Profile(pth);
+        var prfl = new Profile(false, pth);
         profiles.push(prfl);
 
         prfl.load(function() {
@@ -1091,11 +1092,70 @@ var getProfiles = function(callback, waitAll) {
 
           if (loaded >= profilePaths.length) {
             _callback(null, profiles);
+            return;
           }
         }, waitAll);
       }
     });
   });
+};
+
+var getProfilesService = function(callback, waitAll) {
+  var _callback = function(err, prfls) {
+    if (prfls) {
+      prfls = sortProfiles(prfls);
+    }
+
+    callback(err, prfls);
+  };
+
+  service.sprofilesGet(function(sprfls, err) {
+    if (err) {
+      return
+    }
+
+    var prfl;
+    var sprfl;
+    var profiles = [];
+
+    if (!sprfls.length) {
+      _callback(null, []);
+      return;
+    }
+
+    for (i = 0; i < sprfls.length; i++) {
+      sprfl = sprfls[i];
+
+      prfl = new Profile(true);
+      prfl.loadSystem(sprfl);
+
+      profiles.push(prfl);
+    }
+
+    _callback(null, profiles);
+  });
+}
+
+var getProfilesAll = function(callback, waitAll) {
+  var profiles = [];
+
+  getProfilesService(function(err, prflsService) {
+    if (err) {
+      return;
+    }
+
+    profiles = prflsService;
+
+    getProfilesUser(function(err, prflsUser) {
+      if (err) {
+        return;
+      }
+
+      profiles = profiles.concat(prflsUser);
+
+      callback(err, profiles);
+    }, waitAll);
+  }, waitAll);
 };
 
 var sortProfiles = function(prfls) {
@@ -1131,6 +1191,8 @@ var sortProfiles = function(prfls) {
 
 module.exports = {
   Profile: Profile,
-  getProfiles: getProfiles,
+  getProfilesUser: getProfilesUser,
+  getProfilesService: getProfilesService,
+  getProfilesAll: getProfilesAll,
   sortProfiles: sortProfiles
 };
