@@ -9,14 +9,24 @@ var logger = require('./logger.js');
 var fs = require('fs');
 var childProcess = require('child_process');
 
-function Profile(pth) {
+function Profile(systemPrfl, pth) {
   this.onUpdate = null;
 
-  this.id = path.basename(pth);
-  this.path = pth;
-  this.confPath = pth + '.conf';
-  this.ovpnPath = pth + '.ovpn';
-  this.logPath = pth + '.log';
+  this.systemPrfl = systemPrfl;
+  if (this.systemPrfl) {
+    this.id = null;
+    this.path = null;
+    this.confPath = null;
+    this.ovpnPath = null;
+    this.logPath = null;
+  } else {
+    this.id = path.basename(pth);
+    this.path = pth;
+    this.confPath = pth + '.conf';
+    this.ovpnPath = pth + '.ovpn';
+    this.logPath = pth + '.log';
+  }
+
   this.data = null;
   this.name = null;
   this.uvName = null;
@@ -31,7 +41,6 @@ function Profile(pth) {
   this.passwordMode = null;
   this.token = null;
   this.tokenTtl = null;
-  this.autostart = false;
   this.syncHosts = [];
   this.syncHash = null;
   this.syncSecret = null;
