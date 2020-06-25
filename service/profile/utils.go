@@ -5,7 +5,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"regexp"
 	"runtime"
 	"sync"
 	"time"
@@ -15,7 +14,6 @@ import (
 )
 
 var (
-	alphaNumRe  = regexp.MustCompile("[^a-zA-Z0-9]+")
 	restartLock sync.Mutex
 )
 
@@ -244,8 +242,4 @@ func RestartProfiles(resetNet bool) (err error) {
 	}
 
 	return
-}
-
-func FilterStr(input string) string {
-	return string(alphaNumRe.ReplaceAll([]byte(input), []byte("")))
 }
