@@ -461,7 +461,7 @@ app.on('ready', function() {
         tray.setContextMenu(appMenu);
       }
 
-      profile.getProfiles(function(err, prfls) {
+      profile.getProfilesUser(function(err, prfls) {
         if (err) {
           return;
         }

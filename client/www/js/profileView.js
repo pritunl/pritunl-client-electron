@@ -635,7 +635,7 @@ var renderProfile = function(index, prfl) {
 };
 
 var refreshProfiles = function() {
-  profile.getProfiles(function(err, prfls) {
+  profile.getProfilesUser(function(err, prfls) {
     if (err) {
       err = new errors.ReadError(
         'importer: Failed to read profiles (%s)', err);
@@ -731,7 +731,7 @@ var init = function() {
 };
 
 var initProfiles = function() {
-  profile.getProfiles(function(err, prfls) {
+  profile.getProfilesUser(function(err, prfls) {
     var profileCount = 0;
 
     var importLock = false;
