@@ -290,16 +290,30 @@ var sync =  function() {
       return;
     }
 
-    try {
-      var data = JSON.parse(body);
-    } catch (e) {
-      err = new errors.ParseError(
-        'main: Failed to parse service status (%s)', e);
+    if (!err && resp && resp.statusCode !== 200) {
+      err = resp.statusMessage;
+    }
+
+    if (err) {
+      err = new errors.NetworkError(
+        'main: Failed to get service status (%s)', err);
       logger.error(err);
       if (tray) {
         tray.setImage(disconnTray);
       }
       return;
+    } else {
+      try {
+        var data = JSON.parse(body);
+      } catch (e) {
+        err = new errors.ParseError(
+          'main: Failed to parse service status (%s)', e);
+        logger.error(err);
+        if (tray) {
+          tray.setImage(disconnTray);
+        }
+        return;
+      }
     }
 
     if (tray) {
