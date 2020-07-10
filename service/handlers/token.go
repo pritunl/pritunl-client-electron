@@ -1,8 +1,11 @@
 package handlers
 
 import (
+	"github.com/dropbox/godropbox/errors"
 	"github.com/gin-gonic/gin"
+	"github.com/pritunl/pritunl-client-electron/service/errortypes"
 	"github.com/pritunl/pritunl-client-electron/service/token"
+	"github.com/pritunl/pritunl-client-electron/service/utils"
 )
 
 type tokenData struct {
@@ -14,7 +17,15 @@ type tokenData struct {
 
 func tokenPut(c *gin.Context) {
 	data := &tokenData{}
-	c.Bind(data)
+
+	err := c.Bind(data)
+	if err != nil {
+		err = &errortypes.ParseError{
+			errors.Wrap(err, "handler: Bind error"),
+		}
+		utils.AbortWithError(c, 400, err)
+		return
+	}
 
 	tokn, err := token.Update(
 		data.Profile,
@@ -23,7 +34,7 @@ func tokenPut(c *gin.Context) {
 		data.Ttl,
 	)
 	if err != nil {
-		c.AbortWithError(500, err)
+		utils.AbortWithError(c, 500, err)
 		return
 	}
 
@@ -32,7 +43,15 @@ func tokenPut(c *gin.Context) {
 
 func tokenDelete(c *gin.Context) {
 	data := &tokenData{}
-	c.Bind(data)
+
+	err := c.Bind(data)
+	if err != nil {
+		err = &errortypes.ParseError{
+			errors.Wrap(err, "handler: Bind error"),
+		}
+		utils.AbortWithError(c, 400, err)
+		return
+	}
 
 	token.Clear(data.Profile)
 
