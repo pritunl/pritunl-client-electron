@@ -1,8 +1,11 @@
 package handlers
 
 import (
+	"github.com/dropbox/godropbox/errors"
 	"github.com/gin-gonic/gin"
+	"github.com/pritunl/pritunl-client-electron/service/errortypes"
 	"github.com/pritunl/pritunl-client-electron/service/profile"
+	"github.com/pritunl/pritunl-client-electron/service/utils"
 )
 
 type profileData struct {
@@ -30,13 +33,22 @@ func profileGet(c *gin.Context) {
 
 func profilePost(c *gin.Context) {
 	data := &profileData{}
-	c.Bind(data)
+
+	err := c.Bind(data)
+	if err != nil {
+		err = &errortypes.ParseError{
+			errors.Wrap(err, "handler: Bind error"),
+		}
+		utils.AbortWithError(c, 400, err)
+		return
+	}
+	data.Id = utils.FilterStr(data.Id)
 
 	prfl := profile.GetProfile(data.Id)
 	if prfl != nil {
 		err := prfl.Stop()
 		if err != nil {
-			c.AbortWithError(500, err)
+			utils.AbortWithError(c, 500, err)
 			return
 		}
 	}
@@ -60,9 +72,12 @@ func profilePost(c *gin.Context) {
 	}
 	prfl.Init()
 
-	err := prfl.Start(data.Timeout)
+	err = prfl.Start(data.Timeout)
 	if err != nil {
-		c.AbortWithError(500, err)
+		err = &errortypes.ParseError{
+			errors.Wrap(err, "handler: Bind error"),
+		}
+		utils.AbortWithError(c, 500, err)
 		return
 	}
 
@@ -71,13 +86,19 @@ func profilePost(c *gin.Context) {
 
 func profileDel(c *gin.Context) {
 	data := &profileData{}
-	c.Bind(data)
+
+	err := c.Bind(data)
+	if err != nil {
+		utils.AbortWithError(c, 400, err)
+		return
+	}
+	data.Id = utils.FilterStr(data.Id)
 
 	prfl := profile.GetProfile(data.Id)
 	if prfl != nil {
 		err := prfl.Stop()
 		if err != nil {
-			c.AbortWithError(500, err)
+			utils.AbortWithError(c, 500, err)
 			return
 		}
 	}
