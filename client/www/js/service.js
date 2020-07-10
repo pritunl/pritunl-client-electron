@@ -57,6 +57,10 @@ var update = function(callback) {
     url: url,
     headers: headers
   }, function(err, resp, body) {
+    if (!err && resp && resp.statusCode !== 200) {
+      err = resp.statusMessage;
+    }
+
     if (err) {
       err = new errors.NetworkError(
         'service: Failed to update profile (%s)', err);
@@ -130,7 +134,11 @@ var start = function(prfl, mode, timeout, serverPubKey, serverBoxPubKey,
         timeout: timeout,
         data: data
       }
-    }, function(err) {
+    }, function(err, resp, data) {
+      if (!err && resp && resp.statusCode !== 200) {
+        err = resp.statusMessage;
+      }
+
       if (err) {
         err = new errors.NetworkError(
           'service: Failed to start profile (%s)', err);
@@ -164,7 +172,11 @@ var stop = function(prfl, callback) {
     body: {
       id: prfl.id
     }
-  }, function(err) {
+  }, function(err, resp, data) {
+    if (!err && resp && resp.statusCode !== 200) {
+      err = resp.statusMessage;
+    }
+
     if (err) {
       err = new errors.NetworkError(
         'service: Failed to stop profile (%s)', err);
@@ -209,6 +221,10 @@ var tokenUpdate = function(prfl, callback) {
       ttl: prfl.tokenTtl,
     }
   }, function(err, resp, body) {
+    if (!err && resp && resp.statusCode !== 200) {
+      err = resp.statusMessage;
+    }
+
     if (err) {
       err = new errors.NetworkError(
         'service: Failed to update token (%s)', err);
@@ -247,7 +263,11 @@ var tokenDelete = function(prfl, callback) {
     body: {
       profile: prfl.id
     }
-  }, function(err) {
+  }, function(err, resp, data) {
+    if (!err && resp && resp.statusCode !== 200) {
+      err = resp.statusMessage;
+    }
+
     if (err) {
       err = new errors.NetworkError(
         'service: Failed to delete token (%s)', err);
@@ -331,6 +351,10 @@ var state = function(callback) {
     url: url,
     headers: headers,
   }, function(err, resp, body) {
+    if (!err && resp && resp.statusCode !== 200) {
+      err = resp.statusMessage;
+    }
+
     if (err) {
       err = new errors.NetworkError(
         'service: Failed to get state (%s)', err);
