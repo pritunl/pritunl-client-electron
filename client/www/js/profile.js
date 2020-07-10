@@ -410,7 +410,7 @@ Profile.prototype.export = function() {
     server: this.server || '',
     userId: this.userId || '',
     user: this.user || '',
-    pre_connect_msg: this.preConnectMsg || '',
+    preConnectMsg: this.preConnectMsg || '',
     autostart: this.systemPrfl ? 'On' : 'Off',
     syncHosts: this.syncHosts || [],
     syncHash: this.syncHash || '',
