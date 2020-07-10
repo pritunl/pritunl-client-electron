@@ -12,6 +12,7 @@ import (
 type sprofileData struct {
 	Id                 string   `json:"id"`
 	Name               string   `json:"name"`
+	State              bool     `json:"state"`
 	Wg                 bool     `json:"wg"`
 	OrganizationId     string   `json:"organization_id"`
 	Organization       string   `json:"organization"`
@@ -59,6 +60,7 @@ func sprofilePut(c *gin.Context) {
 	prfl := &sprofile.Sprofile{
 		Id:                 data.Id,
 		Name:               data.Name,
+		State:              data.State,
 		Wg:                 data.Wg,
 		OrganizationId:     data.OrganizationId,
 		Organization:       data.Organization,
