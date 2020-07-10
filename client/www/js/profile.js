@@ -31,6 +31,7 @@ function Profile(systemPrfl, pth) {
   this.name = null;
   this.uvName = null;
   this.wg = null;
+  this.lastMode = null;
   this.organizationId = null;
   this.organization = null;
   this.serverId = null;
@@ -205,6 +206,7 @@ Profile.prototype.loadSystem = function(data) {
   this.id = data.id;
   this.name = data.name || this.name;
   this.wg = data.wg || false;
+  this.lastMode = data.last_mode || null;
   this.organizationId = data.organization_id || null;
   this.organization = data.organization || null;
   this.serverId = data.server_id || null;
@@ -232,6 +234,7 @@ Profile.prototype.exportSystem = function() {
     id: this.id,
     name: this.name,
     wg: this.wg,
+    last_mode: this.lastMode,
     organization_id: this.organizationId,
     organization: this.organization,
     server_id: this.serverId,
@@ -286,6 +289,7 @@ Profile.prototype.update = function(data) {
 Profile.prototype.refresh = function(prfl) {
   this.name = prfl.name || this.name;
   this.wg = prfl.wg;
+  this.lastMode = prfl.lastMode;
   this.organizationId = prfl.organizationId || this.organizationId;
   this.organization = prfl.organization || this.organization;
   this.serverId = prfl.serverId || this.serverId;
@@ -311,6 +315,7 @@ Profile.prototype.import = function(data) {
   this.status = this.status || 'disconnected';
   this.name = data.name || this.name;
   this.wg = data.wg || false;
+  this.lastMode = data.last_mode || this.lastMode;
   this.organizationId = data.organization_id || null;
   this.organization = data.organization || null;
   this.serverId = data.server_id || null;
@@ -333,6 +338,7 @@ Profile.prototype.import = function(data) {
 Profile.prototype.upsert = function(data) {
   this.name = data.name || this.name;
   this.wg = data.wg || false;
+  this.lastMode = data.lastMode || this.lastMode;
   this.organizationId = data.organization_id || this.organizationId;
   this.organization = data.organization || this.organization;
   this.serverId = data.server_id || this.serverId;
@@ -354,6 +360,7 @@ Profile.prototype.exportConf = function() {
   return {
     name: this.name,
     wg: this.wg,
+    lastMode: this.lastMode,
     organization_id: this.organizationId,
     organization: this.organization,
     server_id: this.serverId,
@@ -396,6 +403,7 @@ Profile.prototype.export = function() {
     clientAddr: this.clientAddr || '-',
     name: formatedName,
     wg: this.wg || false,
+    lastMode: this.lastMode,
     organizationId: this.organizationId || '',
     organization: this.organization || '',
     serverId: this.serverId || '',
