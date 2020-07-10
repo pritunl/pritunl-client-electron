@@ -14,6 +14,7 @@ type Sprofile struct {
 	Name               string   `json:"name"`
 	State              bool     `json:"state"`
 	Wg                 bool     `json:"wg"`
+	LastMode           string   `json:"last_mode"`
 	OrganizationId     string   `json:"organization_id"`
 	Organization       string   `json:"organization"`
 	ServerId           string   `json:"server_id"`
