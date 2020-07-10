@@ -93,11 +93,14 @@ func getOpenvpnPath() (pth string) {
 		case "windows":
 			pth = filepath.Join(utils.GetRootDir(), "..",
 				"openvpn_win", "openvpn.exe")
+			break
 		case "darwin":
 			pth = filepath.Join(utils.GetRootDir(), "..",
 				"openvpn_osx", "openvpn")
+			break
 		case "linux":
 			pth = "openvpn"
+			break
 		default:
 			panic("profile: Not implemented")
 		}
