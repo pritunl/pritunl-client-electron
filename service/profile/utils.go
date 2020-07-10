@@ -9,6 +9,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/dropbox/godropbox/container/set"
 	"github.com/pritunl/pritunl-client-electron/service/constants"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
 )
@@ -197,6 +198,18 @@ func GetProfiles() (prfls map[string]*Profile) {
 	Profiles.RLock()
 	for _, prfl := range Profiles.m {
 		prfls[prfl.Id] = prfl
+	}
+	Profiles.RUnlock()
+
+	return
+}
+
+func GetProfilesId() (prflsId set.Set) {
+	prflsId = set.NewSet()
+
+	Profiles.RLock()
+	for _, prfl := range Profiles.m {
+		prflsId.Add(prfl.Id)
 	}
 	Profiles.RUnlock()
 
