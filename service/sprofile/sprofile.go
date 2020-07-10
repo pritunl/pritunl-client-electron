@@ -12,6 +12,7 @@ import (
 type Sprofile struct {
 	Id                 string   `json:"id"`
 	Name               string   `json:"name"`
+	State              bool     `json:"state"`
 	Wg                 bool     `json:"wg"`
 	OrganizationId     string   `json:"organization_id"`
 	Organization       string   `json:"organization"`
