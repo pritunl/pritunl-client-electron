@@ -188,6 +188,157 @@ var stop = function(prfl, callback) {
   });
 };
 
+var sprofilesGet = function(callback) {
+  var url;
+  var headers = {
+    'Auth-Key': constants.key,
+    'User-Agent': 'pritunl'
+  };
+
+  if (constants.unixSocket) {
+    url = 'http://unix:' + constants.unixPath + ':/sprofile';
+    headers['Host'] = 'unix';
+  } else {
+    url = 'http://' + constants.serviceHost + '/sprofile';
+  }
+
+  request.get({
+    url: url,
+    headers: headers
+  }, function(err, resp, body) {
+    if (!err && resp && resp.statusCode !== 200) {
+      err = resp.statusMessage;
+    }
+
+    if (err) {
+      err = new errors.NetworkError(
+        'service: Failed to get sprofile (%s)', err);
+    } else {
+      try {
+        var data = JSON.parse(body);
+      } catch (e) {
+        err = new errors.ParseError(
+          'service: Failed to parse data (%s)', e);
+        logger.error(err);
+      }
+    }
+
+    if (callback) {
+      callback(data, err);
+    }
+  }.bind(this));
+};
+
+var sprofilePut = function(data, callback) {
+  var url;
+  var headers = {
+    'Auth-Key': constants.key,
+    'User-Agent': 'pritunl'
+  };
+
+  if (constants.unixSocket) {
+    url = 'http://unix:' + constants.unixPath + ':/sprofile';
+    headers['Host'] = 'unix';
+  } else {
+    url = 'http://' + constants.serviceHost + '/sprofile';
+  }
+
+  request.put({
+    url: url,
+    json: true,
+    headers: headers,
+    body: data
+  }, function(err, resp, body) {
+    if (!err && resp && resp.statusCode !== 200) {
+      err = resp.statusMessage;
+    }
+
+    if (err) {
+      err = new errors.NetworkError(
+        'service: Failed to update sprofile (%s)', err);
+      logger.error(err);
+    }
+
+    if (callback) {
+      callback(null, body.valid ? body : null);
+    }
+  });
+};
+
+var sprofileDel = function(prflId, callback) {
+  var url;
+  var headers = {
+    'Auth-Key': constants.key,
+    'User-Agent': 'pritunl'
+  };
+
+  if (constants.unixSocket) {
+    url = 'http://unix:' + constants.unixPath + ':/sprofile';
+    headers['Host'] = 'unix';
+  } else {
+    url = 'http://' + constants.serviceHost + '/sprofile';
+  }
+
+  request.del({
+    url: url,
+    json: true,
+    headers: headers,
+    body: {
+      id: prflId
+    }
+  }, function(err, resp, data) {
+    if (!err && resp && resp.statusCode !== 200) {
+      err = resp.statusMessage;
+    }
+
+    if (err) {
+      err = new errors.NetworkError(
+        'service: Failed to delete token (%s)', err);
+      logger.error(err);
+    }
+    if (callback) {
+      callback(err);
+    }
+  });
+};
+
+var sprofileLogDel = function(prflId, callback) {
+  var url;
+  var headers = {
+    'Auth-Key': constants.key,
+    'User-Agent': 'pritunl'
+  };
+
+  if (constants.unixSocket) {
+    url = 'http://unix:' + constants.unixPath + ':/sprofile/log';
+    headers['Host'] = 'unix';
+  } else {
+    url = 'http://' + constants.serviceHost + '/sprofile/log';
+  }
+
+  request.del({
+    url: url,
+    json: true,
+    headers: headers,
+    body: {
+      id: prflId
+    }
+  }, function(err, resp, data) {
+    if (!err && resp && resp.statusCode !== 200) {
+      err = resp.statusMessage;
+    }
+
+    if (err) {
+      err = new errors.NetworkError(
+        'service: Failed to delete token (%s)', err);
+      logger.error(err);
+    }
+    if (callback) {
+      callback(err);
+    }
+  });
+};
+
 var tokenUpdate = function(prfl, callback) {
   var serverPubKey = '';
 
@@ -388,6 +539,10 @@ module.exports = {
   get: get,
   iter: iter,
   update: update,
+  sprofilesGet: sprofilesGet,
+  sprofilePut: sprofilePut,
+  sprofileDel: sprofileDel,
+  sprofileLogDel: sprofileLogDel,
   tokenUpdate: tokenUpdate,
   tokenDelete: tokenDelete,
   start: start,
