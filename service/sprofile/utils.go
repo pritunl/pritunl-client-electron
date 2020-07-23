@@ -9,11 +9,18 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
+	"sync"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/dropbox/godropbox/errors"
 	"github.com/pritunl/pritunl-client-electron/service/errortypes"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
+)
+
+var (
+	cache      = []*Sprofile{}
+	cacheStale = true
+	cacheLock  = sync.Mutex{}
 )
 
 func GetPath() string {
@@ -32,9 +39,44 @@ func GetPath() string {
 }
 
 func GetAll() (prfls []*Sprofile, err error) {
-	prflsPath := GetPath()
+	if cacheStale {
+		err = Reload(false)
+		if err != nil {
+			return
+		}
+	}
 
 	prfls = []*Sprofile{}
+	prflsCache := cache
+
+	for _, prfl := range prflsCache {
+		newPrlf := prfl.Copy()
+		prfls = append(prfls, newPrlf)
+	}
+
+	return
+}
+
+func Remove(prflId string) {
+	prflsPath := GetPath()
+	prflPth := path.Join(prflsPath, fmt.Sprintf("%s.conf", prflId))
+	logPth := path.Join(prflsPath, fmt.Sprintf("%s.log", prflId))
+
+	_ = os.Remove(prflPth)
+	_ = os.Remove(logPth)
+}
+
+func Reload(init bool) (err error) {
+	cacheLock.Lock()
+	defer cacheLock.Unlock()
+
+	prflsPath := GetPath()
+	prfls := []*Sprofile{}
+
+	curPrfls := map[string]*Sprofile{}
+	for _, prfl := range cache {
+		curPrfls[prfl.Id] = prfl
+	}
 
 	files, err := ioutil.ReadDir(prflsPath)
 	if err != nil {
@@ -79,19 +121,22 @@ func GetAll() (prfls []*Sprofile, err error) {
 			continue
 		}
 
+		if init {
+			prfl.State = true
+		} else {
+			curPrfl := curPrfls[prfl.Id]
+			if curPrfl != nil {
+				prfl.State = curPrfl.State
+			}
+		}
+
 		prfls = append(prfls, prfl)
 	}
 
+	cache = prfls
+	cacheStale = false
+
 	return
-}
-
-func Remove(prflId string) {
-	prflsPath := GetPath()
-	prflPth := path.Join(prflsPath, fmt.Sprintf("%s.conf", prflId))
-	logPth := path.Join(prflsPath, fmt.Sprintf("%s.log", prflId))
-
-	_ = os.Remove(prflPth)
-	_ = os.Remove(logPth)
 }
 
 func ClearLog(prflId string) (err error) {
