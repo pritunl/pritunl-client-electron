@@ -86,6 +86,59 @@ var update = function(callback) {
 
 var start = function(prfl, mode, timeout, serverPubKey, serverBoxPubKey,
     username, password, callback) {
+  var reconnect = prfl.disableReconnect ? false :
+    !config.settings.disable_reconnect;
+
+  if (prfl.systemPrfl) {
+    var url;
+    var headers = {
+      'Auth-Key': constants.key,
+      'User-Agent': 'pritunl'
+    };
+
+    if (constants.unixSocket) {
+      url = 'http://unix:' + constants.unixPath + ':/profile';
+      headers['Host'] = 'unix';
+    } else {
+      url = 'http://' + constants.serviceHost + '/profile';
+    }
+
+    request.post({
+      url: url,
+      json: true,
+      headers: headers,
+      body: {
+        id: prfl.id,
+        mode: mode,
+        org_id: prfl.organizationId,
+        user_id: prfl.userId,
+        server_id: prfl.serverId,
+        sync_token: prfl.syncToken,
+        sync_secret: prfl.syncSecret,
+        username: username,
+        password: password,
+        token_ttl: prfl.tokenTtl,
+        reconnect: reconnect,
+        timeout: timeout
+      }
+    }, function(err, resp, data) {
+      if (!err && resp && resp.statusCode !== 200) {
+        err = resp.statusMessage;
+      }
+
+      if (err) {
+        err = new errors.NetworkError(
+          'service: Failed to start profile (%s)', err);
+        logger.error(err);
+      }
+      if (callback) {
+        callback(err);
+      }
+    });
+
+    return;
+  }
+
   username = username || 'pritunl';
 
   if (serverPubKey && (mode === 'wg' || prfl.token || password)) {
@@ -96,9 +149,6 @@ var start = function(prfl, mode, timeout, serverPubKey, serverBoxPubKey,
   }
 
   prfl.getFullData(function(data) {
-    var reconnect = prfl.disableReconnect ? false :
-      !config.settings.disable_reconnect;
-
     var url;
     var headers = {
       'Auth-Key': constants.key,
