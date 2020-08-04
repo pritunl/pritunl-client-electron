@@ -618,8 +618,12 @@ Profile.prototype.autostartOn = function(callback) {
 
   service.sprofilePut(this.exportSystem(), function(err) {
     if (!err) {
-      this.systemPrfl = true;
       this.delete();
+      this.systemPrfl = true;
+      this.path = null;
+      this.confPath = null;
+      this.ovpnPath = null;
+      this.logPath = null;
     }
     callback();
   }.bind(this));
