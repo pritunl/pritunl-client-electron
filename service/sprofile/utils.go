@@ -25,6 +25,49 @@ var (
 	cacheLock      = sync.Mutex{}
 )
 
+func Activate(prflId, mode, password string) (err error) {
+	cacheLock.Lock()
+	defer cacheLock.Unlock()
+
+	prflsCache := []*Sprofile{}
+
+	for _, prfl := range cache {
+		if prfl.Id == prflId {
+			prfl = prfl.Copy()
+
+			prfl.State = true
+			prfl.LastMode = mode
+			prfl.Password = password
+
+			err = prfl.Commit()
+			if err != nil {
+				return
+			}
+		}
+		prflsCache = append(prflsCache, prfl)
+	}
+
+	cache = prflsCache
+
+	return
+}
+
+func Deactivate(prflId string) {
+	cacheLock.Lock()
+	defer cacheLock.Unlock()
+
+	prflsCache := []*Sprofile{}
+
+	for _, prfl := range cache {
+		if prfl.Id == prflId {
+			prfl.State = false
+		}
+		prflsCache = append(prflsCache, prfl)
+	}
+
+	cache = prflsCache
+}
+
 func GetPath() string {
 	switch runtime.GOOS {
 	case "windows":
