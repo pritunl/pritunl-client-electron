@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/pritunl/pritunl-client-electron/service/errortypes"
 	"github.com/pritunl/pritunl-client-electron/service/profile"
+	"github.com/pritunl/pritunl-client-electron/service/sprofile"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
 )
 
@@ -43,6 +44,18 @@ func profilePost(c *gin.Context) {
 		return
 	}
 	data.Id = utils.FilterStr(data.Id)
+
+	sprfl := sprofile.Get(data.Id)
+	if sprfl != nil {
+		err = sprofile.Activate(data.Id, data.Mode, data.Password)
+		if err != nil {
+			utils.AbortWithError(c, 500, err)
+			return
+		}
+
+		c.JSON(200, nil)
+		return
+	}
 
 	prfl := profile.GetProfile(data.Id)
 	if prfl != nil {
@@ -93,6 +106,13 @@ func profileDel(c *gin.Context) {
 		return
 	}
 	data.Id = utils.FilterStr(data.Id)
+
+	sprfl := sprofile.Get(data.Id)
+	if sprfl != nil {
+		sprofile.Deactivate(data.Id)
+		c.JSON(200, nil)
+		return
+	}
 
 	prfl := profile.GetProfile(data.Id)
 	if prfl != nil {
