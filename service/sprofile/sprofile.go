@@ -110,6 +110,8 @@ func (s *Sprofile) Commit() (err error) {
 		return
 	}
 
+	cacheStale = true
+
 	return
 }
 
