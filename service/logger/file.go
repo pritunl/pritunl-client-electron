@@ -42,7 +42,7 @@ func (s *fileSender) send(entry *logrus.Entry) (err error) {
 		return
 	}
 
-	if stat.Size() >= 2000000 {
+	if stat.Size() >= 1000000 {
 		os.Remove(utils.GetLogPath2())
 		err = os.Rename(utils.GetLogPath(), utils.GetLogPath2())
 		if err != nil {
