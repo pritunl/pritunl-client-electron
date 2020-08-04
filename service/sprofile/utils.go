@@ -10,6 +10,7 @@ import (
 	"runtime"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/dropbox/godropbox/errors"
@@ -18,9 +19,10 @@ import (
 )
 
 var (
-	cache      = []*Sprofile{}
-	cacheStale = true
-	cacheLock  = sync.Mutex{}
+	cache          = []*Sprofile{}
+	cacheStale     = true
+	cacheTimestamp = time.Now()
+	cacheLock      = sync.Mutex{}
 )
 
 func GetPath() string {
@@ -39,7 +41,7 @@ func GetPath() string {
 }
 
 func GetAll() (prfls []*Sprofile, err error) {
-	if cacheStale {
+	if cacheStale || time.Since(cacheTimestamp) > 1*time.Minute {
 		err = Reload(false)
 		if err != nil {
 			return
@@ -64,6 +66,8 @@ func Remove(prflId string) {
 
 	_ = os.Remove(prflPth)
 	_ = os.Remove(logPth)
+
+	cacheStale = true
 }
 
 func Reload(init bool) (err error) {
@@ -135,6 +139,7 @@ func Reload(init bool) (err error) {
 
 	cache = prfls
 	cacheStale = false
+	cacheTimestamp = time.Now()
 
 	return
 }
