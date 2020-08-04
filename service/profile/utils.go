@@ -6,11 +6,14 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"sync"
 	"time"
 
+	"github.com/Sirupsen/logrus"
 	"github.com/dropbox/godropbox/container/set"
 	"github.com/pritunl/pritunl-client-electron/service/constants"
+	"github.com/pritunl/pritunl-client-electron/service/sprofile"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
 )
 
@@ -290,4 +293,107 @@ func RestartProfiles(resetNet bool) (err error) {
 	}
 
 	return
+}
+
+func SyncSystemProfiles() (err error) {
+	sprfls, err := sprofile.GetAll()
+	if err != nil {
+		return
+	}
+
+	prfls := GetProfiles()
+
+	waiter := sync.WaitGroup{}
+
+	for _, sPrfl := range sprfls {
+		curPrfl := prfls[sPrfl.Id]
+
+		if sPrfl.State {
+			if curPrfl == nil {
+				prfl := ImportSystemProfile(sPrfl)
+
+				waiter.Add(1)
+
+				go func() {
+					err = prfl.Start(false)
+					if err != nil {
+						logrus.WithFields(logrus.Fields{
+							"profile_id": prfl.Id,
+							"error":      err,
+						}).Error("profile: Failed to start system profile")
+						err = nil
+					}
+
+					waiter.Done()
+				}()
+			} else if curPrfl.Mode != sPrfl.LastMode &&
+				!(curPrfl.Mode == "ovpn" && sPrfl.LastMode == "") {
+
+				waiter.Add(1)
+
+				go func() {
+					err = curPrfl.Stop()
+					if err != nil {
+						logrus.WithFields(logrus.Fields{
+							"profile_id": curPrfl.Id,
+							"error":      err,
+						}).Error("profile: Failed to stop system profile")
+						err = nil
+
+						time.Sleep(1 * time.Second)
+					}
+
+					prfl := ImportSystemProfile(sPrfl)
+					err = prfl.Start(false)
+					if err != nil {
+						logrus.WithFields(logrus.Fields{
+							"profile_id": curPrfl.Id,
+							"error":      err,
+						}).Error("profile: Failed to start system profile")
+						err = nil
+					}
+
+					waiter.Done()
+				}()
+			}
+		} else if curPrfl != nil {
+			waiter.Add(1)
+
+			go func() {
+				err = curPrfl.Stop()
+				if err != nil {
+					logrus.WithFields(logrus.Fields{
+						"profile_id": curPrfl.Id,
+						"error":      err,
+					}).Error("profile: Failed to stop system profile")
+					err = nil
+				}
+
+				waiter.Done()
+			}()
+		}
+	}
+
+	waiter.Wait()
+
+	return
+}
+
+func watchSystemProfiles() {
+	time.Sleep(1 * time.Second)
+	sprofile.Reload(true)
+
+	for {
+		time.Sleep(1 * time.Second)
+		err := SyncSystemProfiles()
+		if err != nil {
+			logrus.WithFields(logrus.Fields{
+				"error": err,
+			}).Error("profile: Failed to sync system profiles")
+		}
+	}
+}
+
+func WatchSystemProfiles() {
+	go watchSystemProfiles()
 }
