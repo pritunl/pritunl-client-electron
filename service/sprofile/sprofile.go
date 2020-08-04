@@ -35,6 +35,56 @@ type Sprofile struct {
 	OvpnData           string   `json:"ovpn_data"`
 	Path               string   `json:"-"`
 	LogPath            string   `json:"-"`
+	Password           string   `json:"-"`
+}
+
+func (s *Sprofile) Copy() (sprfl *Sprofile) {
+	var syncHosts []string
+	if s.SyncHosts != nil {
+		syncHosts := []string{}
+		for _, host := range s.SyncHosts {
+			syncHosts = append(syncHosts, host)
+		}
+	}
+
+	var serverPublicKey []string
+	if s.ServerPublicKey != nil {
+		serverPublicKey := []string{}
+		for _, key := range s.ServerPublicKey {
+			serverPublicKey = append(serverPublicKey, key)
+		}
+	}
+
+	sprfl = &Sprofile{
+		Id:                 s.Id,
+		Name:               s.Name,
+		State:              s.State,
+		Wg:                 s.Wg,
+		LastMode:           s.LastMode,
+		OrganizationId:     s.OrganizationId,
+		Organization:       s.Organization,
+		ServerId:           s.ServerId,
+		Server:             s.Server,
+		UserId:             s.UserId,
+		User:               s.User,
+		PreConnectMsg:      s.PreConnectMsg,
+		PasswordMode:       s.PasswordMode,
+		Token:              s.Token,
+		TokenTtl:           s.TokenTtl,
+		DisableReconnect:   s.DisableReconnect,
+		SyncHosts:          syncHosts,
+		SyncHash:           s.SyncHash,
+		SyncSecret:         s.SyncSecret,
+		SyncToken:          s.SyncToken,
+		ServerPublicKey:    serverPublicKey,
+		ServerBoxPublicKey: s.ServerBoxPublicKey,
+		OvpnData:           s.OvpnData,
+		Path:               s.Path,
+		LogPath:            s.LogPath,
+		Password:           s.Password,
+	}
+
+	return
 }
 
 func (s *Sprofile) Commit() (err error) {
