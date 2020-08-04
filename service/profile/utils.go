@@ -175,6 +175,38 @@ func Clean() (err error) {
 	return
 }
 
+func ImportSystemProfile(sPrfl *sprofile.Sprofile) (prfl *Profile) {
+	serverPublicKey := ""
+	if sPrfl.ServerPublicKey != nil && len(sPrfl.ServerPublicKey) > 0 {
+		serverPublicKey = strings.Join(sPrfl.ServerPublicKey, "\n")
+	}
+
+	lastMode := sPrfl.LastMode
+	if lastMode == "" {
+		lastMode = "ovpn"
+	}
+
+	prfl = &Profile{
+		Id:                 sPrfl.Id,
+		Mode:               lastMode,
+		OrgId:              sPrfl.OrganizationId,
+		UserId:             sPrfl.UserId,
+		ServerId:           sPrfl.ServerId,
+		SyncToken:          sPrfl.SyncToken,
+		SyncSecret:         sPrfl.SyncSecret,
+		Data:               sPrfl.OvpnData,
+		Username:           "pritunl",
+		Password:           "",
+		ServerPublicKey:    serverPublicKey,
+		ServerBoxPublicKey: sPrfl.ServerBoxPublicKey,
+		TokenTtl:           sPrfl.TokenTtl,
+		Reconnect:          true,
+	}
+	prfl.Init()
+
+	return
+}
+
 func GetStatus() (status bool) {
 	for _, prfl := range GetProfiles() {
 		if prfl.Status == "connected" {
