@@ -14,6 +14,7 @@ type sprofileData struct {
 	Name               string   `json:"name"`
 	State              bool     `json:"state"`
 	Wg                 bool     `json:"wg"`
+	LastMode           string   `json:"last_mode"`
 	OrganizationId     string   `json:"organization_id"`
 	Organization       string   `json:"organization"`
 	ServerId           string   `json:"server_id"`
@@ -62,6 +63,7 @@ func sprofilePut(c *gin.Context) {
 		Name:               data.Name,
 		State:              data.State,
 		Wg:                 data.Wg,
+		LastMode:           data.LastMode,
 		OrganizationId:     data.OrganizationId,
 		Organization:       data.Organization,
 		ServerId:           data.ServerId,
