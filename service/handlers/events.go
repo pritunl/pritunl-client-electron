@@ -1,15 +1,17 @@
 package handlers
 
 import (
+	"io/ioutil"
+	"net/http"
+	"runtime/debug"
+	"time"
+
 	"github.com/Sirupsen/logrus"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"github.com/pritunl/pritunl-client-electron/service/event"
 	"github.com/pritunl/pritunl-client-electron/service/profile"
-	"io/ioutil"
-	"net/http"
-	"runtime/debug"
-	"time"
+	"github.com/pritunl/pritunl-client-electron/service/utils"
 )
 
 const (
@@ -32,7 +34,7 @@ var (
 func eventsGet(c *gin.Context) {
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
-		c.AbortWithError(500, err)
+		utils.AbortWithError(c, 500, err)
 		return
 	}
 
