@@ -12,7 +12,7 @@ import (
 type Sprofile struct {
 	Id                 string   `json:"id"`
 	Name               string   `json:"name"`
-	State              bool     `json:"state"`
+	State              bool     `json:"-"`
 	Wg                 bool     `json:"wg"`
 	LastMode           string   `json:"last_mode"`
 	OrganizationId     string   `json:"organization_id"`
