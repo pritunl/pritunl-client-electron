@@ -167,7 +167,6 @@ type Profile struct {
 	token              *token.Token       `json:"-"`
 	Id                 string             `json:"id"`
 	Mode               string             `json:"mode"`
-	PortWg             int                `json:"port_wg"`
 	OrgId              string             `json:"-"`
 	UserId             string             `json:"-"`
 	ServerId           string             `json:"-"`
@@ -965,7 +964,6 @@ func (p *Profile) Copy() (prfl *Profile) {
 	prfl = &Profile{
 		Id:                 p.Id,
 		Mode:               p.Mode,
-		PortWg:             p.PortWg,
 		OrgId:              p.OrgId,
 		UserId:             p.UserId,
 		ServerId:           p.ServerId,
