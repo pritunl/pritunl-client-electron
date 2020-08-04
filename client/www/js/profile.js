@@ -660,17 +660,21 @@ Profile.prototype.delete = function() {
     service.sprofileDel(this.id);
   }
 
+  var confPath = this.confPath;
+  var ovpnPath = this.ovpnPath;
+  var logPath = this.logPath;
+
   if (os.platform() === 'darwin') {
     childProcess.exec(
       '/usr/bin/security delete-generic-password -s pritunl -a ' +
       this.id, function() {}.bind(this));
   }
 
-  fs.exists(this.confPath, function(exists) {
+  fs.exists(confPath, function(exists) {
     if (!exists) {
       return;
     }
-    fs.unlink(this.confPath, function(err) {
+    fs.unlink(confPath, function(err) {
       if (err) {
         err = new errors.RemoveError(
           'config: Failed to delete profile conf (%s)', err);
@@ -678,11 +682,11 @@ Profile.prototype.delete = function() {
       }
     });
   }.bind(this));
-  fs.exists(this.ovpnPath, function(exists) {
+  fs.exists(ovpnPath, function(exists) {
     if (!exists) {
       return;
     }
-    fs.unlink(this.ovpnPath, function(err) {
+    fs.unlink(ovpnPath, function(err) {
       if (err) {
         err = new errors.RemoveError(
           'config: Failed to delete profile data (%s)', err);
@@ -690,11 +694,11 @@ Profile.prototype.delete = function() {
       }
     });
   }.bind(this));
-  fs.exists(this.logPath, function(exists) {
+  fs.exists(logPath, function(exists) {
     if (!exists) {
       return;
     }
-    fs.unlink(this.logPath, function(err) {
+    fs.unlink(logPath, function(err) {
       if (err) {
         err = new errors.RemoveError(
           'config: Failed to delete profile log (%s)', err);
