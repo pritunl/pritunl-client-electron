@@ -29,3 +29,7 @@ func Execute() {
 		panic(err)
 	}
 }
+
+func init() {
+	RootCmd.AddCommand(VersionCmd)
+}
