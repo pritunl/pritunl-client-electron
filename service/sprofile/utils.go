@@ -83,6 +83,19 @@ func GetPath() string {
 	}
 }
 
+func Get(prflId string) (prfl *Sprofile) {
+	prflsCache := cache
+
+	for _, pfl := range prflsCache {
+		if pfl.Id == prflId {
+			prfl = pfl
+			return
+		}
+	}
+
+	return
+}
+
 func GetAll() (prfls []*Sprofile, err error) {
 	if cacheStale || time.Since(cacheTimestamp) > 1*time.Minute {
 		err = Reload(false)
