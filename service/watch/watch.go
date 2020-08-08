@@ -2,15 +2,16 @@ package watch
 
 import (
 	"fmt"
-	"github.com/Sirupsen/logrus"
-	"github.com/pritunl/pritunl-client-electron/service/profile"
-	"github.com/pritunl/pritunl-client-electron/service/utils"
 	"reflect"
 	"runtime"
 	"runtime/debug"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/Sirupsen/logrus"
+	"github.com/pritunl/pritunl-client-electron/service/profile"
+	"github.com/pritunl/pritunl-client-electron/service/utils"
 )
 
 var (
