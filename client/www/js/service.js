@@ -169,7 +169,6 @@ var start = function(prfl, mode, timeout, serverPubKey, serverBoxPubKey,
       body: {
         id: prfl.id,
         mode: mode,
-        port_wg: prfl.portWg,
         org_id: prfl.organizationId,
         user_id: prfl.userId,
         server_id: prfl.serverId,
