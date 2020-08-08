@@ -61,7 +61,7 @@ func sprofilePut(c *gin.Context) {
 	prfl := &sprofile.Sprofile{
 		Id:                 data.Id,
 		Name:               data.Name,
-		State:              data.State,
+		State:              true,
 		Wg:                 data.Wg,
 		LastMode:           data.LastMode,
 		OrganizationId:     data.OrganizationId,
