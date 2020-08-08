@@ -12,7 +12,6 @@ import (
 type profileData struct {
 	Id                 string `json:"id"`
 	Mode               string `json:"mode"`
-	PortWg             int    `json:"port_wg"`
 	OrgId              string `json:"org_id"`
 	UserId             string `json:"user_id"`
 	ServerId           string `json:"server_id"`
@@ -69,7 +68,6 @@ func profilePost(c *gin.Context) {
 	prfl = &profile.Profile{
 		Id:                 data.Id,
 		Mode:               data.Mode,
-		PortWg:             data.PortWg,
 		OrgId:              data.OrgId,
 		UserId:             data.UserId,
 		ServerId:           data.ServerId,
