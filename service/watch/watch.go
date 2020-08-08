@@ -131,7 +131,7 @@ func dnsWatch() {
 	dnsState := false
 
 	for {
-		time.Sleep(1 * time.Second)
+		time.Sleep(2 * time.Second)
 
 		if !profile.GetStatus() {
 			if dnsState {
