@@ -1,5 +1,10 @@
 package sprofile
 
+import (
+	"fmt"
+	"strings"
+)
+
 type Sprofile struct {
 	Id                 string   `json:"id"`
 	Name               string   `json:"name"`
@@ -24,4 +29,24 @@ type Sprofile struct {
 	ServerBoxPublicKey string   `json:"server_box_public_key"`
 	OvpnData           string   `json:"ovpn_data"`
 	Password           string   `json:"password"`
+}
+
+func (s *Sprofile) FormatedName() (name string) {
+	name = s.Name
+
+	if name == "" {
+		if s.User != "" {
+			name = strings.SplitN(s.User, "@", 2)[0]
+
+			if s.Server != "" {
+				name += fmt.Sprintf(" (%s)", s.Server)
+			}
+		} else if s.Server != "" {
+			name = s.Server
+		} else {
+			name = "Unknown Profile"
+		}
+	}
+
+	return
 }
