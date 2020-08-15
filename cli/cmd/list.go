@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/olekukonko/tablewriter"
@@ -14,6 +15,7 @@ var ListCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		sprfls, err := sprofile.GetAll()
 		if err != nil {
+			panic(err)
 			return
 		}
 
@@ -27,12 +29,21 @@ var ListCmd = &cobra.Command{
 		table.SetBorder(true)
 
 		for _, sprfl := range sprfls {
-			table.Append([]string{
-				sprfl.FormatedName(),
-				"23 hours 12 seconds",
-				"172.16.65.12",
-				"10.32.174.72",
-			})
+			if sprfl.Profile != nil {
+				table.Append([]string{
+					sprfl.FormatedName(),
+					fmt.Sprintf("%d", sprfl.Profile.Timestamp),
+					sprfl.Profile.ServerAddr,
+					sprfl.Profile.ClientAddr,
+				})
+			} else {
+				table.Append([]string{
+					sprfl.FormatedName(),
+					"Disconnected",
+					"-",
+					"-",
+				})
+			}
 		}
 
 		table.Render()
