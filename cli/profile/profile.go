@@ -1,5 +1,12 @@
 package profile
 
+import (
+	"fmt"
+	"math"
+	"strings"
+	"time"
+)
+
 type Route struct {
 	NextHop    string `json:"next_hop"`
 	Network    string `json:"network"`
@@ -23,4 +30,49 @@ type Profile struct {
 	ClientAddr   string   `json:"client_addr"`
 	MacAddr      string   `json:"mac_addr"`
 	MacAddrs     []string `json:"mac_addrs"`
+}
+
+func (p *Profile) FormatedTime() string {
+	uptime := time.Now().Unix() - p.Timestamp
+	unitItems := []string{}
+
+	if uptime > 86400 {
+		units := int64(math.Floor(float64(uptime) / 86400))
+		uptime -= units * 86400
+		unitStr := fmt.Sprintf("%d day", units)
+		if units > 1 {
+			unitStr += "s"
+		}
+		unitItems = append(unitItems, unitStr)
+	}
+
+	if uptime > 3600 {
+		units := int64(math.Floor(float64(uptime) / 3600))
+		uptime -= units * 3600
+		unitStr := fmt.Sprintf("%d hour", units)
+		if units > 1 {
+			unitStr += "s"
+		}
+		unitItems = append(unitItems, unitStr)
+	}
+
+	if uptime > 60 {
+		units := int64(math.Floor(float64(uptime) / 60))
+		uptime -= units * 60
+		unitStr := fmt.Sprintf("%d min", units)
+		if units > 1 {
+			unitStr += "s"
+		}
+		unitItems = append(unitItems, unitStr)
+	}
+
+	if uptime > 0 {
+		unitStr := fmt.Sprintf("%d sec", uptime)
+		if uptime > 1 {
+			unitStr += "s"
+		}
+		unitItems = append(unitItems, unitStr)
+	}
+
+	return strings.Join(unitItems, " ")
 }
