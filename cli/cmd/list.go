@@ -21,6 +21,7 @@ var ListCmd = &cobra.Command{
 
 		table := tablewriter.NewWriter(os.Stdout)
 		table.SetHeader([]string{
+			"ID",
 			"Name",
 			"Online For",
 			"Server Address",
@@ -31,6 +32,7 @@ var ListCmd = &cobra.Command{
 		for _, sprfl := range sprfls {
 			if sprfl.Profile != nil {
 				table.Append([]string{
+					sprfl.Id,
 					sprfl.FormatedName(),
 					fmt.Sprintf("%d", sprfl.Profile.Timestamp),
 					sprfl.Profile.ServerAddr,
@@ -38,6 +40,7 @@ var ListCmd = &cobra.Command{
 				})
 			} else {
 				table.Append([]string{
+					sprfl.Id,
 					sprfl.FormatedName(),
 					"Disconnected",
 					"-",
