@@ -5,8 +5,9 @@ import (
 	"net/http"
 	"runtime"
 
-	"github.com/pkg/errors"
+	"github.com/dropbox/godropbox/errors"
 	"github.com/pritunl/pritunl-client-electron/cli/errortypes"
+	"github.com/pritunl/pritunl-client-electron/cli/profile"
 	"github.com/pritunl/pritunl-client-electron/cli/service"
 )
 
@@ -49,6 +50,23 @@ func GetAll() (sprfls []*Sprofile, err error) {
 			errors.Wrap(err, "sprofile: Failed to parse response"),
 		}
 		return
+	}
+
+	sprflsMap := map[string]*Sprofile{}
+	for _, sprfl := range sprfls {
+		sprflsMap[sprfl.Id] = sprfl
+	}
+
+	prfls, err := profile.GetAll()
+	if err != nil {
+		return
+	}
+
+	for _, prfl := range prfls {
+		sprfl := sprflsMap[prfl.Id]
+		if sprfl != nil {
+			sprfl.Profile = prfl
+		}
 	}
 
 	return
