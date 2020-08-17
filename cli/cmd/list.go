@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/olekukonko/tablewriter"
@@ -34,7 +33,7 @@ var ListCmd = &cobra.Command{
 				table.Append([]string{
 					sprfl.Id,
 					sprfl.FormatedName(),
-					fmt.Sprintf("%d", sprfl.Profile.Timestamp),
+					sprfl.Profile.FormatedTime(),
 					sprfl.Profile.ServerAddr,
 					sprfl.Profile.ClientAddr,
 				})
