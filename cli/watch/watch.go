@@ -23,50 +23,68 @@ func refresh() {
 
 		sprfls, err := sprofile.GetAll()
 		if err != nil {
-			panic (err)
-		}
+			termui.Clear()
 
-		rows := [][]string{
-			[]string{
-				"ID",
-				"Name",
-				"Online For",
-				"Server Address",
-				"Client Address",
-			},
-		}
+			para := widgets.NewParagraph()
+			para.Title = fmt.Sprintf(
+				"Pritunl Client v%s - %s",
+				constants.Version,
+				time.Now().Format("01/02/2006 15:04:05"),
+			)
+			para.Text = ""
 
-		for _, sprfl := range sprfls {
-			if sprfl.Profile != nil {
-				rows = append(rows, []string{
-					sprfl.Id,
-					sprfl.FormatedName(),
-					sprfl.Profile.FormatedTime(),
-					sprfl.Profile.ServerAddr,
-					sprfl.Profile.ClientAddr,
-				})
-			} else {
-				rows = append(rows, []string{
-					sprfl.Id,
-					sprfl.FormatedName(),
-					"Disconnected",
-					"-",
-					"-",
-				})
+			grid.Set(termui.NewRow(1, termui.NewCol(1, para)))
+
+			termui.Render(grid)
+
+			time.Sleep(200 * time.Millisecond)
+
+			para.Text = err.Error()
+			termui.Render(grid)
+
+			time.Sleep(1 * time.Second)
+		} else {
+			rows := [][]string{
+				[]string{
+					"ID",
+					"Name",
+					"Online For",
+					"Server Address",
+					"Client Address",
+				},
 			}
+
+			for _, sprfl := range sprfls {
+				if sprfl.Profile != nil {
+					rows = append(rows, []string{
+						sprfl.Id,
+						sprfl.FormatedName(),
+						sprfl.Profile.FormatedTime(),
+						sprfl.Profile.ServerAddr,
+						sprfl.Profile.ClientAddr,
+					})
+				} else {
+					rows = append(rows, []string{
+						sprfl.Id,
+						sprfl.FormatedName(),
+						"Disconnected",
+						"-",
+						"-",
+					})
+				}
+			}
+
+			table.Title = fmt.Sprintf("Pritunl Client v%s", constants.Version)
+			table.RowSeparator = true
+			table.FillRow = false
+			table.TextStyle = termui.NewStyle(termui.ColorWhite)
+			table.TextAlignment = termui.AlignCenter
+			table.Rows = rows
+
+			grid.Set(termui.NewRow(1, termui.NewCol(1, table)))
+
+			termui.Render(grid)
 		}
-
-		table.Title = fmt.Sprintf("Pritunl Client v%s", constants.Version)
-		table.RowSeparator = true
-		table.FillRow = false
-		table.TextStyle = termui.NewStyle(termui.ColorWhite)
-		table.TextAlignment = termui.AlignCenter
-		table.Rows = rows
-
-		grid.Set(termui.NewRow(1, termui.NewCol(1, table)))
-
-		termui.Render(grid)
-
 
 		time.Sleep(1 * time.Second)
 	}
