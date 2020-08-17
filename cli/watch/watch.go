@@ -74,7 +74,11 @@ func refresh() {
 				}
 			}
 
-			table.Title = fmt.Sprintf("Pritunl Client v%s", constants.Version)
+			table.Title = fmt.Sprintf(
+				"Pritunl Client v%s - %s",
+				constants.Version,
+				time.Now().Format("01/02/2006 15:04:05"),
+			)
 			table.RowSeparator = true
 			table.FillRow = false
 			table.TextStyle = termui.NewStyle(termui.ColorWhite)
