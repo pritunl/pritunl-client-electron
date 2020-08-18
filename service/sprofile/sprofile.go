@@ -41,7 +41,7 @@ type Sprofile struct {
 func (s *Sprofile) Copy() (sprfl *Sprofile) {
 	var syncHosts []string
 	if s.SyncHosts != nil {
-		syncHosts := []string{}
+		syncHosts = []string{}
 		for _, host := range s.SyncHosts {
 			syncHosts = append(syncHosts, host)
 		}
@@ -49,7 +49,7 @@ func (s *Sprofile) Copy() (sprfl *Sprofile) {
 
 	var serverPublicKey []string
 	if s.ServerPublicKey != nil {
-		serverPublicKey := []string{}
+		serverPublicKey = []string{}
 		for _, key := range s.ServerPublicKey {
 			serverPublicKey = append(serverPublicKey, key)
 		}
