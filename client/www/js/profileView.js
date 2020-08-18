@@ -90,7 +90,8 @@ var renderProfile = function(index, prfl) {
     $profile.find('.info .server-addr').text(data.serverAddr);
     $profile.find('.info .client-addr').text(data.clientAddr);
 
-    if (prfl.status !== 'disconnected') {
+    if ((prfl.systemPrfl && prfl.state) ||
+        (!prfl.systemPrfl && prfl.status !== 'disconnected')) {
       $profile.find('.menu .connect').hide();
       $profile.find('.menu .disconnect').css('display', 'flex');
     } else {
