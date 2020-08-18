@@ -397,6 +397,8 @@ var renderProfile = function(index, prfl) {
         }
       };
       authHandler();
+    }, function() {
+      refreshProfiles();
     });
   };
 
@@ -523,7 +525,9 @@ var renderProfile = function(index, prfl) {
   });
 
   $profile.find('.menu .disconnect').click(function() {
-    prfl.disconnect();
+    prfl.disconnect(function() {
+      refreshProfiles();
+    });
     closeMenu($profile);
   });
 
