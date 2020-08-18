@@ -42,7 +42,7 @@ func sprofilesGet(c *gin.Context) {
 		return
 	}
 
-	prfls, err := sprofile.GetAll()
+	prfls, err := sprofile.GetAllClient()
 	if err != nil {
 		utils.AbortWithError(c, 500, err)
 		return
@@ -96,7 +96,7 @@ func sprofilePut(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, prfl)
+	c.JSON(200, prfl.Client())
 }
 
 func sprofileDel(c *gin.Context) {
