@@ -29,6 +29,7 @@ function Profile(systemPrfl, pth) {
 
   this.data = null;
   this.name = null;
+  this.state = null;
   this.uvName = null;
   this.wg = null;
   this.lastMode = null;
@@ -205,6 +206,7 @@ Profile.prototype.load = function(callback, waitAll) {
 Profile.prototype.loadSystem = function(data) {
   this.id = data.id;
   this.name = data.name || this.name;
+  this.state = data.state || null;
   this.wg = data.wg || false;
   this.lastMode = data.last_mode || null;
   this.organizationId = data.organization_id || null;
@@ -288,6 +290,7 @@ Profile.prototype.update = function(data) {
 
 Profile.prototype.refresh = function(prfl) {
   this.name = prfl.name || this.name;
+  this.state = prfl.state || null;
   this.wg = prfl.wg;
   this.lastMode = prfl.lastMode;
   this.organizationId = prfl.organizationId || this.organizationId;
