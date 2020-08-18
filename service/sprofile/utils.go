@@ -113,6 +113,25 @@ func GetAll() (prfls []*Sprofile, err error) {
 	return
 }
 
+func GetAllClient() (prfls []*SprofileClient, err error) {
+	if cacheStale {
+		err = Reload(false)
+		if err != nil {
+			return
+		}
+	}
+
+	prfls = []*SprofileClient{}
+	prflsCache := cache
+
+	for _, prfl := range prflsCache {
+		newPrlf := prfl.Client()
+		prfls = append(prfls, newPrlf)
+	}
+
+	return
+}
+
 func Remove(prflId string) {
 	prflsPath := GetPath()
 	prflPth := path.Join(prflsPath, fmt.Sprintf("%s.conf", prflId))
