@@ -984,11 +984,12 @@ Profile.prototype.preConnect = function(callback) {
   }
 };
 
-Profile.prototype.postConnect = function(mode, timeout, authCallback) {
-  this.auth(mode, timeout, authCallback);
+Profile.prototype.postConnect = function(mode, timeout,
+    authCallback, connCallback) {
+  this.auth(mode, timeout, authCallback, connCallback);
 };
 
-Profile.prototype.auth = function(mode, timeout, callback) {
+Profile.prototype.auth = function(mode, timeout, callback, connCallback) {
   var authType = this.getAuthType();
 
   if (this.token) {
@@ -1025,32 +1026,33 @@ Profile.prototype.auth = function(mode, timeout, callback) {
         authType = authType.join('_');
       }
 
-      this._auth(authType, mode, timeout, callback);
+      this._auth(authType, mode, timeout, callback, connCallback);
     }.bind(this));
   } else {
     service.tokenDelete(this);
-    this._auth(authType, mode, timeout, callback);
+    this._auth(authType, mode, timeout, callback, connCallback);
   }
 };
 
-Profile.prototype._auth = function(authType, mode, timeout, callback) {
+Profile.prototype._auth = function(authType, mode, timeout,
+    callback, connCallback) {
   if (!authType) {
     if (callback) {
       callback(null, null);
     }
     service.start(this, mode, timeout, this.serverPublicKey,
-      this.serverBoxPublicKey);
+      this.serverBoxPublicKey, null, null, connCallback);
   } else if (!callback) {
   } else {
     callback(authType, function(user, pass) {
       service.start(this, mode, timeout, this.serverPublicKey,
-        this.serverBoxPublicKey, user || 'pritunl', pass);
+        this.serverBoxPublicKey, user || 'pritunl', pass, connCallback);
     }.bind(this));
   }
 };
 
-Profile.prototype.disconnect = function() {
-  service.stop(this);
+Profile.prototype.disconnect = function(callback) {
+  service.stop(this, callback);
 };
 
 var getProfilesUser = function(callback, waitAll) {
