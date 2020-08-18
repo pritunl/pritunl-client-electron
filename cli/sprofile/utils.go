@@ -75,7 +75,7 @@ func Stop(sprflId string) (err error) {
 		return
 	}
 
-	data, err := json.Marshal(&Sprofile{
+	data, err := json.Marshal(&SprofileData{
 		Id: sprfl.Id,
 	})
 	if err != nil {
