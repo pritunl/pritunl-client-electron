@@ -35,7 +35,63 @@ type Sprofile struct {
 	OvpnData           string   `json:"ovpn_data"`
 	Path               string   `json:"-"`
 	LogPath            string   `json:"-"`
-	Password           string   `json:"-"`
+	Password           string   `json:"password"`
+}
+
+type SprofileClient struct {
+	Id                 string   `json:"id"`
+	Name               string   `json:"name"`
+	State              bool     `json:"state"`
+	Wg                 bool     `json:"wg"`
+	LastMode           string   `json:"last_mode"`
+	OrganizationId     string   `json:"organization_id"`
+	Organization       string   `json:"organization"`
+	ServerId           string   `json:"server_id"`
+	Server             string   `json:"server"`
+	UserId             string   `json:"user_id"`
+	User               string   `json:"user"`
+	PreConnectMsg      string   `json:"pre_connect_msg"`
+	PasswordMode       string   `json:"password_mode"`
+	Token              bool     `json:"token"`
+	TokenTtl           int      `json:"token_ttl"`
+	DisableReconnect   bool     `json:"disable_reconnect"`
+	SyncHosts          []string `json:"sync_hosts"`
+	SyncHash           string   `json:"sync_hash"`
+	SyncSecret         string   `json:"sync_secret"`
+	SyncToken          string   `json:"sync_token"`
+	ServerPublicKey    []string `json:"server_public_key"`
+	ServerBoxPublicKey string   `json:"server_box_public_key"`
+	OvpnData           string   `json:"ovpn_data"`
+}
+
+func (s *Sprofile) Client() (sprflc *SprofileClient) {
+	sprflc = &SprofileClient{
+		Id:                 s.Id,
+		Name:               s.Name,
+		State:              s.State,
+		Wg:                 s.Wg,
+		LastMode:           s.LastMode,
+		OrganizationId:     s.OrganizationId,
+		Organization:       s.Organization,
+		ServerId:           s.ServerId,
+		Server:             s.Server,
+		UserId:             s.UserId,
+		User:               s.User,
+		PreConnectMsg:      s.PreConnectMsg,
+		PasswordMode:       s.PasswordMode,
+		Token:              s.Token,
+		TokenTtl:           s.TokenTtl,
+		DisableReconnect:   s.DisableReconnect,
+		SyncHosts:          s.SyncHosts,
+		SyncHash:           s.SyncHash,
+		SyncSecret:         s.SyncSecret,
+		SyncToken:          s.SyncToken,
+		ServerPublicKey:    s.ServerPublicKey,
+		ServerBoxPublicKey: s.ServerBoxPublicKey,
+		OvpnData:           s.OvpnData,
+	}
+
+	return
 }
 
 func (s *Sprofile) Copy() (sprfl *Sprofile) {
