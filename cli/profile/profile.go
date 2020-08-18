@@ -33,6 +33,10 @@ type Profile struct {
 }
 
 func (p *Profile) FormatedTime() string {
+	if p.Timestamp == 0 {
+		return "Connecting"
+	}
+
 	uptime := time.Now().Unix() - p.Timestamp
 	unitItems := []string{}
 
