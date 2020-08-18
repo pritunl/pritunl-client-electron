@@ -12,33 +12,41 @@ import (
 	"github.com/pritunl/pritunl-client-electron/cli/service"
 )
 
-func Stop(sprflId string) (err error) {
+func Match(sprflId string) (sprfl *Sprofile, err error) {
 	sprfls, err := GetAll()
 	if err != nil {
 		return
 	}
 
-	var matched *Sprofile
-	for _, sprfl := range sprfls {
-		if sprflId == sprfl.Id {
-			matched = sprfl
-		} else if len(sprflId) <= len(sprfl.Id) &&
-			sprfl.Id[:len(sprflId)] == sprflId {
+	for _, spfl := range sprfls {
+		if sprflId == spfl.Id {
+			sprfl = spfl
+		} else if len(sprflId) <= len(spfl.Id) &&
+			spfl.Id[:len(sprflId)] == sprflId {
 
-			if matched != nil {
+			if sprfl != nil {
 				err = errortypes.NotFoundError{
-					errors.Wrap(err, "sprofile: Profile duplicate match"),
+					errors.New("sprofile: Profile duplicate match"),
 				}
 				return
 			}
-			matched = sprfl
+			sprfl = spfl
 		}
 	}
 
-	if matched == nil {
+	if sprfl == nil {
 		err = errortypes.NotFoundError{
-			errors.Wrap(err, "sprofile: Profile not found"),
+			errors.New("sprofile: Profile not found"),
 		}
+		return
+	}
+
+	return
+}
+
+func Stop(sprflId string) (err error) {
+	sprfl, err := Match(sprflId)
+	if err != nil {
 		return
 	}
 
@@ -50,7 +58,7 @@ func Stop(sprflId string) (err error) {
 	}
 
 	data, err := json.Marshal(&Sprofile{
-		Id: matched.Id,
+		Id: sprfl.Id,
 	})
 	if err != nil {
 		err = errortypes.RequestError{
