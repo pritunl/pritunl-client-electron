@@ -86,10 +86,6 @@ func main() {
 		MaxHeaderBytes: 4096,
 	}
 
-	if runtime.GOOS != "linux" {
-		server.Addr = "127.0.0.1:9770"
-	}
-
 	err = profile.Clean()
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
