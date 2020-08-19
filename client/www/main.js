@@ -475,21 +475,6 @@ app.on('ready', function() {
         tray.setContextMenu(appMenu);
       }
 
-      profile.getProfilesAll(function(err, prfls) {
-        if (err) {
-          return;
-        }
-
-        var prfl;
-        for (var i = 0; i < prfls.length; i++) {
-          prfl = prfls[i];
-
-          if (prfl.autostart) {
-            prfl.connect('ovpn', false);
-          }
-        }
-      }, true);
-
       sync();
     });
   });
