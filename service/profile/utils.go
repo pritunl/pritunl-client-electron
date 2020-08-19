@@ -199,7 +199,7 @@ func ImportSystemProfile(sPrfl *sprofile.Sprofile) (prfl *Profile) {
 		SyncSecret:         sPrfl.SyncSecret,
 		Data:               sPrfl.OvpnData,
 		Username:           "pritunl",
-		Password:           "",
+		Password:           sPrfl.Password,
 		ServerPublicKey:    serverPublicKey,
 		ServerBoxPublicKey: sPrfl.ServerBoxPublicKey,
 		TokenTtl:           sPrfl.TokenTtl,
