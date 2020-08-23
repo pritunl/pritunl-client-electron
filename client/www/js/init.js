@@ -160,6 +160,9 @@ var closeServiceEditor = function() {
 };
 
 config.onReady(function() {
+  if (process.platform === 'linux') {
+    $('.main-menu').addClass('linux');
+  }
   $('.auto-reconnect').text('Auto Reconnect ' +
     (!config.settings.disable_reconnect ? 'On' : 'Off'));
   $('.tray-icon').text('Tray Icon ' +
