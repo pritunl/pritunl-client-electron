@@ -400,6 +400,22 @@ app.on('ready', function() {
         tray.on('double-click', function() {
           openMainWin();
         });
+        var trayMenu = Menu.buildFromTemplate([
+          {
+            label: 'Pritunl v' + constants.version,
+            click: function () {
+              openMainWin();
+            }
+          },
+          {
+            label: 'Exit',
+            click: function() {
+              app.quit();
+            }
+          }
+        ]);
+        tray.setToolTip('Pritunl v' + constants.version);
+        tray.setContextMenu(trayMenu);
       }
 
       var appMenu = Menu.buildFromTemplate([
@@ -470,24 +486,6 @@ app.on('ready', function() {
         }
       ]);
       Menu.setApplicationMenu(appMenu);
-
-      if (tray) {
-        var trayMenu = Menu.buildFromTemplate([
-          {
-            label: 'Pritunl v' + constants.version,
-            click: function () {
-              openMainWin();
-            }
-          },
-          {
-            label: 'Exit',
-            click: function() {
-              app.quit();
-            }
-          }
-        ]);
-        tray.setContextMenu(trayMenu);
-      }
 
       sync();
     });
