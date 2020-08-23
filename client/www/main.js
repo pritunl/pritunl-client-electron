@@ -238,7 +238,8 @@ var openMainWin = function() {
     main.maximizedPrev = null;
 
     main.on('closed', function() {
-      if (process.platform !== 'linux' && !app.dock) {
+      if (process.platform !== 'linux' &&
+          config.settings.disable_tray_icon) {
         app.quit();
       }
       main = null;
