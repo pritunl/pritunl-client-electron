@@ -341,7 +341,6 @@ Profile.prototype.import = function(data) {
 Profile.prototype.upsert = function(data) {
   this.name = data.name || this.name;
   this.wg = data.wg || false;
-  this.lastMode = data.lastMode || this.lastMode;
   this.organizationId = data.organization_id || this.organizationId;
   this.organization = data.organization || this.organization;
   this.serverId = data.server_id || this.serverId;
