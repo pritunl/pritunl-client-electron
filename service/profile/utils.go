@@ -178,7 +178,7 @@ func Clean() (err error) {
 	return
 }
 
-func ImportSystemProfile(sPrfl *sprofile.Sprofile) (prfl *Profile) {
+func UpdateSystemProfile(prfl *Profile, sPrfl *sprofile.Sprofile) {
 	serverPublicKey := ""
 	if sPrfl.ServerPublicKey != nil && len(sPrfl.ServerPublicKey) > 0 {
 		serverPublicKey = strings.Join(sPrfl.ServerPublicKey, "\n")
@@ -189,22 +189,30 @@ func ImportSystemProfile(sPrfl *sprofile.Sprofile) (prfl *Profile) {
 		lastMode = "ovpn"
 	}
 
+	prfl.Id = sPrfl.Id
+	prfl.Mode = lastMode
+	prfl.OrgId = sPrfl.OrganizationId
+	prfl.UserId = sPrfl.UserId
+	prfl.ServerId = sPrfl.ServerId
+	prfl.SyncToken = sPrfl.SyncToken
+	prfl.SyncSecret = sPrfl.SyncSecret
+	prfl.Data = sPrfl.OvpnData
+	prfl.Username = "pritunl"
+	prfl.Password = sPrfl.Password
+	prfl.ServerPublicKey = serverPublicKey
+	prfl.ServerBoxPublicKey = sPrfl.ServerBoxPublicKey
+	prfl.TokenTtl = sPrfl.TokenTtl
+	prfl.Reconnect = true
+	prfl.SystemProfile = sPrfl
+}
+
+func ImportSystemProfile(sPrfl *sprofile.Sprofile) (prfl *Profile) {
 	prfl = &Profile{
-		Id:                 sPrfl.Id,
-		Mode:               lastMode,
-		OrgId:              sPrfl.OrganizationId,
-		UserId:             sPrfl.UserId,
-		ServerId:           sPrfl.ServerId,
-		SyncToken:          sPrfl.SyncToken,
-		SyncSecret:         sPrfl.SyncSecret,
-		Data:               sPrfl.OvpnData,
-		Username:           "pritunl",
-		Password:           sPrfl.Password,
-		ServerPublicKey:    serverPublicKey,
-		ServerBoxPublicKey: sPrfl.ServerBoxPublicKey,
-		TokenTtl:           sPrfl.TokenTtl,
-		Reconnect:          true,
+		Id: sPrfl.Id,
 	}
+
+	UpdateSystemProfile(prfl, sPrfl)
+
 	prfl.Init()
 
 	return
