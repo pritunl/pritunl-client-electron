@@ -177,7 +177,15 @@ func CreateWrite(path string, data string, perm os.FileMode) (err error) {
 	if err != nil {
 		return
 	}
-	defer file.Close()
+	defer func() {
+		err = file.Close()
+		if err != nil {
+			err = &errortypes.WriteError{
+				errors.Wrapf(err, "utils: Failed to write '%s'", path),
+			}
+			return
+		}
+	}()
 
 	_, err = file.WriteString(data)
 	if err != nil {
