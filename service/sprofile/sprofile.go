@@ -1,13 +1,42 @@
 package sprofile
 
 import (
+	"crypto/hmac"
+	"crypto/sha512"
+	"crypto/subtle"
+	"crypto/tls"
+	"encoding/base64"
 	"encoding/json"
+	"fmt"
+	"net/http"
 	"path"
+	"strconv"
+	"strings"
+	"time"
 
 	"github.com/dropbox/godropbox/errors"
 	"github.com/pritunl/pritunl-client-electron/service/errortypes"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
 )
+
+var (
+	clientInsecure = &http.Client{
+		Transport: &http.Transport{
+			TLSHandshakeTimeout: 10 * time.Second,
+			TLSClientConfig: &tls.Config{
+				InsecureSkipVerify: true,
+				MinVersion:         tls.VersionTLS12,
+				MaxVersion:         tls.VersionTLS13,
+			},
+		},
+		Timeout: 10 * time.Second,
+	}
+)
+
+type SyncData struct {
+	Signature string `json:"signature"`
+	Conf      string `json:"conf"`
+}
 
 type Sprofile struct {
 	Id                 string   `json:"id"`
@@ -138,6 +167,228 @@ func (s *Sprofile) Copy() (sprfl *Sprofile) {
 		Path:               s.Path,
 		LogPath:            s.LogPath,
 		Password:           s.Password,
+	}
+
+	return
+}
+
+func (s *Sprofile) syncUpdate(data string) (updated bool, err error) {
+	sIndex := 0
+	eIndex := 0
+	tlsAuth := ""
+	cert := ""
+	key := ""
+	jsonData := ""
+	jsonFound := false
+	jsonLoaded := false
+
+	dataLines := strings.Split(s.OvpnData, "\n")
+	uvId := ""
+	uvName := ""
+	for _, line := range dataLines {
+		if strings.HasPrefix(line, "setenv UV_ID ") {
+			uvId = line
+		} else if strings.HasPrefix(line, "setenv UV_NAME ") {
+			uvName = line
+		}
+	}
+
+	dataLines = strings.Split(data, "\n")
+	data = ""
+	for _, line := range dataLines {
+		if !jsonLoaded && !jsonFound && line == "#{" {
+			jsonFound = true
+			jsonLoaded = true
+		}
+
+		if jsonFound && strings.HasPrefix(line, "#") {
+			if line == "#}" {
+				jsonFound = false
+			}
+			jsonData += strings.Replace(line, "#", "", 1)
+		} else {
+			if strings.HasPrefix(line, "setenv UV_ID ") {
+				line = uvId
+			} else if strings.HasPrefix(line, "setenv UV_NAME ") {
+				line = uvName
+			}
+
+			data += line + "\n"
+		}
+	}
+
+	if jsonLoaded {
+		confData := &Sprofile{}
+		err = json.Unmarshal([]byte(jsonData), confData)
+		if err != nil {
+			err = &errortypes.ParseError{
+				errors.Wrap(err, "profile: Failed to parse sync conf data"),
+			}
+			return
+		}
+
+		s.Name = confData.Name
+		s.Wg = confData.Wg
+		s.OrganizationId = confData.OrganizationId
+		s.Organization = confData.Organization
+		s.ServerId = confData.ServerId
+		s.Server = confData.Server
+		s.UserId = confData.UserId
+		s.User = confData.User
+		s.PreConnectMsg = confData.PreConnectMsg
+		s.PasswordMode = confData.PasswordMode
+		s.Token = confData.Token
+		s.TokenTtl = confData.TokenTtl
+		s.DisableReconnect = confData.DisableReconnect
+		s.SyncHosts = confData.SyncHosts
+		s.SyncHash = confData.SyncHash
+		s.ServerPublicKey = confData.ServerPublicKey
+		s.ServerBoxPublicKey = confData.ServerBoxPublicKey
+	}
+
+	if strings.Contains(s.OvpnData, "key-direction") &&
+		!strings.Contains(data, "key-direction") {
+
+		tlsAuth += "key-direction 1\n"
+	}
+
+	sIndex = strings.Index(s.OvpnData, "<tls-auth>")
+	eIndex = strings.Index(s.OvpnData, "</tls-auth>")
+	if sIndex >= 0 && eIndex >= 0 {
+		tlsAuth += s.OvpnData[sIndex:eIndex+11] + "\n"
+	}
+
+	sIndex = strings.Index(s.OvpnData, "<cert>")
+	eIndex = strings.Index(s.OvpnData, "</cert>")
+	if sIndex >= 0 && eIndex >= 0 {
+		cert += s.OvpnData[sIndex:eIndex+7] + "\n"
+	}
+
+	sIndex = strings.Index(s.OvpnData, "<key>")
+	eIndex = strings.Index(s.OvpnData, "</key>")
+	if sIndex >= 0 && eIndex >= 0 {
+		key += s.OvpnData[sIndex:eIndex+6] + "\n"
+	}
+
+	s.OvpnData = data + tlsAuth + cert + key
+	err = s.Commit()
+	if err != nil {
+		return
+	}
+
+	updated = true
+
+	return
+}
+
+func (s *Sprofile) syncProfile(host string) (updated bool, err error) {
+	pth := fmt.Sprintf(
+		"/key/sync/%s/%s/%s/%s",
+		s.OrganizationId,
+		s.UserId,
+		s.ServerId,
+		s.SyncHash,
+	)
+
+	u := host + pth
+
+	timestamp := strconv.FormatInt(time.Now().Unix(), 10)
+
+	authNonce, err := utils.RandStr(32)
+	if err != nil {
+		return
+	}
+
+	authStr := strings.Join([]string{
+		s.SyncToken,
+		timestamp,
+		authNonce,
+		"GET",
+		pth,
+	}, "&")
+
+	hashFunc := hmac.New(sha512.New, []byte(s.SyncSecret))
+	hashFunc.Write([]byte(authStr))
+	rawSignature := hashFunc.Sum(nil)
+	sig := base64.StdEncoding.EncodeToString(rawSignature)
+
+	req, err := http.NewRequest(
+		"GET",
+		u,
+		nil,
+	)
+	if err != nil {
+		err = &errortypes.RequestError{
+			errors.Wrap(err, "profile: Sync profile request error"),
+		}
+		return
+	}
+
+	req.Header.Set("Auth-Token", s.SyncToken)
+	req.Header.Set("Auth-Timestamp", timestamp)
+	req.Header.Set("Auth-Nonce", authNonce)
+	req.Header.Set("Auth-Signature", sig)
+
+	res, err := clientInsecure.Do(req)
+	if err != nil {
+		err = &errortypes.RequestError{
+			errors.Wrap(err, "sprofile: Sync profile connection error"),
+		}
+		return
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode == 480 {
+		return
+	}
+
+	if res.StatusCode != 200 {
+		err = &errortypes.RequestError{
+			errors.Wrapf(err, "profile: Bad status %n code from server",
+				res.StatusCode),
+		}
+		return
+	}
+
+	syncData := &SyncData{}
+	err = json.NewDecoder(res.Body).Decode(&syncData)
+	if err != nil {
+		err = &errortypes.ParseError{
+			errors.Wrap(err, "profile: Failed to parse response body"),
+		}
+		return
+	}
+
+	hashFuncSync := hmac.New(sha512.New, []byte(s.SyncSecret))
+	hashFuncSync.Write([]byte(syncData.Conf))
+	rawSignatureSync := hashFuncSync.Sum(nil)
+	sigSync := base64.StdEncoding.EncodeToString(rawSignatureSync)
+
+	if subtle.ConstantTimeCompare(
+		[]byte(sigSync), []byte(syncData.Signature)) != 1 {
+
+		err = &errortypes.ParseError{
+			errors.New("profile: Sync profile signature invalid"),
+		}
+		return
+	}
+
+	updated, err = s.syncUpdate(syncData.Conf)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+func (s *Sprofile) Sync() (updated bool, err error) {
+	for _, syncHost := range s.SyncHosts {
+		updated, err = s.syncProfile(syncHost)
+		if err != nil {
+			continue
+		}
+
+		break
 	}
 
 	return
