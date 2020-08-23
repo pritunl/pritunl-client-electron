@@ -935,6 +935,9 @@ Profile.prototype.sync = function(syncHosts, callback) {
             data.conf).digest('base64');
 
           if (confSignature !== data.signature) {
+            logger.warning('profile: Failed to sync conf, ' +
+              'signature invalid');
+
             if (callback) {
               callback();
             }
