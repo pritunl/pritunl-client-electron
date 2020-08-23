@@ -150,7 +150,8 @@ var checkService = function(callback) {
 
 app.on('window-all-closed', function() {
   config.reload(function() {
-    if (config.settings.disable_tray_icon || !tray) {
+    if (process.platform === 'linux' ||
+        config.settings.disable_tray_icon || !tray) {
       app.quit();
     } else {
       if (app.dock) {
@@ -238,7 +239,8 @@ var openMainWin = function() {
     main.maximizedPrev = null;
 
     main.on('closed', function() {
-      if (config.settings.disable_tray_icon || !tray) {
+      if (process.platform === 'linux' ||
+          config.settings.disable_tray_icon || !tray) {
         app.quit();
       }
       main = null;
@@ -387,12 +389,14 @@ app.on('ready', function() {
 
       if (!noMain) {
         openMainWin();
-      } else if (config.settings.disable_tray_icon) {
+      } else if (process.platform === 'linux' ||
+          config.settings.disable_tray_icon) {
         app.quit();
         return;
       }
 
-      if (!config.settings.disable_tray_icon) {
+      if (process.platform !== 'linux' &&
+          !config.settings.disable_tray_icon) {
         tray = new Tray(disconnTray);
         tray.on('click', function() {
           openMainWin();
