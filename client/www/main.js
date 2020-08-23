@@ -470,9 +470,23 @@ app.on('ready', function() {
         }
       ]);
       Menu.setApplicationMenu(appMenu);
+
       if (tray) {
-        // required on linux 
-        tray.setContextMenu(appMenu);
+        var trayMenu = Menu.buildFromTemplate([
+          {
+            label: 'Pritunl v' + constants.version,
+            click: function () {
+              openMainWin();
+            }
+          },
+          {
+            label: 'Exit',
+            click: function() {
+              app.quit();
+            }
+          }
+        ]);
+        tray.setContextMenu(trayMenu);
       }
 
       sync();
