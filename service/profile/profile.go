@@ -993,6 +993,18 @@ func (p *Profile) Init() {
 }
 
 func (p *Profile) Start(timeout bool) (err error) {
+	if p.SystemProfile != nil {
+		updated, e := p.SystemProfile.Sync()
+		if e != nil {
+			logrus.WithFields(logrus.Fields{
+				"profile_id": p.Id,
+				"error":      e,
+			}).Error("profile: Failed to sync system profile")
+		} else if updated {
+			UpdateSystemProfile(p, p.SystemProfile)
+		}
+	}
+
 	if p.Mode == Wg {
 		err = p.startWg(timeout)
 	} else {
