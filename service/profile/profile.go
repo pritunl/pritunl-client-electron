@@ -42,6 +42,7 @@ import (
 	"github.com/pritunl/pritunl-client-electron/service/errortypes"
 	"github.com/pritunl/pritunl-client-electron/service/event"
 	"github.com/pritunl/pritunl-client-electron/service/network"
+	"github.com/pritunl/pritunl-client-electron/service/sprofile"
 	"github.com/pritunl/pritunl-client-electron/service/token"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
 	"golang.org/x/crypto/nacl/box"
@@ -196,6 +197,7 @@ type Profile struct {
 	ClientAddr         string             `json:"client_addr"`
 	MacAddr            string             `json:"mac_addr"`
 	MacAddrs           []string           `json:"mac_addrs"`
+	SystemProfile      *sprofile.Sprofile `json:"-"`
 }
 
 type AuthData struct {
