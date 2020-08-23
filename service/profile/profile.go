@@ -977,6 +977,7 @@ func (p *Profile) Copy() (prfl *Profile) {
 		ServerPublicKey:    p.ServerPublicKey,
 		ServerBoxPublicKey: p.ServerBoxPublicKey,
 		Reconnect:          p.Reconnect,
+		SystemProfile:      p.SystemProfile,
 		connected:          p.connected,
 	}
 	prfl.Init()
