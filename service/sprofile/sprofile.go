@@ -63,7 +63,6 @@ type Sprofile struct {
 	ServerBoxPublicKey string   `json:"server_box_public_key"`
 	OvpnData           string   `json:"ovpn_data"`
 	Path               string   `json:"-"`
-	LogPath            string   `json:"-"`
 	Password           string   `json:"password"`
 }
 
@@ -170,7 +169,6 @@ func (s *Sprofile) Copy() (sprfl *Sprofile) {
 		ServerBoxPublicKey: s.ServerBoxPublicKey,
 		OvpnData:           s.OvpnData,
 		Path:               s.Path,
-		LogPath:            s.LogPath,
 		Password:           s.Password,
 	}
 
