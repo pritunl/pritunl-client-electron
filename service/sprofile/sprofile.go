@@ -93,6 +93,11 @@ type SprofileClient struct {
 	OvpnData           string   `json:"ovpn_data"`
 }
 
+func (s *Sprofile) BasePath() string {
+	prflsPath := GetPath()
+	return path.Join(prflsPath, s.Id)
+}
+
 func (s *Sprofile) Client() (sprflc *SprofileClient) {
 	sprflc = &SprofileClient{
 		Id:                 s.Id,
@@ -423,10 +428,9 @@ func (s *Sprofile) Commit() (err error) {
 }
 
 func (s *Sprofile) Delete() (err error) {
-	prflsPath := GetPath()
-	pth := path.Join(prflsPath, s.Id+".conf")
+	prflPth := s.BasePath() + ".conf"
 
-	_ = utils.Remove(pth)
+	_ = utils.Remove(prflPth)
 
 	return
 }
