@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 	"path"
 	"strconv"
 	"strings"
@@ -170,6 +171,60 @@ func (s *Sprofile) Copy() (sprfl *Sprofile) {
 		OvpnData:           s.OvpnData,
 		Path:               s.Path,
 		Password:           s.Password,
+	}
+
+	return
+}
+
+func (s *Sprofile) PushOutput(line string) (err error) {
+	logPth1 := s.BasePath() + ".log"
+	logPth2 := s.BasePath() + ".log.1"
+
+	file, err := os.OpenFile(logPth1,
+		os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
+	if err != nil {
+		err = &errortypes.WriteError{
+			errors.Wrap(err, "sprofile: Failed to open log file"),
+		}
+		return
+	}
+	defer file.Close()
+
+	stat, err := file.Stat()
+	if err != nil {
+		err = &errortypes.ReadError{
+			errors.Wrap(err, "sprofile: Failed to stat log file"),
+		}
+		return
+	}
+
+	if stat.Size() >= 1000000 {
+		os.Remove(logPth2)
+		err = os.Rename(logPth1, logPth2)
+		if err != nil {
+			err = &errortypes.WriteError{
+				errors.Wrap(err, "sprofile: Failed to rotate log file"),
+			}
+			return
+		}
+
+		file.Close()
+		file, err = os.OpenFile(logPth1,
+			os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
+		if err != nil {
+			err = &errortypes.WriteError{
+				errors.Wrap(err, "sprofile: Failed to open log file"),
+			}
+			return
+		}
+	}
+
+	_, err = file.Write([]byte(line))
+	if err != nil {
+		err = &errortypes.WriteError{
+			errors.Wrap(err, "sprofile: Failed to write to log file"),
+		}
+		return
 	}
 
 	return
