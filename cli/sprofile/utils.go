@@ -121,6 +121,65 @@ func Stop(sprflId string) (err error) {
 	return
 }
 
+func Delete(sprflId string) (err error) {
+	sprfl, err := Match(sprflId)
+	if err != nil {
+		return
+	}
+
+	reqUrl := service.GetAddress() + "/sprofile"
+
+	authKey, err := service.GetAuthKey()
+	if err != nil {
+		return
+	}
+
+	data, err := json.Marshal(&SprofileData{
+		Id: sprfl.Id,
+	})
+	if err != nil {
+		err = errortypes.RequestError{
+			errors.Wrap(err, "sprofile: Json marshal error"),
+		}
+		return
+	}
+
+	body := bytes.NewBuffer(data)
+
+	req, err := http.NewRequest("DELETE", reqUrl, body)
+	if err != nil {
+		err = errortypes.RequestError{
+			errors.Wrap(err, "sprofile: Delete request failed"),
+		}
+		return
+	}
+
+	if runtime.GOOS == "linux" {
+		req.Host = "unix"
+	}
+	req.Header.Set("Auth-Key", authKey)
+	req.Header.Set("User-Agent", "pritunl")
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := service.GetClient().Do(req)
+	if err != nil {
+		err = errortypes.RequestError{
+			errors.Wrap(err, "sprofile: Request failed"),
+		}
+		return
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		err = errortypes.RequestError{
+			errors.Wrap(err, "sprofile: Unknown request error"),
+		}
+		return
+	}
+
+	return
+}
+
 func GetAll() (sprfls []*Sprofile, err error) {
 	reqUrl := service.GetAddress() + "/sprofile"
 
