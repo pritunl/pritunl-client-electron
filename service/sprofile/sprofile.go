@@ -350,6 +350,13 @@ func (s *Sprofile) syncProfile(host string) (updated bool, err error) {
 
 	u := host + pth
 
+	if !strings.HasPrefix(u, "https") {
+		err = &errortypes.RequestError{
+			errors.Wrap(err, "profile: Sync profile invalid URL"),
+		}
+		return
+	}
+
 	timestamp := strconv.FormatInt(time.Now().Unix(), 10)
 
 	authNonce, err := utils.RandStr(32)
