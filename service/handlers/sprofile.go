@@ -62,7 +62,15 @@ func sprofilePut(c *gin.Context) {
 		utils.AbortWithError(c, 400, err)
 		return
 	}
+
 	data.Id = utils.FilterStr(data.Id)
+	if data.Id == "" {
+		err = &errortypes.ParseError{
+			errors.Wrap(err, "handler: Invalid profile ID"),
+		}
+		utils.AbortWithError(c, 400, err)
+		return
+	}
 
 	prfl := &sprofile.Sprofile{
 		Id:                 data.Id,
@@ -110,7 +118,15 @@ func sprofileDel(c *gin.Context) {
 		utils.AbortWithError(c, 400, err)
 		return
 	}
+
 	data.Id = utils.FilterStr(data.Id)
+	if data.Id == "" {
+		err = &errortypes.ParseError{
+			errors.Wrap(err, "handler: Invalid profile ID"),
+		}
+		utils.AbortWithError(c, 400, err)
+		return
+	}
 
 	prfl := profile.GetProfile(data.Id)
 	if prfl != nil {
