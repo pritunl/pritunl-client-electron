@@ -393,6 +393,7 @@ func (s *Sprofile) syncProfile(host string) (updated bool, err error) {
 	req.Header.Set("Auth-Timestamp", timestamp)
 	req.Header.Set("Auth-Nonce", authNonce)
 	req.Header.Set("Auth-Signature", sig)
+	req.Header.Set("User-Agent", "pritunl")
 
 	res, err := clientInsecure.Do(req)
 	if err != nil {
