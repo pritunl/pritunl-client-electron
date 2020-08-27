@@ -32,6 +32,7 @@ func Execute() {
 
 func init() {
 	RootCmd.AddCommand(VersionCmd)
+	RootCmd.AddCommand(AddCmd)
 	RootCmd.AddCommand(RemoveCmd)
 	RootCmd.AddCommand(ListCmd)
 	RootCmd.AddCommand(StartCmd)
