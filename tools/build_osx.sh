@@ -33,6 +33,7 @@ npm update
   --icon=./www/img/pritunl.icns \
   --darwinDarkModeSupport=true \
   --extra-resource="../build/resources/pritunl-service" \
+  --extra-resource="../build/resources/pritunl-client" \
   --extra-resource="../build/resources/pritunl-openvpn" \
   --osx-sign.hardenedRuntime \
   --osx-sign.hardened-runtime \
