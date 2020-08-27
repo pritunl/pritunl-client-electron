@@ -490,8 +490,12 @@ func (s *Sprofile) Commit() (err error) {
 
 func (s *Sprofile) Delete() (err error) {
 	prflPth := s.BasePath() + ".conf"
+	logPth1 := s.BasePath() + ".log"
+	logPth2 := s.BasePath() + ".log.1"
 
 	_ = utils.Remove(prflPth)
+	_ = utils.Remove(logPth1)
+	_ = utils.Remove(logPth2)
 
 	return
 }
