@@ -2,14 +2,45 @@ package sprofile
 
 import (
 	"bytes"
+	"crypto/tls"
 	"encoding/json"
 	"net/http"
+	"regexp"
 	"runtime"
+	"strings"
+	"time"
 
 	"github.com/dropbox/godropbox/errors"
 	"github.com/pritunl/pritunl-client-electron/cli/errortypes"
 	"github.com/pritunl/pritunl-client-electron/cli/profile"
 	"github.com/pritunl/pritunl-client-electron/cli/service"
+	"github.com/pritunl/pritunl-client-electron/cli/utils"
+)
+
+var (
+	clientSecure = &http.Client{
+		Transport: &http.Transport{
+			TLSHandshakeTimeout: 12 * time.Second,
+			TLSClientConfig: &tls.Config{
+				MinVersion: tls.VersionTLS12,
+				MaxVersion: tls.VersionTLS13,
+			},
+		},
+		Timeout: 12 * time.Second,
+	}
+	clientInsecure = &http.Client{
+		Transport: &http.Transport{
+			TLSHandshakeTimeout: 12 * time.Second,
+			TLSClientConfig: &tls.Config{
+				InsecureSkipVerify: true,
+				MinVersion:         tls.VersionTLS12,
+				MaxVersion:         tls.VersionTLS13,
+			},
+		},
+		Timeout: 12 * time.Second,
+	}
+	ip4reg = regexp.MustCompile("/\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}/")
+	ip6reg = regexp.MustCompile("/\\[[a-fA-F0-9:]*\\]/")
 )
 
 type SprofileData struct {
@@ -314,6 +345,183 @@ func Start(sprflId, mode, password string) (err error) {
 			errors.Wrap(err, "sprofile: Unknown request error"),
 		}
 		return
+	}
+
+	return
+}
+
+func Import(data string) (err error) {
+	proflId, err := utils.RandStr(32)
+	if err != nil {
+		return
+	}
+
+	profl := &Sprofile{
+		Id: strings.ToLower(proflId),
+	}
+
+	jsonData := ""
+	jsonFound := false
+	jsonLoaded := false
+
+	dataLines := strings.Split(data, "\n")
+	data = ""
+	for _, line := range dataLines {
+		if !jsonLoaded && !jsonFound && line == "#{" {
+			jsonFound = true
+			jsonLoaded = true
+		}
+
+		if jsonFound && strings.HasPrefix(line, "#") {
+			if line == "#}" {
+				jsonFound = false
+			}
+			jsonData += strings.Replace(line, "#", "", 1)
+		} else {
+			data += line + "\n"
+		}
+	}
+
+	if jsonLoaded {
+		err = json.Unmarshal([]byte(jsonData), profl)
+		if err != nil {
+			err = &errortypes.ParseError{
+				errors.Wrap(err, "profile: Failed to parse sync conf data"),
+			}
+			return
+		}
+	} else {
+		err = &errortypes.ParseError{
+			errors.Wrap(err, "profile: Conf data missing"),
+		}
+		return
+	}
+
+	profl.OvpnData = data
+
+	reqUrl := service.GetAddress() + "/sprofile"
+
+	authKey, err := service.GetAuthKey()
+	if err != nil {
+		return
+	}
+
+	reqData, err := json.Marshal(profl)
+	if err != nil {
+		err = errortypes.RequestError{
+			errors.Wrap(err, "sprofile: Json marshal error"),
+		}
+		return
+	}
+
+	body := bytes.NewBuffer(reqData)
+
+	req, err := http.NewRequest("PUT", reqUrl, body)
+	if err != nil {
+		err = errortypes.RequestError{
+			errors.Wrap(err, "sprofile: Post request failed"),
+		}
+		return
+	}
+
+	if runtime.GOOS == "linux" {
+		req.Host = "unix"
+	}
+	req.Header.Set("Auth-Key", authKey)
+	req.Header.Set("User-Agent", "pritunl")
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := service.GetClient().Do(req)
+	if err != nil {
+		err = errortypes.RequestError{
+			errors.Wrap(err, "sprofile: Request failed"),
+		}
+		return
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		err = errortypes.RequestError{
+			errors.Wrapf(
+				err,
+				"sprofile: Unknown request error %d",
+				resp.StatusCode,
+			),
+		}
+		return
+	}
+
+	return
+}
+
+func ImportUri(uri string) (err error) {
+	uri = strings.Replace(uri, "pritunl://", "https://", 1)
+	uri = strings.Replace(uri, "/k/", "/ku/", 1)
+
+	req, err := http.NewRequest(
+		"GET",
+		uri,
+		nil,
+	)
+	if err != nil {
+		err = &errortypes.RequestError{
+			errors.Wrap(err, "profile: Sync profile request error"),
+		}
+		return
+	}
+
+	req.Header.Set("User-Agent", "pritunl")
+
+	var client *http.Client
+	if len(ip4reg.FindAllString(uri, -1)) > 1 ||
+		len(ip6reg.FindAllString(uri, -1)) > 1 {
+
+		client = clientInsecure
+	} else {
+		client = clientSecure
+	}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		err = errortypes.RequestError{
+			errors.Wrap(err, "sprofile: Request failed"),
+		}
+		return
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode == 404 {
+		err = errortypes.RequestError{
+			errors.Wrap(err, "sprofile: Invalid profile uri"),
+		}
+		return
+	}
+
+	if resp.StatusCode != 200 {
+		err = errortypes.RequestError{
+			errors.Wrapf(
+				err,
+				"sprofile: Unknown profile uri error %d",
+				resp.StatusCode,
+			),
+		}
+		return
+	}
+
+	data := map[string]string{}
+	err = json.NewDecoder(resp.Body).Decode(&data)
+	if err != nil {
+		err = &errortypes.ParseError{
+			errors.Wrap(err, "sprofile: Failed to parse uri response body"),
+		}
+		return
+	}
+
+	for _, proflData := range data {
+		err = Import(proflData)
+		if err != nil {
+			return
+		}
 	}
 
 	return
