@@ -288,7 +288,7 @@ func Start(sprflId, mode, password string) (err error) {
 	req, err := http.NewRequest("POST", reqUrl, body)
 	if err != nil {
 		err = errortypes.RequestError{
-			errors.Wrap(err, "sprofile: Delete request failed"),
+			errors.Wrap(err, "sprofile: Post request failed"),
 		}
 		return
 	}
