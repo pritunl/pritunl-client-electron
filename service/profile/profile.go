@@ -654,14 +654,24 @@ func (p *Profile) update() {
 }
 
 func (p *Profile) pushOutput(output string) {
-	evt := &event.Event{
-		Type: "output",
-		Data: &OutputData{
-			Id:     p.Id,
-			Output: output,
-		},
+	if p.SystemProfile != nil {
+		err := p.SystemProfile.PushOutput(output + "\n")
+		if err != nil {
+			logrus.WithFields(logrus.Fields{
+				"output": output,
+				"error":  err,
+			}).Error("profile: Failed to push profile log output")
+		}
+	} else {
+		evt := &event.Event{
+			Type: "output",
+			Data: &OutputData{
+				Id:     p.Id,
+				Output: output,
+			},
+		}
+		evt.Init()
 	}
-	evt.Init()
 
 	return
 }
