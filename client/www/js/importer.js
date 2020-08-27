@@ -330,7 +330,7 @@ var importProfileUri = function(prflUri, callback) {
   request.get({
     url: prflUri,
     strictSSL: strictSsl,
-    timeout: 5000,
+    timeout: 12000,
     headers: {
       'User-Agent': 'pritunl'
     }
