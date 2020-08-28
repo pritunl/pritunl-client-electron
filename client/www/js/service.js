@@ -414,7 +414,7 @@ var sprofileLogDel = function(prflId, callback) {
 
     if (err) {
       err = new errors.NetworkError(
-        'service: Failed to delete token (%s)', err);
+        'service: Failed to delete logs (%s)', err);
       logger.error(err);
     }
     if (callback) {
@@ -626,6 +626,7 @@ module.exports = {
   sprofilesGet: sprofilesGet,
   sprofilePut: sprofilePut,
   sprofileDel: sprofileDel,
+  sprofileLogGet: sprofileLogGet,
   sprofileLogDel: sprofileLogDel,
   tokenUpdate: tokenUpdate,
   tokenDelete: tokenDelete,
