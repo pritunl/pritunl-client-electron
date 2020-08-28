@@ -587,9 +587,11 @@ var renderProfile = function(index, prfl) {
   });
 
   $profile.find('.menu .view-logs').click(function() {
-    edtr = openEditor($profile, prfl.log, 'logs');
-    edtrType = 'logs';
-    closeMenu($profile);
+    prfl.getOutput(function(data) {
+      edtr = openEditor($profile, data, 'logs');
+      edtrType = 'logs';
+      closeMenu($profile);
+    });
   });
 
   $profile.find('.config .btns .save').click(function() {
