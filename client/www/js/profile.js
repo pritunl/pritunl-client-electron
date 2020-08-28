@@ -458,6 +458,20 @@ Profile.prototype.pushOutput = function(output) {
   }
 };
 
+Profile.prototype.getOutput = function(callback) {
+  if (this.systemPrfl) {
+    service.sprofileLogGet(this.id, function(err, data) {
+      if (err) {
+        callback('');
+      } else {
+        callback(data);
+      }
+    }.bind(this));
+  } else {
+    callback(this.log);
+  }
+};
+
 Profile.prototype.getUptime = function(curTime) {
   if (!this.timestamp || this.status !== 'connected') {
     return;
