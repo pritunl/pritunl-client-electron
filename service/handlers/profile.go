@@ -46,7 +46,7 @@ func profilePost(c *gin.Context) {
 	data.Id = utils.FilterStr(data.Id)
 	if data.Id == "" {
 		err = &errortypes.ParseError{
-			errors.Wrap(err, "handler: Invalid profile ID"),
+			errors.New("handler: Invalid profile ID"),
 		}
 		utils.AbortWithError(c, 400, err)
 		return
@@ -115,7 +115,7 @@ func profileDel(c *gin.Context) {
 	data.Id = utils.FilterStr(data.Id)
 	if data.Id == "" {
 		err = &errortypes.ParseError{
-			errors.Wrap(err, "handler: Invalid profile ID"),
+			errors.New("handler: Invalid profile ID"),
 		}
 		utils.AbortWithError(c, 400, err)
 		return
