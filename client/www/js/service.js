@@ -342,7 +342,7 @@ var sprofileDel = function(prflId, callback) {
 
     if (err) {
       err = new errors.NetworkError(
-        'service: Failed to delete token (%s)', err);
+        'service: Failed to delete sprofile (%s)', err);
       logger.error(err);
     }
     if (callback) {
