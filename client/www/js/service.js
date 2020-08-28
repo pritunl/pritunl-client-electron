@@ -351,6 +351,41 @@ var sprofileDel = function(prflId, callback) {
   });
 };
 
+var sprofileLogGet = function(prflId, callback) {
+  var url;
+  var headers = {
+    'Auth-Key': constants.key,
+    'User-Agent': 'pritunl'
+  };
+
+  if (constants.unixSocket) {
+    url = 'http://unix:' + constants.unixPath +
+      ':/sprofile/' + prflId + '/log';
+    headers['Host'] = 'unix';
+  } else {
+    url = 'http://' + constants.serviceHost +
+      ':/sprofile/' + prflId + '/log';
+  }
+
+  request.get({
+    url: url,
+    headers: headers,
+  }, function(err, resp, data) {
+    if (!err && resp && resp.statusCode !== 200) {
+      err = resp.statusMessage;
+    }
+
+    if (err) {
+      err = new errors.NetworkError(
+        'service: Failed to get logs (%s)', err);
+      logger.error(err);
+    }
+    if (callback) {
+      callback(null, data);
+    }
+  });
+};
+
 var sprofileLogDel = function(prflId, callback) {
   var url;
   var headers = {
