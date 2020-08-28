@@ -168,16 +168,16 @@ func sprofileLogGet(c *gin.Context) {
 }
 
 func sprofileLogDel(c *gin.Context) {
-	data := &profileData{}
-
-	err := c.Bind(data)
-	if err != nil {
+	prflId := utils.FilterStr(c.Param("profile_id"))
+	if prflId == "" {
+		err := &errortypes.ParseError{
+			errors.New("handler: Invalid profile ID"),
+		}
 		utils.AbortWithError(c, 400, err)
 		return
 	}
-	data.Id = utils.FilterStr(data.Id)
 
-	err = sprofile.ClearLog(data.Id)
+	err := sprofile.ClearLog(prflId)
 	if err != nil {
 		utils.AbortWithError(c, 500, err)
 		return
