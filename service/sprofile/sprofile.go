@@ -8,6 +8,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"path"
@@ -172,6 +173,22 @@ func (s *Sprofile) Copy() (sprfl *Sprofile) {
 		Path:               s.Path,
 		Password:           s.Password,
 	}
+
+	return
+}
+
+func (s *Sprofile) GetOutput() (data string, err error) {
+	logPth := s.BasePath() + ".log"
+
+	dataByt, err := ioutil.ReadFile(logPth)
+	if err != nil {
+		err = &errortypes.ReadError{
+			errors.Wrap(err, "sprofile: Failed to read log file"),
+		}
+		return
+	}
+
+	data = string(dataByt)
 
 	return
 }
