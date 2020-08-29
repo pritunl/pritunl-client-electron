@@ -14,4 +14,4 @@ def get_ver(version):
 
     return ver_str
 
-print get_ver(sys.argv[1])
+print(get_ver(sys.argv[1]))
