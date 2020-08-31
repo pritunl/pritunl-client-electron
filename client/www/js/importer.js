@@ -71,7 +71,7 @@ Importer.prototype.import = function(pth, data, callback) {
       if (this.files[filePth]) {
         keyData += '<ca>\n' + this.files[filePth] + '</ca>\n';
       } else {
-        filePth = path.join(path.dirname(pth), filePth);
+        filePth = path.join(path.dirname(pth), path.normalize(filePth));
         waiter.add();
 
         fs.readFile(filePth, 'utf8', function(err, data) {
@@ -94,7 +94,7 @@ Importer.prototype.import = function(pth, data, callback) {
       if (this.files[filePth]) {
         keyData += '<cert>\n' + this.files[filePth] + '</cert>\n';
       } else {
-        filePth = path.join(path.dirname(pth), filePth);
+        filePth = path.join(path.dirname(pth), path.normalize(filePth));
         waiter.add();
 
         fs.readFile(filePth, 'utf8', function(err, data) {
@@ -117,7 +117,7 @@ Importer.prototype.import = function(pth, data, callback) {
       if (this.files[filePth]) {
         keyData += '<key>\n' + this.files[filePth] + '</key>\n';
       } else {
-        filePth = path.join(path.dirname(pth), filePth);
+        filePth = path.join(path.dirname(pth), path.normalize(filePth));
         waiter.add();
 
         fs.readFile(filePth, 'utf8', function(err, data) {
@@ -145,7 +145,7 @@ Importer.prototype.import = function(pth, data, callback) {
       if (this.files[filePth]) {
         keyData += '<tls-auth>\n' + this.files[filePth] + '</tls-auth>\n';
       } else {
-        filePth = path.join(path.dirname(pth), filePth);
+        filePth = path.join(path.dirname(pth), path.normalize(filePth));
         waiter.add();
 
         fs.readFile(filePth, 'utf8', function(err, data) {
