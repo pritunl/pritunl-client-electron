@@ -914,6 +914,7 @@ func PidInit() (err error) {
 		}
 	}
 
+	_ = os.Remove(pth)
 	err = ioutil.WriteFile(
 		pth,
 		[]byte(strconv.Itoa(os.Getpid())),

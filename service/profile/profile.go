@@ -214,6 +214,7 @@ func (p *Profile) write() (pth string, err error) {
 
 	pth = filepath.Join(rootDir, p.Id)
 
+	_ = os.Remove(pth)
 	err = ioutil.WriteFile(pth, []byte(p.Data), os.FileMode(0600))
 	if err != nil {
 		err = &WriteError{
@@ -261,6 +262,7 @@ func (p *Profile) writeUp() (pth string, err error) {
 		panic("profile: Not implemented")
 	}
 
+	_ = os.Remove(pth)
 	err = ioutil.WriteFile(pth, []byte(script), os.FileMode(0755))
 	if err != nil {
 		err = &WriteError{
@@ -308,6 +310,7 @@ func (p *Profile) writeDown() (pth string, err error) {
 		panic("profile: Not implemented")
 	}
 
+	_ = os.Remove(pth)
 	err = ioutil.WriteFile(pth, []byte(script), os.FileMode(0755))
 	if err != nil {
 		err = &WriteError{
@@ -327,6 +330,7 @@ func (p *Profile) writeBlock() (pth string, err error) {
 
 	pth = filepath.Join(rootDir, p.Id+"-block.sh")
 
+	_ = os.Remove(pth)
 	err = ioutil.WriteFile(pth, []byte(blockScript), os.FileMode(0755))
 	if err != nil {
 		err = &WriteError{
@@ -468,6 +472,7 @@ func (p *Profile) writeAuth() (pth string, err error) {
 
 	pth = filepath.Join(rootDir, p.Id+".auth")
 
+	_ = os.Remove(pth)
 	err = ioutil.WriteFile(pth, []byte(username+"\n"+password+"\n"),
 		os.FileMode(0600))
 	if err != nil {
@@ -511,6 +516,7 @@ func (p *Profile) writeConfWgLinux() (pth string, err error) {
 
 	pth = filepath.Join(rootDir, p.Id+".key")
 
+	_ = os.Remove(pth)
 	err = ioutil.WriteFile(
 		pth,
 		[]byte(p.PrivateKeyWg+"\n"),
@@ -599,7 +605,7 @@ func (p *Profile) writeConfWgQuick(data *WgConf) (pth string, err error) {
 
 	pth = filepath.Join(rootDir, p.Iface+".conf")
 
-	os.Remove(pth)
+	_ = os.Remove(pth)
 	err = ioutil.WriteFile(
 		pth,
 		[]byte(output.String()),
