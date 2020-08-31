@@ -34,6 +34,7 @@ func init() {
 	RootCmd.AddCommand(VersionCmd)
 	RootCmd.AddCommand(AddCmd)
 	RootCmd.AddCommand(RemoveCmd)
+	RootCmd.AddCommand(LogsCmd)
 	RootCmd.AddCommand(ListCmd)
 	RootCmd.AddCommand(StartCmd)
 	RootCmd.AddCommand(StopCmd)
