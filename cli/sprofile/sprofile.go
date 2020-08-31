@@ -2,9 +2,15 @@ package sprofile
 
 import (
 	"fmt"
+	"io/ioutil"
+	"net/http"
+	"runtime"
 	"strings"
 
+	"github.com/dropbox/godropbox/errors"
+	"github.com/pritunl/pritunl-client-electron/cli/errortypes"
 	"github.com/pritunl/pritunl-client-electron/cli/profile"
+	"github.com/pritunl/pritunl-client-electron/cli/service"
 )
 
 type Sprofile struct {
@@ -50,6 +56,50 @@ func (s *Sprofile) FormatedName() (name string) {
 			name = "Unknown Profile"
 		}
 	}
+
+	return
+}
+
+func (s *Sprofile) GetLogs() (data string, err error) {
+	reqUrl := service.GetAddress() + "/sprofile/" + s.Id + "/log"
+
+	authKey, err := service.GetAuthKey()
+	if err != nil {
+		return
+	}
+
+	req, err := http.NewRequest("GET", reqUrl, nil)
+	if err != nil {
+		err = errortypes.RequestError{
+			errors.Wrap(err, "sprofile: Get request failed"),
+		}
+		return
+	}
+
+	if runtime.GOOS == "linux" {
+		req.Host = "unix"
+	}
+	req.Header.Set("Auth-Key", authKey)
+	req.Header.Set("User-Agent", "pritunl")
+
+	resp, err := service.GetClient().Do(req)
+	if err != nil {
+		err = errortypes.RequestError{
+			errors.Wrap(err, "sprofile: Request failed"),
+		}
+		return
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		err = errortypes.ReadError{
+			errors.Wrap(err, "sprofile: Failed to read response"),
+		}
+		return
+	}
+
+	data = strings.TrimSpace(string(body)) + "\n"
 
 	return
 }
