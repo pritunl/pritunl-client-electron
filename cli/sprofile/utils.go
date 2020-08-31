@@ -232,7 +232,6 @@ func GetAll() (sprfls []*Sprofile, err error) {
 	}
 	req.Header.Set("Auth-Key", authKey)
 	req.Header.Set("User-Agent", "pritunl")
-	req.Header.Set("Content-Type", "application/json")
 
 	resp, err := service.GetClient().Do(req)
 	if err != nil {
