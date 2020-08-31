@@ -771,6 +771,43 @@ func GetLogPath2() (pth string) {
 	return
 }
 
+func InitTempDir() (err error) {
+	if constants.Development {
+		pth := filepath.Join(GetRootDir(), "..", "dev", "tmp")
+		err = os.MkdirAll(pth, 0755)
+		if err != nil {
+			err = &IoError{
+				errors.Wrap(err, "utils: Failed to create temp directory"),
+			}
+			return
+		}
+	} else if runtime.GOOS == "windows" {
+		pth := filepath.Join("C:\\", "ProgramData", "Pritunl")
+
+		_ = os.RemoveAll(pth)
+		err = os.MkdirAll(pth, 0755)
+		if err != nil {
+			err = &IoError{
+				errors.Wrap(err, "utils: Failed to create temp directory"),
+			}
+			return
+		}
+	} else {
+		pth := filepath.Join(string(filepath.Separator), "tmp", "pritunl")
+
+		_ = os.RemoveAll(pth)
+		err = os.MkdirAll(pth, 0700)
+		if err != nil {
+			err = &IoError{
+				errors.Wrap(err, "utils: Failed to create temp directory"),
+			}
+			return
+		}
+	}
+
+	return
+}
+
 func GetTempDir() (pth string, err error) {
 	if constants.Development {
 		pth = filepath.Join(GetRootDir(), "..", "dev", "tmp")

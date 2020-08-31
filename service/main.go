@@ -38,6 +38,14 @@ func main() {
 		panic(err)
 	}
 
+	err = utils.InitTempDir()
+	if err != nil {
+		logrus.WithFields(logrus.Fields{
+			"error": err,
+		}).Error("main: Failed to init temp dir")
+		panic(err)
+	}
+
 	logger.Init()
 
 	logrus.WithFields(logrus.Fields{
