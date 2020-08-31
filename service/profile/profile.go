@@ -1009,32 +1009,6 @@ func (p *Profile) Init() {
 }
 
 func (p *Profile) Start(timeout bool) (err error) {
-	if p.SystemProfile != nil {
-		updated, e := p.SystemProfile.Sync()
-		if e != nil {
-			logrus.WithFields(logrus.Fields{
-				"profile_id": p.Id,
-				"error":      e,
-			}).Error("profile: Failed to sync system profile")
-		} else if updated {
-			UpdateSystemProfile(p, p.SystemProfile)
-		}
-	}
-
-	if p.Mode == Wg {
-		err = p.startWg(timeout)
-	} else {
-		err = p.startOvpn(timeout)
-	}
-
-	if p.stop {
-		err = nil
-	}
-
-	return
-}
-
-func (p *Profile) startOvpn(timeout bool) (err error) {
 	start := time.Now()
 	p.startTime = start
 	p.remPaths = []string{}
@@ -1065,9 +1039,35 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 	Profiles.m[p.Id] = p
 	Profiles.Unlock()
 
+	if p.SystemProfile != nil {
+		updated, e := p.SystemProfile.Sync()
+		if e != nil {
+			logrus.WithFields(logrus.Fields{
+				"profile_id": p.Id,
+				"error":      e,
+			}).Error("profile: Failed to sync system profile")
+		} else if updated {
+			UpdateSystemProfile(p, p.SystemProfile)
+		}
+	}
+
+	if p.Mode == Wg {
+		err = p.startWg(timeout)
+	} else {
+		err = p.startOvpn(timeout)
+	}
+
+	if p.stop {
+		err = nil
+	}
+
+	return
+}
+
+func (p *Profile) startOvpn(timeout bool) (err error) {
 	confPath, err := p.write()
 	if err != nil {
-		p.clearStatus(start)
+		p.clearStatus(p.startTime)
 		return
 	}
 	p.remPaths = append(p.remPaths, confPath)
@@ -1078,7 +1078,7 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 
 		authPath, err = p.writeAuth()
 		if err != nil {
-			p.clearStatus(start)
+			p.clearStatus(p.startTime)
 			return
 		}
 		p.remPaths = append(p.remPaths, authPath)
@@ -1094,7 +1094,7 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 	if runtime.GOOS == "windows" {
 		p.intf, err = utils.AcquireTap()
 		if err != nil {
-			p.clearStatus(start)
+			p.clearStatus(p.startTime)
 			return
 		}
 
@@ -1106,7 +1106,7 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 	blockPath, e := p.writeBlock()
 	if e != nil {
 		err = e
-		p.clearStatus(start)
+		p.clearStatus(p.startTime)
 		return
 	}
 	p.remPaths = append(p.remPaths, blockPath)
@@ -1119,7 +1119,7 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 		upPath, e := p.writeUp()
 		if e != nil {
 			err = e
-			p.clearStatus(start)
+			p.clearStatus(p.startTime)
 			return
 		}
 		p.remPaths = append(p.remPaths, upPath)
@@ -1127,7 +1127,7 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 		downPath, e := p.writeDown()
 		if e != nil {
 			err = e
-			p.clearStatus(start)
+			p.clearStatus(p.startTime)
 			return
 		}
 		p.remPaths = append(p.remPaths, downPath)
@@ -1145,7 +1145,7 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 		upPath, e := p.writeUp()
 		if e != nil {
 			err = e
-			p.clearStatus(start)
+			p.clearStatus(p.startTime)
 			return
 		}
 		p.remPaths = append(p.remPaths, upPath)
@@ -1153,7 +1153,7 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 		downPath, e := p.writeDown()
 		if e != nil {
 			err = e
-			p.clearStatus(start)
+			p.clearStatus(p.startTime)
 			return
 		}
 		p.remPaths = append(p.remPaths, downPath)
@@ -1184,7 +1184,7 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 		err = &ExecError{
 			errors.Wrap(err, "profile: Failed to get stdout"),
 		}
-		p.clearStatus(start)
+		p.clearStatus(p.startTime)
 		return
 	}
 
@@ -1193,7 +1193,7 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 		err = &ExecError{
 			errors.Wrap(err, "profile: Failed to get stderr"),
 		}
-		p.clearStatus(start)
+		p.clearStatus(p.startTime)
 		return
 	}
 
@@ -1313,7 +1313,7 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 		err = &ExecError{
 			errors.Wrap(err, "profile: Failed to start openvpn"),
 		}
-		p.clearStatus(start)
+		p.clearStatus(p.startTime)
 		return
 	}
 
@@ -1349,7 +1349,7 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 			}).Error("profile: Unexpected profile exit")
 		}
 
-		p.clearStatus(start)
+		p.clearStatus(p.startTime)
 	}()
 
 	if timeout {
@@ -2475,39 +2475,9 @@ func (p *Profile) watchWg() {
 }
 
 func (p *Profile) startWg(timeout bool) (err error) {
-	start := time.Now()
-	p.startTime = start
-	p.remPaths = []string{}
-
-	p.Status = "connecting"
-	p.stateLock.Lock()
-	p.state = true
-	p.stateLock.Unlock()
-
-	Profiles.RLock()
-	n := len(Profiles.m)
-	_, ok := Profiles.m[p.Id]
-	Profiles.RUnlock()
-	if ok {
-		return
-	}
-
-	logrus.WithFields(logrus.Fields{
-		"profile_id": p.Id,
-		"mode":       p.Mode,
-	}).Info("profile: Connecting")
-
-	if runtime.GOOS == "darwin" && n == 0 {
-		utils.ClearScutilKeys()
-	}
-
-	Profiles.Lock()
-	Profiles.m[p.Id] = p
-	Profiles.Unlock()
-
 	err = p.generateWgKey()
 	if err != nil {
-		p.clearStatus(start)
+		p.clearStatus(p.startTime)
 		return
 	}
 
@@ -2523,7 +2493,7 @@ func (p *Profile) startWg(timeout bool) (err error) {
 			errors.New("profile: Failed to load interfaces"),
 		}
 
-		p.clearStatus(start)
+		p.clearStatus(p.startTime)
 		return
 	}
 
@@ -2596,7 +2566,7 @@ func (p *Profile) startWg(timeout bool) (err error) {
 		}
 
 		if p.stop {
-			p.clearStatus(start)
+			p.clearStatus(p.startTime)
 			return
 		}
 	}
@@ -2617,12 +2587,12 @@ func (p *Profile) startWg(timeout bool) (err error) {
 		if p.connected && !p.stop {
 			go p.restart()
 		}
-		p.clearStatus(start)
+		p.clearStatus(p.startTime)
 		return
 	}
 
 	if p.stop {
-		p.clearStatus(start)
+		p.clearStatus(p.startTime)
 		return
 	}
 
@@ -2631,7 +2601,7 @@ func (p *Profile) startWg(timeout bool) (err error) {
 			errors.Wrap(err, "profile: Request wg returned empty data"),
 		}
 
-		p.clearStatus(start)
+		p.clearStatus(p.startTime)
 		return
 	}
 
@@ -2646,7 +2616,9 @@ func (p *Profile) startWg(timeout bool) (err error) {
 		}
 		evt.Init()
 
-		p.clearStatus(start)
+		time.Sleep(3 * time.Second)
+
+		p.clearStatus(p.startTime)
 		return
 	}
 
@@ -2658,7 +2630,7 @@ func (p *Profile) startWg(timeout bool) (err error) {
 			),
 		}
 
-		p.clearStatus(start)
+		p.clearStatus(p.startTime)
 		return
 	}
 
@@ -2668,14 +2640,14 @@ func (p *Profile) startWg(timeout bool) (err error) {
 			errors.New("profile: Failed to acquire interface"),
 		}
 
-		p.clearStatus(start)
+		p.clearStatus(p.startTime)
 		return
 	}
 	p.Iface = iface
 
 	wgConfPth, err := p.writeWgConf(data.Configuration)
 	if err != nil {
-		p.clearStatus(start)
+		p.clearStatus(p.startTime)
 		return
 	}
 	p.remPaths = append(p.remPaths, wgConfPth)
@@ -2694,7 +2666,7 @@ func (p *Profile) startWg(timeout bool) (err error) {
 		}).Error("profile: Failed to configure wg")
 		err = nil
 
-		p.clearStatus(start)
+		p.clearStatus(p.startTime)
 		return
 	}
 
