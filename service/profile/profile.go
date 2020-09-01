@@ -799,6 +799,8 @@ func (p *Profile) parseLine(line string) {
 				Data: p,
 			}
 			evt.Init()
+
+			time.Sleep(3 * time.Second)
 		}
 	} else if strings.Contains(line, "link remote:") {
 		sIndex := strings.LastIndex(line, "]") + 1
