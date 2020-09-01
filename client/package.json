@@ -1,6 +1,6 @@
 {
   "name": "pritunl",
-  "version": "1.0.2440.93",
+  "version": "1.2.2546.92",
   "main": "www/main.js",
   "dependencies": {
     "jquery": "3.5.1",
