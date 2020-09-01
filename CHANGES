@@ -1,8 +1,7 @@
 Pritunl Client Changelog
 ========================
 
-Version 1.2.2546.92 2020-09-01
-------------------------------
+<%= version %>
 
 Add command line client
 Improve autostart profiles
