@@ -214,8 +214,43 @@ func (p *Profile) write() (pth string, err error) {
 
 	pth = filepath.Join(rootDir, p.Id)
 
+	data := ""
+	for _, line := range strings.Split(p.Data, "\n") {
+		trimLine := strings.TrimSpace(line)
+		trimLine = strings.Trim(trimLine, "#")
+		trimLine = strings.Trim(trimLine, "-")
+		trimLine = strings.Trim(trimLine, "_")
+		trimLine = strings.Trim(trimLine, ":")
+		trimLine = strings.Trim(trimLine, ";")
+		trimLine = strings.Trim(trimLine, "*")
+		trimLine = strings.Trim(trimLine, "%")
+		trimLine = strings.Trim(trimLine, "$")
+		trimLine = strings.Trim(trimLine, "+")
+		trimLine = strings.Trim(trimLine, "=")
+		trimLine = strings.Trim(trimLine, "~")
+		trimLine = strings.Trim(trimLine, "(")
+		trimLine = strings.Trim(trimLine, ")")
+		trimLine = strings.Trim(trimLine, "[")
+		trimLine = strings.Trim(trimLine, "]")
+		trimLine = strings.Trim(trimLine, "{")
+		trimLine = strings.Trim(trimLine, "}")
+
+		if strings.Contains(trimLine, "script-security") ||
+			strings.HasPrefix(trimLine, "log ") ||
+			strings.HasPrefix(trimLine, "up ") ||
+			strings.HasPrefix(trimLine, "down ") ||
+			strings.HasPrefix(trimLine, "route-pre-down ") ||
+			strings.HasPrefix(trimLine, "tls-verify ") ||
+			strings.HasPrefix(trimLine, "ipchange ") ||
+			strings.HasPrefix(trimLine, "route-up ") {
+
+			continue
+		}
+		data += line + "\n"
+	}
+
 	_ = os.Remove(pth)
-	err = ioutil.WriteFile(pth, []byte(p.Data), os.FileMode(0600))
+	err = ioutil.WriteFile(pth, []byte(data), os.FileMode(0600))
 	if err != nil {
 		err = &WriteError{
 			errors.Wrap(err, "profile: Failed to write profile"),
