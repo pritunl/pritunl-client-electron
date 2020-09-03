@@ -16,6 +16,15 @@ mkdir -p build/resources
 cp service/service build/resources/pritunl-service
 codesign --force --timestamp --options=runtime -s "Developer ID Application: Pritunl, Inc. (U22BLATN63)" build/resources/pritunl-service
 
+# CLI
+cd cli
+go get -u -f
+go build -v
+cd ..
+mkdir -p build/resources
+cp cli/cli build/resources/pritunl-client
+codesign --force --timestamp --options=runtime -s "Developer ID Application: Pritunl, Inc. (U22BLATN63)" build/resources/pritunl-client
+
 # Openvpn
 cp openvpn_osx/openvpn build/resources/pritunl-openvpn
 codesign --force --timestamp --options=runtime -s "Developer ID Application: Pritunl, Inc. (U22BLATN63)" build/resources/pritunl-openvpn
