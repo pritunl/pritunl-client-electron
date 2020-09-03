@@ -606,7 +606,11 @@ Profile.prototype.saveLog = function(callback) {
 Profile.prototype.clearLog = function(callback) {
   this.log = '';
   if (this.systemPrfl) {
-    service.sprofilePut(this.exportSystem());
+    service.sprofileLogDel(this.id, function(err) {
+      if (callback) {
+        callback(err);
+      }
+    }.bind(this));
   } else {
     fs.writeFile(
       this.logPath,
