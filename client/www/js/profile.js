@@ -442,6 +442,10 @@ Profile.prototype.formatedName = function() {
     }
   }
 
+  if (this.systemPrfl) {
+    name += ' (system)';
+  }
+
   return name;
 };
 
