@@ -254,6 +254,10 @@ var openMainWin = function() {
       }
       shown = true;
       main.show();
+
+      if (process.argv.indexOf('--dev-tools') !== -1) {
+        main.openDevTools();
+      }
     });
     setTimeout(function() {
       if (shown) {
