@@ -233,6 +233,7 @@ var openMainWin = function() {
       backgroundColor: '#151719',
       webPreferences: {
         zoomFactor: zoomFactor,
+        enableRemoteModule: true,
         nodeIntegration: true
       }
     });
