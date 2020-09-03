@@ -394,19 +394,17 @@ var sprofileLogDel = function(prflId, callback) {
   };
 
   if (constants.unixSocket) {
-    url = 'http://unix:' + constants.unixPath + ':/sprofile/log';
+    url = 'http://unix:' + constants.unixPath +
+      ':/sprofile/' + prflId + '/log';
     headers['Host'] = 'unix';
   } else {
-    url = 'http://' + constants.serviceHost + '/sprofile/log';
+    url = 'http://' + constants.serviceHost +
+      ':/sprofile/' + prflId + '/log';
   }
 
   request.del({
     url: url,
-    json: true,
     headers: headers,
-    body: {
-      id: prflId
-    }
   }, function(err, resp, data) {
     if (!err && resp && resp.statusCode !== 200) {
       err = resp.statusMessage;
