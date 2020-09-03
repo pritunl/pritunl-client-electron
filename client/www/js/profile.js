@@ -533,7 +533,9 @@ Profile.prototype.getUptime = function(curTime) {
 
 Profile.prototype.saveConf = function(callback) {
   if (this.systemPrfl) {
-    service.sprofilePut(this.exportSystem());
+    this.exportSystem(function(data) {
+      service.sprofilePut(data);
+    }.bind(this));
   } else {
     fs.writeFile(
       this.confPath,
@@ -558,7 +560,9 @@ Profile.prototype.saveConf = function(callback) {
 
 Profile.prototype.saveData = function(callback) {
   if (this.systemPrfl) {
-    service.sprofilePut(this.exportSystem());
+    this.exportSystem(function(data) {
+      service.sprofilePut(data);
+    }.bind(this));
   } else {
     if (os.platform() === 'darwin') {
       this.extractKey(this.data);
@@ -585,7 +589,9 @@ Profile.prototype.saveData = function(callback) {
 
 Profile.prototype.saveLog = function(callback) {
   if (this.systemPrfl) {
-    service.sprofilePut(this.exportSystem());
+    this.exportSystem(function(data) {
+      service.sprofilePut(data);
+    }.bind(this));
   } else {
     if (os.platform() === 'darwin') {
       this.extractKey(this.data);
@@ -642,16 +648,18 @@ Profile.prototype.autostartOn = function(callback) {
     return;
   }
 
-  service.sprofilePut(this.exportSystem(), function(err) {
-    if (!err) {
-      this.delete();
-      this.systemPrfl = true;
-      this.path = null;
-      this.confPath = null;
-      this.ovpnPath = null;
-      this.logPath = null;
-    }
-    callback();
+  this.exportSystem(function(data) {
+    service.sprofilePut(data, function(err) {
+      if (!err) {
+        this.delete();
+        this.systemPrfl = true;
+        this.path = null;
+        this.confPath = null;
+        this.ovpnPath = null;
+        this.logPath = null;
+      }
+      callback();
+    }.bind(this));
   }.bind(this));
 };
 
