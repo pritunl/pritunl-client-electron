@@ -231,31 +231,33 @@ Profile.prototype.loadSystem = function(data) {
   this.parseData();
 };
 
-Profile.prototype.exportSystem = function() {
-  return {
-    id: this.id,
-    name: this.name,
-    wg: this.wg,
-    last_mode: this.lastMode,
-    organization_id: this.organizationId,
-    organization: this.organization,
-    server_id: this.serverId,
-    server: this.server,
-    user_id: this.userId,
-    user: this.user,
-    pre_connect_msg: this.preConnectMsg,
-    password_mode: this.passwordMode,
-    token: this.token,
-    token_ttl: this.tokenTtl,
-    disable_reconnect: this.disableReconnect,
-    sync_hosts: this.syncHosts,
-    sync_hash: this.syncHash,
-    sync_secret: this.syncSecret,
-    sync_token: this.syncToken,
-    server_public_key: this.serverPublicKey,
-    server_box_public_key: this.serverBoxPublicKey,
-    ovpn_data: this.data,
-  };
+Profile.prototype.exportSystem = function(callback) {
+  this.getFullData(function (data) {
+    callback({
+      id: this.id,
+      name: this.name,
+      wg: this.wg,
+      last_mode: this.lastMode,
+      organization_id: this.organizationId,
+      organization: this.organization,
+      server_id: this.serverId,
+      server: this.server,
+      user_id: this.userId,
+      user: this.user,
+      pre_connect_msg: this.preConnectMsg,
+      password_mode: this.passwordMode,
+      token: this.token,
+      token_ttl: this.tokenTtl,
+      disable_reconnect: this.disableReconnect,
+      sync_hosts: this.syncHosts,
+      sync_hash: this.syncHash,
+      sync_secret: this.syncSecret,
+      sync_token: this.syncToken,
+      server_public_key: this.serverPublicKey,
+      server_box_public_key: this.serverBoxPublicKey,
+      ovpn_data: data,
+    });
+  }.bind(this));
 };
 
 Profile.prototype.parseData = function() {
