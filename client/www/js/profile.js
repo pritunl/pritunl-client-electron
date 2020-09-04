@@ -593,10 +593,6 @@ Profile.prototype.saveLog = function(callback) {
       service.sprofilePut(data);
     }.bind(this));
   } else {
-    if (os.platform() === 'darwin') {
-      this.extractKey(this.data);
-    }
-
     fs.writeFile(
       this.logPath,
       this.log,
