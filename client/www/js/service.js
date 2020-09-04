@@ -364,7 +364,7 @@ var sprofileLogGet = function(prflId, callback) {
     headers['Host'] = 'unix';
   } else {
     url = 'http://' + constants.serviceHost +
-      ':/sprofile/' + prflId + '/log';
+      '/sprofile/' + prflId + '/log';
   }
 
   request.get({
@@ -399,7 +399,7 @@ var sprofileLogDel = function(prflId, callback) {
     headers['Host'] = 'unix';
   } else {
     url = 'http://' + constants.serviceHost +
-      ':/sprofile/' + prflId + '/log';
+      '/sprofile/' + prflId + '/log';
   }
 
   request.del({
