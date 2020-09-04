@@ -237,6 +237,10 @@ func (p *Profile) write() (pth string, err error) {
 
 		if strings.Contains(trimLine, "script-security") ||
 			strings.HasPrefix(trimLine, "log ") ||
+			strings.HasPrefix(trimLine, "log-append ") ||
+			strings.HasPrefix(trimLine, "syslog ") ||
+			strings.HasPrefix(trimLine, "management ") ||
+			strings.HasPrefix(trimLine, "plugin ") ||
 			strings.HasPrefix(trimLine, "up ") ||
 			strings.HasPrefix(trimLine, "down ") ||
 			strings.HasPrefix(trimLine, "route-pre-down ") ||
