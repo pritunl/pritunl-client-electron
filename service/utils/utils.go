@@ -781,18 +781,7 @@ func InitTempDir() (err error) {
 			}
 			return
 		}
-	} else if runtime.GOOS == "windows" {
-		pth := filepath.Join("C:\\", "ProgramData", "Pritunl")
-
-		_ = os.RemoveAll(pth)
-		err = os.MkdirAll(pth, 0755)
-		if err != nil {
-			err = &IoError{
-				errors.Wrap(err, "utils: Failed to create temp directory"),
-			}
-			return
-		}
-	} else {
+	} else if runtime.GOOS != "windows" {
 		pth := filepath.Join(string(filepath.Separator), "tmp", "pritunl")
 
 		_ = os.RemoveAll(pth)
