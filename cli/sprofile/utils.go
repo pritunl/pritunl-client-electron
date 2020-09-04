@@ -126,7 +126,7 @@ func Stop(sprflId string) (err error) {
 		return
 	}
 
-	if runtime.GOOS == "linux" {
+	if runtime.GOOS == "linux" || runtime.GOOS == "darwin" {
 		req.Host = "unix"
 	}
 	req.Header.Set("Auth-Key", authKey)
@@ -185,7 +185,7 @@ func Delete(sprflId string) (err error) {
 		return
 	}
 
-	if runtime.GOOS == "linux" {
+	if runtime.GOOS == "linux" || runtime.GOOS == "darwin" {
 		req.Host = "unix"
 	}
 	req.Header.Set("Auth-Key", authKey)
@@ -227,7 +227,7 @@ func GetAll() (sprfls []*Sprofile, err error) {
 		return
 	}
 
-	if runtime.GOOS == "linux" {
+	if runtime.GOOS == "linux" || runtime.GOOS == "darwin" {
 		req.Host = "unix"
 	}
 	req.Header.Set("Auth-Key", authKey)
@@ -323,7 +323,7 @@ func Start(sprflId, mode, password string) (err error) {
 		return
 	}
 
-	if runtime.GOOS == "linux" {
+	if runtime.GOOS == "linux" || runtime.GOOS == "darwin" {
 		req.Host = "unix"
 	}
 	req.Header.Set("Auth-Key", authKey)
@@ -423,7 +423,7 @@ func Import(data string) (err error) {
 		return
 	}
 
-	if runtime.GOOS == "linux" {
+	if runtime.GOOS == "linux" || runtime.GOOS == "darwin" {
 		req.Host = "unix"
 	}
 	req.Header.Set("Auth-Key", authKey)

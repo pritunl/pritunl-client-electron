@@ -26,7 +26,7 @@ func GetAll() (prfls map[string]*Profile, err error) {
 		return
 	}
 
-	if runtime.GOOS == "linux" {
+	if runtime.GOOS == "linux" || runtime.GOOS == "darwin" {
 		req.Host = "unix"
 	}
 	req.Header.Set("Auth-Key", authKey)

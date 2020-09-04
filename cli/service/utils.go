@@ -28,7 +28,7 @@ var unixClient = &http.Client{
 }
 
 func GetAddress() string {
-	if runtime.GOOS == "linux" {
+	if runtime.GOOS == "linux" || runtime.GOOS == "darwin" {
 		return "http://unix"
 	} else {
 		return "http://127.0.0.1:9770"
@@ -52,7 +52,7 @@ func GetAuthKey() (key string, err error) {
 }
 
 func GetClient() *http.Client {
-	if runtime.GOOS == "linux" {
+	if runtime.GOOS == "linux" || runtime.GOOS == "darwin" {
 		return unixClient
 	} else {
 		return httpClient
