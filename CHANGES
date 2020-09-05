@@ -5,6 +5,7 @@ Pritunl Client Changelog
 
 Fix system profiles autostart on Windows
 Fix local privilege escalation with openvpn configuration
+Fix file permissions on Linux and macOS
 
 Version 1.2.2549.5 2020-09-04
 -----------------------------
