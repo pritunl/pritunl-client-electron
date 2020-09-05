@@ -4,6 +4,7 @@ Pritunl Client Changelog
 <%= version %>
 
 Fix system profiles autostart on Windows
+Fix local privilege escalation with openvpn configuration
 
 Version 1.2.2549.5 2020-09-04
 -----------------------------
