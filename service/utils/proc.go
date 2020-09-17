@@ -2,7 +2,7 @@ package utils
 
 import (
 	"bytes"
-	"github.com/Sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 	"io"
 	"os"
 	"os/exec"
