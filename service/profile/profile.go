@@ -165,6 +165,8 @@ type Profile struct {
 	intf               *utils.Interface   `json:"-"`
 	lastAuthErr        time.Time          `json:"-"`
 	token              *token.Token       `json:"-"`
+	managementPass     string             `json:"-"`
+	managementPort     int                `json:"-"`
 	Id                 string             `json:"id"`
 	Mode               string             `json:"mode"`
 	OrgId              string             `json:"-"`
@@ -392,6 +394,38 @@ func (p *Profile) writeBlock() (pth string, err error) {
 
 	_ = os.Remove(pth)
 	err = ioutil.WriteFile(pth, []byte(script), os.FileMode(0755))
+	if err != nil {
+		err = &WriteError{
+			errors.Wrap(err, "profile: Failed to write block script"),
+		}
+		return
+	}
+
+	return
+}
+
+func (p *Profile) writeManagementPass() (pth string, err error) {
+	rootDir, err := utils.GetTempDir()
+	if err != nil {
+		return
+	}
+
+	p.managementPass, err = utils.RandStrComplex(32)
+	if err != nil {
+		return
+	}
+
+	script := ""
+	if runtime.GOOS == "windows" {
+		pth = filepath.Join(rootDir, p.Id+"-management.txt")
+		script = blockScriptWindows
+	} else {
+		pth = filepath.Join(rootDir, p.Id+"-management")
+		script = blockScript
+	}
+
+	_ = os.Remove(pth)
+	err = ioutil.WriteFile(pth, []byte(script), os.FileMode(0600))
 	if err != nil {
 		err = &WriteError{
 			errors.Wrap(err, "profile: Failed to write block script"),
@@ -984,6 +1018,10 @@ func (p *Profile) clearStatus(start time.Time) {
 		utils.ReleaseTap(p.intf)
 	}
 
+	if p.managementPort != 0 {
+		ManagementPortRelease(p.managementPort)
+	}
+
 	go func() {
 		defer func() {
 			panc := recover()
@@ -1175,6 +1213,16 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 
 	switch runtime.GOOS {
 	case "windows":
+		p.managementPort = ManagementPortAcquire()
+
+		managementPassPath, e := p.writeManagementPass()
+		if e != nil {
+			err = e
+			p.clearStatus(p.startTime)
+			return
+		}
+		p.remPaths = append(p.remPaths, managementPassPath)
+
 		upPath, e := p.writeUp()
 		if e != nil {
 			err = e
@@ -1198,6 +1246,11 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 			"--tls-verify", blockPath,
 			"--ipchange", blockPath,
 			"--route-up", blockPath,
+			"--management", fmt.Sprintf(
+				"127.0.0.1 %d %s",
+				p.managementPort,
+				managementPassPath,
+			),
 		)
 		break
 	case "darwin":
