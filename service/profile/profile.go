@@ -271,10 +271,17 @@ func (p *Profile) writeUp() (pth string, err error) {
 		return
 	}
 
-	pth = filepath.Join(rootDir, p.Id+"-up.sh")
+	if runtime.GOOS == "windows" {
+		pth = filepath.Join(rootDir, p.Id+"-up.bat")
+	} else {
+		pth = filepath.Join(rootDir, p.Id+"-up.sh")
+	}
 
 	script := ""
 	switch runtime.GOOS {
+	case "windows":
+		script = upDownScriptWindows
+		break
 	case "darwin":
 		script = upScriptDarwin
 		break
@@ -319,10 +326,17 @@ func (p *Profile) writeDown() (pth string, err error) {
 		return
 	}
 
-	pth = filepath.Join(rootDir, p.Id+"-down.sh")
+	if runtime.GOOS == "windows" {
+		pth = filepath.Join(rootDir, p.Id+"-down.bat")
+	} else {
+		pth = filepath.Join(rootDir, p.Id+"-down.sh")
+	}
 
 	script := ""
 	switch runtime.GOOS {
+	case "windows":
+		script = upDownScriptWindows
+		break
 	case "darwin":
 		script = downScriptDarwin
 		break
@@ -367,7 +381,11 @@ func (p *Profile) writeBlock() (pth string, err error) {
 		return
 	}
 
-	pth = filepath.Join(rootDir, p.Id+"-block.sh")
+	if runtime.GOOS == "windows" {
+		pth = filepath.Join(rootDir, p.Id+"-block.bat")
+	} else {
+		pth = filepath.Join(rootDir, p.Id+"-block.sh")
+	}
 
 	_ = os.Remove(pth)
 	err = ioutil.WriteFile(pth, []byte(blockScript), os.FileMode(0755))
