@@ -1,8 +1,9 @@
 package profile
 
 const (
-	blockScript    = "#!/bin/bash\n"
-	upScriptDarwin = `#!/bin/bash -e
+	blockScript        = "#!/bin/bash\n"
+	blockScriptWindows = "@echo off\n"
+	upScriptDarwin     = `#!/bin/bash -e
 
 CONN_ID="$(echo ${config} | /sbin/md5)"
 
