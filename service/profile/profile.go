@@ -1324,7 +1324,7 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 		}()
 
 		defer func() {
-			stdout.Close()
+			_ = stdout.Close()
 			output <- ""
 		}()
 
@@ -1478,7 +1478,7 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 			time.Sleep(connTimeout)
 			if p.Status != "connected" && running {
 				if runtime.GOOS == "windows" {
-					cmd.Process.Kill()
+					_ = cmd.Process.Kill()
 				} else {
 					err = p.cmd.Process.Signal(os.Interrupt)
 					if err != nil {
@@ -1507,10 +1507,10 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 						if done {
 							return
 						}
-						p.cmd.Process.Kill()
+						_ = p.cmd.Process.Kill()
 					}()
 
-					p.cmd.Process.Wait()
+					_, _ = p.cmd.Process.Wait()
 					done = true
 				}
 
