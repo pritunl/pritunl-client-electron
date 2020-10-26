@@ -410,7 +410,7 @@ func (p *Profile) writeManagementPass() (pth string, err error) {
 		return
 	}
 
-	p.managementPass, err = utils.RandStrComplex(32)
+	p.managementPass, err = utils.RandStr(32)
 	if err != nil {
 		return
 	}
