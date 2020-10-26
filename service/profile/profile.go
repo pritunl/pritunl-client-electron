@@ -299,9 +299,6 @@ func (p *Profile) writeUp() (pth string, err error) {
 
 	script := ""
 	switch runtime.GOOS {
-	case "windows":
-		script = upScriptWindows
-		break
 	case "darwin":
 		script = upScriptDarwin
 		break
@@ -354,9 +351,6 @@ func (p *Profile) writeDown() (pth string, err error) {
 
 	script := ""
 	switch runtime.GOOS {
-	case "windows":
-		script = downScriptWindows
-		break
 	case "darwin":
 		script = downScriptDarwin
 		break
@@ -1229,30 +1223,7 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 
 	switch runtime.GOOS {
 	case "windows":
-		upPath, e := p.writeUp()
-		if e != nil {
-			err = e
-			p.clearStatus(p.startTime)
-			return
-		}
-		p.remPaths = append(p.remPaths, upPath)
-
-		downPath, e := p.writeDown()
-		if e != nil {
-			err = e
-			p.clearStatus(p.startTime)
-			return
-		}
-		p.remPaths = append(p.remPaths, downPath)
-
-		args = append(args, "--script-security", "2",
-			"--up", upPath,
-			"--down", downPath,
-			"--route-pre-down", blockPath,
-			"--tls-verify", blockPath,
-			"--ipchange", blockPath,
-			"--route-up", blockPath,
-		)
+		args = append(args, "--script-security", "1")
 		break
 	case "darwin":
 		upPath, e := p.writeUp()
