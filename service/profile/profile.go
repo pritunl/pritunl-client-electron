@@ -217,6 +217,23 @@ func (p *Profile) write() (pth string, err error) {
 	pth = filepath.Join(rootDir, p.Id)
 
 	data := ""
+
+	if runtime.GOOS == "windows" {
+		p.managementPort = ManagementPortAcquire()
+
+		managementPassPath, err := p.writeManagementPass()
+		if err != nil {
+			return
+		}
+		p.remPaths = append(p.remPaths, managementPassPath)
+
+		data += fmt.Sprintf(
+			"management 127.0.0.1 %d %s\n",
+			p.managementPort,
+			managementPassPath,
+		)
+	}
+
 	for _, line := range strings.Split(p.Data, "\n") {
 		trimLine := strings.TrimSpace(line)
 		trimLine = strings.Trim(trimLine, "#")
@@ -1213,16 +1230,6 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 
 	switch runtime.GOOS {
 	case "windows":
-		p.managementPort = ManagementPortAcquire()
-
-		managementPassPath, e := p.writeManagementPass()
-		if e != nil {
-			err = e
-			p.clearStatus(p.startTime)
-			return
-		}
-		p.remPaths = append(p.remPaths, managementPassPath)
-
 		upPath, e := p.writeUp()
 		if e != nil {
 			err = e
@@ -1246,11 +1253,6 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 			"--tls-verify", blockPath,
 			"--ipchange", blockPath,
 			"--route-up", blockPath,
-			"--management", fmt.Sprintf(
-				"127.0.0.1 %d %s",
-				p.managementPort,
-				managementPassPath,
-			),
 		)
 		break
 	case "darwin":
