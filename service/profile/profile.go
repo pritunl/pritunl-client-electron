@@ -221,8 +221,9 @@ func (p *Profile) write() (pth string, err error) {
 	if runtime.GOOS == "windows" {
 		p.managementPort = ManagementPortAcquire()
 
-		managementPassPath, err := p.writeManagementPass()
-		if err != nil {
+		managementPassPath, e := p.writeManagementPass()
+		if e != nil {
+			err = e
 			return
 		}
 		p.remPaths = append(p.remPaths, managementPassPath)
@@ -230,7 +231,7 @@ func (p *Profile) write() (pth string, err error) {
 		data += fmt.Sprintf(
 			"management 127.0.0.1 %d %s\n",
 			p.managementPort,
-			managementPassPath,
+			strings.ReplaceAll(managementPassPath, "\\", "\\\\"),
 		)
 	}
 
@@ -432,7 +433,6 @@ func (p *Profile) writeManagementPass() (pth string, err error) {
 		return
 	}
 
-	script := ""
 	if runtime.GOOS == "windows" {
 		pth = filepath.Join(rootDir, p.Id+"-management.txt")
 	} else {
