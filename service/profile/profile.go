@@ -435,17 +435,16 @@ func (p *Profile) writeManagementPass() (pth string, err error) {
 	script := ""
 	if runtime.GOOS == "windows" {
 		pth = filepath.Join(rootDir, p.Id+"-management.txt")
-		script = blockScriptWindows
 	} else {
 		pth = filepath.Join(rootDir, p.Id+"-management")
-		script = blockScript
 	}
 
 	_ = os.Remove(pth)
-	err = ioutil.WriteFile(pth, []byte(script), os.FileMode(0600))
+	err = ioutil.WriteFile(pth, []byte(p.managementPass),
+		os.FileMode(0600))
 	if err != nil {
 		err = &WriteError{
-			errors.Wrap(err, "profile: Failed to write block script"),
+			errors.Wrap(err, "profile: Failed to write management"),
 		}
 		return
 	}
