@@ -381,14 +381,17 @@ func (p *Profile) writeBlock() (pth string, err error) {
 		return
 	}
 
+	script := ""
 	if runtime.GOOS == "windows" {
 		pth = filepath.Join(rootDir, p.Id+"-block.bat")
+		script = blockScriptWindows
 	} else {
 		pth = filepath.Join(rootDir, p.Id+"-block.sh")
+		script = blockScript
 	}
 
 	_ = os.Remove(pth)
-	err = ioutil.WriteFile(pth, []byte(blockScript), os.FileMode(0755))
+	err = ioutil.WriteFile(pth, []byte(script), os.FileMode(0755))
 	if err != nil {
 		err = &WriteError{
 			errors.Wrap(err, "profile: Failed to write block script"),
