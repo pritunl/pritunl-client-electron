@@ -280,7 +280,7 @@ func (p *Profile) writeUp() (pth string, err error) {
 	script := ""
 	switch runtime.GOOS {
 	case "windows":
-		script = upDownScriptWindows
+		script = upScriptWindows
 		break
 	case "darwin":
 		script = upScriptDarwin
@@ -335,7 +335,7 @@ func (p *Profile) writeDown() (pth string, err error) {
 	script := ""
 	switch runtime.GOOS {
 	case "windows":
-		script = upDownScriptWindows
+		script = downScriptWindows
 		break
 	case "darwin":
 		script = downScriptDarwin
