@@ -2290,6 +2290,59 @@ func (p *Profile) confWgLinux(data *WgConf) (err error) {
 	return
 }
 
+func (p *Profile) sendManagementCommand(cmd string) (err error) {
+	conn, err := net.DialTimeout(
+		"tcp",
+		fmt.Sprintf("127.0.0.1:%d", p.managementPort),
+		3*time.Second,
+	)
+	if err != nil {
+		err = &errortypes.ReadError{
+			errors.Wrap(err, "profile: Failed to open socket"),
+		}
+		return
+	}
+	defer conn.Close()
+
+	go func() {
+		for {
+			buf := make([]byte, 10000)
+			n, e := conn.Read(buf)
+			if e != nil || n == 0 {
+				break
+			}
+		}
+	}()
+
+	err = conn.SetDeadline(time.Now().Add(3 * time.Second))
+	if err != nil {
+		err = &errortypes.ReadError{
+			errors.Wrap(err, "profile: Failed set deadline"),
+		}
+		return
+	}
+
+	_, err = conn.Write([]byte(fmt.Sprintf("%s\n", p.managementPass)))
+	if err != nil {
+		err = &errortypes.ReadError{
+			errors.Wrap(err, "profile: Failed to write socket password"),
+		}
+		return
+	}
+
+	time.Sleep(500 * time.Millisecond)
+
+	_, err = conn.Write([]byte(fmt.Sprintf("%s\n", cmd)))
+	if err != nil {
+		err = &errortypes.ReadError{
+			errors.Wrap(err, "profile: Failed to write socket command"),
+		}
+		return
+	}
+
+	return
+}
+
 func (p *Profile) confWgLinuxQuick() (err error) {
 	p.wgQuickLock.Lock()
 	defer p.wgQuickLock.Unlock()
@@ -2885,13 +2938,35 @@ func (p *Profile) stopWg() (err error) {
 
 func (p *Profile) stopOvpn() (err error) {
 	if runtime.GOOS == "windows" {
-		err = p.cmd.Process.Kill()
-		if err != nil {
-			err = &ExecError{
-				errors.Wrap(err, "profile: Failed to stop openvpn"),
+		done := false
+
+		go func() {
+			defer func() {
+				panc := recover()
+				if panc != nil {
+					logrus.WithFields(logrus.Fields{
+						"stack": string(debug.Stack()),
+						"panic": panc,
+					}).Error("profile: Panic")
+					panic(panc)
+				}
+			}()
+
+			err = p.sendManagementCommand("signal SIGTERM")
+			if err != nil {
+				_ = p.cmd.Process.Kill()
+				return
 			}
-			return
-		}
+
+			time.Sleep(5 * time.Second)
+			if done {
+				return
+			}
+			_ = p.cmd.Process.Kill()
+		}()
+
+		_, _ = p.cmd.Process.Wait()
+		done = true
 	} else {
 		p.cmd.Process.Signal(os.Interrupt)
 		done := false
