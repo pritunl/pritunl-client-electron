@@ -1172,7 +1172,30 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 
 	switch runtime.GOOS {
 	case "windows":
-		args = append(args, "--script-security", "1")
+		upPath, e := p.writeUp()
+		if e != nil {
+			err = e
+			p.clearStatus(p.startTime)
+			return
+		}
+		p.remPaths = append(p.remPaths, upPath)
+
+		downPath, e := p.writeDown()
+		if e != nil {
+			err = e
+			p.clearStatus(p.startTime)
+			return
+		}
+		p.remPaths = append(p.remPaths, downPath)
+
+		args = append(args, "--script-security", "2",
+			"--up", upPath,
+			"--down", downPath,
+			"--route-pre-down", blockPath,
+			"--tls-verify", blockPath,
+			"--ipchange", blockPath,
+			"--route-up", blockPath,
+		)
 		break
 	case "darwin":
 		upPath, e := p.writeUp()
