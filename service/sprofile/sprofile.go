@@ -66,6 +66,7 @@ type Sprofile struct {
 	OvpnData           string   `json:"ovpn_data"`
 	Path               string   `json:"-"`
 	Password           string   `json:"password"`
+	AuthErrorCount     int      `json:"-"`
 }
 
 type SprofileClient struct {
@@ -172,6 +173,7 @@ func (s *Sprofile) Copy() (sprfl *Sprofile) {
 		OvpnData:           s.OvpnData,
 		Path:               s.Path,
 		Password:           s.Password,
+		AuthErrorCount:     s.AuthErrorCount,
 	}
 
 	return
