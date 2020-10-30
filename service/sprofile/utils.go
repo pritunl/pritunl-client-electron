@@ -66,6 +66,22 @@ func Deactivate(prflId string) {
 	cache = prflsCache
 }
 
+func SetAuthErrorCount(prflId string, errorCount int) {
+	cacheLock.Lock()
+	defer cacheLock.Unlock()
+
+	prflsCache := []*Sprofile{}
+
+	for _, prfl := range cache {
+		if prfl.Id == prflId {
+			prfl.AuthErrorCount = errorCount
+		}
+		prflsCache = append(prflsCache, prfl)
+	}
+
+	cache = prflsCache
+}
+
 func GetPath() string {
 	switch runtime.GOOS {
 	case "windows":
