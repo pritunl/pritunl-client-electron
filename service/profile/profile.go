@@ -904,6 +904,27 @@ func (p *Profile) parseLine(line string) {
 			}
 			evt.Init()
 
+			if p.SystemProfile != nil {
+				if p.SystemProfile.AuthErrorCount >= 2 {
+					logrus.WithFields(logrus.Fields{
+						"profile_id": p.SystemProfile.Id,
+					}).Error("profile: Stopping system " +
+						"profile due to authentication errors")
+
+					p.SystemProfile.State = false
+					sprofile.Deactivate(p.SystemProfile.Id)
+					sprofile.SetAuthErrorCount(
+						p.SystemProfile.Id,
+						0,
+					)
+				} else {
+					sprofile.SetAuthErrorCount(
+						p.SystemProfile.Id,
+						p.SystemProfile.AuthErrorCount+1,
+					)
+				}
+			}
+
 			time.Sleep(3 * time.Second)
 		}
 	} else if strings.Contains(line, "link remote:") {
@@ -2778,6 +2799,27 @@ func (p *Profile) startWg(timeout bool) (err error) {
 			Data: p,
 		}
 		evt.Init()
+
+		if p.SystemProfile != nil {
+			if p.SystemProfile.AuthErrorCount >= 2 {
+				logrus.WithFields(logrus.Fields{
+					"profile_id": p.SystemProfile.Id,
+				}).Error("profile: Stopping system " +
+					"profile due to authentication errors")
+
+				p.SystemProfile.State = false
+				sprofile.Deactivate(p.SystemProfile.Id)
+				sprofile.SetAuthErrorCount(
+					p.SystemProfile.Id,
+					0,
+				)
+			} else {
+				sprofile.SetAuthErrorCount(
+					p.SystemProfile.Id,
+					p.SystemProfile.AuthErrorCount+1,
+				)
+			}
+		}
 
 		time.Sleep(3 * time.Second)
 
