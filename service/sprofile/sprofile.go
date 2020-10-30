@@ -442,6 +442,10 @@ func (s *Sprofile) syncProfile(host string) (updated bool, err error) {
 		return
 	}
 
+	if syncData.Conf == "" {
+		return
+	}
+
 	hashFuncSync := hmac.New(sha512.New, []byte(s.SyncSecret))
 	hashFuncSync.Write([]byte(syncData.Conf))
 	rawSignatureSync := hashFuncSync.Sum(nil)
