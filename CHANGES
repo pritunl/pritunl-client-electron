@@ -4,6 +4,7 @@ Pritunl Client Changelog
 <%= version %>
 
 Fix routing issue on Windows
+Improve system profile connection management
 
 Version 1.2.2550.20 2020-09-05
 ------------------------------
