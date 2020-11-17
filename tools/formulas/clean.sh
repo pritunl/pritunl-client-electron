@@ -3,7 +3,7 @@ set -e
 
 brew uninstall --force openvpn
 brew uninstall --force pkcs11-helper
-brew uninstall --force openssl
+brew uninstall --force openssl@1.1
 brew uninstall --force lz4
 brew uninstall --force lzo
 brew uninstall --force makedepend

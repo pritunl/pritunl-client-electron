@@ -1,8 +1,8 @@
 class Lz4 < Formula
   desc "Extremely Fast Compression algorithm"
   homepage "https://lz4.org/"
-  url "https://github.com/lz4/lz4/archive/v1.8.3.tar.gz"
-  sha256 "33af5936ac06536805f9745e0b6d61da606a1f8b4cc5c04dd3cbaca3b9b4fc43"
+  url "https://github.com/lz4/lz4/archive/v1.9.3.tar.gz"
+  sha256 "030644df4611007ff7dc962d981f390361e6c97a34e5cbc393ddfbe019ffe2c1"
   head "https://github.com/lz4/lz4.git"
 
   def install

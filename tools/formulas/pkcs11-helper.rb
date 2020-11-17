@@ -1,15 +1,15 @@
 class Pkcs11Helper < Formula
   desc "Library to simplify the interaction with PKCS#11"
   homepage "https://github.com/OpenSC/OpenSC/wiki/pkcs11-helper"
-  url "https://github.com/OpenSC/pkcs11-helper/releases/download/pkcs11-helper-1.25.1/pkcs11-helper-1.25.1.tar.bz2"
-  sha256 "10dd8a1dbcf41ece051fdc3e9642b8c8111fe2c524cb966c0870ef3413c75a77"
+  url "https://github.com/OpenSC/pkcs11-helper/releases/download/pkcs11-helper-1.26/pkcs11-helper-1.26.0.tar.bz2"
+  sha256 "e886ec3ad17667a3694b11a71317c584839562f74b29c609d54c002973b387be"
   head "https://github.com/OpenSC/pkcs11-helper.git"
 
   depends_on "autoconf" => :build
   depends_on "automake" => :build
   depends_on "libtool" => :build
   depends_on "pkg-config" => :build
-  depends_on "openssl"
+  depends_on "openssl@1.1"
 
   def install
     ENV["CFLAGS"] = "-mmacosx-version-min=10.6"
@@ -25,6 +25,9 @@ class Pkcs11Helper < Formula
       --disable-dependency-tracking
       --disable-threading
       --disable-slotevent
+      --disable-crypto-engine-gnutls
+      --disable-crypto-engine-nss
+      --disable-crypto-engine-mbedtls
       --disable-shared
       --enable-static
       --prefix=#{prefix}
