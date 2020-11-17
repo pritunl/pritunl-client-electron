@@ -50,11 +50,9 @@ class OpensslAT11 < Formula
     %W[
       --prefix=#{prefix}
       --openssldir=#{openssldir}
-      no-ssl3
-      no-ssl3-method
-      no-zlib
-      enable-static
-      disable-shared
+      zlib
+      no-asm
+      no-shared
     ]
   end
 
