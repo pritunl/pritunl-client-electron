@@ -44,3 +44,6 @@ tar xf openvpn-2.5.0.tar.gz
 cd ./openvpn-2.5.0
 sh ../build_openvpn.sh
 cd ../
+
+
+codesign --force --timestamp --options=runtime -s "Developer ID Application: Pritunl, Inc. (U22BLATN63)" ./openvpn/sbin/openvpn
