@@ -6,5 +6,5 @@ export LINKFLAGS="-mmacosx-version-min=11.0"
 ./bootstrap.sh
 ./configure \
   --disable-profiling \
-  --prefix=/Users/apple/build/iperf3a
+  --prefix=/Users/apple/build/iperf3
 make install
