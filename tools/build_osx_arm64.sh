@@ -38,7 +38,7 @@ npm update
 ./node_modules/.bin/electron-rebuild
 ./node_modules/.bin/electron-packager ./ Pritunl \
   --platform=darwin \
-  --arch=x64 \
+  --arch=arm64 \
   --icon=./www/img/pritunl.icns \
   --darwinDarkModeSupport=true \
   --extra-resource="../build/resources/pritunl-service" \
@@ -56,8 +56,8 @@ npm update
   --out=../build/macos/Applications
 
 cd ../
-mv build/macos/Applications/Pritunl-darwin-x64/Pritunl.app build/macos/Applications/
-rm -rf build/macos/Applications/Pritunl-darwin-x64
+mv build/macos/Applications/Pritunl-darwin-arm64/Pritunl.app build/macos/Applications/
+rm -rf build/macos/Applications/Pritunl-darwin-arm64
 sleep 3
 #codesign --force --deep --timestamp --options=runtime --entitlements="./resources_macos/entitlements.plist" --sign "Developer ID Application: Pritunl, Inc. (U22BLATN63)" build/macos/Applications/Pritunl.app/Contents/MacOS/Pritunl
 
