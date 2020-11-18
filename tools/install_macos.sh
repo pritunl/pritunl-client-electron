@@ -20,32 +20,32 @@ curl -L https://github.com/pritunl/pritunl-client-electron/archive/$APP_VER.tar.
 cd pritunl-client-electron-$APP_VER
 
 # Pritunl
-mkdir -p build/osx/Applications
+mkdir -p build/macos/Applications
 cd client
 npm install
 ./node_modules/.bin/electron-rebuild
-./node_modules/.bin/electron-packager ./ Pritunl --platform=darwin --arch=x64 --icon=./www/img/pritunl.icns --out=../build/osx/Applications
+./node_modules/.bin/electron-packager ./ Pritunl --platform=darwin --arch=x64 --icon=./www/img/pritunl.icns --out=../build/macos/Applications
 cd ../
-mv build/osx/Applications/Pritunl-darwin-x64/Pritunl.app build/osx/Applications/
-rm -rf build/osx/Applications/Pritunl-darwin-x64
+mv build/macos/Applications/Pritunl-darwin-x64/Pritunl.app build/macos/Applications/
+rm -rf build/macos/Applications/Pritunl-darwin-x64
 
 # Service
 cd service
 GOPATH="$(pwd)/go" go get -d
 GOPATH="$(pwd)/go" go build -v
 cd ..
-cp service/service build/osx/Applications/Pritunl.app/Contents/Resources/pritunl-service
+cp service/service build/macos/Applications/Pritunl.app/Contents/Resources/pritunl-service
 
 # Service Daemon
-mkdir -p build/osx/Library/LaunchDaemons
-cp service_osx/com.pritunl.service.plist build/osx/Library/LaunchDaemons
+mkdir -p build/macos/Library/LaunchDaemons
+cp service_macos/com.pritunl.service.plist build/macos/Library/LaunchDaemons
 
 # Client Agent
-mkdir -p build/osx/Library/LaunchAgents
-cp service_osx/com.pritunl.client.plist build/osx/Library/LaunchAgents
+mkdir -p build/macos/Library/LaunchAgents
+cp service_macos/com.pritunl.client.plist build/macos/Library/LaunchAgents
 
 # Openvpn
-cp openvpn_osx/openvpn build/osx/Applications/Pritunl.app/Contents/Resources/pritunl-openvpn
+cp openvpn_macos/openvpn build/macos/Applications/Pritunl.app/Contents/Resources/pritunl-openvpn
 
 # Files
 sudo touch /var/run/pritunl_auth
@@ -65,9 +65,9 @@ echo "###################################################"
 echo "Installing..."
 echo "###################################################"
 sudo rm -rf /Applications/Pritunl.app
-sudo cp -r build/osx/Applications/Pritunl.app /Applications
-sudo cp -f build/osx/Library/LaunchAgents/com.pritunl.client.plist /Library/LaunchAgents/com.pritunl.client.plist
-sudo cp -f build/osx/Library/LaunchDaemons/com.pritunl.service.plist /Library/LaunchDaemons/com.pritunl.service.plist
+sudo cp -r build/macos/Applications/Pritunl.app /Applications
+sudo cp -f build/macos/Library/LaunchAgents/com.pritunl.client.plist /Library/LaunchAgents/com.pritunl.client.plist
+sudo cp -f build/macos/Library/LaunchDaemons/com.pritunl.service.plist /Library/LaunchDaemons/com.pritunl.service.plist
 
 # Postinstall
 echo "###################################################"

@@ -7,7 +7,7 @@ export LINKFLAGS="-mmacosx-version-min=11.0"
   --disable-dependency-tracking \
   --enable-static \
   --disable-shared \
-  --prefix=`pwd`/../lzo
+  --prefix=/Users/apple/build/lzo
 make
 make check
 make install

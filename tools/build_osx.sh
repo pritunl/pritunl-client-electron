@@ -26,12 +26,12 @@ cp cli/cli build/resources/pritunl-client
 codesign --force --timestamp --options=runtime -s "Developer ID Application: Pritunl, Inc. (U22BLATN63)" build/resources/pritunl-client
 
 # Openvpn
-cp openvpn_osx/openvpn build/resources/pritunl-openvpn
+cp openvpn_macos/openvpn build/resources/pritunl-openvpn
 codesign --force --timestamp --options=runtime -s "Developer ID Application: Pritunl, Inc. (U22BLATN63)" build/resources/pritunl-openvpn
 
 
 # Pritunl
-mkdir -p build/osx/Applications
+mkdir -p build/macos/Applications
 cd client
 npm install
 npm update
@@ -53,35 +53,35 @@ npm update
   --osx-sign.identity="Developer ID Application: Pritunl, Inc. (U22BLATN63)" \
   --osx-notarize.appleId="contact@pritunl.com" \
   --osx-notarize.appleIdPassword="@keychain:xcode" \
-  --out=../build/osx/Applications
+  --out=../build/macos/Applications
 
 cd ../
-mv build/osx/Applications/Pritunl-darwin-x64/Pritunl.app build/osx/Applications/
-rm -rf build/osx/Applications/Pritunl-darwin-x64
+mv build/macos/Applications/Pritunl-darwin-x64/Pritunl.app build/macos/Applications/
+rm -rf build/macos/Applications/Pritunl-darwin-x64
 sleep 3
-#codesign --force --deep --timestamp --options=runtime --entitlements="./resources_osx/entitlements.plist" --sign "Developer ID Application: Pritunl, Inc. (U22BLATN63)" build/osx/Applications/Pritunl.app/Contents/MacOS/Pritunl
+#codesign --force --deep --timestamp --options=runtime --entitlements="./resources_macos/entitlements.plist" --sign "Developer ID Application: Pritunl, Inc. (U22BLATN63)" build/macos/Applications/Pritunl.app/Contents/MacOS/Pritunl
 
 # Files
-mkdir -p build/osx/var/run
+mkdir -p build/macos/var/run
 touch build/var/run/pritunl_auth
-mkdir -p build/osx/var/log
-touch build/osx/var/log/pritunl.log
-touch build/osx/var/log/pritunl.log.1
+mkdir -p build/macos/var/log
+touch build/macos/var/log/pritunl.log
+touch build/macos/var/log/pritunl.log.1
 
 # Service Daemon
-mkdir -p build/osx/Library/LaunchDaemons
-cp service_osx/com.pritunl.service.plist build/osx/Library/LaunchDaemons
+mkdir -p build/macos/Library/LaunchDaemons
+cp service_macos/com.pritunl.service.plist build/macos/Library/LaunchDaemons
 
 # Client Agent
-mkdir -p build/osx/Library/LaunchAgents
-cp service_osx/com.pritunl.client.plist build/osx/Library/LaunchAgents
+mkdir -p build/macos/Library/LaunchAgents
+cp service_macos/com.pritunl.client.plist build/macos/Library/LaunchAgents
 
 # Package
-chmod +x resources_osx/scripts/postinstall
-chmod +x resources_osx/scripts/preinstall
+chmod +x resources_macos/scripts/postinstall
+chmod +x resources_macos/scripts/preinstall
 cd build
-pkgbuild --root osx --scripts ../resources_osx/scripts --sign "Developer ID Installer: Pritunl, Inc. (U22BLATN63)" --identifier com.pritunl.pkg.Pritunl --version $APP_VER --ownership recommended --install-location / Build.pkg
-productbuild --resources ../resources_osx --distribution ../resources_osx/distribution.xml --sign "Developer ID Installer: Pritunl, Inc. (U22BLATN63)" --version $APP_VER Pritunl.pkg
+pkgbuild --root osx --scripts ../resources_macos/scripts --sign "Developer ID Installer: Pritunl, Inc. (U22BLATN63)" --identifier com.pritunl.pkg.Pritunl --version $APP_VER --ownership recommended --install-location / Build.pkg
+productbuild --resources ../resources_macos --distribution ../resources_macos/distribution.xml --sign "Developer ID Installer: Pritunl, Inc. (U22BLATN63)" --version $APP_VER Pritunl.pkg
 zip Pritunl.pkg.zip Pritunl.pkg
 rm -f Build.pkg
 

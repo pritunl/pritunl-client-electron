@@ -100,7 +100,7 @@ func getOpenvpnPath() (pth string) {
 			break
 		case "darwin":
 			pth = filepath.Join(utils.GetRootDir(), "..",
-				"openvpn_osx", "openvpn")
+				"openvpn_macos", "openvpn")
 			break
 		case "linux":
 			pth = "openvpn"

@@ -14,7 +14,7 @@ perl ./Configure \
   no-asm \
   no-shared \
   --openssldir=etc/"openssl@1.1" \
-  --prefix=`pwd`/../openssl
+  --prefix=/Users/apple/build/openssl
 make
 make test
 make install

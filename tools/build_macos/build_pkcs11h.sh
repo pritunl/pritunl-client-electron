@@ -2,8 +2,8 @@ export CFLAGS="-mmacosx-version-min=11.0"
 export CXXFLAGS="-mmacosx-version-min=11.0"
 export CPPFLAGS="-mmacosx-version-min=11.0"
 export LINKFLAGS="-mmacosx-version-min=11.0"
-export OPENSSL_CFLAGS="-I`pwd`/../openssl/include"
-export OPENSSL_LIBS="-L`pwd`/../openssl/lib -lssl -lcrypto -lz"
+export OPENSSL_CFLAGS="-I/Users/apple/build/openssl/include"
+export OPENSSL_LIBS="-L/Users/apple/build/openssl/lib -lssl -lcrypto -lz"
 
 make clean
 #autoreconf --verbose --install --force
@@ -17,5 +17,5 @@ make clean
   --disable-crypto-engine-mbedtls \
   --disable-shared \
   --enable-static \
-  --prefix=`pwd`/../pkcs11-helper
+  --prefix=/Users/apple/build/pkcs11-helper
 make install
