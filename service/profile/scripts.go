@@ -265,7 +265,7 @@ get_link_info() {
   shift
 
   link=''
-  link="$(/sbin/ip link show dev "$dev")" || return $?
+  link="$(/usr/sbin/ip link show dev "$dev")" || return $?
 
   echo "$dev" "${link%%:*}"
 }
