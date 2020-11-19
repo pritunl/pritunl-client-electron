@@ -6,5 +6,7 @@ export LINKFLAGS="-mmacosx-version-min=11.0"
 ./bootstrap.sh
 ./configure \
   --disable-profiling \
+  --enable-static \
+  --disable-shared \
   --prefix=/Users/apple/build/iperf3
 make install
