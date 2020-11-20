@@ -1,6 +1,10 @@
 Pritunl Client Changelog
 ========================
 
+<%= version %>
+
+Stability improvements
+
 Version 1.2.2624.84 2020-11-18
 ------------------------------
 
