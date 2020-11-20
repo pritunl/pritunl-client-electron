@@ -10,7 +10,7 @@
     "ws": "7.4.0"
   },
   "devDependencies": {
-    "electron": "11.0.1",
+    "electron": "11.0.2",
     "electron-packager": "15.1.0",
     "electron-rebuild": "2.3.2",
     "rcedit": "2.2.0",
