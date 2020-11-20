@@ -116,6 +116,8 @@ func main() {
 				panic(err)
 			}
 		} else {
+			_ = os.Remove("/var/run/pritunl.sock")
+
 			listener, err := net.Listen("unix", "/var/run/pritunl.sock")
 			if err != nil {
 				err = &errortypes.WriteError{
