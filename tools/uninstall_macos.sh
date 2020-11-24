@@ -29,7 +29,7 @@ sudo rm -f /var/run/pritunl_auth
 sudo rm -f /var/run/pritunl.sock
 sudo rm -f /var/log/pritunl.log
 sudo rm -f /var/log/pritunl.log.1
-sudo rm -f /var/lib/pritunl-client
+sudo rm -rf /var/lib/pritunl-client
 
 # Old Files
 sudo rm -rf /var/lib/pritunl
