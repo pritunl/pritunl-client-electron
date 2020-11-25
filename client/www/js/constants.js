@@ -1,6 +1,6 @@
 module.exports = {
   key: '',
-  version: '1.2.2626.63',
+  version: '1.2.2631.70',
   serviceHost: '127.0.0.1:9770',
   wg: false,
   unixSocket: false,
