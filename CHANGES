@@ -1,6 +1,10 @@
 Pritunl Client Changelog
 ========================
 
+<%= version %>
+
+Linux connection improvements
+
 Version 1.2.2626.63 2020-11-20
 ------------------------------
 
