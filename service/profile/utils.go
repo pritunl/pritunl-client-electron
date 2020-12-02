@@ -10,11 +10,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/sirupsen/logrus"
 	"github.com/dropbox/godropbox/container/set"
 	"github.com/pritunl/pritunl-client-electron/service/constants"
 	"github.com/pritunl/pritunl-client-electron/service/sprofile"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
+	"github.com/sirupsen/logrus"
 )
 
 var (
@@ -387,12 +387,22 @@ func SyncSystemProfiles() (err error) {
 	return
 }
 
+func Shutdown() {
+	shutdown = true
+	sprofile.Shutdown()
+}
+
 func watchSystemProfiles() {
 	time.Sleep(1 * time.Second)
 	sprofile.Reload(true)
 
 	for {
 		time.Sleep(1 * time.Second)
+
+		if shutdown {
+			return
+		}
+
 		err := SyncSystemProfiles()
 		if err != nil {
 			logrus.WithFields(logrus.Fields{

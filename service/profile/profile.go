@@ -54,6 +54,7 @@ const (
 )
 
 var (
+	shutdown = false
 	Profiles = struct {
 		sync.RWMutex
 		m map[string]*Profile
@@ -1140,6 +1141,10 @@ func (p *Profile) Init() {
 }
 
 func (p *Profile) Start(timeout bool) (err error) {
+	if shutdown {
+		return
+	}
+
 	start := time.Now()
 	p.startTime = start
 	p.remPaths = []string{}
