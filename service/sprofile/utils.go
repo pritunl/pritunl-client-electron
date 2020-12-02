@@ -11,10 +11,10 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/sirupsen/logrus"
 	"github.com/dropbox/godropbox/errors"
 	"github.com/pritunl/pritunl-client-electron/service/errortypes"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
+	"github.com/sirupsen/logrus"
 )
 
 var (
@@ -242,4 +242,18 @@ func ClearLog(prflId string) (err error) {
 	}
 
 	return
+}
+
+func Shutdown() {
+	cacheLock.Lock()
+	defer cacheLock.Unlock()
+
+	prflsCache := []*Sprofile{}
+
+	for _, prfl := range cache {
+		prfl.State = false
+		prflsCache = append(prflsCache, prfl)
+	}
+
+	cache = prflsCache
 }
