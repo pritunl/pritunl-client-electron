@@ -12,7 +12,6 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/sirupsen/logrus"
 	"github.com/dropbox/godropbox/errors"
 	"github.com/gin-gonic/gin"
 	"github.com/pritunl/pritunl-client-electron/service/auth"
@@ -24,6 +23,7 @@ import (
 	"github.com/pritunl/pritunl-client-electron/service/profile"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
 	"github.com/pritunl/pritunl-client-electron/service/watch"
+	"github.com/sirupsen/logrus"
 )
 
 func main() {
@@ -165,6 +165,8 @@ func main() {
 	}()
 
 	time.Sleep(250 * time.Millisecond)
+
+	profile.Shutdown()
 
 	prfls := profile.GetProfiles()
 	for _, prfl := range prfls {
