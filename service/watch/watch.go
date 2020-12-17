@@ -188,9 +188,7 @@ func dnsWatch() {
 		vpnDomains, vpnAddresses := parseDns(vpn)
 		globalDomains, globalAddresses := parseDns(global)
 
-		if !reflect.DeepEqual(vpnDomains, globalDomains) ||
-			!reflect.DeepEqual(vpnAddresses, globalAddresses) {
-
+		if !reflect.DeepEqual(vpnAddresses, globalAddresses) {
 			if reset {
 				restartLock.Lock()
 
