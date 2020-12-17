@@ -1,6 +1,10 @@
 Pritunl Client Changelog
 ========================
 
+<%= version %>
+
+Fix DNS issue on macOS
+
 Version 1.2.2631.70 2020-11-25
 ------------------------------
 
