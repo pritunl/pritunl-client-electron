@@ -267,7 +267,8 @@ func (p *Profile) write() (pth string, err error) {
 			strings.HasPrefix(trimLine, "route-pre-down ") ||
 			strings.HasPrefix(trimLine, "tls-verify ") ||
 			strings.HasPrefix(trimLine, "ipchange ") ||
-			strings.HasPrefix(trimLine, "route-up ") {
+			strings.HasPrefix(trimLine, "route-up ") ||
+			strings.HasPrefix(trimLine, "iproute ") {
 
 			continue
 		}
