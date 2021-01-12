@@ -10,6 +10,10 @@ The key you tell people to add to their package managers not existing on any key
 
 This means your average pleb (those poor bastards) they cannot install the software. It's kinda not good.
 
+You know what? I bet a lot of people just gave up and didn't install it. Must have.
+
+Must be good for business. I wonder how long that has gone on?
+
 Please guys. Come on. Please fix it. Would be a nice late christmas present from you to me. Thanks guys. Love it.
 
 # apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv E162F504A20CDF15827F718D4B7C549A058F8B6B
