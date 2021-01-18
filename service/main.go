@@ -9,6 +9,8 @@ import (
 	"os/signal"
 	"runtime"
 	"runtime/debug"
+	"strconv"
+	"strings"
 	"syscall"
 	"time"
 
@@ -44,6 +46,16 @@ func main() {
 			"error": err,
 		}).Error("main: Failed to init temp dir")
 		panic(err)
+	}
+
+	if runtime.GOOS == "darwin" {
+		output, err := utils.ExecOutput("uname", "-r")
+		if err == nil {
+			macosVersion, err := strconv.Atoi(strings.Split(output, ".")[0])
+			if err == nil && macosVersion < 20 {
+				constants.Macos10 = true
+			}
+		}
 	}
 
 	logger.Init()
