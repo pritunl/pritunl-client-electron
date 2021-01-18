@@ -99,8 +99,13 @@ func getOpenvpnPath() (pth string) {
 				"openvpn_win", "openvpn.exe")
 			break
 		case "darwin":
-			pth = filepath.Join(utils.GetRootDir(), "..",
-				"openvpn_macos", "openvpn")
+			if constants.Macos10 {
+				pth = filepath.Join(utils.GetRootDir(), "..",
+					"openvpn_macos", "openvpn10")
+			} else {
+				pth = filepath.Join(utils.GetRootDir(), "..",
+					"openvpn_macos", "openvpn")
+			}
 			break
 		case "linux":
 			pth = "openvpn"
@@ -117,8 +122,13 @@ func getOpenvpnPath() (pth string) {
 		pth = filepath.Join(utils.GetRootDir(), "openvpn", "openvpn.exe")
 		break
 	case "darwin":
-		pth = filepath.Join(string(os.PathSeparator), "Applications",
-			"Pritunl.app", "Contents", "Resources", "pritunl-openvpn")
+		if constants.Macos10 {
+			pth = filepath.Join(string(os.PathSeparator), "Applications",
+				"Pritunl.app", "Contents", "Resources", "pritunl-openvpn10")
+		} else {
+			pth = filepath.Join(string(os.PathSeparator), "Applications",
+				"Pritunl.app", "Contents", "Resources", "pritunl-openvpn")
+		}
 		break
 	case "linux":
 		pth = "openvpn"
