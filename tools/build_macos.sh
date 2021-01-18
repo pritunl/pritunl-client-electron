@@ -28,6 +28,8 @@ codesign --force --timestamp --options=runtime -s "Developer ID Application: Pri
 # Openvpn
 cp openvpn_macos/openvpn build/resources/pritunl-openvpn
 codesign --force --timestamp --options=runtime -s "Developer ID Application: Pritunl, Inc. (U22BLATN63)" build/resources/pritunl-openvpn
+cp openvpn_macos/openvpn10 build/resources/pritunl-openvpn10
+codesign --force --timestamp --options=runtime -s "Developer ID Application: Pritunl, Inc. (U22BLATN63)" build/resources/pritunl-openvpn10
 
 
 # Pritunl
@@ -44,6 +46,7 @@ npm update
   --extra-resource="../build/resources/pritunl-service" \
   --extra-resource="../build/resources/pritunl-client" \
   --extra-resource="../build/resources/pritunl-openvpn" \
+  --extra-resource="../build/resources/pritunl-openvpn10" \
   --osx-sign.hardenedRuntime \
   --osx-sign.hardened-runtime \
   --no-osx-sign.gatekeeper-assess \

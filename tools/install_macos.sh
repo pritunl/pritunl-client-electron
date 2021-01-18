@@ -46,6 +46,7 @@ cp service_macos/com.pritunl.client.plist build/macos/Library/LaunchAgents
 
 # Openvpn
 cp openvpn_macos/openvpn build/macos/Applications/Pritunl.app/Contents/Resources/pritunl-openvpn
+cp openvpn_macos/openvpn10 build/macos/Applications/Pritunl.app/Contents/Resources/pritunl-openvpn10
 
 # Files
 sudo touch /var/run/pritunl_auth
