@@ -26,7 +26,7 @@ cp cli/cli build/resources/pritunl-client
 codesign --force --timestamp --options=runtime -s "Developer ID Application: Pritunl, Inc. (U22BLATN63)" build/resources/pritunl-client
 
 # Openvpn
-cp openvpn_macos/openvpn build/resources/pritunl-openvpn
+cp openvpn_macos/openvpn_arm64 build/resources/pritunl-openvpn
 codesign --force --timestamp --options=runtime -s "Developer ID Application: Pritunl, Inc. (U22BLATN63)" build/resources/pritunl-openvpn
 
 
