@@ -1,7 +1,8 @@
 Pritunl Client Changelog
 ========================
 
-<%= version %>
+Version 1.2.2685.61 2021-01-18
+------------------------------
 
 Fix local privilege escalation with openvpn configuration
 

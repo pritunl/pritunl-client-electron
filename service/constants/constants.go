@@ -1,7 +1,7 @@
 package constants
 
 const (
-	Version = "1.2.2653.1"
+	Version = "1.2.2685.61"
 )
 
 var (
