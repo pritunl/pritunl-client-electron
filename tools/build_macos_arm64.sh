@@ -72,10 +72,6 @@ touch build/macos/var/log/pritunl.log.1
 mkdir -p build/macos/Library/LaunchDaemons
 cp service_macos/com.pritunl.service.plist build/macos/Library/LaunchDaemons
 
-# Client Agent
-mkdir -p build/macos/Library/LaunchAgents
-cp service_macos/com.pritunl.client.plist build/macos/Library/LaunchAgents
-
 # Package
 chmod +x resources_macos/scripts/postinstall
 chmod +x resources_macos/scripts/preinstall
