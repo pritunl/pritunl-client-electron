@@ -63,7 +63,6 @@ echo "Installing..."
 echo "###################################################"
 sudo rm -rf /Applications/Pritunl.app
 sudo cp -r build/macos/Applications/Pritunl.app /Applications
-sudo cp -f build/macos/Library/LaunchAgents/com.pritunl.client.plist /Library/LaunchAgents/com.pritunl.client.plist
 sudo cp -f build/macos/Library/LaunchDaemons/com.pritunl.service.plist /Library/LaunchDaemons/com.pritunl.service.plist
 
 # Postinstall
