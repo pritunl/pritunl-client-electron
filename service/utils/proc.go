@@ -2,7 +2,6 @@ package utils
 
 import (
 	"bytes"
-	"github.com/sirupsen/logrus"
 	"io"
 	"os"
 	"os/exec"
@@ -11,6 +10,7 @@ import (
 	"github.com/dropbox/godropbox/errors"
 	"github.com/pritunl/pritunl-client-electron/service/command"
 	"github.com/pritunl/pritunl-client-electron/service/errortypes"
+	"github.com/sirupsen/logrus"
 )
 
 func Exec(name string, arg ...string) (err error) {
@@ -173,6 +173,61 @@ func ExecOutputLogged(ignores []string, name string, arg ...string) (
 			"cmd":          name,
 			"arg":          arg,
 			"error":        err,
+		}).Error("utils: Process exec error")
+		return
+	}
+
+	return
+}
+
+func ExecCombinedOutput(name string, arg ...string) (
+	output string, err error) {
+
+	cmd := exec.Command(name, arg...)
+
+	outputByt, err := cmd.CombinedOutput()
+	if outputByt != nil {
+		output = string(outputByt)
+	}
+	if err != nil {
+		err = &errortypes.ExecError{
+			errors.Wrapf(err, "utils: Failed to exec '%s'", name),
+		}
+		return
+	}
+
+	return
+}
+
+func ExecCombinedOutputLogged(ignores []string, name string, arg ...string) (
+	output string, err error) {
+
+	cmd := exec.Command(name, arg...)
+
+	outputByt, err := cmd.CombinedOutput()
+	if outputByt != nil {
+		output = string(outputByt)
+	}
+
+	if err != nil && ignores != nil {
+		for _, ignore := range ignores {
+			if strings.Contains(output, ignore) {
+				err = nil
+				output = ""
+				break
+			}
+		}
+	}
+	if err != nil {
+		err = &errortypes.ExecError{
+			errors.Wrapf(err, "utils: Failed to exec '%s'", name),
+		}
+
+		logrus.WithFields(logrus.Fields{
+			"output": output,
+			"cmd":    name,
+			"arg":    arg,
+			"error":  err,
 		}).Error("utils: Process exec error")
 		return
 	}
