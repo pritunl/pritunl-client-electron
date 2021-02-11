@@ -7,12 +7,12 @@
     "mustache": "4.1.0",
     "request": "2.88.2",
     "tar": "6.1.0",
-    "ws": "7.4.2"
+    "ws": "7.4.3"
   },
   "devDependencies": {
-    "electron": "11.2.0",
+    "electron": "11.2.3",
     "electron-packager": "15.2.0",
-    "electron-rebuild": "2.3.4",
+    "electron-rebuild": "2.3.5",
     "rcedit": "3.0.0",
     "rimraf": "3.0.2"
   }
