@@ -986,7 +986,7 @@ func (p *Profile) parseLine(line string) {
 func (p *Profile) clearWgLinux() {
 	if p.Iface != "" {
 		p.wgQuickLock.Lock()
-		utils.ExecOutputLogged(
+		utils.ExecCombinedOutputLogged(
 			[]string{
 				"does not exist",
 				"is not a",
@@ -1002,7 +1002,7 @@ func (p *Profile) clearWgLinux() {
 func (p *Profile) clearWgMac() {
 	if p.Iface != "" {
 		p.wgQuickLock.Lock()
-		utils.ExecOutputLogged(
+		utils.ExecCombinedOutputLogged(
 			[]string{
 				"is not a",
 			},
@@ -1018,11 +1018,11 @@ func (p *Profile) clearWgMac() {
 func (p *Profile) clearWgWin() {
 	if p.Iface != "" {
 		p.wgQuickLock.Lock()
-		_, _ = utils.ExecOutput(
+		_, _ = utils.ExecCombinedOutput(
 			"sc.exe", "stop", fmt.Sprintf("WireGuardTunnel$%s", p.Iface),
 		)
 		time.Sleep(100 * time.Millisecond)
-		_, _ = utils.ExecOutput(
+		_, _ = utils.ExecCombinedOutput(
 			"sc.exe", "delete", fmt.Sprintf("WireGuardTunnel$%s", p.Iface),
 		)
 		network.InterfaceRelease(p.Iface)
@@ -2139,7 +2139,7 @@ func (p *Profile) pingWg(remote string) (wgData *WgPingData, retry bool,
 }
 
 func (p *Profile) confWgLinux(data *WgConf) (err error) {
-	utils.ExecOutputLogged(
+	utils.ExecCombinedOutputLogged(
 		[]string{
 			"Cannot find device",
 		},
@@ -2147,7 +2147,7 @@ func (p *Profile) confWgLinux(data *WgConf) (err error) {
 		"del", p.Iface,
 	)
 
-	_, err = utils.ExecOutputLogged(nil,
+	_, err = utils.ExecCombinedOutputLogged(nil,
 		"ip", "link",
 		"add", "dev", p.Iface,
 		"type", "wireguard",
@@ -2156,7 +2156,7 @@ func (p *Profile) confWgLinux(data *WgConf) (err error) {
 		return
 	}
 
-	_, err = utils.ExecOutputLogged(nil,
+	_, err = utils.ExecCombinedOutputLogged(nil,
 		"ip", "addr",
 		"add", data.Address,
 		"dev", p.Iface,
@@ -2166,7 +2166,7 @@ func (p *Profile) confWgLinux(data *WgConf) (err error) {
 	}
 
 	if data.Address6 != "" {
-		_, err = utils.ExecOutputLogged(nil,
+		_, err = utils.ExecCombinedOutputLogged(nil,
 			"ip", "-6", "addr",
 			"add", data.Address6,
 			"dev", p.Iface,
@@ -2188,7 +2188,7 @@ func (p *Profile) confWgLinux(data *WgConf) (err error) {
 		}
 	}
 
-	_, err = utils.ExecOutputLogged(nil,
+	_, err = utils.ExecCombinedOutputLogged(nil,
 		p.wgPath,
 		"set", p.Iface,
 		"private-key", p.wgConfPth,
@@ -2201,7 +2201,7 @@ func (p *Profile) confWgLinux(data *WgConf) (err error) {
 		return
 	}
 
-	_, err = utils.ExecOutputLogged(nil,
+	_, err = utils.ExecCombinedOutputLogged(nil,
 		"ip", "link",
 		"set", p.Iface, "up",
 	)
@@ -2216,7 +2216,7 @@ func (p *Profile) confWgLinux(data *WgConf) (err error) {
 
 			} else {
 				if route.Metric != 0 {
-					_, err = utils.ExecOutputLogged(
+					_, err = utils.ExecCombinedOutputLogged(
 						[]string{
 							"File exists",
 						},
@@ -2230,7 +2230,7 @@ func (p *Profile) confWgLinux(data *WgConf) (err error) {
 						return
 					}
 				} else {
-					_, err = utils.ExecOutputLogged(
+					_, err = utils.ExecCombinedOutputLogged(
 						[]string{
 							"File exists",
 						},
@@ -2254,7 +2254,7 @@ func (p *Profile) confWgLinux(data *WgConf) (err error) {
 
 			} else {
 				if route.Metric != 0 {
-					_, err = utils.ExecOutputLogged(
+					_, err = utils.ExecCombinedOutputLogged(
 						[]string{
 							"File exists",
 						},
@@ -2268,7 +2268,7 @@ func (p *Profile) confWgLinux(data *WgConf) (err error) {
 						return
 					}
 				} else {
-					_, err = utils.ExecOutputLogged(
+					_, err = utils.ExecCombinedOutputLogged(
 						[]string{
 							"File exists",
 						},
@@ -2346,7 +2346,7 @@ func (p *Profile) confWgLinuxQuick() (err error) {
 	defer p.wgQuickLock.Unlock()
 
 	for i := 0; i < 3; i++ {
-		_, _ = utils.ExecOutput(
+		_, _ = utils.ExecCombinedOutput(
 			p.wgQuickPath, "down", p.Iface,
 		)
 
@@ -2356,7 +2356,7 @@ func (p *Profile) confWgLinuxQuick() (err error) {
 			time.Sleep(500 * time.Millisecond)
 		}
 
-		_, err = utils.ExecOutputLogged(
+		_, err = utils.ExecCombinedOutputLogged(
 			nil,
 			p.wgQuickPath,
 			"up", p.Iface,
@@ -2379,7 +2379,7 @@ func (p *Profile) confWgMac() (err error) {
 
 	output := ""
 	for i := 0; i < 3; i++ {
-		_, _ = utils.ExecOutput(
+		_, _ = utils.ExecCombinedOutput(
 			"/usr/local/bin/bash", p.wgQuickPath, "down", p.Iface,
 		)
 
@@ -2389,7 +2389,7 @@ func (p *Profile) confWgMac() (err error) {
 			time.Sleep(500 * time.Millisecond)
 		}
 
-		output, err = utils.ExecOutputLogged(
+		output, err = utils.ExecCombinedOutputLogged(
 			nil,
 			"/usr/local/bin/bash",
 			p.wgQuickPath,
@@ -2428,11 +2428,11 @@ func (p *Profile) confWgMac() (err error) {
 func (p *Profile) confWgWin() (err error) {
 	for i := 0; i < 3; i++ {
 		p.wgQuickLock.Lock()
-		_, _ = utils.ExecOutput(
+		_, _ = utils.ExecCombinedOutput(
 			"sc.exe", "stop", fmt.Sprintf("WireGuardTunnel$%s", p.Iface),
 		)
 		time.Sleep(100 * time.Millisecond)
-		_, _ = utils.ExecOutput(
+		_, _ = utils.ExecCombinedOutput(
 			"sc.exe", "delete", fmt.Sprintf("WireGuardTunnel$%s", p.Iface),
 		)
 		p.wgQuickLock.Unlock()
@@ -2443,7 +2443,7 @@ func (p *Profile) confWgWin() (err error) {
 			time.Sleep(500 * time.Millisecond)
 		}
 
-		_, err = utils.ExecOutputLogged(
+		_, err = utils.ExecCombinedOutputLogged(
 			nil,
 			WgWinPath,
 			"/installtunnelservice", p.wgConfPth,
@@ -2526,7 +2526,7 @@ func (p *Profile) updateWgHandshake() (err error) {
 		iface = p.Iface
 	}
 
-	output, err := utils.ExecOutputLogged(
+	output, err := utils.ExecCombinedOutputLogged(
 		[]string{
 			"No such device",
 			"access interface",
@@ -2889,7 +2889,7 @@ func (p *Profile) startWg(timeout bool) (err error) {
 func (p *Profile) stopWgLinux() (err error) {
 	//if p.Iface != "" {
 	//	p.wgQuickLock.Lock()
-	//	utils.ExecOutputLogged(
+	//	utils.ExecCombinedOutputLogged(
 	//		[]string{
 	//			"Cannot find device",
 	//		},
@@ -2905,7 +2905,7 @@ func (p *Profile) stopWgLinux() (err error) {
 func (p *Profile) stopWgMac() (err error) {
 	//if p.Iface != "" {
 	//	p.wgQuickLock.Lock()
-	//	utils.ExecOutputLogged(
+	//	utils.ExecCombinedOutputLogged(
 	//		[]string{
 	//			"is not a",
 	//		},
@@ -2921,11 +2921,11 @@ func (p *Profile) stopWgMac() (err error) {
 func (p *Profile) stopWgWin() (err error) {
 	//if p.Iface != "" {
 	//	p.wgQuickLock.Lock()
-	//	_, _ = utils.ExecOutput(
+	//	_, _ = utils.ExecCombinedOutput(
 	//		"sc.exe", "stop", fmt.Sprintf("WireGuardTunnel$%s", p.Iface),
 	//	)
 	//	time.Sleep(100 * time.Millisecond)
-	//	_, _ = utils.ExecOutput(
+	//	_, _ = utils.ExecCombinedOutput(
 	//		"sc.exe", "delete", fmt.Sprintf("WireGuardTunnel$%s", p.Iface),
 	//	)
 	//	p.wgQuickLock.Unlock()

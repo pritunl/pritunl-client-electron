@@ -176,11 +176,11 @@ func Clean() (err error) {
 	}
 
 	for i := 0; i < 10; i++ {
-		_, _ = utils.ExecOutput(
+		_, _ = utils.ExecCombinedOutput(
 			"sc.exe", "stop", fmt.Sprintf("WireGuardTunnel$pritunl%d", i),
 		)
 		time.Sleep(100 * time.Millisecond)
-		_, _ = utils.ExecOutput(
+		_, _ = utils.ExecCombinedOutput(
 			"sc.exe", "delete", fmt.Sprintf("WireGuardTunnel$pritunl%d", i),
 		)
 	}
