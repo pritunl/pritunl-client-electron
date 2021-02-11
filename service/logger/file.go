@@ -1,11 +1,12 @@
 package logger
 
 import (
-	"github.com/sirupsen/logrus"
+	"os"
+
 	"github.com/dropbox/godropbox/errors"
 	"github.com/pritunl/pritunl-client-electron/service/errortypes"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
-	"os"
+	"github.com/sirupsen/logrus"
 )
 
 type fileSender struct{}
