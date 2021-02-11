@@ -37,6 +37,6 @@ func Init() {
 
 	logrus.SetFormatter(&formatter{})
 	logrus.AddHook(&logHook{})
-	logrus.SetOutput(os.Stderr)
+	logrus.SetOutput(&Writer{})
 	logrus.SetLevel(logrus.InfoLevel)
 }
