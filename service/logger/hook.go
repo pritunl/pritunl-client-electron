@@ -1,8 +1,9 @@
 package logger
 
 import (
-	"github.com/sirupsen/logrus"
 	"strings"
+
+	"github.com/sirupsen/logrus"
 )
 
 type logHook struct{}
@@ -12,8 +13,8 @@ func (h *logHook) Fire(entry *logrus.Entry) (err error) {
 		return
 	}
 
-	for _, sndr := range senders {
-		sndr.Parse(entry)
+	if len(buffer) <= 64 {
+		buffer <- entry
 	}
 
 	return
