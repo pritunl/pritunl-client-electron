@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/dropbox/godropbox/errors"
-	"github.com/gizak/termui/v3"
-	"github.com/gizak/termui/v3/widgets"
+	"github.com/gizak/termui"
+	"github.com/gizak/termui/widgets"
 	"github.com/pritunl/pritunl-client-electron/cli/errortypes"
 	"github.com/pritunl/pritunl-client-electron/cli/sprofile"
 	"github.com/pritunl/pritunl-client-electron/service/constants"
