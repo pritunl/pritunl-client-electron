@@ -1,6 +1,6 @@
 {
   "name": "pritunl",
-  "version": "1.2.2685.61",
+  "version": "1.2.2709.71",
   "main": "www/main.js",
   "dependencies": {
     "jquery": "3.5.1",
@@ -17,3 +17,4 @@
     "rimraf": "3.0.2"
   }
 }
+
