@@ -1,6 +1,10 @@
 Pritunl Client Changelog
 ========================
 
+<%= version %>
+
+Fix reliability issues
+
 Version 1.2.2685.61 2021-01-18
 ------------------------------
 
