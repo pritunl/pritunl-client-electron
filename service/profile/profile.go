@@ -256,6 +256,13 @@ func (p *Profile) write() (pth string, err error) {
 		trimLine = strings.Trim(trimLine, "{")
 		trimLine = strings.Trim(trimLine, "}")
 
+		if strings.HasPrefix(trimLine, "setenv") &&
+			!strings.HasPrefix(trimLine, "setenv UV_ID ") &&
+			!strings.HasPrefix(trimLine, "setenv UV_NAME ") {
+
+			continue
+		}
+
 		if strings.Contains(trimLine, "script-security") ||
 			strings.HasPrefix(trimLine, "log ") ||
 			strings.HasPrefix(trimLine, "log-append ") ||
