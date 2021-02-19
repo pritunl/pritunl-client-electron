@@ -69,6 +69,7 @@ sudo cp -f build/macos/Library/LaunchDaemons/com.pritunl.service.plist /Library/
 echo "###################################################"
 echo "Postinstall: Starting pritunl service..."
 echo "###################################################"
+sudo launchctl enable system/com.pritunl.service
 sudo launchctl load /Library/LaunchDaemons/com.pritunl.service.plist
 
 cd ..
