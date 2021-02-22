@@ -41,6 +41,11 @@ func GetWgPath() string {
 			return path
 		}
 
+		path, _ = exec.LookPath("/opt/homebrew/bin/wg")
+		if path != "" {
+			return path
+		}
+
 		break
 	case "linux":
 		path, _ := exec.LookPath("wg")
@@ -72,6 +77,11 @@ func GetWgQuickPath() string {
 		}
 
 		path, _ = exec.LookPath("/usr/local/bin/wg-quick")
+		if path != "" {
+			return path
+		}
+
+		path, _ = exec.LookPath("/opt/homebrew/bin/wg-quick")
 		if path != "" {
 			return path
 		}
@@ -168,6 +178,26 @@ func getOpenvpnDir() (pth string) {
 	}
 
 	return
+}
+
+func GetBashPath() string {
+	switch runtime.GOOS {
+	case "darwin":
+		switch runtime.GOARCH {
+		case "arm64":
+			return "/opt/homebrew/bin/bash"
+		default:
+			return "/usr/local/bin/bash"
+		}
+		break
+	case "linux":
+		break
+	case "windows":
+		break
+	default:
+		panic("handlers: Not implemented")
+	}
+	return ""
 }
 
 func Clean() (err error) {
