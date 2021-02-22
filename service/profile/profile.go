@@ -156,6 +156,7 @@ type Profile struct {
 	authFailed         bool               `json:"-"`
 	waiters            []chan bool        `json:"-"`
 	remPaths           []string           `json:"-"`
+	bashPath           string             `json:"-"`
 	wgPath             string             `json:"-"`
 	wgQuickPath        string             `json:"-"`
 	wgConfPth          string             `json:"-"`
@@ -1013,7 +1014,7 @@ func (p *Profile) clearWgMac() {
 			[]string{
 				"is not a",
 			},
-			"/usr/local/bin/bash",
+			p.bashPath,
 			p.wgQuickPath,
 			"down", p.Iface,
 		)
@@ -1144,6 +1145,7 @@ func (p *Profile) Init() {
 	p.Id = utils.FilterStr(p.Id)
 	p.stateLock = sync.Mutex{}
 	p.waiters = []chan bool{}
+	p.bashPath = GetBashPath()
 	p.wgPath = GetWgPath()
 	p.wgQuickPath = GetWgQuickPath()
 }
@@ -2387,7 +2389,7 @@ func (p *Profile) confWgMac() (err error) {
 	output := ""
 	for i := 0; i < 3; i++ {
 		_, _ = utils.ExecCombinedOutput(
-			"/usr/local/bin/bash", p.wgQuickPath, "down", p.Iface,
+			p.bashPath, p.wgQuickPath, "down", p.Iface,
 		)
 
 		if i == 0 {
@@ -2398,7 +2400,7 @@ func (p *Profile) confWgMac() (err error) {
 
 		output, err = utils.ExecCombinedOutputLogged(
 			nil,
-			"/usr/local/bin/bash",
+			p.bashPath,
 			p.wgQuickPath,
 			"up", p.Iface,
 		)
