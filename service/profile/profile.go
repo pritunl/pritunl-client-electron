@@ -2643,13 +2643,13 @@ func (p *Profile) watchWg() {
 		var data *WgPingData
 		var retry bool
 		var err error
-		for i := 0; i < 3; i++ {
-			data, retry, err = p.pingWg(p.GatewayAddr)
+		for i := 0; i < 6; i++ {
+			data, retry, err = p.pingWg()
 			if !retry {
 				break
 			}
 
-			time.Sleep(1 * time.Millisecond)
+			time.Sleep(1 * time.Second)
 		}
 		if err != nil {
 			logrus.WithFields(logrus.Fields{
