@@ -22,6 +22,8 @@ var main = null;
 var tray = null;
 var wakeup = false;
 
+remote.initialize();
+
 process.on('uncaughtException', function (error) {
   var errorMsg;
   if (error && error.stack) {
