@@ -237,7 +237,8 @@ var openMainWin = function() {
       webPreferences: {
         zoomFactor: zoomFactor,
         enableRemoteModule: true,
-        nodeIntegration: true
+        nodeIntegration: true,
+        contextIsolation: false
       }
     });
     main.maximizedPrev = null;
