@@ -183,12 +183,21 @@ func getOpenvpnDir() (pth string) {
 func GetBashPath() string {
 	switch runtime.GOOS {
 	case "darwin":
-		switch runtime.GOARCH {
-		case "arm64":
-			return "/opt/homebrew/bin/bash"
-		default:
-			return "/usr/local/bin/bash"
+		path, _ := exec.LookPath("/usr/local/bin/bash")
+		if path != "" {
+			return path
 		}
+
+		path, _ = exec.LookPath("/opt/homebrew/bin/bash")
+		if path != "" {
+			return path
+		}
+
+		path, _ = exec.LookPath("/opt/homebrew/bin/wg-quick")
+		if path != "" {
+			return path
+		}
+
 		break
 	case "linux":
 		break
