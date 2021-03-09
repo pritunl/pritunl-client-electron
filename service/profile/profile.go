@@ -2443,6 +2443,15 @@ func (p *Profile) confWgMac() (err error) {
 	}
 
 	if tunIface == "" {
+		for _, line := range strings.Split(output, "\n") {
+			if strings.Contains(line, "Interface for") {
+				lines := strings.Fields(line)
+				tunIface = lines[len(lines)-1]
+			}
+		}
+	}
+
+	if tunIface == "" {
 		err = &errortypes.ParseError{
 			errors.New("profile: Failed to parse wg interface output"),
 		}
