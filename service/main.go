@@ -101,8 +101,8 @@ func main() {
 	server := &http.Server{
 		Addr:           "127.0.0.1:9770",
 		Handler:        router,
-		ReadTimeout:    30 * time.Second,
-		WriteTimeout:   30 * time.Second,
+		ReadTimeout:    300 * time.Second,
+		WriteTimeout:   300 * time.Second,
 		MaxHeaderBytes: 4096,
 	}
 
