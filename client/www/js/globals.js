@@ -19,9 +19,12 @@ global.ErrorInit = function(name, args) {
 };
 
 global.remoteRequire = function() {
-  var remote = require('electron').remote;
-  if (remote) {
-    return remote;
+  try {
+    var remote = require('@electron/remote');
+    if (remote) {
+      return remote;
+    }
+  } catch (e) {
   }
   return require('electron');
 };
