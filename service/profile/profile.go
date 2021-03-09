@@ -2644,7 +2644,7 @@ func (p *Profile) watchWg() {
 		var retry bool
 		var err error
 		for i := 0; i < 6; i++ {
-			data, retry, err = p.pingWg()
+			data, retry, err = p.pingWg(p.GatewayAddr)
 			if !retry {
 				break
 			}
