@@ -123,6 +123,8 @@ type WgConf struct {
 	Gateway       string   `json:"gateway"`
 	Gateway6      string   `json:"gateway6"`
 	Port          int      `json:"port"`
+	WebPort       int      `json:"web_port"`
+	WebNoSsl      bool     `json:"web_no_ssl"`
 	PublicKey     string   `json:"public_key"`
 	Routes        []*Route `json:"routes"`
 	Routes6       []*Route `json:"routes6"`
@@ -200,6 +202,8 @@ type Profile struct {
 	ClientAddr         string             `json:"client_addr"`
 	MacAddr            string             `json:"mac_addr"`
 	MacAddrs           []string           `json:"mac_addrs"`
+	WebPort            int                `json:"web_port"`
+	WebNoSsl           bool               `json:"web_no_ssl"`
 	SystemProfile      *sprofile.Sprofile `json:"-"`
 }
 
@@ -1867,8 +1871,8 @@ func (p *Profile) reqWg(remote string) (wgData *WgData, err error) {
 	return
 }
 
-func (p *Profile) pingWg(remote string) (wgData *WgPingData, retry bool,
-	err error) {
+func (p *Profile) pingWg() (wgData *WgPingData, retry bool, err error) {
+	remote := p.GatewayAddr
 
 	if p.ServerBoxPublicKey == "" {
 		err = &errortypes.ReadError{
