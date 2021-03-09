@@ -10,21 +10,22 @@ import (
 )
 
 type profileData struct {
-	Id                 string `json:"id"`
-	Mode               string `json:"mode"`
-	OrgId              string `json:"org_id"`
-	UserId             string `json:"user_id"`
-	ServerId           string `json:"server_id"`
-	SyncToken          string `json:"sync_token"`
-	SyncSecret         string `json:"sync_secret"`
-	Data               string `json:"data"`
-	Username           string `json:"username"`
-	Password           string `json:"password"`
-	ServerPublicKey    string `json:"server_public_key"`
-	ServerBoxPublicKey string `json:"server_box_public_key"`
-	TokenTtl           int    `json:"token_ttl"`
-	Reconnect          bool   `json:"reconnect"`
-	Timeout            bool   `json:"timeout"`
+	Id                 string   `json:"id"`
+	Mode               string   `json:"mode"`
+	OrgId              string   `json:"org_id"`
+	UserId             string   `json:"user_id"`
+	ServerId           string   `json:"server_id"`
+	SyncHosts          []string `json:"sync_hosts"`
+	SyncToken          string   `json:"sync_token"`
+	SyncSecret         string   `json:"sync_secret"`
+	Data               string   `json:"data"`
+	Username           string   `json:"username"`
+	Password           string   `json:"password"`
+	ServerPublicKey    string   `json:"server_public_key"`
+	ServerBoxPublicKey string   `json:"server_box_public_key"`
+	TokenTtl           int      `json:"token_ttl"`
+	Reconnect          bool     `json:"reconnect"`
+	Timeout            bool     `json:"timeout"`
 }
 
 func profileGet(c *gin.Context) {
@@ -79,6 +80,7 @@ func profilePost(c *gin.Context) {
 		OrgId:              data.OrgId,
 		UserId:             data.UserId,
 		ServerId:           data.ServerId,
+		SyncHosts:          data.SyncHosts,
 		SyncToken:          data.SyncToken,
 		SyncSecret:         data.SyncSecret,
 		Data:               data.Data,
