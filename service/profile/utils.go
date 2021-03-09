@@ -243,6 +243,7 @@ func UpdateSystemProfile(prfl *Profile, sPrfl *sprofile.Sprofile) {
 	prfl.OrgId = sPrfl.OrganizationId
 	prfl.UserId = sPrfl.UserId
 	prfl.ServerId = sPrfl.ServerId
+	prfl.SyncHosts = sPrfl.SyncHosts
 	prfl.SyncToken = sPrfl.SyncToken
 	prfl.SyncSecret = sPrfl.SyncSecret
 	prfl.Data = sPrfl.OvpnData
