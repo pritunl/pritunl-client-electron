@@ -4,7 +4,7 @@ var utils = require('./utils.js');
 
 var alert;
 try {
-  var remote = require('electron').remote;
+  var remote = require('@electron/remote');
   if (remote) {
     alert = require('./alert.js');
   }

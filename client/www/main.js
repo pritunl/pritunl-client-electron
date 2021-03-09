@@ -5,6 +5,7 @@ var path = require('path');
 var fs = require('fs');
 var process = require('process');
 var request = require('request');
+var remote = require('@electron/remote/main');
 var dialog = require('electron').dialog;
 var BrowserWindow = require('electron').BrowserWindow;
 var Tray = require('electron').Tray;

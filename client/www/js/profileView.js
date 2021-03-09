@@ -1,5 +1,5 @@
 var path = require('path');
-var remote = require('electron').remote;
+var remote = require('@electron/remote');
 var $ = require('jquery');
 var Mustache = require('mustache');
 var constants = require('./constants.js');
