@@ -2021,8 +2021,21 @@ func (p *Profile) pingWg() (wgData *WgPingData, retry bool, err error) {
 		remote = "[" + remote + "]"
 	}
 
+	scheme := ""
+	if p.WebNoSsl {
+		scheme = "http"
+		if p.WebPort != 0 && p.WebPort != 80 {
+			remote += fmt.Sprintf(":%d", p.WebPort)
+		}
+	} else {
+		scheme = "https"
+		if p.WebPort != 0 && p.WebPort != 443 {
+			remote += fmt.Sprintf(":%d", p.WebPort)
+		}
+	}
+
 	u := &url.URL{
-		Scheme: "https",
+		Scheme: scheme,
 		Host:   remote,
 		Path:   reqPath,
 	}
