@@ -176,6 +176,7 @@ type Profile struct {
 	OrgId              string             `json:"-"`
 	UserId             string             `json:"-"`
 	ServerId           string             `json:"-"`
+	SyncHosts          []string           `json:"-"`
 	SyncToken          string             `json:"-"`
 	SyncSecret         string             `json:"-"`
 	PrivateKeyWg       string             `json:"-"`
@@ -1129,6 +1130,7 @@ func (p *Profile) Copy() (prfl *Profile) {
 		OrgId:              p.OrgId,
 		UserId:             p.UserId,
 		ServerId:           p.ServerId,
+		SyncHosts:          p.SyncHosts,
 		SyncToken:          p.SyncToken,
 		SyncSecret:         p.SyncSecret,
 		Data:               p.Data,
@@ -2756,6 +2758,30 @@ func (p *Profile) startWg(timeout bool) (err error) {
 			} else {
 				p.PrivateKey += line + "\n"
 			}
+		}
+	}
+
+	for _, syncAddr := range p.SyncHosts {
+		syncUrl, e := url.Parse(syncAddr)
+		if e != nil {
+			err = &errortypes.ParseError{
+				errors.Wrap(e, "profile: Sync address parse error"),
+			}
+
+			logrus.WithFields(logrus.Fields{
+				"error": err,
+			}).Error("profile: Failed to parse sync address")
+
+			err = nil
+
+			continue
+		}
+
+		remote := syncUrl.Host
+
+		if !remotesSet.Contains(remote) {
+			remotesSet.Add(remote)
+			remotes = append(remotes, remote)
 		}
 	}
 
