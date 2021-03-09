@@ -2502,6 +2502,8 @@ func (p *Profile) confWg(data *WgConf) (err error) {
 	p.ServerAddr = data.Hostname
 	p.GatewayAddr = data.Gateway
 	p.GatewayAddr6 = data.Gateway6
+	p.WebPort = data.WebPort
+	p.WebNoSsl = data.WebNoSsl
 	p.wgServerPublicKey = data.PublicKey
 
 	switch runtime.GOOS {
@@ -2618,7 +2620,7 @@ func (p *Profile) watchWg() {
 		}
 
 		if i%10 == 0 {
-			go p.pingWg(p.GatewayAddr)
+			go p.pingWg()
 		}
 
 		err := p.updateWgHandshake()
@@ -2672,7 +2674,7 @@ func (p *Profile) watchWg() {
 		var retry bool
 		var err error
 		for i := 0; i < 6; i++ {
-			data, retry, err = p.pingWg(p.GatewayAddr)
+			data, retry, err = p.pingWg()
 			if !retry {
 				break
 			}
