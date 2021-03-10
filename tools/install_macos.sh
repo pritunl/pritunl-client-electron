@@ -31,8 +31,8 @@ rm -rf build/macos/Applications/Pritunl-darwin-x64
 
 # Service
 cd service
-GOPATH="$(pwd)/go" go get -d
-GOPATH="$(pwd)/go" go build -v
+GO111MODULE=off GOPATH="$(pwd)/go" go get -d
+GO111MODULE=off GOPATH="$(pwd)/go" go build -v
 cd ..
 cp service/service build/macos/Applications/Pritunl.app/Contents/Resources/pritunl-service
 

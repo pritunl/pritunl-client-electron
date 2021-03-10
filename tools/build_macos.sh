@@ -11,8 +11,8 @@ export APP_VER="$(cat client/package.json | grep version | cut -d '"' -f 4)"
 
 # Service
 cd service
-go get -u -f
-go build -v
+GO111MODULE=off go get -u -f
+GO111MODULE=off go build -v
 cd ..
 mkdir -p build/resources
 cp service/service build/resources/pritunl-service
@@ -20,8 +20,8 @@ codesign --force --timestamp --options=runtime -s "Developer ID Application: Pri
 
 # CLI
 cd cli
-go get -u -f
-go build -v
+GO111MODULE=off go get -u -f
+GO111MODULE=off go build -v
 cd ..
 mkdir -p build/resources
 cp cli/cli build/resources/pritunl-client
