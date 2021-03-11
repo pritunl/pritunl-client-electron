@@ -1,7 +1,7 @@
 Pritunl Client Changelog
 ========================
 
-Version <%= version %>
+<%= version %>
 
 Fix connection issues
 Block unsafe openvpn environment variables
