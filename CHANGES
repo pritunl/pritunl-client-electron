@@ -3,6 +3,7 @@ Pritunl Client Changelog
 
 <%= version %>
 
+Fix connection issues
 Block unsafe openvpn environment variables
 
 Version 1.2.2709.72 2021-02-11
