@@ -80,6 +80,7 @@ var (
 		Timeout:   10 * time.Second,
 	}
 	ipReg = regexp.MustCompile(`(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}`)
+	profileReg = regexp.MustCompile(`[^a-z0-9_\- ]+`)
 )
 
 type WgKeyReq struct {
@@ -242,34 +243,25 @@ func (p *Profile) write() (pth string, err error) {
 		)
 	}
 
-	for _, line := range strings.Split(p.Data, "\n") {
-		trimLine := strings.TrimSpace(line)
-		trimLine = strings.Trim(trimLine, "#")
-		trimLine = strings.Trim(trimLine, "-")
-		trimLine = strings.Trim(trimLine, "_")
-		trimLine = strings.Trim(trimLine, ":")
-		trimLine = strings.Trim(trimLine, ";")
-		trimLine = strings.Trim(trimLine, "*")
-		trimLine = strings.Trim(trimLine, "%")
-		trimLine = strings.Trim(trimLine, "$")
-		trimLine = strings.Trim(trimLine, "+")
-		trimLine = strings.Trim(trimLine, "=")
-		trimLine = strings.Trim(trimLine, "~")
-		trimLine = strings.Trim(trimLine, "(")
-		trimLine = strings.Trim(trimLine, ")")
-		trimLine = strings.Trim(trimLine, "[")
-		trimLine = strings.Trim(trimLine, "]")
-		trimLine = strings.Trim(trimLine, "{")
-		trimLine = strings.Trim(trimLine, "}")
+	inData := strings.ReplaceAll(p.Data, ";", "")
+	inData = strings.ReplaceAll(inData, "\r", "")
 
-		if strings.HasPrefix(trimLine, "setenv") &&
-			!strings.HasPrefix(trimLine, "setenv UV_ID ") &&
-			!strings.HasPrefix(trimLine, "setenv UV_NAME ") {
+	for _, line := range strings.Split(inData, "\n") {
+		trimLine := strings.ToLower(line)
+		trimLine = profileReg.ReplaceAllString(trimLine, "")
+		trimLine = strings.TrimSpace(trimLine)
+
+		if (strings.Contains(trimLine, "setenv ") ||
+			strings.HasPrefix(trimLine, "setenv")) &&
+			!strings.HasPrefix(trimLine, "setenv uv_id ") &&
+			!strings.HasPrefix(trimLine, "setenv uv_name ") {
 
 			continue
 		}
 
-		if strings.Contains(trimLine, "script-security") ||
+		if trimLine == "" ||
+			strings.Contains(trimLine, "ld_preload") ||
+			strings.Contains(trimLine, "script-security") ||
 			strings.HasPrefix(trimLine, "log ") ||
 			strings.HasPrefix(trimLine, "log-append ") ||
 			strings.HasPrefix(trimLine, "syslog ") ||
