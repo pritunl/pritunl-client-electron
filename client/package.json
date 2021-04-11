@@ -1,6 +1,6 @@
 {
   "name": "pritunl",
-  "version": "1.2.2737.2",
+  "version": "1.2.2768.85",
   "main": "www/main.js",
   "dependencies": {
     "@electron/remote": "1.1.0",
