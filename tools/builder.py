@@ -485,9 +485,18 @@ if cmd == 'upload' or cmd == 'upload-test' or cmd == 'build-upload':
         '--overwrite',
         '--md5',
         'mirror',
-        'repo/stable',
+        'repo-east/stable',
     ], cwd=pacur_path)
 
+    subprocess.check_call([
+        'mc',
+        'mirror',
+        '--remove',
+        '--overwrite',
+        '--md5',
+        'mirror',
+        'repo-west/stable',
+    ], cwd=pacur_path)
 
     for name, path in iter_packages():
         post_git_asset(release_id, name, path)
