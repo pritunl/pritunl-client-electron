@@ -1,6 +1,10 @@
 Pritunl Client Changelog
 ========================
 
+<%= version %>
+
+Improve connection management
+
 Version 1.2.2768.85 2021-04-11
 ------------------------------
 
