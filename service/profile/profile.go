@@ -2079,6 +2079,7 @@ func (p *Profile) pingWg() (wgData *WgPingData, retry bool, err error) {
 		err = &errortypes.RequestError{
 			errors.Wrap(err, "profile: Request put error"),
 		}
+		retry = true
 		return
 	}
 	defer res.Body.Close()
