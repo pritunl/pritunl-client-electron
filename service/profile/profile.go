@@ -79,7 +79,7 @@ var (
 		Transport: clientTransport,
 		Timeout:   10 * time.Second,
 	}
-	ipReg = regexp.MustCompile(`(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}`)
+	ipReg      = regexp.MustCompile(`(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}`)
 	profileReg = regexp.MustCompile(`[^a-z0-9_\- ]+`)
 )
 
@@ -979,6 +979,20 @@ func (p *Profile) parseLine(line string) {
 					clientAddr = split[0]
 				}
 			}
+		}
+
+		if clientAddr != "" {
+			p.ClientAddr = clientAddr
+			p.update()
+		}
+	} else if strings.Contains(line, "net_addr_v4_add:") {
+		clientAddr := ""
+		line = line[strings.Index(line, "net_addr_v4_add:")+17:]
+		line = strings.TrimSpace(line)
+
+		ipList := ipReg.FindAllString(line, -1)
+		if len(ipList) > 0 {
+			clientAddr = ipList[0]
 		}
 
 		if clientAddr != "" {
