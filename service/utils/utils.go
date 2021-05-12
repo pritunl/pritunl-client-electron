@@ -756,11 +756,7 @@ func GetLogPath2() (pth string) {
 
 		pth = filepath.Join(pth, "pritunl.log.1")
 		break
-	case "darwin":
-		pth = filepath.Join(string(os.PathSeparator), "Applications",
-			"Pritunl.app", "Contents", "Resources", "pritunl.log.1")
-		break
-	case "linux":
+	case "linux", "darwin":
 		pth = filepath.Join(string(filepath.Separator),
 			"var", "log", "pritunl.log.1")
 		break
