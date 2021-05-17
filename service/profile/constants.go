@@ -16,6 +16,7 @@ const (
 Address = {{.Address}}
 PrivateKey = {{.PrivateKey}}{{if .HasDns}}
 DNS = {{.DnsServers}}{{end}}
+MTU = 1280
 
 [Peer]
 PublicKey = {{.PublicKey}}
