@@ -485,7 +485,7 @@ if cmd == 'upload' or cmd == 'upload-test' or cmd == 'build-upload':
         '--overwrite',
         '--md5',
         'mirror',
-        'repo-east/stable',
+        'repo-east/unstable',
     ], cwd=pacur_path)
 
     subprocess.check_call([
@@ -495,7 +495,7 @@ if cmd == 'upload' or cmd == 'upload-test' or cmd == 'build-upload':
         '--overwrite',
         '--md5',
         'mirror',
-        'repo-west/stable',
+        'repo-west/unstable',
     ], cwd=pacur_path)
 
     for name, path in iter_packages():
