@@ -3,8 +3,8 @@ package token
 import (
 	"time"
 
-	"github.com/sirupsen/logrus"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
+	"github.com/sirupsen/logrus"
 )
 
 type Token struct {
@@ -54,7 +54,7 @@ func (t *Token) Reset() (err error) {
 }
 
 func (t *Token) Update() (err error) {
-	if time.Since(t.Timestamp) > time.Duration(t.Ttl)*time.Second {
+	if utils.SinceAbs(t.Timestamp) > time.Duration(t.Ttl)*time.Second {
 		err = t.Init()
 		if err != nil {
 			return
