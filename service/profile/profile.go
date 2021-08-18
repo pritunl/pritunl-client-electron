@@ -1767,6 +1767,7 @@ func (p *Profile) reqWg(remote string) (wgData *WgData, err error) {
 		return
 	}
 
+	req.Header.Set("User-Agent", "pritunl-client")
 	req.Header.Set("Content-Type", "application/json")
 
 	timestamp := strconv.FormatInt(time.Now().Unix(), 10)
