@@ -39,7 +39,7 @@ var (
 		},
 		Timeout: 12 * time.Second,
 	}
-	ip4reg = regexp.MustCompile("/\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}/")
+	ip4reg = regexp.MustCompile(`(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}`)
 	ip6reg = regexp.MustCompile("/\\[[a-fA-F0-9:]*\\]/")
 )
 
