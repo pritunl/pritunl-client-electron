@@ -18,13 +18,13 @@ func main() {
 	}
 
 	err = os.Remove(filepath.Join("openvpn_win",
-		"openvpn-install-2.4.6-I602.exe"))
+		"OpenVPN-2.5.3-I601-amd64.msi"))
 	if err != nil && !os.IsNotExist(err) {
 		panic(err)
 	}
 
 	err = os.Remove(filepath.Join("openvpn_win",
-		"openvpn-install-2.4.6-I602.exe.asc"))
+		"OpenVPN-2.5.3-I601-amd64.msi.asc"))
 	if err != nil && !os.IsNotExist(err) {
 		panic(err)
 	}
