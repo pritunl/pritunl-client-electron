@@ -19,12 +19,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/sirupsen/logrus"
 	"github.com/dropbox/godropbox/container/set"
 	"github.com/dropbox/godropbox/errors"
 	"github.com/pritunl/pritunl-client-electron/service/command"
 	"github.com/pritunl/pritunl-client-electron/service/constants"
 	"github.com/pritunl/pritunl-client-electron/service/errortypes"
+	"github.com/sirupsen/logrus"
 )
 
 var (
@@ -939,5 +939,13 @@ func PidInit() (err error) {
 		}
 	}
 
+	return
+}
+
+func SinceAbs(t time.Time) (s time.Duration) {
+	s = time.Since(t)
+	if s < 0 {
+		s = s * -1
+	}
 	return
 }
