@@ -1742,7 +1742,7 @@ func (p *Profile) reqWg(remote string) (wgData *WgData, err error) {
 		p.OrgId, p.UserId, p.ServerId,
 	)
 
-	if strings.Contains(remote, ":") {
+	if strings.Count(remote, ":") > 1 {
 		remote = "[" + remote + "]"
 	}
 
