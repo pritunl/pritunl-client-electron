@@ -3,19 +3,19 @@
   "version": "1.2.2799.2",
   "main": "www/main.js",
   "dependencies": {
-    "@electron/remote": "1.1.0",
+    "@electron/remote": "1.2.1",
     "jquery": "3.6.0",
     "mustache": "4.2.0",
     "request": "2.88.2",
-    "tar": "6.1.0",
-    "ws": "7.4.5"
+    "tar": "6.1.8",
+    "ws": "8.2.0"
   },
   "devDependencies": {
-    "electron": "12.0.7",
-    "electron-packager": "15.2.0",
-    "electron-rebuild": "2.3.5",
-    "@electron/remote": "1.1.0",
-    "rcedit": "3.0.0",
+    "@electron/remote": "1.2.1",
+    "electron": "13.2.1",
+    "electron-packager": "15.3.0",
+    "electron-rebuild": "3.1.1",
+    "rcedit": "3.0.1",
     "rimraf": "3.0.2"
   }
 }
