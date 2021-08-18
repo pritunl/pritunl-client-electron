@@ -402,6 +402,7 @@ Profile.prototype.export = function() {
   }
 
   return {
+    id: this.id,
     status: status,
     serverAddr: this.serverAddr || '-',
     clientAddr: this.clientAddr || '-',
