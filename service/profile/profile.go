@@ -2062,6 +2062,7 @@ func (p *Profile) pingWg() (wgData *WgPingData, retry bool, err error) {
 		return
 	}
 
+	req.Header.Set("User-Agent", "pritunl-client")
 	req.Header.Set("Content-Type", "application/json")
 
 	timestamp := strconv.FormatInt(time.Now().Unix(), 10)
