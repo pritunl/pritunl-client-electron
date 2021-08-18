@@ -2016,6 +2016,9 @@ func (p *Profile) pingWg() (wgData *WgPingData, retry bool, err error) {
 
 	wgReqData, err := json.Marshal(wgReq)
 	if err != nil {
+		err = &errortypes.ParseError{
+			errors.Wrap(err, "profile: Failed to marshal data"),
+		}
 		return
 	}
 
