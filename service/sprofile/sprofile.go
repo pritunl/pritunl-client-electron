@@ -182,15 +182,25 @@ func (s *Sprofile) Copy() (sprfl *Sprofile) {
 func (s *Sprofile) GetOutput() (data string, err error) {
 	logPth := s.BasePath() + ".log"
 
-	dataByt, err := ioutil.ReadFile(logPth)
+	exists, err := utils.Exists(logPth)
 	if err != nil {
 		err = &errortypes.ReadError{
-			errors.Wrap(err, "sprofile: Failed to read log file"),
+			errors.Wrap(err, "sprofile: Failed to check log file"),
 		}
 		return
 	}
 
-	data = string(dataByt)
+	if exists {
+		dataByt, e := ioutil.ReadFile(logPth)
+		if e != nil {
+			err = &errortypes.ReadError{
+				errors.Wrap(e, "sprofile: Failed to read log file"),
+			}
+			return
+		}
+
+		data = string(dataByt)
+	}
 
 	return
 }
