@@ -378,14 +378,15 @@ if cmd == 'set-version':
     # Create gitlab release
     response = requests.post(
         ('https://%s/api/v4/projects' +
-            '/%s%%2F%s/repository/tags/%s/release') % (
-            gitlab_host, github_owner, REPO_NAME, new_version),
+         '/%s%%2F%s/releases') % (
+            gitlab_host, github_owner, REPO_NAME),
         headers={
             'Private-Token': gitlab_token,
             'Content-type': 'application/json',
         },
         data=json.dumps({
             'tag_name': new_version,
+            'name': '%s v%s' % (REPO_NAME, new_version),
             'description': release_body,
         }),
     )
