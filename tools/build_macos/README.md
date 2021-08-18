@@ -30,18 +30,18 @@ cd ./lzo-2.10
 sh ../build_lzo.sh
 cd ../
 
-tar xf openssl-1.1.1h.tar.gz
-cd ./openssl-1.1.1h
+tar xf openssl-1.1.1k.tar.gz
+cd ./openssl-1.1.1k
 sh ../build_openssl.sh
 cd ../
 
-tar xf pkcs11-helper-1.26.0.tar.bz2
-cd ./pkcs11-helper-1.26.0
+tar xf pkcs11-helper-1.27.0.tar.bz2
+cd ./pkcs11-helper-1.27.0
 sh ../build_pkcs11h.sh
 cd ../
 
-tar xf openvpn-2.5.0.tar.gz
-cd ./openvpn-2.5.0
+tar xf openvpn-2.5.3.tar.gz
+cd ./openvpn-2.5.3
 sh ../build_openvpn.sh
 cd ../
 
