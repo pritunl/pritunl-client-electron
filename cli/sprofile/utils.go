@@ -472,8 +472,8 @@ func ImportUri(uri string) (err error) {
 	req.Header.Set("User-Agent", "pritunl")
 
 	var client *http.Client
-	if len(ip4reg.FindAllString(uri, -1)) > 1 ||
-		len(ip6reg.FindAllString(uri, -1)) > 1 {
+	if len(ip4reg.FindAllString(uri, -1)) > 0 ||
+		len(ip6reg.FindAllString(uri, -1)) > 0 {
 
 		client = clientInsecure
 	} else {
