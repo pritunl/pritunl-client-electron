@@ -5,7 +5,7 @@ import (
 )
 
 func SinceSafe(t time.Time) time.Duration {
-	return time.Duration(time.Now().Unix()-t.Unix()) * time.Second
+	return time.Duration(time.Now().UnixNano()-t.UnixNano()) * time.Nanosecond
 }
 
 func SinceAbs(t time.Time) (s time.Duration) {
