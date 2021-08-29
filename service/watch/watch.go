@@ -9,16 +9,14 @@ import (
 	"sync"
 	"time"
 
-	"github.com/sirupsen/logrus"
 	"github.com/pritunl/pritunl-client-electron/service/profile"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
+	"github.com/sirupsen/logrus"
 )
 
 var (
 	lastRestart = time.Now()
 	restartLock = sync.Mutex{}
-	wake        = time.Now()
-	wakeLock    = sync.Mutex{}
 )
 
 func parseDns(data string) (searchDomains, searchAddresses []string) {
@@ -66,7 +64,7 @@ func parseDns(data string) (searchDomains, searchAddresses []string) {
 	return
 }
 
-func wakeWatch(delay time.Duration) {
+func wakeWatch() {
 	defer func() {
 		panc := recover()
 		if panc != nil {
@@ -79,32 +77,20 @@ func wakeWatch(delay time.Duration) {
 	}()
 
 	curTime := time.Now()
-	delay += 1 * time.Second
 
 	for {
-		time.Sleep(delay)
-		if utils.SinceSafe(curTime) > 10*time.Second {
-			reset := false
+		time.Sleep(1 * time.Second)
+		if utils.SinceSafe(curTime) > 15*time.Second {
+			restartLock.Lock()
+			if utils.SinceSafe(lastRestart) > 60*time.Second {
+				lastRestart = time.Now()
+				restartLock.Unlock()
 
-			wakeLock.Lock()
-			if utils.SinceSafe(wake) > 5*time.Second {
-				wake = time.Now()
-				reset = true
-			}
-			wakeLock.Unlock()
+				logrus.Warn("watch: Wakeup restarting...")
 
-			if reset {
-				restartLock.Lock()
-				if utils.SinceSafe(lastRestart) > 60*time.Second {
-					lastRestart = time.Now()
-					restartLock.Unlock()
-
-					logrus.Warn("watch: Wakeup restarting...")
-
-					profile.RestartProfiles(false)
-				} else {
-					restartLock.Unlock()
-				}
+				profile.RestartProfiles(false)
+			} else {
+				restartLock.Unlock()
 			}
 		}
 		curTime = time.Now()
@@ -225,7 +211,6 @@ func dnsWatch() {
 }
 
 func StartWatch() {
-	go wakeWatch(10 * time.Millisecond)
-	go wakeWatch(100 * time.Millisecond)
+	go wakeWatch()
 	go dnsWatch()
 }
