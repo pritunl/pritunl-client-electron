@@ -82,6 +82,7 @@ func wakeWatch() {
 		if !profile.GetActive() {
 			time.Sleep(30 * time.Second)
 			curTime = time.Now()
+			continue
 		}
 
 		time.Sleep(1 * time.Second)
