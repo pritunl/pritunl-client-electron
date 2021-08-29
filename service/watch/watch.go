@@ -83,11 +83,11 @@ func wakeWatch(delay time.Duration) {
 
 	for {
 		time.Sleep(delay)
-		if time.Since(curTime) > 10*time.Second {
+		if utils.SinceSafe(curTime) > 10*time.Second {
 			reset := false
 
 			wakeLock.Lock()
-			if time.Since(wake) > 5*time.Second {
+			if utils.SinceSafe(wake) > 5*time.Second {
 				wake = time.Now()
 				reset = true
 			}
@@ -95,7 +95,7 @@ func wakeWatch(delay time.Duration) {
 
 			if reset {
 				restartLock.Lock()
-				if time.Since(lastRestart) > 60*time.Second {
+				if utils.SinceSafe(lastRestart) > 60*time.Second {
 					lastRestart = time.Now()
 					restartLock.Unlock()
 

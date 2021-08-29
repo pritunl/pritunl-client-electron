@@ -943,7 +943,7 @@ func PidInit() (err error) {
 }
 
 func SinceAbs(t time.Time) (s time.Duration) {
-	s = time.Since(t)
+	s = utils.SinceSafe(t)
 	if s < 0 {
 		s = s * -1
 	}

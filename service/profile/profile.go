@@ -902,7 +902,7 @@ func (p *Profile) parseLine(line string) {
 			tokn.Init()
 		}
 
-		if time.Since(p.lastAuthErr) > 10*time.Second {
+		if utils.SinceSafe(p.lastAuthErr) > 10*time.Second {
 			p.lastAuthErr = time.Now()
 
 			evt := event.Event{
@@ -1086,7 +1086,7 @@ func (p *Profile) clearStatus(start time.Time) {
 			}
 		}()
 
-		diff := time.Since(start)
+		diff := utils.SinceSafe(start)
 		if diff < 1*time.Second {
 			time.Sleep(1 * time.Second)
 		}
@@ -2683,7 +2683,7 @@ func (p *Profile) watchWg() {
 			}
 			time.Sleep(1 * time.Second)
 
-			if time.Since(last) > 3*time.Minute {
+			if utils.SinceSafe(last) > 3*time.Minute {
 				go p.restart()
 				return
 			}
@@ -2693,7 +2693,7 @@ func (p *Profile) watchWg() {
 		var retry bool
 		var err error
 		for i := 0; i < 4; i++ {
-			if time.Since(last) > 3*time.Minute {
+			if utils.SinceSafe(last) > 3*time.Minute {
 				go p.restart()
 				return
 			}
@@ -2703,7 +2703,7 @@ func (p *Profile) watchWg() {
 				break
 			}
 
-			if time.Since(last) > 3*time.Minute {
+			if utils.SinceSafe(last) > 3*time.Minute {
 				go p.restart()
 				return
 			}
@@ -2730,7 +2730,7 @@ func (p *Profile) watchWg() {
 			return
 		}
 
-		if time.Since(last) > 3*time.Minute {
+		if utils.SinceSafe(last) > 3*time.Minute {
 			go p.restart()
 			return
 		}
@@ -3132,7 +3132,7 @@ func (p *Profile) Stop() (err error) {
 		cancel()
 	}
 
-	diff := time.Since(p.startTime)
+	diff := utils.SinceSafe(p.startTime)
 	if diff < 8*time.Second {
 		delay := time.Duration(8-int64(diff.Seconds())) * time.Second
 		time.Sleep(delay)
