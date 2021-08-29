@@ -278,6 +278,13 @@ func GetStatus() (status bool) {
 	return
 }
 
+func GetActive() (active bool) {
+	Profiles.RLock()
+	active = len(Profiles.m) > 0
+	Profiles.RUnlock()
+	return
+}
+
 func GetProfile(id string) (prfl *Profile) {
 	Profiles.RLock()
 	prfl = Profiles.m[id]
