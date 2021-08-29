@@ -272,6 +272,7 @@ func GetStatus() (status bool) {
 	for _, prfl := range GetProfiles() {
 		if prfl.Status == "connected" {
 			status = true
+			return
 		}
 	}
 
