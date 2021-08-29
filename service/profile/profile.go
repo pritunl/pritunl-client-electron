@@ -2674,6 +2674,8 @@ func (p *Profile) watchWg() {
 		return
 	}
 
+	last := time.Now()
+
 	for {
 		for i := 0; i < 10; i++ {
 			if p.stop {
@@ -2685,10 +2687,20 @@ func (p *Profile) watchWg() {
 		var data *WgPingData
 		var retry bool
 		var err error
-		for i := 0; i < 6; i++ {
+		for i := 0; i < 4; i++ {
+			if time.Since(last) > 3*time.Minute {
+				go p.restart()
+				return
+			}
+
 			data, retry, err = p.pingWg()
 			if !retry {
 				break
+			}
+
+			if time.Since(last) > 3*time.Minute {
+				go p.restart()
+				return
 			}
 
 			time.Sleep(1 * time.Second)
@@ -2712,6 +2724,8 @@ func (p *Profile) watchWg() {
 			go p.restart()
 			return
 		}
+
+		last = time.Now()
 	}
 }
 
