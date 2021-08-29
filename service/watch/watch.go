@@ -79,6 +79,11 @@ func wakeWatch() {
 	curTime := time.Now()
 
 	for {
+		if !profile.GetActive() {
+			time.Sleep(30 * time.Second)
+			curTime = time.Now()
+		}
+
 		time.Sleep(1 * time.Second)
 		if utils.SinceSafe(curTime) > 15*time.Second {
 			restartLock.Lock()
