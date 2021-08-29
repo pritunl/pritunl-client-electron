@@ -2682,6 +2682,11 @@ func (p *Profile) watchWg() {
 				return
 			}
 			time.Sleep(1 * time.Second)
+
+			if time.Since(last) > 3*time.Minute {
+				go p.restart()
+				return
+			}
 		}
 
 		var data *WgPingData
@@ -2725,6 +2730,10 @@ func (p *Profile) watchWg() {
 			return
 		}
 
+		if time.Since(last) > 3*time.Minute {
+			go p.restart()
+			return
+		}
 		last = time.Now()
 	}
 }
