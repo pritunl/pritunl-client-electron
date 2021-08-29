@@ -73,7 +73,7 @@ var (
 	}
 	clientInsecure = &http.Client{
 		Transport: clientTransport,
-		Timeout:   10 * time.Second,
+		Timeout:   6 * time.Second,
 	}
 	clientConnInsecure = &http.Client{
 		Transport: clientTransport,
