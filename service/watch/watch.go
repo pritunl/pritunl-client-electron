@@ -137,6 +137,8 @@ func dnsWatch() {
 				}
 			}
 
+			time.Sleep(3 * time.Second)
+
 			continue
 		}
 
