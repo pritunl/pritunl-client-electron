@@ -1,6 +1,10 @@
 Pritunl Client Changelog
 ========================
 
+<%= version %>
+
+Fix reconnect from suspend
+
 Version 1.2.2897.44 2021-08-18
 ------------------------------
 
