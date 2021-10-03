@@ -1,6 +1,10 @@
 Pritunl Client Changelog
 ========================
 
+<%= version %>
+
+Fix certificate issue
+
 Version 1.2.2916.18 2021-09-06
 ------------------------------
 
