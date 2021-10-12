@@ -5,6 +5,7 @@ launchctl unload /Library/LaunchDaemons/com.pritunl.service.plist || true
 
 rm -rf /var/lib/pritunl || true
 rm -f /var/log/pritunl.log || true
+rm -f /var/log/pritunl-client.log || true
 kextunload -b net.sf.tuntaposx.tap || true
 kextunload -b net.sf.tuntaposx.tun || true
 rm -rf /Library/Extensions/tap.kext || true

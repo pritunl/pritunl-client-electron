@@ -28,7 +28,7 @@ var $systemLogs = $('.system-logs');
 var $serviceLogs = $('.service-logs');
 
 var readSystemLogs = function(callback) {
-  var pth = path.join(utils.getUserDataPath(), 'pritunl.log');
+  var pth = path.join(utils.getUserDataPath(), 'pritunl-client.log');
 
   fs.exists(pth, function(exists) {
     if (!exists) {
@@ -49,7 +49,7 @@ var readSystemLogs = function(callback) {
 };
 
 var clearSystemLogs = function(callback) {
-  var pth = path.join(utils.getUserDataPath(), 'pritunl.log');
+  var pth = path.join(utils.getUserDataPath(), 'pritunl-client.log');
 
   fs.exists(pth, function(exists) {
     if (!exists) {
@@ -72,9 +72,9 @@ var clearSystemLogs = function(callback) {
 var readServiceLogs = function(callback) {
   var pth;
   if (process.platform === 'win32') {
-    pth = path.join('C:\\', 'ProgramData', 'Pritunl', 'pritunl.log');
+    pth = path.join('C:\\', 'ProgramData', 'Pritunl', 'pritunl-client.log');
   } else {
-    pth = path.join(path.sep, 'var', 'log', 'pritunl.log');
+    pth = path.join(path.sep, 'var', 'log', 'pritunl-client.log');
   }
 
   fs.exists(pth, function(exists) {

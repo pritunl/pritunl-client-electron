@@ -11,7 +11,7 @@ try {
 } catch (e) {
 }
 
-var pth = path.join(utils.getUserDataPath(), 'pritunl.log');
+var pth = path.join(utils.getUserDataPath(), 'pritunl-client.log');
 
 var push = function(lvl, msg) {
   var time = new Date();

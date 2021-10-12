@@ -695,7 +695,7 @@ func GetLogPath() (pth string) {
 			panic(err)
 		}
 
-		pth = filepath.Join(pth, "pritunl.log")
+		pth = filepath.Join(pth, "pritunl-client.log")
 
 		return
 	}
@@ -712,11 +712,11 @@ func GetLogPath() (pth string) {
 			panic(err)
 		}
 
-		pth = filepath.Join(pth, "pritunl.log")
+		pth = filepath.Join(pth, "pritunl-client.log")
 		break
 	case "linux", "darwin":
 		pth = filepath.Join(string(filepath.Separator),
-			"var", "log", "pritunl.log")
+			"var", "log", "pritunl-client.log")
 		break
 	default:
 		panic("profile: Not implemented")
@@ -737,7 +737,7 @@ func GetLogPath2() (pth string) {
 			panic(err)
 		}
 
-		pth = filepath.Join(pth, "pritunl.log.1")
+		pth = filepath.Join(pth, "pritunl-client.log.1")
 
 		return
 	}
@@ -754,11 +754,11 @@ func GetLogPath2() (pth string) {
 			panic(err)
 		}
 
-		pth = filepath.Join(pth, "pritunl.log.1")
+		pth = filepath.Join(pth, "pritunl-client.log.1")
 		break
 	case "linux", "darwin":
 		pth = filepath.Join(string(filepath.Separator),
-			"var", "log", "pritunl.log.1")
+			"var", "log", "pritunl-client.log.1")
 		break
 	default:
 		panic("profile: Not implemented")

@@ -70,8 +70,8 @@ sleep 3
 mkdir -p build/macos/var/run
 touch build/macos/var/run/pritunl_auth
 mkdir -p build/macos/var/log
-touch build/macos/var/log/pritunl.log
-touch build/macos/var/log/pritunl.log.1
+touch build/macos/var/log/pritunl-client.log
+touch build/macos/var/log/pritunl-client.log.1
 
 # Service Daemon
 mkdir -p build/macos/Library/LaunchDaemons
