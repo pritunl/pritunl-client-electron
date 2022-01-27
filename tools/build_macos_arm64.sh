@@ -79,7 +79,7 @@ chmod +x resources_macos/scripts/postinstall
 chmod +x resources_macos/scripts/preinstall
 cd build
 pkgbuild --root macos --scripts ../resources_macos/scripts --sign "Developer ID Installer: Pritunl, Inc. (U22BLATN63)" --identifier com.pritunl.pkg.Pritunl --version $APP_VER --ownership recommended --install-location / Build.pkg
-productbuild --resources ../resources_macos --distribution ../resources_macos/distribution.xml --sign "Developer ID Installer: Pritunl, Inc. (U22BLATN63)" --version $APP_VER Pritunl.arm64.pkg
+productbuild --resources ../resources_macos --distribution ../resources_macos/distributionArm64.xml --sign "Developer ID Installer: Pritunl, Inc. (U22BLATN63)" --version $APP_VER Pritunl.arm64.pkg
 zip Pritunl.arm64.pkg.zip Pritunl.arm64.pkg
 rm -f Build.pkg
 
