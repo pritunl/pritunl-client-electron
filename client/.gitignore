@@ -4,6 +4,8 @@ node_modules/*
 jspm_packages/*
 !webpack.config.js
 !webpack.dev.config.js
+!webpack-main.config.js
+!webpack-main.dev.config.js
 !dist/**/*.js
 !dist/**/*.map
 !dist-dev/**/*.js
