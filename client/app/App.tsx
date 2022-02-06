@@ -5,15 +5,17 @@ import * as Blueprint from '@blueprintjs/core';
 import Main from './components/Main';
 import * as Alert from './Alert';
 import * as Event from './Event';
-import * as Csrf from './Csrf';
+import * as Auth from './Auth';
+import * as Constants from './Constants';
 
-Csrf.load().then((): void => {
-	Blueprint.FocusStyleManager.onlyShowFocusOnTabs();
-	Alert.init();
-	Event.init();
+Blueprint.FocusStyleManager.onlyShowFocusOnTabs();
 
-	ReactDOM.render(
-		<div><Main/></div>,
-		document.getElementById('app'),
-	);
-});
+Constants.load();
+Auth.load();
+Alert.init();
+Event.init();
+
+ReactDOM.render(
+	<div><Main/></div>,
+	document.getElementById('app'),
+);
