@@ -56,7 +56,7 @@ class Main {
 		});
 
 		this.window.on('closed', (): void => {
-			Electron.app.quit();
+			electron.app.quit();
 			this.window = null;
 		});
 
