@@ -235,6 +235,10 @@ input:active {
   outline: none;
 }
 
+.focused {
+  background-color: #9c9c9c26 !important;
+}
+
 ::-webkit-scrollbar {
   width: 15px;
   background: #171a1d;
