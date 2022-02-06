@@ -6,16 +6,26 @@ import Main from './components/Main';
 import * as Alert from './Alert';
 import * as Event from './Event';
 import * as Auth from './Auth';
+import * as Config from './Config';
+import * as Theme from './Theme';
 import * as Constants from './Constants';
 
 Blueprint.FocusStyleManager.onlyShowFocusOnTabs();
 
-Constants.load();
-Auth.load();
-Alert.init();
-Event.init();
+Config.load().then((): void => {
+	if (Config.theme === 'light') {
+		Theme.light();
+	} else {
+		Theme.dark();
+	}
 
-ReactDOM.render(
-	<div><Main/></div>,
-	document.getElementById('app'),
-);
+	Constants.load();
+	Auth.load();
+	Alert.init();
+	Event.init();
+
+	ReactDOM.render(
+		<div><Main/></div>,
+		document.getElementById('app'),
+	);
+});
