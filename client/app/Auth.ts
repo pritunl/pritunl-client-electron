@@ -1,12 +1,25 @@
 /// <reference path="./References.d.ts"/>
 import * as SuperAgent from 'superagent';
 import * as Theme from './Theme';
+import * as Constants from './Constants';
+import fs from "fs";
 
 export let token = '';
 
-export function load(): Promise<void> {
-	return new Promise<void>((resolve, reject): void => {
-		resolve();
+export function load(): void {
+	fs.readFile(Constants.authPath, 'utf-8', (err, data: string): void => {
+		if (err) {
+			setTimeout((): void => {
+				load();
+			}, 100);
+			return;
+		}
+
+		token = data.trim();
+
+		setTimeout((): void => {
+			load();
+		}, 1000);
 	});
 
 	// return new Promise<void>((resolve, reject): void => {
