@@ -1,6 +1,6 @@
 {
   "name": "pritunl-client",
-  "main": "www/main.js",
+  "main": "dist-dev/static/main.js",
   "dependencies": {
     "@blueprintjs/core": "3.44.0",
     "@blueprintjs/datetime": "3.23.0",
@@ -19,6 +19,8 @@
     "@types/react-router": "5.1.13",
     "@types/react-router-dom": "5.1.7",
     "@types/superagent": "4.1.10",
+    "@types/ws": "8.2.2",
+    "bufferutil": "4.0.6",
     "chart.js": "3.2.0",
     "events": "3.3.0",
     "flux": "4.0.1",
@@ -35,9 +37,10 @@
     "systemjs": "6.8.3",
     "tar": "6.1.11",
     "terser-webpack-plugin": "5.1.1",
+    "utf-8-validate": "5.0.8",
     "mustache": "4.2.0",
     "request": "2.88.2",
-    "ws": "8.2.1"
+    "ws": "8.4.2"
   },
   "devDependencies": {
     "@electron/remote": "1.2.1",
