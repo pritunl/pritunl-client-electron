@@ -29,7 +29,7 @@ for (let item of queryVals) {
 	let key = items[0];
 	let value = items.slice(1).join('=');
 
-	args.set(key, value);
+	args.set(key, decodeURIComponent(value));
 }
 
 if (args.get('dev') === 'true') {
@@ -42,6 +42,8 @@ if (args.get('dev') === 'true') {
 		authPath = path.join(path.sep, 'var', 'run', 'pritunl.auth');
 	}
 }
+
+export const dataPath = args.get('dataPath');
 
 export function load(): void {
 }
