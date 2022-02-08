@@ -5,73 +5,73 @@ import * as Alert from "./Alert";
 import fs from "fs";
 import path from "path";
 
-export let token = '';
+class ConfigData {
+	disable_tray_icon = false;
+	theme = "dark";
 
-export let disableTrayIcon = false;
-export function setDisableTrayIcon(val: boolean) {
-	disableTrayIcon = val;
-}
+	configPath(): string {
+		return path.join(Constants.dataPath, "pritunl.json");
+	}
 
-export let theme = 'dark';
-export function setTheme(val: string) {
-	theme = val;
-}
+	load(): Promise<void> {
+		return new Promise<void>((resolve, reject): void => {
+			fs.readFile(
+				this.configPath(), "utf-8",
+				(err: NodeJS.ErrnoException, data: string): void => {
+					if (err) {
+						if (err.code !== "ENOENT") {
+							err = new Errors.ReadError(err, "Config: Read error");
+							Alert.error(err.message, 10);
+						}
 
-export function load(): Promise<void> {
-	let configPath = path.join(Constants.dataPath, 'pritunl.json');
+						resolve();
+						return;
+					}
 
-	return new Promise<void>((resolve, reject): void => {
-		fs.readFile(
-			configPath, 'utf-8',
-			(err: NodeJS.ErrnoException, data: string): void => {
-				if (err) {
-					if (err.code !== 'ENOENT') {
-						err = new Errors.ReadError('Config: Read error', err);
+					let configData: any;
+					try {
+						configData = JSON.parse(data);
+					} catch (err) {
+						err = new Errors.ReadError(err, "Config: Parse error");
+						Alert.error(err.message, 10);
+
+						configData = {};
+					}
+
+					if (configData["disable_tray_icon"] !== undefined) {
+						this.disable_tray_icon = configData["disable_tray_icon"];
+					}
+					if (configData["theme"] !== undefined) {
+						this.theme = configData["theme"];
+					}
+
+					resolve();
+				},
+			);
+		});
+	}
+
+	save(): Promise<void> {
+		let configPath = path.join(Constants.dataPath, "pritunl.json");
+
+		return new Promise<void>((resolve, reject): void => {
+			fs.writeFile(
+				configPath, JSON.stringify({
+					disable_tray_icon: this.disable_tray_icon,
+					theme: this.theme,
+				}),
+				(err: NodeJS.ErrnoException): void => {
+					if (err) {
+						err = new Errors.ReadError(err, "Config: Write error");
 						Alert.error(err.message);
 					}
+
 					resolve();
-					return;
-				}
-
-				let configData: any = {};
-				try {
-					configData = JSON.parse(data);
-				} catch (e) {
-					err = new Errors.ReadError('Config: Parse error', e);
-					Alert.error(err.message);
-					configData = {};
-				}
-
-				if (configData['disable_tray_icon'] !== undefined) {
-					disableTrayIcon = configData['disable_tray_icon'];
-				}
-				if (configData['theme'] !== undefined) {
-					theme = configData['theme'];
-				}
-
-				resolve();
-			},
-		);
-	});
+				},
+			);
+		});
+	}
 }
 
-export function save(): Promise<void> {
-	let configPath = path.join(Constants.dataPath, 'pritunl.json');
-
-	return new Promise<void>((resolve, reject): void => {
-		fs.writeFile(
-			configPath, JSON.stringify({
-				disable_tray_icon: disableTrayIcon,
-				theme: theme,
-			}),
-			(err: NodeJS.ErrnoException): void => {
-				if (err) {
-					err = new Errors.ReadError('Config: Write error', err);
-					Alert.error(err.message);
-				}
-
-				resolve();
-			},
-		);
-	});
-}
+const Config = new ConfigData();
+export default Config;
