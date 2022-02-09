@@ -4,6 +4,8 @@ import EventDispatcher from './dispatcher/EventDispatcher';
 import * as Auth from './Auth';
 import * as Alert from './Alert';
 import * as Constants from './Constants';
+import * as Errors from "./Errors";
+import * as Logger from "./Logger";
 
 let connected = false;
 let showConnect = false;
@@ -47,19 +49,23 @@ function connect(): void {
 	socket.on('open', (): void => {
 		if (showConnect) {
 			showConnect = false;
-			Alert.success('[Events] Service reconnected');
+			Alert.success('Events: Service reconnected');
 		}
 	});
 
-	socket.on('error', (err) => {
+	socket.on('error', (err: Error) => {
+		err = new Errors.RequestError(err, "Events: Socket error");
+		Logger.errorAlert(err.message);
+
 		showConnect = true;
-		Alert.error('[Events] ' + err);
 		reconnect();
 	});
 
 	socket.on('onerror', (err) => {
+		err = new Errors.RequestError(err, "Events: Socket error");
+		Logger.errorAlert(err.message);
+
 		showConnect = true;
-		Alert.error('[Events] ' + err);
 		reconnect();
 	});
 
