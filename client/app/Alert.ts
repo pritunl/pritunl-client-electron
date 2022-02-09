@@ -1,12 +1,14 @@
 /// <reference path="./References.d.ts"/>
-import * as SuperAgent from 'superagent';
-import * as Blueprint from '@blueprintjs/core';
+import * as SuperAgent from "superagent";
+import * as Blueprint from "@blueprintjs/core";
 
 let toaster: Blueprint.IToaster;
 
 export function success(message: string, timeout?: number): string {
 	if (timeout === undefined) {
 		timeout = 5000;
+	} else {
+		timeout = timeout * 1000;
 	}
 
 	return toaster.show({
@@ -19,6 +21,8 @@ export function success(message: string, timeout?: number): string {
 export function info(message: string, timeout?: number): string {
 	if (timeout === undefined) {
 		timeout = 5000;
+	} else {
+		timeout = timeout * 1000;
 	}
 
 	return toaster.show({
@@ -31,6 +35,8 @@ export function info(message: string, timeout?: number): string {
 export function warning(message: string, timeout?: number): string {
 	if (timeout === undefined) {
 		timeout = 5000;
+	} else {
+		timeout = timeout * 1000;
 	}
 
 	return toaster.show({
@@ -42,7 +48,9 @@ export function warning(message: string, timeout?: number): string {
 
 export function error(message: string, timeout?: number): string {
 	if (timeout === undefined) {
-		timeout = 5000;
+		timeout = 10000;
+	} else {
+		timeout = timeout * 1000;
 	}
 
 	return toaster.show({
@@ -53,9 +61,11 @@ export function error(message: string, timeout?: number): string {
 }
 
 export function errorRes(res: SuperAgent.Response, message: string,
-												 timeout?: number): string {
+		timeout?: number): string {
 	if (timeout === undefined) {
-		timeout = 5000;
+		timeout = 10000;
+	} else {
+		timeout = timeout * 1000;
 	}
 
 	try {
@@ -82,8 +92,8 @@ export function init() {
 	if (Blueprint.Toaster) {
 		toaster = Blueprint.Toaster.create({
 			position: Blueprint.Position.BOTTOM,
-		}, document.getElementById('toaster'));
+		}, document.getElementById("toaster"));
 	} else {
-		console.error('Failed to load toaster')
+		console.error("Failed to load toaster")
 	}
 }
