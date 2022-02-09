@@ -9,6 +9,49 @@
   box-sizing: border-box;
 }
 
+@font-face {
+  font-family: 'Fredoka One';
+  font-style: normal;
+  font-weight: 400;
+  src: url('fredoka-one.ttf') format('truetype');
+}
+
+::-webkit-scrollbar {
+  width: 15px;
+  background: #f5f8fa;
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 3px;
+  background: #ffffff;
+  border: 1px solid rgb(16 22 26 / 20%);
+}
+::-webkit-scrollbar-corner {
+  background: #f5f8fa;
+}
+
+.bp3-dark ::-webkit-scrollbar {
+  width: 15px;
+  background: #293742;
+}
+.bp3-dark ::-webkit-scrollbar-thumb {
+  border-radius: 3px;
+  background: #30404d;
+  border: 1px solid rgb(16 22 26 / 70%);
+}
+.bp3-dark ::-webkit-scrollbar-corner {
+  background: #293742;
+}
+
+.cm-editor {
+  outline: none !important;
+}
+.cm-editor * {
+  font-size: 12px;
+}
+.cm-foldGutter {
+  width: 0;
+}
+
 body {
   background-color: #f5f8fa;
 }
