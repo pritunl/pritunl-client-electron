@@ -1,7 +1,7 @@
 /// <reference path="./References.d.ts"/>
 import * as Errors from "./Errors";
 import * as Constants from "./Constants";
-import * as Alert from "./Alert";
+import * as Logger from "./Logger";
 import fs from "fs";
 import path from "path";
 
@@ -21,7 +21,7 @@ class ConfigData {
 					if (err) {
 						if (err.code !== "ENOENT") {
 							err = new Errors.ReadError(err, "Config: Read error");
-							Alert.error(err.message, 10);
+							Logger.errorAlert(err.message, 10);
 						}
 
 						resolve();
@@ -33,7 +33,7 @@ class ConfigData {
 						configData = JSON.parse(data);
 					} catch (err) {
 						err = new Errors.ReadError(err, "Config: Parse error");
-						Alert.error(err.message, 10);
+						Logger.errorAlert(err.message, 10);
 
 						configData = {};
 					}
@@ -63,7 +63,7 @@ class ConfigData {
 				(err: NodeJS.ErrnoException): void => {
 					if (err) {
 						err = new Errors.ReadError(err, "Config: Write error");
-						Alert.error(err.message);
+						Logger.errorAlert(err.message);
 					}
 
 					resolve();
