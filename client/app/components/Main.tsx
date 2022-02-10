@@ -42,6 +42,7 @@ const css = {
 		color: 'inherit',
 	} as React.CSSProperties,
 	heading: {
+		fontFamily: "'Fredoka One', cursive",
 		marginRight: '11px',
 		fontSize: '26px',
 	} as React.CSSProperties,
