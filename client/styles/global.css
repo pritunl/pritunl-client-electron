@@ -1,12 +1,50 @@
-* {
-  font-family: Roboto, Noto, sans-serif;
-}
+/** {*/
+/*  font-family: Roboto, Noto, sans-serif;*/
+/*}*/
 
 *, *:before, *:after {
   -webkit-box-sizing: border-box;
   -webkit-appearance: none;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
+}
+
+@font-face {
+  font-family: 'Fredoka One';
+  font-style: normal;
+  font-weight: 400;
+  src: url('fredoka-one.ttf') format('truetype');
+}
+
+::-webkit-scrollbar {
+  width: 15px;
+  background: #f5f8fa;
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 3px;
+  background: #ffffff;
+  border: 1px solid rgb(16 22 26 / 20%);
+}
+::-webkit-scrollbar-corner {
+  background: #f5f8fa;
+}
+
+.bp3-dark ::-webkit-scrollbar {
+  width: 15px;
+  background: #293742;
+}
+.bp3-dark ::-webkit-scrollbar-thumb {
+  border-radius: 3px;
+  background: #30404d;
+  border: 1px solid rgb(16 22 26 / 70%);
+}
+.bp3-dark ::-webkit-scrollbar-corner {
+  background: #293742;
+}
+
+.ace-dracula .ace_gutter {
+  background-color: #23242e !important;
+  border-right: 1px solid rgb(255 255 255 / 15%) !important;
 }
 
 body {
