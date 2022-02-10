@@ -37,3 +37,9 @@ export class WriteError extends BaseError {
 		super("WriteError", ...args);
 	}
 }
+
+export class RequestError extends BaseError {
+	constructor(...args: any[]) {
+		super("WriteError", ...args);
+	}
+}
