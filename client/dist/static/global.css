@@ -1,6 +1,6 @@
-* {
-  font-family: Roboto, Noto, sans-serif;
-}
+/** {*/
+/*  font-family: Roboto, Noto, sans-serif;*/
+/*}*/
 
 *, *:before, *:after {
   -webkit-box-sizing: border-box;
@@ -42,14 +42,9 @@
   background: #293742;
 }
 
-.cm-editor {
-  outline: none !important;
-}
-.cm-editor * {
-  font-size: 12px;
-}
-.cm-foldGutter {
-  width: 0;
+.ace-dracula .ace_gutter {
+  background-color: #23242e !important;
+  border-right: 1px solid rgb(255 255 255 / 15%) !important;
 }
 
 body {
