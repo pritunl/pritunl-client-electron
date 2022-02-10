@@ -6,7 +6,11 @@ import * as ProfileTypes from '../types/ProfileTypes';
 import * as ProfileActions from '../actions/ProfileActions';
 import PageInfo from './PageInfo';
 import PageSwitch from './PageSwitch';
-import CodeMirror from '@uiw/react-codemirror';
+import AceEditor from "react-ace";
+
+import "ace-builds/src-noconflict/mode-text";
+import "ace-builds/src-noconflict/theme-dracula";
+import "ace-builds/src-noconflict/theme-eclipse";
 
 interface Props {
 	profile: ProfileTypes.ProfileRo;
@@ -17,6 +21,8 @@ interface State {
 	message: string;
 	disabled: boolean;
 	changed: boolean;
+	settings: boolean;
+	value: string;
 }
 
 const css = {
@@ -44,6 +50,9 @@ const css = {
 	buttons: {
 		flexShrink: 0,
 	} as React.CSSProperties,
+	editor: {
+		margin: '10px 0 0 0',
+	} as React.CSSProperties,
 };
 
 export default class Profile extends React.Component<Props, State> {
@@ -54,6 +63,8 @@ export default class Profile extends React.Component<Props, State> {
 			message: '',
 			disabled: false,
 			changed: false,
+			settings: false,
+			value: 'test',
 		};
 	}
 
@@ -129,7 +140,7 @@ export default class Profile extends React.Component<Props, State> {
 					},
 					{
 						label: 'Configuration Sync Hosts',
-						value: this.formatedHosts(profile),
+						value: syncHosts,
 					},
 				]}
 			/>
@@ -137,6 +148,7 @@ export default class Profile extends React.Component<Props, State> {
 				<PageSwitch
 					label="Autostart"
 					help="Automatically start profile with system service. Autostart profiles will run for all users."
+					hidden={!this.state.settings}
 					checked={!!profile.system}
 					onToggle={(): void => {
 					}}
@@ -171,15 +183,35 @@ export default class Profile extends React.Component<Props, State> {
 					</button>
 				</div>
 			</div>
-			<CodeMirror
-				value={"test"}
-				height="300px"
-				theme={Theme.theme() as any}
-				extensions={[]}
-				onChange={(value: string) => {
-					console.log(value);
-				}}
-			/>
+			<label
+				className="bp3-label"
+				style={css.editor}
+			>
+				Profile Output
+				<AceEditor
+					name={profile.id + "-logs"}
+					theme={Theme.editorTheme()}
+					height="400px"
+					width="100%"
+					mode="text"
+					fontSize="10px"
+					showPrintMargin={false}
+					showGutter={true}
+					defaultValue={"todo"}
+					editorProps={{
+						$blockScrolling: true,
+					}}
+					setOptions={{
+						showFoldWidgets: false,
+					}}
+					onChange={(value: string) => {
+						this.setState({
+							...this.state,
+							value: value,
+						})
+					}}
+				/>
+			</label>
 		</div>;
 	}
 }
