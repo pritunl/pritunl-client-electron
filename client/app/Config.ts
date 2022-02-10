@@ -1,22 +1,18 @@
 /// <reference path="./References.d.ts"/>
-import * as Errors from "./Errors";
 import * as Constants from "./Constants";
+import * as Errors from "./Errors";
 import * as Logger from "./Logger";
+import * as Paths from "./Paths";
 import fs from "fs";
-import path from "path";
 
 class ConfigData {
 	disable_tray_icon = false;
 	theme = "dark";
 
-	configPath(): string {
-		return path.join(Constants.dataPath, "pritunl.json");
-	}
-
 	load(): Promise<void> {
 		return new Promise<void>((resolve, reject): void => {
 			fs.readFile(
-				this.configPath(), "utf-8",
+				Paths.config(), "utf-8",
 				(err: NodeJS.ErrnoException, data: string): void => {
 					if (err) {
 						if (err.code !== "ENOENT") {
@@ -52,11 +48,9 @@ class ConfigData {
 	}
 
 	save(): Promise<void> {
-		let configPath = path.join(Constants.dataPath, "pritunl.json");
-
 		return new Promise<void>((resolve, reject): void => {
 			fs.writeFile(
-				configPath, JSON.stringify({
+				Paths.config(), JSON.stringify({
 					disable_tray_icon: this.disable_tray_icon,
 					theme: this.theme,
 				}),
