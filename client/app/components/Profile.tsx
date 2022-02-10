@@ -97,6 +97,9 @@ export default class Profile extends React.Component<Props, State> {
 		let profile: ProfileTypes.Profile = this.state.profile ||
 			this.props.profile;
 
+		let syncHosts = this.formatedHosts(profile);
+		syncHosts.push('Last Sync: 11/22/3333 11:22');
+
 		return <div className="bp3-card" style={css.card}>
 			<div className="layout horizontal">
 				<PageInfo
