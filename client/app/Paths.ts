@@ -2,10 +2,14 @@
 import * as Constants from './Constants';
 import path from "path";
 
-export function logPath(): string {
+export function log(): string {
 	return path.join(Constants.dataPath, "pritunl.json");
 }
 
-export function configPath(): string {
+export function config(): string {
 	return path.join(Constants.dataPath, "pritunl.json");
+}
+
+export function profiles(): string {
+	return path.join(Constants.dataPath, "profiles");
 }
