@@ -87,6 +87,8 @@ class Main {
 		let indexUrl = 'file://' + path.join(__dirname, '..', 'index.html');
 		indexUrl += '?dev=' + (process.argv.indexOf('--dev') !== -1 ?
 			'true' : 'false');
+		indexUrl += '&dataPath=' + encodeURIComponent(
+			electron.app.getPath('userData'));
 
 		this.window.loadURL(indexUrl);
 
