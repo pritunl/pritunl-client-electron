@@ -1,5 +1,5 @@
 {
-  "name": "pritunl-client",
+  "name": "pritunl",
   "main": "dist-dev/static/main.js",
   "dependencies": {
     "@blueprintjs/core": "3.44.0",
