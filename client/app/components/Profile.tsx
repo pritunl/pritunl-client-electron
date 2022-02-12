@@ -82,7 +82,64 @@ export default class Profile extends React.Component<Props, State> {
 		});
 	}
 
-	formatedHosts(prfl: ProfileTypes.Profile): string[] {
+	uptime(): string {
+		let prfl = this.props.profile;
+
+		if (!prfl.timestamp || prfl.status !== 'connected') {
+			return '';
+		}
+
+		let  curTime = Math.floor((new Date).getTime() / 1000);
+
+		let uptime = curTime - prfl.timestamp;
+		let units: number;
+		let unitStr: string;
+		let uptimeItems: string[] =[];
+
+		if (uptime > 86400) {
+			units = Math.floor(uptime / 86400);
+			uptime -= units * 86400;
+			unitStr = units + ' day';
+			if (units > 1) {
+				unitStr += 's';
+			}
+			uptimeItems.push(unitStr);
+		}
+
+		if (uptime > 3600) {
+			units = Math.floor(uptime / 3600);
+			uptime -= units * 3600;
+			unitStr = units + ' hour';
+			if (units > 1) {
+				unitStr += 's';
+			}
+			uptimeItems.push(unitStr);
+		}
+
+		if (uptime > 60) {
+			units = Math.floor(uptime / 60);
+			uptime -= units * 60;
+			unitStr = units + ' min';
+			if (units > 1) {
+				unitStr += 's';
+			}
+			uptimeItems.push(unitStr);
+		}
+
+		if (uptime) {
+			unitStr = uptime + ' sec';
+			if (uptime > 1) {
+				unitStr += 's';
+			}
+			uptimeItems.push(unitStr);
+		}
+
+		return uptimeItems.join(' ');
+	}
+
+	formatedHosts(): string[] {
+		let prfl = this.props.profile;
+
 		let hosts: string[] = [];
 
 		for (let hostAddr of prfl.sync_hosts) {
@@ -97,7 +154,7 @@ export default class Profile extends React.Component<Props, State> {
 		let profile: ProfileTypes.Profile = this.state.profile ||
 			this.props.profile;
 
-		let syncHosts = this.formatedHosts(profile);
+		let syncHosts = this.formatedHosts();
 		syncHosts.push('Last Sync: 11/22/3333 11:22');
 
 		return <div className="bp3-card" style={css.card}>
