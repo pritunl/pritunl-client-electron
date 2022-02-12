@@ -55,3 +55,22 @@ export interface ProfileDispatch {
 		count?: number;
 	};
 }
+
+export interface ProfileData {
+	id?: string;
+	mode?: string;
+	org_id?: string;
+	user_id?: string;
+	server_id?: string;
+	sync_hosts?: string[];
+	sync_token?: string;
+	sync_secret?: string;
+	username?: string;
+	password?: string;
+	server_public_key?: string;
+	server_box_public_key?: string;
+	token_ttl?: number;
+	reconnect?: boolean;
+	timeout?: number;
+	data?: string;
+}
