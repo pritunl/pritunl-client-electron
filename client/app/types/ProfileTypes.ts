@@ -29,9 +29,9 @@ export interface Profile {
 	sync_token?: string;
 	server_public_key?: string[];
 	server_box_public_key?: string;
+	status?: string;
+	timestamp?: number;
 }
-
-
 
 export interface Filter {
 	id?: string;
