@@ -71,13 +71,16 @@ export function sync2(noLoading?: boolean): Promise<void> {
 	});
 }
 
-function loadProfile(prflPath: string): Promise<ProfileTypes.Profile> {
+function loadProfile(prflId: string,
+		prflPath: string): Promise<ProfileTypes.Profile> {
+
 	return new Promise<ProfileTypes.Profile>((resolve): void => {
 		fs.readFile(
-			prflPath, 'utf-8',
+			prflPath, "utf-8",
 			(err: NodeJS.ErrnoException, data: string): void => {
-				let prfl: ProfileTypes.Profile = JSON.parse(data);
-				resolve(prfl);
+				let prfl: ProfileTypes.Profile = JSON.parse(data)
+				prfl.id = prflId
+				resolve(prfl)
 			},
 		);
 	});
@@ -102,7 +105,7 @@ function loadProfiles(): Promise<ProfileTypes.Profiles> {
 
 				fs.readdir(
 					profilesPath,
-					async (err: NodeJS.ErrnoException, fileNames: string[]) => {
+					async (err: NodeJS.ErrnoException, filenames: string[]) => {
 						if (err) {
 							err = new Errors.ReadError(err, "Profiles: Read error");
 							Logger.errorAlert(err.message, 10);
@@ -112,14 +115,15 @@ function loadProfiles(): Promise<ProfileTypes.Profiles> {
 						}
 
 						let prfls: ProfileTypes.Profiles = [];
-						for (let fileName of fileNames) {
-							if (!fileName.endsWith('.conf')) {
+						for (let filename of filenames) {
+							if (!filename.endsWith('.conf')) {
 								continue;
 							}
 
-							let prflPath = path.join(profilesPath, fileName);
+							let prflPath = path.join(profilesPath, filename);
+							let prflId = filename.split(".")[0]
 
-							let prfl = await loadProfile(prflPath);
+							let prfl = await loadProfile(prflId, prflPath);
 							prfls.push(prfl);
 						}
 
