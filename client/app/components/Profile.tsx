@@ -4,6 +4,8 @@ import * as Theme from "../Theme";
 import ProfilesStore from '../stores/ProfilesStore';
 import * as ProfileTypes from '../types/ProfileTypes';
 import * as ProfileActions from '../actions/ProfileActions';
+import * as ServiceActions from '../actions/ServiceActions';
+import * as Blueprint from "@blueprintjs/core";
 import PageInfo from './PageInfo';
 import PageSwitch from './PageSwitch';
 import AceEditor from "react-ace";
@@ -11,6 +13,7 @@ import AceEditor from "react-ace";
 import "ace-builds/src-noconflict/mode-text";
 import "ace-builds/src-noconflict/theme-dracula";
 import "ace-builds/src-noconflict/theme-eclipse";
+import ProfileConnect from "./ProfileConnect";
 
 interface Props {
 	profile: ProfileTypes.ProfileRo;
@@ -82,79 +85,42 @@ export default class Profile extends React.Component<Props, State> {
 		});
 	}
 
-	uptime(): string {
+	connect(mode: string, password: string): void {
 		let prfl = this.props.profile;
 
-		if (!prfl.timestamp || prfl.status !== 'connected') {
-			return '';
+		let serverPubKey = "";
+		let serverBoxPubKey = "";
+		if (prfl.server_public_key && (mode === "wg" || prfl.token || password)) {
+			serverPubKey = prfl.server_public_key.join("\n");
+			serverBoxPubKey = prfl.server_box_public_key;
 		}
 
-		let  curTime = Math.floor((new Date).getTime() / 1000);
+		let data: ProfileTypes.ProfileData = {
+			id: prfl.id,
+			mode: mode,
+			org_id: prfl.organization_id,
+			user_id: prfl.user_id,
+			server_id: prfl.server_id,
+			sync_hosts: prfl.sync_hosts,
+			sync_token: prfl.sync_token,
+			sync_secret: prfl.sync_secret,
+			username: "pritunl",
+			password: password,
+			server_public_key: serverPubKey,
+			server_box_public_key: serverBoxPubKey,
+			token_ttl: prfl.token_ttl,
+			timeout: 30,
+			data: "TODO",
+		};
 
-		let uptime = curTime - prfl.timestamp;
-		let units: number;
-		let unitStr: string;
-		let uptimeItems: string[] =[];
-
-		if (uptime > 86400) {
-			units = Math.floor(uptime / 86400);
-			uptime -= units * 86400;
-			unitStr = units + ' day';
-			if (units > 1) {
-				unitStr += 's';
-			}
-			uptimeItems.push(unitStr);
-		}
-
-		if (uptime > 3600) {
-			units = Math.floor(uptime / 3600);
-			uptime -= units * 3600;
-			unitStr = units + ' hour';
-			if (units > 1) {
-				unitStr += 's';
-			}
-			uptimeItems.push(unitStr);
-		}
-
-		if (uptime > 60) {
-			units = Math.floor(uptime / 60);
-			uptime -= units * 60;
-			unitStr = units + ' min';
-			if (units > 1) {
-				unitStr += 's';
-			}
-			uptimeItems.push(unitStr);
-		}
-
-		if (uptime) {
-			unitStr = uptime + ' sec';
-			if (uptime > 1) {
-				unitStr += 's';
-			}
-			uptimeItems.push(unitStr);
-		}
-
-		return uptimeItems.join(' ');
-	}
-
-	formatedHosts(): string[] {
-		let prfl = this.props.profile;
-
-		let hosts: string[] = [];
-
-		for (let hostAddr of prfl.sync_hosts) {
-			let url = new URL(hostAddr);
-			hosts.push(url.hostname + (url.port ? (':' + url.port) : ''));
-		}
-
-		return hosts;
+		ServiceActions.connect(data);
 	}
 
 	render(): JSX.Element {
 		let profile: ProfileTypes.Profile = this.state.profile ||
 			this.props.profile;
 
-		let syncHosts = this.formatedHosts();
+		let syncHosts = profile.formatedHosts();
 		syncHosts.push('Last Sync: 11/22/3333 11:22');
 
 		return <div className="bp3-card" style={css.card}>
@@ -219,17 +185,7 @@ export default class Profile extends React.Component<Props, State> {
 			</div>
 			<div className="layout horizontal">
 				<div style={css.buttons}>
-					<button
-						className="bp3-button bp3-intent-success bp3-icon-link"
-						style={css.button}
-						type="button"
-						disabled={this.state.disabled}
-						onClick={(): void => {
-
-						}}
-					>
-						Connect
-					</button>
+					<ProfileConnect profile={this.props.profile}/>
 					<button
 						className="bp3-button bp3-icon-cog"
 						style={css.button}
