@@ -1,4 +1,3 @@
-// Api handlers.
 package handlers
 
 import (
@@ -6,13 +5,12 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/sirupsen/logrus"
 	"github.com/dropbox/godropbox/errors"
 	"github.com/gin-gonic/gin"
 	"github.com/pritunl/pritunl-client-electron/service/auth"
+	"github.com/sirupsen/logrus"
 )
 
-// Recover panics
 func Recovery(c *gin.Context) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -26,7 +24,6 @@ func Recovery(c *gin.Context) {
 	c.Next()
 }
 
-// Log errors
 func Errors(c *gin.Context) {
 	c.Next()
 	for _, err := range c.Errors {
@@ -36,14 +33,19 @@ func Errors(c *gin.Context) {
 	}
 }
 
-// Auth requests
 func Auth(c *gin.Context) {
+	token := c.Request.Header.Get("Auth-Token")
+	if token == "" {
+		token = c.Request.Header.Get("Auth-Key")
+	}
+	if token == "" {
+		token = c.Query("token")
+	}
+
 	if c.Request.Header.Get("Origin") != "" ||
 		c.Request.Header.Get("Referer") != "" ||
 		c.Request.Header.Get("User-Agent") != "pritunl" ||
-		subtle.ConstantTimeCompare(
-			[]byte(c.Request.Header.Get("Auth-Key")),
-			[]byte(auth.Key)) != 1 {
+		subtle.ConstantTimeCompare([]byte(token), []byte(auth.Key)) != 1 {
 
 		c.AbortWithStatus(401)
 		return
