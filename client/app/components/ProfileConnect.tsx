@@ -62,11 +62,52 @@ export default class ProfileConnect extends React.Component<Props, State> {
 		}
 	}
 
-	openDialog = (): void => {
-		this.setState({
-			...this.state,
-			dialog: true,
+	connect(mode: string, password: string): void {
+		let prfl = this.props.profile;
+
+		let serverPubKey = "";
+		let serverBoxPubKey = "";
+		if (prfl.server_public_key && (mode === "wg" || prfl.token || password)) {
+			serverPubKey = prfl.server_public_key.join("\n");
+			serverBoxPubKey = prfl.server_box_public_key;
+		}
+
+		ProfileActions.loadData(prfl).then((data: string): void => {
+			if (!data) {
+				return;
+			}
+
+			let connData: ProfileTypes.ProfileData = {
+				id: prfl.id,
+				mode: mode,
+				org_id: prfl.organization_id,
+				user_id: prfl.user_id,
+				server_id: prfl.server_id,
+				sync_hosts: prfl.sync_hosts,
+				sync_token: prfl.sync_token,
+				sync_secret: prfl.sync_secret,
+				username: "pritunl",
+				password: password,
+				server_public_key: serverPubKey,
+				server_box_public_key: serverBoxPubKey,
+				token_ttl: prfl.token_ttl,
+				timeout: true,
+				data: data,
+			};
+
+			ServiceActions.connect(connData);
 		})
+	}
+
+	onConnect = (): void => {
+		if (this.props.profile.password_mode) {
+			this.setState({
+				...this.state,
+				dialog: true,
+			})
+		} else {
+			this.connect("ovpn", "")
+		}
 	}
 
 	closeDialog = (): void => {
@@ -111,7 +152,7 @@ export default class ProfileConnect extends React.Component<Props, State> {
 				style={css.button}
 				type="button"
 				disabled={this.state.disabled}
-				onClick={this.openDialog}
+				onClick={this.onConnect}
 			>
 				{buttonLabel}
 			</button>
