@@ -4,6 +4,7 @@ tsc
 rm -rf dist-dev/static
 mkdir -p dist-dev/static
 cp styles/global.css dist-dev/static/
+cp styles/fredoka-one.ttf dist-dev/static/
 cp node_modules/normalize.css/normalize.css dist-dev/static/
 cp node_modules/@blueprintjs/core/lib/css/blueprint.css dist-dev/static/
 cp node_modules/@blueprintjs/datetime/lib/css/blueprint-datetime.css dist-dev/static/
@@ -16,8 +17,8 @@ cp node_modules/@blueprintjs/icons/resources/icons/icons-20.ttf dist-dev/static/
 cp node_modules/@blueprintjs/icons/resources/icons/icons-20.woff dist-dev/static/
 sed -i 's|../../resources/icons/||g' dist-dev/static/blueprint-icons.css
 
-npm link webpack
 webpack --config webpack.dev.config
+webpack --config webpack-main.dev.config
 
 cp index.html dist-dev/index.html
 
@@ -25,6 +26,7 @@ cp index.html dist-dev/index.html
 rm -rf dist/static
 mkdir -p dist/static
 cp styles/global.css dist/static/
+cp styles/fredoka-one.ttf dist/static/
 cp node_modules/normalize.css/normalize.css dist/static/
 cp node_modules/@blueprintjs/core/lib/css/blueprint.css dist/static/
 cp node_modules/@blueprintjs/datetime/lib/css/blueprint-datetime.css dist/static/
@@ -37,7 +39,8 @@ cp node_modules/@blueprintjs/icons/resources/icons/icons-20.ttf dist/static/
 cp node_modules/@blueprintjs/icons/resources/icons/icons-20.woff dist/static/
 sed -i 's|../../resources/icons/||g' dist/static/blueprint-icons.css
 
-webpack
+webpack --config webpack.config
+webpack --config webpack-main.config
 
 cp index_dist.html dist/index.html
 
