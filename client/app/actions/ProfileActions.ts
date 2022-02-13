@@ -170,6 +170,28 @@ export function sync(noLoading?: boolean): Promise<void> {
 	});
 }
 
+export function loadData(prfl: ProfileTypes.Profile): Promise<string> {
+	return new Promise<string>((resolve): void => {
+		let profilePath = prfl.dataPath()
+
+		fs.readFile(
+			profilePath, "utf-8",
+			(err: NodeJS.ErrnoException, data: string): void => {
+				if (err) {
+					err = new Errors.ReadError(
+						err, "Profiles: Profile read error")
+					Logger.errorAlert(err.message, 10)
+
+					resolve("")
+					return
+				}
+
+				resolve(data)
+			},
+		)
+	})
+}
+
 export function traverse(page: number): Promise<void> {
 	Dispatcher.dispatch({
 		type: ProfileTypes.TRAVERSE,
