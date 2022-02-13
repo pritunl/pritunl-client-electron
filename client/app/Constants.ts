@@ -10,8 +10,7 @@ export const mobileOs = md.os();
 
 export const loadDelay = 700;
 export let unix = false;
-export const unixHost = 'http://unix:' + path.join(
-	path.sep, 'var', 'run', 'pritunl.sock') + ':';
+export const unixHost = 'http+unix://%2Fvar%2Frun%2Fpritunl.sock';
 export const webHost = 'http://127.0.0.1:9770';
 export const unixWsHost = 'ws+unix://' + path.join(
 	path.sep, 'var', 'run', 'pritunl.sock') + ':';
