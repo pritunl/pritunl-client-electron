@@ -1,11 +1,11 @@
-### pritunl-cloud-www
+### pritunl-client-www
 
 ```
 npm install
+python3 patch.py
 cd ./node_modules/@github/webauthn-json/dist/
 ln -sf ./esm/* ./
 cd ../../../../
-npm link webpack
 ```
 
 #### lint
