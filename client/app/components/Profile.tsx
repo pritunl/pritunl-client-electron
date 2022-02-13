@@ -85,37 +85,6 @@ export default class Profile extends React.Component<Props, State> {
 		});
 	}
 
-	connect(mode: string, password: string): void {
-		let prfl = this.props.profile;
-
-		let serverPubKey = "";
-		let serverBoxPubKey = "";
-		if (prfl.server_public_key && (mode === "wg" || prfl.token || password)) {
-			serverPubKey = prfl.server_public_key.join("\n");
-			serverBoxPubKey = prfl.server_box_public_key;
-		}
-
-		let data: ProfileTypes.ProfileData = {
-			id: prfl.id,
-			mode: mode,
-			org_id: prfl.organization_id,
-			user_id: prfl.user_id,
-			server_id: prfl.server_id,
-			sync_hosts: prfl.sync_hosts,
-			sync_token: prfl.sync_token,
-			sync_secret: prfl.sync_secret,
-			username: "pritunl",
-			password: password,
-			server_public_key: serverPubKey,
-			server_box_public_key: serverBoxPubKey,
-			token_ttl: prfl.token_ttl,
-			timeout: 30,
-			data: "TODO",
-		};
-
-		ServiceActions.connect(data);
-	}
-
 	render(): JSX.Element {
 		let profile: ProfileTypes.Profile = this.state.profile ||
 			this.props.profile;
