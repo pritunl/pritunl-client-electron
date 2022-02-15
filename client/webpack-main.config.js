@@ -24,6 +24,15 @@ module.exports = {
     publicPath: '',
     filename: '[name].js',
   },
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        enforce: 'pre',
+        use: ['source-map-loader'],
+      },
+    ],
+  },
   plugins: [
     new webpack.DefinePlugin({
       'process.env': JSON.stringify({}),
