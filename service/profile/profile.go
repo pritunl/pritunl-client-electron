@@ -914,7 +914,7 @@ func (p *Profile) parseLine(line string) {
 			}
 			evt.Init()
 
-			if p.SystemProfile != nil {
+			if p.SystemProfile != nil && !p.Reconnect {
 				if p.SystemProfile.AuthErrorCount >= 2 {
 					logrus.WithFields(logrus.Fields{
 						"profile_id": p.SystemProfile.Id,
