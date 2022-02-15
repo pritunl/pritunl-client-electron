@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/pritunl/pritunl-client-electron/service/constants"
+	"github.com/dhurley94/pritunl-client-electron/service/constants"
 	"github.com/spf13/cobra"
 )
 

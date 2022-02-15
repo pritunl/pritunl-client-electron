@@ -1,10 +1,11 @@
 package handlers
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/pritunl/pritunl-client-electron/service/event"
-	"github.com/pritunl/pritunl-client-electron/service/utils"
 	"time"
+
+	"github.com/dhurley94/pritunl-client-electron/service/event"
+	"github.com/dhurley94/pritunl-client-electron/service/utils"
+	"github.com/gin-gonic/gin"
 )
 
 func wakeupPost(c *gin.Context) {

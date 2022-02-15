@@ -4,8 +4,8 @@ import (
 	"io/ioutil"
 	"os"
 
+	"github.com/dhurley94/pritunl-client-electron/service/errortypes"
 	"github.com/dropbox/godropbox/errors"
-	"github.com/pritunl/pritunl-client-electron/service/errortypes"
 )
 
 func Chmod(pth string, mode os.FileMode) (err error) {

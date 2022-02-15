@@ -6,12 +6,12 @@ import (
 	"runtime/debug"
 	"time"
 
-	"github.com/sirupsen/logrus"
+	"github.com/dhurley94/pritunl-client-electron/service/event"
+	"github.com/dhurley94/pritunl-client-electron/service/profile"
+	"github.com/dhurley94/pritunl-client-electron/service/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
-	"github.com/pritunl/pritunl-client-electron/service/event"
-	"github.com/pritunl/pritunl-client-electron/service/profile"
-	"github.com/pritunl/pritunl-client-electron/service/utils"
+	"github.com/sirupsen/logrus"
 )
 
 const (

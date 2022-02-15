@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"runtime"
 
+	"github.com/dhurley94/pritunl-client-electron/cli/errortypes"
+	"github.com/dhurley94/pritunl-client-electron/cli/service"
 	"github.com/dropbox/godropbox/errors"
-	"github.com/pritunl/pritunl-client-electron/cli/errortypes"
-	"github.com/pritunl/pritunl-client-electron/cli/service"
 )
 
 func GetAll() (prfls map[string]*Profile, err error) {

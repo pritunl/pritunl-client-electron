@@ -2,9 +2,10 @@ package cmd
 
 import (
 	"fmt"
+
+	"github.com/dhurley94/pritunl-client-electron/cli/errortypes"
+	"github.com/dhurley94/pritunl-client-electron/cli/sprofile"
 	"github.com/dropbox/godropbox/errors"
-	"github.com/pritunl/pritunl-client-electron/cli/errortypes"
-	"github.com/pritunl/pritunl-client-electron/cli/sprofile"
 	"github.com/spf13/cobra"
 )
 

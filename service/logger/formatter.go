@@ -2,10 +2,11 @@ package logger
 
 import (
 	"fmt"
-	"github.com/sirupsen/logrus"
-	"github.com/pritunl/pritunl-client-electron/service/colorize"
 	"sort"
 	"time"
+
+	"github.com/dhurley94/pritunl-client-electron/service/colorize"
+	"github.com/sirupsen/logrus"
 )
 
 var (

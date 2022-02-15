@@ -52,9 +52,9 @@ npm update
   --osx-sign.hardenedRuntime \
   --osx-sign.hardened-runtime \
   --no-osx-sign.gatekeeper-assess \
-  --osx-sign.entitlements="/Users/apple/go/src/github.com/pritunl/pritunl-client-electron/resources_macos/entitlements.plist" \
-  --osx-sign.entitlements-inherit="/Users/apple/go/src/github.com/pritunl/pritunl-client-electron/resources_macos/entitlements.plist" \
-  --osx-sign.entitlementsInherit="/Users/apple/go/src/github.com/pritunl/pritunl-client-electron/resources_macos/entitlements.plist" \
+  --osx-sign.entitlements="/Users/apple/go/src/github.com/dhurley94/pritunl-client-electron/resources_macos/entitlements.plist" \
+  --osx-sign.entitlements-inherit="/Users/apple/go/src/github.com/dhurley94/pritunl-client-electron/resources_macos/entitlements.plist" \
+  --osx-sign.entitlementsInherit="/Users/apple/go/src/github.com/dhurley94/pritunl-client-electron/resources_macos/entitlements.plist" \
   --osx-sign.identity="Developer ID Application: Pritunl, Inc. (U22BLATN63)" \
   --osx-notarize.appleId="contact@pritunl.com" \
   --osx-notarize.appleIdPassword="@keychain:xcode" \

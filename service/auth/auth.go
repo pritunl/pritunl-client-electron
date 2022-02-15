@@ -1,11 +1,12 @@
 package auth
 
 import (
-	"github.com/dropbox/godropbox/errors"
-	"github.com/pritunl/pritunl-client-electron/service/utils"
 	"io/ioutil"
 	"os"
 	"strings"
+
+	"github.com/dhurley94/pritunl-client-electron/service/utils"
+	"github.com/dropbox/godropbox/errors"
 )
 
 var Key = ""
