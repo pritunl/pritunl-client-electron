@@ -9,10 +9,12 @@ import Loader from '../Loader';
 import * as ProfileTypes from '../types/ProfileTypes';
 import ProfilesStore from '../stores/ProfilesStore';
 import * as MiscUtils from '../utils/MiscUtils';
+import * as RequestUtils from '../utils/RequestUtils';
 import fs from "fs";
 import path from "path";
 import * as Errors from "../Errors";
 import * as Logger from "../Logger";
+import os from "os";
 
 let syncId: string;
 
@@ -75,6 +77,39 @@ function loadProfile(prflId: string,
 		prflPath: string): Promise<ProfileTypes.Profile> {
 
 	return new Promise<ProfileTypes.Profile>((resolve): void => {
+		if (os.platform() !== "win32") {
+			fs.stat(
+				prflId,
+				function(err: NodeJS.ErrnoException, stats: fs.Stats) {
+					if (err && err.code === "ENOENT") {
+						return
+					}
+
+					let mode: string
+					try {
+						mode = (stats.mode & 0o777).toString(8);
+					} catch (e) {
+						err = new Errors.ReadError(
+							err, "Profiles: Failed to stat profile",
+							{profile_path: prflPath})
+						Logger.errorAlert(err.message)
+						return
+					}
+
+					if (mode !== "600") {
+						fs.chmod(prflPath, 0o600, function(err) {
+							if (err) {
+								err = new Errors.ReadError(
+									err, "Profiles: Failed to stat profile",
+									{profile_path: prflPath})
+								Logger.errorAlert(err.message)
+							}
+						});
+					}
+				},
+			);
+		}
+
 		fs.readFile(
 			prflPath, "utf-8",
 			(err: NodeJS.ErrnoException, data: string): void => {
@@ -96,7 +131,7 @@ function loadProfiles(): Promise<ProfileTypes.Profiles> {
 				if (err) {
 					if (err.code !== "ENOENT") {
 						err = new Errors.ReadError(err, "Profiles: Read error");
-						Logger.errorAlert(err.message, 10);
+						Logger.errorAlert(err.message);
 					}
 
 					resolve([]);
@@ -108,7 +143,7 @@ function loadProfiles(): Promise<ProfileTypes.Profiles> {
 					async (err: NodeJS.ErrnoException, filenames: string[]) => {
 						if (err) {
 							err = new Errors.ReadError(err, "Profiles: Read error");
-							Logger.errorAlert(err.message, 10);
+							Logger.errorAlert(err.message);
 
 							resolve([]);
 							return;
