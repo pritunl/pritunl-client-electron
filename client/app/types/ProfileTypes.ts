@@ -3,6 +3,8 @@ import path from "path"
 import * as Constants from "../Constants"
 
 export const SYNC = "profile.sync"
+export const SYNC_STATE = "profile.sync_state"
+export const SYNC_ALL = "profile.sync_all"
 export const TRAVERSE = "profile.traverse"
 export const FILTER = "profile.filter"
 export const CHANGE = "profile.change"
@@ -48,6 +50,7 @@ export interface Filter {
 }
 
 export type Profiles = Profile[];
+export type ProfilesMap = {[key: string]: Profile}
 
 export type ProfileRo = Readonly<Profile>;
 export type ProfilesRo = ReadonlyArray<ProfileRo>;
@@ -58,6 +61,7 @@ export interface ProfileDispatch {
 		id?: string;
 		profile?: Profile;
 		profiles?: Profiles;
+		profilesState?: ProfilesMap;
 		page?: number;
 		pageCount?: number;
 		filter?: Filter;
