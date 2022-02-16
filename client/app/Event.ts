@@ -54,7 +54,7 @@ function connect(): void {
 	});
 
 	socket.on('error', (err: Error) => {
-		err = new Errors.RequestError(err, "Events: Socket error");
+		err = new Errors.RequestError(err, null, "Events: Socket error");
 		Logger.errorAlert(err.message);
 
 		showConnect = true;
@@ -62,7 +62,7 @@ function connect(): void {
 	});
 
 	socket.on('onerror', (err) => {
-		err = new Errors.RequestError(err, "Events: Socket error");
+		err = new Errors.RequestError(err, null, "Events: Socket error");
 		Logger.errorAlert(err.message);
 
 		showConnect = true;
