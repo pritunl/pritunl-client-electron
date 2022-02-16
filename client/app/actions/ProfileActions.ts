@@ -76,10 +76,13 @@ export function sync2(noLoading?: boolean): Promise<void> {
 function loadProfile(prflId: string,
 		prflPath: string): Promise<ProfileTypes.Profile> {
 
+	let ovpnPath = prflPath.substring(0, prflPath.length-5) + ".ovpn"
+	let logPath = prflPath.substring(0, prflPath.length-5) + ".log"
+
 	return new Promise<ProfileTypes.Profile>((resolve): void => {
 		if (os.platform() !== "win32") {
 			fs.stat(
-				prflId,
+				prflPath,
 				function(err: NodeJS.ErrnoException, stats: fs.Stats) {
 					if (err && err.code === "ENOENT") {
 						return
@@ -95,13 +98,72 @@ function loadProfile(prflId: string,
 						Logger.errorAlert(err.message)
 						return
 					}
-
 					if (mode !== "600") {
 						fs.chmod(prflPath, 0o600, function(err) {
 							if (err) {
 								err = new Errors.ReadError(
 									err, "Profiles: Failed to stat profile",
 									{profile_path: prflPath})
+								Logger.errorAlert(err.message)
+							}
+						});
+					}
+				},
+			);
+			fs.stat(
+				ovpnPath,
+				function(err: NodeJS.ErrnoException, stats: fs.Stats) {
+					if (err && err.code === "ENOENT") {
+						return
+					}
+
+					let mode: string
+					try {
+						mode = (stats.mode & 0o777).toString(8);
+					} catch (e) {
+						err = new Errors.ReadError(
+							err, "Profiles: Failed to stat profile ovpn",
+							{profile_ovpn_path: ovpnPath})
+						Logger.errorAlert(err.message)
+						return
+					}
+
+					if (mode !== "600") {
+						fs.chmod(ovpnPath, 0o600, function(err) {
+							if (err) {
+								err = new Errors.ReadError(
+									err, "Profiles: Failed to stat profile ovpn",
+									{profile_ovpn_path: ovpnPath})
+								Logger.errorAlert(err.message)
+							}
+						});
+					}
+				},
+			);
+			fs.stat(
+				logPath,
+				function(err: NodeJS.ErrnoException, stats: fs.Stats) {
+					if (err && err.code === "ENOENT") {
+						return
+					}
+
+					let mode: string
+					try {
+						mode = (stats.mode & 0o777).toString(8);
+					} catch (e) {
+						err = new Errors.ReadError(
+							err, "Profiles: Failed to stat profile log",
+							{profile_log_path: logPath})
+						Logger.errorAlert(err.message)
+						return
+					}
+
+					if (mode !== "600") {
+						fs.chmod(logPath, 0o600, function(err) {
+							if (err) {
+								err = new Errors.ReadError(
+									err, "Profiles: Failed to stat profile log",
+									{profile_log_path: logPath})
 								Logger.errorAlert(err.message)
 							}
 						});
