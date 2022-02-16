@@ -233,6 +233,24 @@ function loadProfiles(): Promise<ProfileTypes.Profiles> {
 	});
 }
 
+function loadProfilesState(): Promise<ProfileTypes.ProfilesMap> {
+	return new Promise<ProfileTypes.ProfilesMap>((resolve): void => {
+		RequestUtils
+			.get('/profile')
+			.set('Accept', 'application/json')
+			.end((err: any, res: SuperAgent.Response): void => {
+				if (err) {
+					err = new Errors.RequestError(err, res, "Profiles: Status error")
+					Logger.errorAlert(err.message)
+					resolve({})
+					return
+				}
+
+				resolve(res.body);
+			});
+	});
+}
+
 export function sync(noLoading?: boolean): Promise<void> {
 	let curSyncId = MiscUtils.uuid();
 	syncId = curSyncId;
@@ -253,16 +271,18 @@ export function sync(noLoading?: boolean): Promise<void> {
 				return;
 			}
 
-			Dispatcher.dispatch({
-				type: ProfileTypes.SYNC,
-				data: {
-					profiles: prfls,
-					count: prfls.length,
-				},
-			});
+			loadProfilesState().then((prflsState: ProfileTypes.ProfilesMap) => {
+				Dispatcher.dispatch({
+					type: ProfileTypes.SYNC_ALL,
+					data: {
+						profiles: prfls,
+						profilesState: prflsState,
+						count: prfls.length,
+					},
+				});
 
-			resolve();
-			return;
+				resolve();
+			})
 		});
 	});
 }
