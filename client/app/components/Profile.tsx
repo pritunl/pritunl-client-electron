@@ -112,7 +112,7 @@ export default class Profile extends React.Component<Props, State> {
 					fields={[
 						{
 							label: 'Status',
-							value: 'Disconnected',
+							value: profile.status || 'Disconnected',
 						},
 						{
 							label: 'Server',
@@ -125,13 +125,13 @@ export default class Profile extends React.Component<Props, State> {
 				fields={[
 					{
 						label: 'Server Address',
-						value: '2001:19f0:ac01:1920:ec4:7aff:fe8f:6961',
-						copy: true,
+						value: profile.server_addr || '-',
+						copy: !!profile.server_addr,
 					},
 					{
 						label: 'Client Address',
-						value: '2001:19f0:ac01:1920:ec4:7aff:fe8f:6961',
-						copy: true,
+						value: profile.client_addr || '-',
+						copy: !!profile.client_addr,
 					},
 					{
 						label: 'Configuration Sync Hosts',
