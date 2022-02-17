@@ -5,7 +5,7 @@ const TerserPlugin = require('terser-webpack-plugin');
 module.exports = {
   mode: 'production',
   target: 'electron-main',
-  devtool: 'inline-source-map',
+  devtool: 'source-map',
   entry: {
     main: {
       import: './main/Main.js',
