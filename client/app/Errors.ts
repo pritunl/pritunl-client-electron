@@ -3,7 +3,7 @@ import * as SuperAgent from "superagent";
 
 export class BaseError extends Error {
 	constructor(name: string, wrapErr: Error, message: string,
-		args: any) {
+		args?: {[key: string]: any}) {
 
 		super()
 
@@ -26,20 +26,20 @@ export class BaseError extends Error {
 }
 
 export class ReadError extends BaseError {
-	constructor(wrapErr: Error, message: string, args?: any) {
+	constructor(wrapErr: Error, message: string, args?: {[key: string]: any}) {
 		super("ReadError", wrapErr, message, args)
 	}
 }
 
 export class WriteError extends BaseError {
-	constructor(wrapErr: Error, message: string, args?: any) {
+	constructor(wrapErr: Error, message: string, args?: {[key: string]: any}) {
 		super("WriteError", wrapErr, message, args)
 	}
 }
 
 export class RequestError extends BaseError {
 	constructor(wrapErr: Error, res: SuperAgent.Response,
-		message: string, args?: any) {
+		message: string, args?: {[key: string]: any}) {
 
 		try {
 			message = res.body.error_msg || message
