@@ -22,7 +22,6 @@ func MkdirSecure(pth string) (err error) {
 		pth,
 		true,
 		false,
-		acl.GrantName(windows.GENERIC_ALL, "CREATOR OWNER"),
 		acl.GrantName(windows.GENERIC_ALL, "SYSTEM"),
 		acl.GrantName(windows.GENERIC_ALL, "Administrators"),
 	)
