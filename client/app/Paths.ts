@@ -3,7 +3,7 @@ import * as Constants from './Constants';
 import path from "path";
 
 export function log(): string {
-	return path.join(Constants.dataPath, "pritunl.json");
+	return path.join(Constants.dataPath, "pritunl.log");
 }
 
 export function config(): string {
