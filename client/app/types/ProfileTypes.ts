@@ -36,6 +36,8 @@ export interface Profile {
 	server_box_public_key?: string
 	status?: string
 	timestamp?: number
+	server_addr?: string
+	client_addr?: string
 
 	formattedName(): string
 	formattedUptime(): string
@@ -84,7 +86,7 @@ export interface ProfileData {
 	server_box_public_key?: string;
 	token_ttl?: number;
 	reconnect?: boolean;
-	timeout?: number;
+	timeout?: boolean;
 	data?: string;
 }
 
