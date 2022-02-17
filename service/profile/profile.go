@@ -40,6 +40,7 @@ import (
 	"github.com/pritunl/pritunl-client-electron/service/errortypes"
 	"github.com/pritunl/pritunl-client-electron/service/event"
 	"github.com/pritunl/pritunl-client-electron/service/network"
+	"github.com/pritunl/pritunl-client-electron/service/platform"
 	"github.com/pritunl/pritunl-client-electron/service/sprofile"
 	"github.com/pritunl/pritunl-client-electron/service/token"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
@@ -688,23 +689,15 @@ func (p *Profile) writeConfWgQuick(data *WgConf) (pth string, err error) {
 	case "linux":
 		rootDir = WgLinuxConfPath
 
-		err = os.MkdirAll(WgLinuxConfPath, 0700)
+		err = platform.MkdirSecure(WgLinuxConfPath)
 		if err != nil {
-			err = &errortypes.WriteError{
-				errors.Wrap(
-					err, "profile: Failed to create wg conf directory"),
-			}
 			return
 		}
 	case "darwin":
 		rootDir = WgMacConfPath
 
-		err = os.MkdirAll(WgMacConfPath, 0700)
+		err = platform.MkdirSecure(WgMacConfPath)
 		if err != nil {
-			err = &errortypes.WriteError{
-				errors.Wrap(
-					err, "profile: Failed to create wg conf directory"),
-			}
 			return
 		}
 	default:
