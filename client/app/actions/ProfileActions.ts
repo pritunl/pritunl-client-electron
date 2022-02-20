@@ -18,59 +18,23 @@ import os from "os";
 
 let syncId: string;
 
-export function sync2(noLoading?: boolean): Promise<void> {
-	let curSyncId = MiscUtils.uuid();
-	syncId = curSyncId;
-
-	let loader: Loader;
-	if (!noLoading) {
-		loader = new Loader().loading();
-	}
-
-	return new Promise<void>((resolve, reject): void => {
-		SuperAgent
+function loadSystemProfiles(): Promise<ProfileTypes.Profiles> {
+	return new Promise<ProfileTypes.Profiles>((resolve): void => {
+		RequestUtils
 			.get('/sprofile')
-			.query({
-				...ProfilesStore.filter,
-				page: ProfilesStore.page,
-				page_count: ProfilesStore.pageCount,
-			})
 			.set('Accept', 'application/json')
-			.set('User-Agent', 'pritunl')
-			.set('Auth-Token', Auth.token)
 			.end((err: any, res: SuperAgent.Response): void => {
-				if (loader) {
-					loader.done();
-				}
-
-				if (res && res.status === 401) {
-					window.location.href = '/login';
-					resolve();
-					return;
-				}
-
-				if (curSyncId !== syncId) {
-					resolve();
-					return;
-				}
-
 				if (err) {
-					Alert.errorRes(res, 'Failed to load profiles');
-					reject(err);
-					return;
+					err = new Errors.RequestError(err, res,
+						"Profiles: Service load error")
+					Logger.errorAlert(err.message)
+					resolve([])
+					return
 				}
 
-				Dispatcher.dispatch({
-					type: ProfileTypes.SYNC,
-					data: {
-						profiles: res.body.profiles,
-						count: res.body.count,
-					},
-				});
-
-				resolve();
-			});
-	});
+				resolve(res.body)
+			})
+	})
 }
 
 function loadProfile(prflId: string,
@@ -91,7 +55,7 @@ function loadProfile(prflId: string,
 					let mode: string
 					try {
 						mode = (stats.mode & 0o777).toString(8);
-					} catch (e) {
+					} catch (err) {
 						err = new Errors.ReadError(
 							err, "Profiles: Failed to stat profile",
 							{profile_path: prflPath})
@@ -120,7 +84,7 @@ function loadProfile(prflId: string,
 					let mode: string
 					try {
 						mode = (stats.mode & 0o777).toString(8);
-					} catch (e) {
+					} catch (err) {
 						err = new Errors.ReadError(
 							err, "Profiles: Failed to stat profile ovpn",
 							{profile_ovpn_path: ovpnPath})
@@ -150,7 +114,7 @@ function loadProfile(prflId: string,
 					let mode: string
 					try {
 						mode = (stats.mode & 0o777).toString(8);
-					} catch (e) {
+					} catch (err) {
 						err = new Errors.ReadError(
 							err, "Profiles: Failed to stat profile log",
 							{profile_log_path: logPath})
@@ -177,9 +141,21 @@ function loadProfile(prflId: string,
 			(err: NodeJS.ErrnoException, data: string): void => {
 				let prfl: ProfileTypes.Profile = JSON.parse(data)
 				prfl.id = prflId
-				resolve(prfl)
+
+				fs.readFile(
+					ovpnPath, "utf-8",
+					(err: NodeJS.ErrnoException, data: string): void => {
+						if (err && err.code === "ENOENT") {
+							return
+						}
+
+						prfl.ovpn_data = data
+
+						resolve(prfl)
+					},
+				)
 			},
-		);
+		)
 	});
 }
 
@@ -271,17 +247,20 @@ export function sync(noLoading?: boolean): Promise<void> {
 				return;
 			}
 
-			loadProfilesState().then((prflsState: ProfileTypes.ProfilesMap) => {
-				Dispatcher.dispatch({
-					type: ProfileTypes.SYNC_ALL,
-					data: {
-						profiles: prfls,
-						profilesState: prflsState,
-						count: prfls.length,
-					},
-				});
+			loadSystemProfiles().then((systemPrfls: ProfileTypes.Profiles) => {
+				loadProfilesState().then((prflsState: ProfileTypes.ProfilesMap) => {
+					Dispatcher.dispatch({
+						type: ProfileTypes.SYNC_ALL,
+						data: {
+							profiles: prfls,
+							profilesState: prflsState,
+							profilesSystem: systemPrfls,
+							count: prfls.length,
+						},
+					});
 
-				resolve();
+					resolve();
+				})
 			})
 		});
 	});
