@@ -138,12 +138,14 @@ export default class ProfileConnect extends React.Component<Props, State> {
 	render(): JSX.Element {
 		let buttonClass = ""
 		let buttonLabel = ""
-		if (this.props.profile.status === "connected") {
-			buttonClass = "bp3-intent-danger bp3-icon-link"
-			buttonLabel = "Disconnect"
-		} else {
+		if (!this.props.profile.status ||
+			this.props.profile.status === "disconnected") {
+
 			buttonClass = "bp3-intent-success bp3-icon-link"
 			buttonLabel = "Connect"
+		} else {
+			buttonClass = "bp3-intent-danger bp3-icon-link"
+			buttonLabel = "Disconnect"
 		}
 
 		return <div style={css.box}>
