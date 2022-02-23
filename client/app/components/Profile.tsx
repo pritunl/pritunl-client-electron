@@ -37,6 +37,7 @@ const css = {
 		marginBottom: '0',
 	} as React.CSSProperties,
 	card: {
+		position: "relative",
 		margin: '8px',
 	} as React.CSSProperties,
 	progress: {
@@ -50,6 +51,13 @@ const css = {
 	} as React.CSSProperties,
 	button: {
 		marginRight: '10px',
+	} as React.CSSProperties,
+	deleteButton: {
+	} as React.CSSProperties,
+	deleteButtonBox: {
+		position: "absolute",
+		top: "5px",
+		right: "5px",
 	} as React.CSSProperties,
 	buttons: {
 		flexShrink: 0,
@@ -86,6 +94,12 @@ export default class Profile extends React.Component<Props, State> {
 		});
 	}
 
+	onDelete = (): void => {
+		this.setState({
+			...this.state,
+		});
+	}
+
 	render(): JSX.Element {
 		let profile: ProfileTypes.Profile = this.state.profile ||
 			this.props.profile;
@@ -113,12 +127,16 @@ export default class Profile extends React.Component<Props, State> {
 					style={css.label}
 					fields={[
 						{
+							label: 'Name',
+							value: profile.formattedName() || '-',
+						},
+						{
 							label: 'User',
 							value: profile.user || '-',
 						},
 						{
-							label: 'Organization',
-							value: profile.organization || '-',
+							label: 'Server',
+							value: profile.server || '-',
 						},
 					]}
 				/>
@@ -127,11 +145,15 @@ export default class Profile extends React.Component<Props, State> {
 					fields={[
 						{
 							label: 'Status',
-							value: profile.status || 'Disconnected',
+							value: profile.formattedStatus(),
 						},
 						{
-							label: 'Server',
-							value: profile.server || '-',
+							label: 'Organization',
+							value: profile.organization || '-',
+						},
+						{
+							label: 'Autostart',
+							value: profile.system ? 'Enabled' : 'Disabled',
 						},
 					]}
 				/>
