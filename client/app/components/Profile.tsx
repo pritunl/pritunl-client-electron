@@ -15,6 +15,7 @@ import "ace-builds/src-noconflict/mode-text";
 import "ace-builds/src-noconflict/theme-dracula";
 import "ace-builds/src-noconflict/theme-eclipse";
 import ProfileConnect from "./ProfileConnect";
+import ProfileSettings from "./ProfileSettings";
 
 interface Props {
 	profile: ProfileTypes.ProfileRo;
@@ -192,17 +193,7 @@ export default class Profile extends React.Component<Props, State> {
 			<div className="layout horizontal">
 				<div style={css.buttons}>
 					<ProfileConnect profile={this.props.profile}/>
-					<button
-						className="bp3-button bp3-icon-cog"
-						style={css.button}
-						type="button"
-						disabled={this.state.disabled}
-						onClick={(): void => {
-
-						}}
-					>
-						Settings
-					</button>
+					<ProfileSettings profile={this.props.profile}/>
 				</div>
 			</div>
 			<label
