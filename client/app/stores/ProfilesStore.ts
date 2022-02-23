@@ -93,16 +93,24 @@ class ProfilesStore extends EventEmitter {
 		this.emitChange();
 	}
 
-	_sync(profiles: ProfileTypes.Profile[], count: number): void {
-		this._map = {};
-		for (let i = 0; i < profiles.length; i++) {
-			profiles[i] = Object.freeze(ProfileTypes.New(profiles[i]));
-			this._map[profiles[i].id] = i;
+	_sync(prfls: ProfileTypes.Profiles,
+		systemPrfls: ProfileTypes.Profiles): void {
+
+		for (let prfl of systemPrfls) {
+			prfl.system = true
 		}
 
-		this._count = count;
-		this._profiles = profiles;
-		this._page = Math.min(this.pages, this.page);
+		let profiles: ProfileTypes.Profiles = prfls.concat(systemPrfls)
+		this._map = {}
+
+		for (let i = 0; i < profiles.length; i++) {
+			profiles[i] = Object.freeze(ProfileTypes.New(profiles[i]))
+			this._map[profiles[i].id] = i
+		}
+
+		this._count = profiles.length
+		this._profiles = profiles
+		this._page = Math.min(this.pages, this.page)
 	}
 
 	_syncState(profiles: ProfileTypes.ProfilesMap): void {
@@ -142,7 +150,7 @@ class ProfilesStore extends EventEmitter {
 				break;
 
 			case ProfileTypes.SYNC:
-				this._sync(action.data.profiles, action.data.count);
+				this._sync(action.data.profiles, action.data.profilesSystem);
 				this.emitChange();
 				break;
 
@@ -152,7 +160,7 @@ class ProfilesStore extends EventEmitter {
 				break;
 
 			case ProfileTypes.SYNC_ALL:
-				this._sync(action.data.profiles, action.data.count);
+				this._sync(action.data.profiles, action.data.profilesSystem);
 				this._syncState(action.data.profilesState);
 				this.emitChange();
 				break;
