@@ -6,6 +6,7 @@ import * as ProfileTypes from '../types/ProfileTypes';
 import * as ProfileActions from '../actions/ProfileActions';
 import * as ServiceActions from '../actions/ServiceActions';
 import * as Blueprint from "@blueprintjs/core";
+import ConfirmButton from "./ConfirmButton";
 import PageInfo from './PageInfo';
 import PageSwitch from './PageSwitch';
 import AceEditor from "react-ace";
@@ -93,6 +94,20 @@ export default class Profile extends React.Component<Props, State> {
 		syncHosts.push('Last Sync: 11/22/3333 11:22');
 
 		return <div className="bp3-card" style={css.card}>
+			<div style={css.deleteButtonBox}>
+				<ConfirmButton
+					className="bp3-minimal bp3-intent-danger bp3-icon-trash"
+					style={css.deleteButton}
+					safe={true}
+					progressClassName="bp3-intent-danger"
+					dialogClassName="bp3-intent-danger bp3-icon-delete"
+					dialogLabel="Delete Profile"
+					confirmMsg="Permanently delete this profile"
+					items={[profile.formattedName()]}
+					disabled={this.state.disabled}
+					onConfirm={this.onDelete}
+				/>
+			</div>
 			<div className="layout horizontal">
 				<PageInfo
 					style={css.label}
