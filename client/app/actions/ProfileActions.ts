@@ -288,6 +288,30 @@ export function loadData(prfl: ProfileTypes.Profile): Promise<string> {
 	})
 }
 
+export function saveConf(prfl: ProfileTypes.Profile): Promise<void> {
+	return new Promise<void>((resolve): void => {
+		let profilePath = prfl.confPath()
+
+		fs.writeFile(
+			profilePath, prfl.exportConf(),
+			(err: NodeJS.ErrnoException): void => {
+				if (err) {
+					err = new Errors.ReadError(
+						err, "Profiles: Profile read error")
+					Logger.errorAlert(err.message, 10)
+
+					resolve()
+					return
+				}
+
+				resolve()
+
+				sync()
+			},
+		)
+	})
+}
+
 export function traverse(page: number): Promise<void> {
 	Dispatcher.dispatch({
 		type: ProfileTypes.TRAVERSE,
