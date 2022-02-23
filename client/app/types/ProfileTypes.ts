@@ -67,6 +67,7 @@ export interface ProfileDispatch {
 		id?: string;
 		profile?: Profile;
 		profiles?: Profiles;
+		profilesSystem?: Profiles;
 		profilesState?: ProfilesMap;
 		page?: number;
 		pageCount?: number;
