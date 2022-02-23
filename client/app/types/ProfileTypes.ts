@@ -38,12 +38,16 @@ export interface Profile {
 	timestamp?: number
 	server_addr?: string
 	client_addr?: string
+	ovpn_data?: string
 
 	formattedName(): string
+	formattedStatus(): string
 	formattedUptime(): string
 	formatedHosts(): string[]
+	authTypes(): string[]
 	confPath(): string
 	dataPath(): string
+	exportConf(): string
 }
 
 export interface Filter {
@@ -93,6 +97,25 @@ export interface ProfileData {
 export function New(data: Profile): Profile {
 	data.formattedName = function(): string {
 		return this.server + " (" + this.user + ")"
+	}
+
+	data.formattedStatus = function(): string {
+		if (!this.status) {
+			return "Disconnected"
+		}
+
+		switch (this.status) {
+			case "connected":
+				return "Connected"
+			case "connecting":
+				return "Connecting"
+			case "reconnecting":
+				return "Reconnecting"
+			case "disconnecting":
+				return "Disconnecting"
+			default:
+				return this.status
+		}
 	}
 
 	data.formattedUptime = function(): string {
@@ -159,12 +182,52 @@ export function New(data: Profile): Profile {
 		return hosts;
 	}
 
+	data.authTypes = function(): string[] {
+		let passwordMode = this.password_mode
+		if (!passwordMode && this.ovpn_data &&
+			this.ovpn_data.indexOf("auth-user-pass") !== -1) {
+
+			if (this.user) {
+				passwordMode = "otp"
+			} else {
+				passwordMode = "username_password"
+			}
+		}
+
+		return passwordMode.split("_")
+	}
+
 	data.confPath = function(): string {
 		return path.join(Constants.dataPath, "profiles", this.id + ".conf")
 	}
 
 	data.dataPath = function(): string {
 		return path.join(Constants.dataPath, "profiles", this.id + ".ovpn")
+	}
+
+	data.exportConf = function(): string {
+		return JSON.stringify({
+			name: this.name,
+			wg: this.wg,
+			lastMode: this.last_mode,
+			organization_id: this.organization_id,
+			organization: this.organization,
+			server_id: this.server_id,
+			server: this.server,
+			user_id: this.user_id,
+			user: this.user,
+			pre_connect_msg: this.pre_connect_msg,
+			password_mode: this.password_mode,
+			token: this.token,
+			token_ttl: this.token_ttl,
+			disable_reconnect: this.disable_reconnect,
+			sync_hosts: this.sync_hosts,
+			sync_hash: this.sync_hash,
+			sync_secret: this.sync_secret,
+			sync_token: this.sync_token,
+			server_public_key: this.server_public_key,
+			server_box_public_key: this.server_box_public_key,
+		})
 	}
 
 	return data;
