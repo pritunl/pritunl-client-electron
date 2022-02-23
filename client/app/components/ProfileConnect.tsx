@@ -100,7 +100,9 @@ export default class ProfileConnect extends React.Component<Props, State> {
 	}
 
 	onConnect = (): void => {
-		if (this.props.profile.password_mode) {
+		if (this.props.profile.password_mode ||
+			this.props.profile.pre_connect_msg) {
+
 			this.setState({
 				...this.state,
 				dialog: true,
@@ -168,6 +170,10 @@ export default class ProfileConnect extends React.Component<Props, State> {
 			>
 				<div className="bp3-dialog-body">
 					Connecting to {this.props.profile.formattedName()}
+					<div hidden={!this.props.profile.pre_connect_msg}>
+						<br/>
+						{this.props.profile.pre_connect_msg}
+					</div>
 					<label
 						className="bp3-label"
 						style={css.label}
