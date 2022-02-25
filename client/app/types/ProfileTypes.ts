@@ -48,6 +48,7 @@ export interface Profile {
 	confPath(): string
 	dataPath(): string
 	exportConf(): string
+	exportSystem(): string
 }
 
 export interface Filter {
@@ -229,6 +230,33 @@ export function New(data: Profile): Profile {
 			server_public_key: this.server_public_key,
 			server_box_public_key: this.server_box_public_key,
 		})
+	}
+
+	data.exportSystem = function(): any {
+		return {
+			id: this.id,
+			name: this.name,
+			wg: this.wg,
+			last_mode: this.last_mode,
+			organization_id: this.organization_id,
+			organization: this.organization,
+			server_id: this.server_id,
+			server: this.server,
+			user_id: this.user_id,
+			user: this.user,
+			pre_connect_msg: this.pre_connect_msg,
+			password_mode: this.password_mode,
+			token: this.token,
+			token_ttl: this.token_ttl,
+			disabled: this.disabled,
+			sync_hosts: this.sync_hosts,
+			sync_hash: this.sync_hash,
+			sync_secret: this.sync_secret,
+			sync_token: this.sync_token,
+			server_public_key: this.server_public_key,
+			server_box_public_key: this.server_box_public_key,
+			ovpn_data: this.ovpn_data,
+		}
 	}
 
 	return data;
