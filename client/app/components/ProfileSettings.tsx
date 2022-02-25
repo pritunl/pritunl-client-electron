@@ -82,7 +82,7 @@ export default class ProfileSettings extends React.Component<Props, State> {
 	}
 
 	onSave = (): void => {
-		ProfileActions.saveConf(this.state.profile).then(() => {
+		ProfileActions.commit(this.state.profile).then(() => {
 			this.closeDialog()
 		})
 	}
