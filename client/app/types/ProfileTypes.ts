@@ -16,7 +16,7 @@ export interface Profile {
 	uv_name?: string
 	state?: string
 	wg?: boolean
-	disable_reconnect?: boolean
+	disabled?: boolean
 	last_mode?: string
 	organization_id?: string
 	organization?: string
@@ -210,7 +210,7 @@ export function New(data: Profile): Profile {
 		return JSON.stringify({
 			name: this.name,
 			wg: this.wg,
-			lastMode: this.last_mode,
+			last_mode: this.last_mode,
 			organization_id: this.organization_id,
 			organization: this.organization,
 			server_id: this.server_id,
@@ -221,7 +221,7 @@ export function New(data: Profile): Profile {
 			password_mode: this.password_mode,
 			token: this.token,
 			token_ttl: this.token_ttl,
-			disable_reconnect: this.disable_reconnect,
+			disabled: this.disabled,
 			sync_hosts: this.sync_hosts,
 			sync_hash: this.sync_hash,
 			sync_secret: this.sync_secret,
