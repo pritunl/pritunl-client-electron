@@ -456,9 +456,7 @@ export function removeMulti(profileIds: string[]): Promise<void> {
 }
 
 EventDispatcher.register((action: ProfileTypes.ProfileDispatch) => {
-	switch (action.type) {
-		case ProfileTypes.CHANGE:
-			sync();
-			break;
+	if (action.type === "update") {
+		sync();
 	}
 });
