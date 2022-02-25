@@ -288,7 +288,37 @@ export function loadData(prfl: ProfileTypes.Profile): Promise<string> {
 	})
 }
 
-export function saveConf(prfl: ProfileTypes.Profile): Promise<void> {
+export function traverse(page: number): Promise<void> {
+	Dispatcher.dispatch({
+		type: ProfileTypes.TRAVERSE,
+		data: {
+			page: page,
+		},
+	});
+
+	return sync();
+}
+
+export function filter(filt: ProfileTypes.Filter): Promise<void> {
+	Dispatcher.dispatch({
+		type: ProfileTypes.FILTER,
+		data: {
+			filter: filt,
+		},
+	});
+
+	return sync();
+}
+
+export function commit(prfl: ProfileTypes.Profile): Promise<void> {
+	if (prfl.system) {
+		return commitSystem(prfl)
+	} else {
+		return commitConf(prfl)
+	}
+}
+
+function commitConf(prfl: ProfileTypes.Profile): Promise<void> {
 	return new Promise<void>((resolve): void => {
 		let profilePath = prfl.confPath()
 
@@ -312,56 +342,28 @@ export function saveConf(prfl: ProfileTypes.Profile): Promise<void> {
 	})
 }
 
-export function traverse(page: number): Promise<void> {
-	Dispatcher.dispatch({
-		type: ProfileTypes.TRAVERSE,
-		data: {
-			page: page,
-		},
-	});
-
-	return sync();
-}
-
-export function filter(filt: ProfileTypes.Filter): Promise<void> {
-	Dispatcher.dispatch({
-		type: ProfileTypes.FILTER,
-		data: {
-			filter: filt,
-		},
-	});
-
-	return sync();
-}
-
-export function commit(profile: ProfileTypes.Profile): Promise<void> {
+function commitSystem(prfl: ProfileTypes.Profile): Promise<void> {
 	let loader = new Loader().loading();
 
 	return new Promise<void>((resolve, reject): void => {
-		SuperAgent
-			.put('/profile/' + profile.id)
-			.send(profile)
-			.set('Accept', 'application/json')
-			.set('User-Agent', 'pritunl')
-			.set('Auth-Token', Auth.token)
+		RequestUtils
+			.put("/sprofile")
+			.send(prfl.exportSystem())
+			.set("Accept", "application/json")
 			.end((err: any, res: SuperAgent.Response): void => {
-				loader.done();
-
-				if (res && res.status === 401) {
-					window.location.href = '/login';
-					resolve();
-					return;
-				}
+				loader.done()
 
 				if (err) {
-					Alert.errorRes(res, 'Failed to save profile');
-					reject(err);
-					return;
+					Alert.errorRes(res, "Failed to save profile")
+					reject(err)
+					return
 				}
 
-				resolve();
-			});
-	});
+				resolve()
+
+				sync()
+			})
+	})
 }
 
 export function create(profile: ProfileTypes.Profile): Promise<void> {
