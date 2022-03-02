@@ -1,45 +1,51 @@
 /// <reference path="./References.d.ts"/>
+import * as SuperAgent from "superagent";
 
 export class BaseError extends Error {
-	constructor(name: string, ...args: any[]) {
-		super();
+	constructor(name: string, wrapErr: Error, message: string,
+		args?: {[key: string]: any}) {
 
-		let message: string;
-		let wrapErr: Error;
-		if (args[0] instanceof Error) {
-			wrapErr = args.shift();
-		}
+		super()
 
-		if (args.length > 0) {
-			message = args.shift();
+		if (args) {
+			for (let key in args) {
+				message += " " + key + "=" + args[key]
+			}
 		}
 
 		if (wrapErr) {
-			message += '\n' + wrapErr;
+			message += '\n' + wrapErr
 		}
 
-		this.name = name;
-		this.message = message;
+		this.name = name
+		this.message = message
 		if (wrapErr) {
-			this.stack = wrapErr.stack;
+			this.stack = wrapErr.stack
 		}
 	}
 }
 
 export class ReadError extends BaseError {
-	constructor(...args: any[]) {
-		super("ReadError", ...args);
+	constructor(wrapErr: Error, message: string, args?: {[key: string]: any}) {
+		super("ReadError", wrapErr, message, args)
 	}
 }
 
 export class WriteError extends BaseError {
-	constructor(...args: any[]) {
-		super("WriteError", ...args);
+	constructor(wrapErr: Error, message: string, args?: {[key: string]: any}) {
+		super("WriteError", wrapErr, message, args)
 	}
 }
 
 export class RequestError extends BaseError {
-	constructor(...args: any[]) {
-		super("WriteError", ...args);
+	constructor(wrapErr: Error, res: SuperAgent.Response,
+		message: string, args?: {[key: string]: any}) {
+
+		try {
+			message = res.body.error_msg || message
+		} catch(err) {
+		}
+
+		super("RequestError", wrapErr, message, args)
 	}
 }

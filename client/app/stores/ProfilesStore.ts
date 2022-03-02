@@ -5,7 +5,7 @@ import * as ProfileTypes from '../types/ProfileTypes';
 import * as GlobalTypes from '../types/GlobalTypes';
 
 class ProfilesStore extends EventEmitter {
-	_profiles: ProfileTypes.ProfilesRo = Object.freeze([]);
+	_profiles: ProfileTypes.Profiles = [];
 	_page: number;
 	_pageCount: number;
 	_filter: ProfileTypes.Filter = null;
@@ -14,7 +14,7 @@ class ProfilesStore extends EventEmitter {
 	_token = Dispatcher.register((this._callback).bind(this));
 
 	_reset(): void {
-		this._profiles = Object.freeze([]);
+		this._profiles = [];
 		this._page = undefined;
 		this._pageCount = undefined;
 		this._filter = null;
@@ -24,7 +24,7 @@ class ProfilesStore extends EventEmitter {
 	}
 
 	get profiles(): ProfileTypes.ProfilesRo {
-		return this._profiles;
+		return Object.freeze(this._profiles);
 	}
 
 	get profilesM(): ProfileTypes.Profiles {
@@ -93,18 +93,46 @@ class ProfilesStore extends EventEmitter {
 		this.emitChange();
 	}
 
-	_sync(profiles: ProfileTypes.Profile[], count: number): void {
-		this._map = {};
-		for (let i = 0; i < profiles.length; i++) {
-			profiles[i] = Object.freeze(profiles[i]);
-			this._map[profiles[i].id] = i;
+	_sync(prfls: ProfileTypes.Profiles,
+		systemPrfls: ProfileTypes.Profiles): void {
+
+		for (let prfl of systemPrfls) {
+			prfl.system = true
 		}
 
-		this._count = count;
-		this._profiles = Object.freeze(profiles);
-		this._page = Math.min(this.pages, this.page);
+		let profiles: ProfileTypes.Profiles = prfls.concat(systemPrfls)
+		this._map = {}
 
-		this.emitChange();
+		for (let i = 0; i < profiles.length; i++) {
+			profiles[i] = Object.freeze(ProfileTypes.New(profiles[i]))
+			this._map[profiles[i].id] = i
+		}
+
+		this._count = profiles.length
+		this._profiles = profiles
+		this._page = Math.min(this.pages, this.page)
+	}
+
+	_syncState(profiles: ProfileTypes.ProfilesMap): void {
+		for (let prflId in profiles) {
+			let prflState = profiles[prflId]
+
+			let index = this._map[prflState.id]
+			if (index === undefined) {
+				continue
+			}
+
+			let prfl = {
+				...this._profiles[index],
+			}
+
+			prfl.status = prflState.status
+			prfl.timestamp = prflState.timestamp
+			prfl.server_addr = prflState.server_addr
+			prfl.client_addr = prflState.client_addr
+
+			this._profiles[index] = Object.freeze(prfl)
+		}
 	}
 
 	_callback(action: ProfileTypes.ProfileDispatch): void {
@@ -122,7 +150,19 @@ class ProfilesStore extends EventEmitter {
 				break;
 
 			case ProfileTypes.SYNC:
-				this._sync(action.data.profiles, action.data.count);
+				this._sync(action.data.profiles, action.data.profilesSystem);
+				this.emitChange();
+				break;
+
+			case ProfileTypes.SYNC_STATE:
+				this._syncState(action.data.profilesState);
+				this.emitChange();
+				break;
+
+			case ProfileTypes.SYNC_ALL:
+				this._sync(action.data.profiles, action.data.profilesSystem);
+				this._syncState(action.data.profilesState);
+				this.emitChange();
 				break;
 		}
 	}

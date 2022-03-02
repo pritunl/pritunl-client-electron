@@ -10,15 +10,6 @@ interface State {
 }
 
 const css = {
-	progress: {
-		width: '100%',
-		height: '4px',
-		borderRadius: 0,
-	} as React.CSSProperties,
-	progressBar: {
-		width: '50%',
-		borderRadius: 0,
-	} as React.CSSProperties,
 };
 
 export default class Profiles extends React.Component<{}, State> {
