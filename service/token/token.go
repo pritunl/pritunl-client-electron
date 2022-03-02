@@ -3,7 +3,7 @@ package token
 import (
 	"time"
 
-	"github.com/pritunl/pritunl-client-electron/service/utils"
+	"github.com/dhurley94/pritunl-client-electron/service/utils"
 	"github.com/sirupsen/logrus"
 )
 

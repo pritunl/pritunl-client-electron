@@ -5,8 +5,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/dhurley94/pritunl-client-electron/service/utils"
 	"github.com/dropbox/godropbox/container/set"
-	"github.com/pritunl/pritunl-client-electron/service/utils"
 )
 
 var (

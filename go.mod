@@ -1,4 +1,4 @@
-module github.com/pritunl/pritunl-client-electron
+module github.com/dhurley94/pritunl-client-electron
 
 go 1.17
 

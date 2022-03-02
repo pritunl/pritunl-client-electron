@@ -3,9 +3,9 @@ package handlers
 import (
 	"time"
 
+	"github.com/dhurley94/pritunl-client-electron/service/event"
+	"github.com/dhurley94/pritunl-client-electron/service/utils"
 	"github.com/gin-gonic/gin"
-	"github.com/pritunl/pritunl-client-electron/service/event"
-	"github.com/pritunl/pritunl-client-electron/service/utils"
 )
 
 func wakeupPost(c *gin.Context) {

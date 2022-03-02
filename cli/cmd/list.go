@@ -3,8 +3,8 @@ package cmd
 import (
 	"os"
 
+	"github.com/dhurley94/pritunl-client-electron/cli/sprofile"
 	"github.com/olekukonko/tablewriter"
-	"github.com/pritunl/pritunl-client-electron/cli/sprofile"
 	"github.com/spf13/cobra"
 )
 

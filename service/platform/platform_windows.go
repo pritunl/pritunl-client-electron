@@ -3,9 +3,9 @@ package platform
 import (
 	"os"
 
+	"github.com/dhurley94/pritunl-client-electron/service/errortypes"
 	"github.com/dropbox/godropbox/errors"
 	"github.com/hectane/go-acl"
-	"github.com/pritunl/pritunl-client-electron/service/errortypes"
 	"golang.org/x/sys/windows"
 )
 
