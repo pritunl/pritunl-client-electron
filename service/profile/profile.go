@@ -892,6 +892,7 @@ func (p *Profile) parseLine(line string) {
 
 		p.stop = true
 		p.authFailed = true
+		maximumBackoff := 7
 
 		tokn := p.token
 		if tokn != nil {
@@ -907,8 +908,8 @@ func (p *Profile) parseLine(line string) {
 			}
 			evt.Init()
 
-			if p.SystemProfile != nil && !p.Reconnect {
-				if p.SystemProfile.AuthErrorCount >= 2 {
+			if p.SystemProfile != nil {
+				if p.SystemProfile.AuthErrorCount >= 2 && !p.Reconnect {
 					logrus.WithFields(logrus.Fields{
 						"profile_id": p.SystemProfile.Id,
 					}).Error("profile: Stopping system " +
@@ -928,7 +929,11 @@ func (p *Profile) parseLine(line string) {
 				}
 			}
 
-			time.Sleep(3 * time.Second)
+			if p.SystemProfile.AuthErrorCount >= 1 && p.SystemProfile.AuthErrorCount <= maximumBackoff {
+				time.Sleep(time.Duration(p.SystemProfile.AuthErrorCount) * time.Second)
+			} else {
+				time.Sleep(30 * time.Second)
+			}
 		}
 	} else if strings.Contains(line, "link remote:") {
 		sIndex := strings.LastIndex(line, "]") + 1
