@@ -1,12 +1,12 @@
 package handlers
 
 import (
-	"github.com/dhurley94/pritunl-client-electron/service/errortypes"
-	"github.com/dhurley94/pritunl-client-electron/service/profile"
-	"github.com/dhurley94/pritunl-client-electron/service/sprofile"
-	"github.com/dhurley94/pritunl-client-electron/service/utils"
 	"github.com/dropbox/godropbox/errors"
 	"github.com/gin-gonic/gin"
+	"github.com/pritunl/pritunl-client-electron/service/errortypes"
+	"github.com/pritunl/pritunl-client-electron/service/profile"
+	"github.com/pritunl/pritunl-client-electron/service/sprofile"
+	"github.com/pritunl/pritunl-client-electron/service/utils"
 )
 
 type sprofileData struct {

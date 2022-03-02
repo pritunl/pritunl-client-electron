@@ -5,8 +5,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/dhurley94/pritunl-client-electron/service/utils"
 	"github.com/dropbox/godropbox/errors"
+	"github.com/pritunl/pritunl-client-electron/service/utils"
 )
 
 var Key = ""

@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"github.com/dhurley94/pritunl-client-electron/cli/errortypes"
 	"github.com/dropbox/godropbox/errors"
+	"github.com/pritunl/pritunl-client-electron/cli/errortypes"
 	"github.com/spf13/cobra"
 )
 

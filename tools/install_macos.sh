@@ -16,7 +16,7 @@ function clean {
 
 trap clean EXIT
 
-curl -L https://github.com/dhurley94/pritunl-client-electron/archive/$APP_VER.tar.gz | tar x
+curl -L https://github.com/pritunl/pritunl-client-electron/archive/$APP_VER.tar.gz | tar x
 cd pritunl-client-electron-$APP_VER
 
 # Pritunl

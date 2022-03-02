@@ -7,9 +7,9 @@ import (
 	"path/filepath"
 	"runtime"
 
-	"github.com/dhurley94/pritunl-client-electron/cli/errortypes"
-	"github.com/dhurley94/pritunl-client-electron/service/constants"
 	"github.com/dropbox/godropbox/errors"
+	"github.com/pritunl/pritunl-client-electron/cli/errortypes"
+	"github.com/pritunl/pritunl-client-electron/service/constants"
 )
 
 func Uuid() (id string) {

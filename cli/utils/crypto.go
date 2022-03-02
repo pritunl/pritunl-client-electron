@@ -13,8 +13,8 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/dhurley94/pritunl-client-electron/cli/errortypes"
 	"github.com/dropbox/godropbox/errors"
+	"github.com/pritunl/pritunl-client-electron/cli/errortypes"
 )
 
 var (
