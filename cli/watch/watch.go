@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/dhurley94/pritunl-client-electron/cli/errortypes"
-	"github.com/dhurley94/pritunl-client-electron/cli/sprofile"
-	"github.com/dhurley94/pritunl-client-electron/service/constants"
 	"github.com/dropbox/godropbox/errors"
 	"github.com/gizak/termui/v3"
 	"github.com/gizak/termui/v3/widgets"
+	"github.com/pritunl/pritunl-client-electron/cli/errortypes"
+	"github.com/pritunl/pritunl-client-electron/cli/sprofile"
+	"github.com/pritunl/pritunl-client-electron/service/constants"
 )
 
 func refresh() {

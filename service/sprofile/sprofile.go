@@ -17,6 +17,7 @@ import (
 	"time"
 
 	"github.com/dhurley94/pritunl-client-electron/service/errortypes"
+	"github.com/dhurley94/pritunl-client-electron/service/platform"
 	"github.com/dhurley94/pritunl-client-electron/service/utils"
 	"github.com/dropbox/godropbox/errors"
 )
@@ -496,7 +497,7 @@ func (s *Sprofile) Sync() (updated bool, err error) {
 func (s *Sprofile) Commit() (err error) {
 	prflsPath := GetPath()
 
-	err = utils.ExistsMkdir(prflsPath, 0700)
+	err = platform.MkdirSecure(prflsPath)
 	if err != nil {
 		return
 	}

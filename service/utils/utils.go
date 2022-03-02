@@ -22,6 +22,7 @@ import (
 	"github.com/dhurley94/pritunl-client-electron/service/command"
 	"github.com/dhurley94/pritunl-client-electron/service/constants"
 	"github.com/dhurley94/pritunl-client-electron/service/errortypes"
+	"github.com/dhurley94/pritunl-client-electron/service/platform"
 	"github.com/dropbox/godropbox/container/set"
 	"github.com/dropbox/godropbox/errors"
 	"github.com/sirupsen/logrus"
@@ -660,17 +661,7 @@ func GetAuthPath() (pth string) {
 
 	switch runtime.GOOS {
 	case "windows":
-		pth = filepath.Join("C:\\", "ProgramData", "Pritunl")
-
-		err := os.MkdirAll(pth, 0755)
-		if err != nil {
-			err = &IoError{
-				errors.Wrap(err, "utils: Failed to create data directory"),
-			}
-			panic(err)
-		}
-
-		pth = filepath.Join(pth, "auth")
+		pth = filepath.Join("C:\\", "Program Files (x86)", "Pritunl", "auth")
 		break
 	case "linux", "darwin":
 		pth = filepath.Join(string(filepath.Separator),
@@ -704,11 +695,8 @@ func GetLogPath() (pth string) {
 	case "windows":
 		pth = filepath.Join("C:\\", "ProgramData", "Pritunl")
 
-		err := os.MkdirAll(pth, 0755)
+		err := platform.MkdirSecure(pth)
 		if err != nil {
-			err = &IoError{
-				errors.Wrap(err, "utils: Failed to create data directory"),
-			}
 			panic(err)
 		}
 
@@ -746,7 +734,7 @@ func GetLogPath2() (pth string) {
 	case "windows":
 		pth = filepath.Join("C:\\", "ProgramData", "Pritunl")
 
-		err := os.MkdirAll(pth, 0755)
+		err := platform.MkdirSecure(pth)
 		if err != nil {
 			err = &IoError{
 				errors.Wrap(err, "utils: Failed to create data directory"),
@@ -781,7 +769,7 @@ func InitTempDir() (err error) {
 		pth := filepath.Join(string(filepath.Separator), "tmp", "pritunl")
 
 		_ = os.RemoveAll(pth)
-		err = os.MkdirAll(pth, 0700)
+		err = platform.MkdirSecure(pth)
 		if err != nil {
 			err = &IoError{
 				errors.Wrap(err, "utils: Failed to create temp directory"),
@@ -802,8 +790,7 @@ func GetTempDir() (pth string, err error) {
 
 	if runtime.GOOS == "windows" {
 		pth = filepath.Join("C:\\", "ProgramData", "Pritunl")
-
-		err = os.MkdirAll(pth, 0755)
+		err = platform.MkdirSecure(pth)
 		if err != nil {
 			err = &IoError{
 				errors.Wrap(
@@ -813,33 +800,13 @@ func GetTempDir() (pth string, err error) {
 		}
 	} else {
 		pth = filepath.Join(string(filepath.Separator), "tmp", "pritunl")
-		if _, err = os.Stat(pth); !os.IsNotExist(err) {
-			err = os.Chown(pth, os.Getuid(), os.Getuid())
-			if err != nil {
-				err = &IoError{
-					errors.Wrap(
-						err, "utils: Failed to chown temp directory"),
-				}
-				return
+		err = platform.MkdirSecure(pth)
+		if err != nil {
+			err = &IoError{
+				errors.Wrap(
+					err, "utils: Failed to create temp directory"),
 			}
-
-			err = os.Chmod(pth, 0700)
-			if err != nil {
-				err = &IoError{
-					errors.Wrap(
-						err, "utils: Failed to chmod temp directory"),
-				}
-				return
-			}
-		} else {
-			err = os.MkdirAll(pth, 0700)
-			if err != nil {
-				err = &IoError{
-					errors.Wrap(
-						err, "utils: Failed to create temp directory"),
-				}
-				return
-			}
+			return
 		}
 	}
 

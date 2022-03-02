@@ -18,15 +18,13 @@ import * as Constants from "../Constants"
 
 interface Props {
 	profile: ProfileTypes.ProfileRo
-	onConfirm?: () => void
 }
 
 interface State {
 	disabled: boolean
-	password: string
+	changed: boolean
 	dialog: boolean
-	confirm: number
-	confirming: string
+	profile: ProfileTypes.Profile
 }
 
 const css = {
@@ -50,118 +48,76 @@ const css = {
 	} as React.CSSProperties,
 }
 
-export default class ProfileConnect extends React.Component<Props, State> {
+export default class ProfileSettings extends React.Component<Props, State> {
 	constructor(props: Props, context: any) {
 		super(props, context)
 		this.state = {
 			disabled: false,
-			password: "",
+			changed: false,
 			dialog: false,
-			confirm: 0,
-			confirming: null,
+			profile: null,
 		}
 	}
 
-	connect(mode: string, password: string): void {
-		let prfl = this.props.profile;
+	set(name: string, val: any): void {
+		let profile: any
 
-		let serverPubKey = "";
-		let serverBoxPubKey = "";
-		if (prfl.server_public_key && (mode === "wg" || prfl.token || password)) {
-			serverPubKey = prfl.server_public_key.join("\n");
-			serverBoxPubKey = prfl.server_box_public_key;
+		if (this.state.changed) {
+			profile = {
+				...this.state.profile,
+			}
+		} else {
+			profile = {
+				...this.props.profile,
+			}
 		}
 
-		ProfileActions.loadData(prfl).then((data: string): void => {
-			if (!data) {
-				return;
-			}
+		profile[name] = val
 
-			let connData: ProfileTypes.ProfileData = {
-				id: prfl.id,
-				mode: mode,
-				org_id: prfl.organization_id,
-				user_id: prfl.user_id,
-				server_id: prfl.server_id,
-				sync_hosts: prfl.sync_hosts,
-				sync_token: prfl.sync_token,
-				sync_secret: prfl.sync_secret,
-				username: "pritunl",
-				password: password,
-				server_public_key: serverPubKey,
-				server_box_public_key: serverBoxPubKey,
-				token_ttl: prfl.token_ttl,
-				timeout: true,
-				data: data,
-			};
-
-			ServiceActions.connect(connData);
+		this.setState({
+			...this.state,
+			changed: true,
+			profile: profile,
 		})
 	}
 
-	onConnect = (): void => {
-		if (this.props.profile.password_mode ||
-			this.props.profile.pre_connect_msg) {
+	onSave = (): void => {
+		ProfileActions.commit(this.state.profile).then(() => {
+			this.closeDialog()
+		})
+	}
 
-			this.setState({
-				...this.state,
-				dialog: true,
-			})
-		} else {
-			this.connect("ovpn", "")
-		}
+	openDialog = (): void => {
+		this.setState({
+			...this.state,
+			dialog: true,
+		})
 	}
 
 	closeDialog = (): void => {
 		this.setState({
 			...this.state,
 			dialog: false,
-		})
-	}
-
-	closeDialogConfirm = (): void => {
-		this.setState({
-			...this.state,
-			dialog: false,
-		})
-		if (this.props.onConfirm) {
-			this.props.onConfirm()
-		}
-	}
-
-	clearConfirm = (): void => {
-		this.setState({
-			...this.state,
-			confirm: 0,
-			confirming: null,
+			profile: null,
 		})
 	}
 
 	render(): JSX.Element {
-		let buttonClass = ""
-		let buttonLabel = ""
-		if (!this.props.profile.status ||
-			this.props.profile.status === "disconnected") {
-
-			buttonClass = "bp3-intent-success bp3-icon-link"
-			buttonLabel = "Connect"
-		} else {
-			buttonClass = "bp3-intent-danger bp3-icon-link"
-			buttonLabel = "Disconnect"
-		}
+		let profile: ProfileTypes.Profile = this.state.profile ||
+			this.props.profile;
 
 		return <div style={css.box}>
 			<button
-				className={"bp3-button " + buttonClass}
+				className="bp3-button bp3-icon-cog"
 				style={css.button}
 				type="button"
 				disabled={this.state.disabled}
-				onClick={this.onConnect}
+				onClick={this.openDialog}
 			>
-				{buttonLabel}
+				Settings
 			</button>
 			<Blueprint.Dialog
-				title="Profile Connect"
+				title="Profile Settings"
 				style={css.dialog}
 				isOpen={this.state.dialog}
 				usePortal={true}
@@ -169,29 +125,21 @@ export default class ProfileConnect extends React.Component<Props, State> {
 				onClose={this.closeDialog}
 			>
 				<div className="bp3-dialog-body">
-					Connecting to {this.props.profile.formattedName()}
-					<div hidden={!this.props.profile.pre_connect_msg}>
-						<br/>
-						{this.props.profile.pre_connect_msg}
-					</div>
 					<label
 						className="bp3-label"
 						style={css.label}
 					>
-						Enter password:
+						Name
 						<input
 							className="bp3-input"
 							style={css.input}
 							disabled={this.state.disabled}
 							autoCapitalize="off"
 							spellCheck={false}
-							placeholder="Enter password"
-							value={this.state.password}
+							placeholder="Enter name"
+							value={profile.name || ""}
 							onChange={(evt): void => {
-								this.setState({
-									...this.state,
-									password: evt.target.value,
-								})
+								this.set("name", evt.target.value)
 							}}
 						/>
 					</label>
@@ -206,9 +154,9 @@ export default class ProfileConnect extends React.Component<Props, State> {
 						<button
 							className="bp3-button bp3-intent-success bp3-icon-link"
 							type="button"
-							disabled={this.state.disabled || this.state.password === ""}
-							onClick={this.closeDialogConfirm}
-						>Connect</button>
+							disabled={this.state.disabled || !this.state.changed}
+							onClick={this.onSave}
+						>Save</button>
 					</div>
 				</div>
 			</Blueprint.Dialog>

@@ -3,6 +3,8 @@ import path from "path"
 import * as Constants from "../Constants"
 
 export const SYNC = "profile.sync"
+export const SYNC_STATE = "profile.sync_state"
+export const SYNC_ALL = "profile.sync_all"
 export const TRAVERSE = "profile.traverse"
 export const FILTER = "profile.filter"
 export const CHANGE = "profile.change"
@@ -14,7 +16,7 @@ export interface Profile {
 	uv_name?: string
 	state?: string
 	wg?: boolean
-	disable_reconnect?: boolean
+	disabled?: boolean
 	last_mode?: string
 	organization_id?: string
 	organization?: string
@@ -34,12 +36,19 @@ export interface Profile {
 	server_box_public_key?: string
 	status?: string
 	timestamp?: number
+	server_addr?: string
+	client_addr?: string
+	ovpn_data?: string
 
 	formattedName(): string
+	formattedStatus(): string
 	formattedUptime(): string
 	formatedHosts(): string[]
+	authTypes(): string[]
 	confPath(): string
 	dataPath(): string
+	exportConf(): string
+	exportSystem(): string
 }
 
 export interface Filter {
@@ -48,6 +57,7 @@ export interface Filter {
 }
 
 export type Profiles = Profile[];
+export type ProfilesMap = {[key: string]: Profile}
 
 export type ProfileRo = Readonly<Profile>;
 export type ProfilesRo = ReadonlyArray<ProfileRo>;
@@ -58,6 +68,8 @@ export interface ProfileDispatch {
 		id?: string;
 		profile?: Profile;
 		profiles?: Profiles;
+		profilesSystem?: Profiles;
+		profilesState?: ProfilesMap;
 		page?: number;
 		pageCount?: number;
 		filter?: Filter;
@@ -80,13 +92,32 @@ export interface ProfileData {
 	server_box_public_key?: string;
 	token_ttl?: number;
 	reconnect?: boolean;
-	timeout?: number;
+	timeout?: boolean;
 	data?: string;
 }
 
 export function New(data: Profile): Profile {
 	data.formattedName = function(): string {
 		return this.server + " (" + this.user + ")"
+	}
+
+	data.formattedStatus = function(): string {
+		if (!this.status) {
+			return "Disconnected"
+		}
+
+		switch (this.status) {
+			case "connected":
+				return "Connected"
+			case "connecting":
+				return "Connecting"
+			case "reconnecting":
+				return "Reconnecting"
+			case "disconnecting":
+				return "Disconnecting"
+			default:
+				return this.status
+		}
 	}
 
 	data.formattedUptime = function(): string {
@@ -153,12 +184,79 @@ export function New(data: Profile): Profile {
 		return hosts;
 	}
 
+	data.authTypes = function(): string[] {
+		let passwordMode = this.password_mode
+		if (!passwordMode && this.ovpn_data &&
+			this.ovpn_data.indexOf("auth-user-pass") !== -1) {
+
+			if (this.user) {
+				passwordMode = "otp"
+			} else {
+				passwordMode = "username_password"
+			}
+		}
+
+		return passwordMode.split("_")
+	}
+
 	data.confPath = function(): string {
 		return path.join(Constants.dataPath, "profiles", this.id + ".conf")
 	}
 
 	data.dataPath = function(): string {
 		return path.join(Constants.dataPath, "profiles", this.id + ".ovpn")
+	}
+
+	data.exportConf = function(): string {
+		return JSON.stringify({
+			name: this.name,
+			wg: this.wg,
+			last_mode: this.last_mode,
+			organization_id: this.organization_id,
+			organization: this.organization,
+			server_id: this.server_id,
+			server: this.server,
+			user_id: this.user_id,
+			user: this.user,
+			pre_connect_msg: this.pre_connect_msg,
+			password_mode: this.password_mode,
+			token: this.token,
+			token_ttl: this.token_ttl,
+			disabled: this.disabled,
+			sync_hosts: this.sync_hosts,
+			sync_hash: this.sync_hash,
+			sync_secret: this.sync_secret,
+			sync_token: this.sync_token,
+			server_public_key: this.server_public_key,
+			server_box_public_key: this.server_box_public_key,
+		})
+	}
+
+	data.exportSystem = function(): any {
+		return {
+			id: this.id,
+			name: this.name,
+			wg: this.wg,
+			last_mode: this.last_mode,
+			organization_id: this.organization_id,
+			organization: this.organization,
+			server_id: this.server_id,
+			server: this.server,
+			user_id: this.user_id,
+			user: this.user,
+			pre_connect_msg: this.pre_connect_msg,
+			password_mode: this.password_mode,
+			token: this.token,
+			token_ttl: this.token_ttl,
+			disabled: this.disabled,
+			sync_hosts: this.sync_hosts,
+			sync_hash: this.sync_hash,
+			sync_secret: this.sync_secret,
+			sync_token: this.sync_token,
+			server_public_key: this.server_public_key,
+			server_box_public_key: this.server_box_public_key,
+			ovpn_data: this.ovpn_data,
+		}
 	}
 
 	return data;

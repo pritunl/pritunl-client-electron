@@ -68,12 +68,27 @@ export default class Main extends React.Component<{}, State> {
 	}
 
 	componentDidMount(): void {
+		Theme.addChangeListener(this.onChange);
 	}
 
 	componentWillUnmount(): void {
+		Theme.removeChangeListener(this.onChange);
+	}
+
+	onChange = (): void => {
+		this.setState({
+			...this.state,
+		});
 	}
 
 	render(): JSX.Element {
+		let themeIcon = ""
+		if (Theme.theme() === "dark") {
+			themeIcon = "bp3-icon-flash"
+		} else {
+			themeIcon = "bp3-icon-moon"
+		}
+
 		return <ReactRouter.HashRouter>
 			<div style={css.container} className="layout vertical">
 				<LoadingBar intent="primary" style={css.loading}/>
@@ -138,7 +153,7 @@ export default class Main extends React.Component<{}, State> {
 							>Refresh</button>
 						)}/>
 						<button
-							className="bp3-button bp3-minimal bp3-icon-moon"
+							className={"bp3-button bp3-minimal " + themeIcon}
 							onClick={(): void => {
 								Theme.toggle();
 								Theme.save();

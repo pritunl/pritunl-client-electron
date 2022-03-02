@@ -1,6 +1,10 @@
 Pritunl Client Changelog
 ========================
 
+<%= version %>
+
+Fix local privilege escalation on Windows
+
 Version 1.2.3019.52 2021-12-18
 ------------------------------
 
