@@ -10,10 +10,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/dhurley94/pritunl-client-electron/service/constants"
-	"github.com/dhurley94/pritunl-client-electron/service/sprofile"
-	"github.com/dhurley94/pritunl-client-electron/service/utils"
 	"github.com/dropbox/godropbox/container/set"
+	"github.com/pritunl/pritunl-client-electron/service/constants"
+	"github.com/pritunl/pritunl-client-electron/service/sprofile"
+	"github.com/pritunl/pritunl-client-electron/service/utils"
 	"github.com/sirupsen/logrus"
 )
 

@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/dhurley94/pritunl-client-electron/service/auth"
 	"github.com/dropbox/godropbox/errors"
 	"github.com/gin-gonic/gin"
+	"github.com/pritunl/pritunl-client-electron/service/auth"
 	"github.com/sirupsen/logrus"
 )
 

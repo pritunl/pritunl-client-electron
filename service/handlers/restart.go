@@ -1,8 +1,8 @@
 package handlers
 
 import (
-	"github.com/dhurley94/pritunl-client-electron/service/profile"
 	"github.com/gin-gonic/gin"
+	"github.com/pritunl/pritunl-client-electron/service/profile"
 	"github.com/sirupsen/logrus"
 )
 

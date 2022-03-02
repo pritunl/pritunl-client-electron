@@ -10,11 +10,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/dhurley94/pritunl-client-electron/cli/errortypes"
-	"github.com/dhurley94/pritunl-client-electron/cli/profile"
-	"github.com/dhurley94/pritunl-client-electron/cli/service"
-	"github.com/dhurley94/pritunl-client-electron/cli/utils"
 	"github.com/dropbox/godropbox/errors"
+	"github.com/pritunl/pritunl-client-electron/cli/errortypes"
+	"github.com/pritunl/pritunl-client-electron/cli/profile"
+	"github.com/pritunl/pritunl-client-electron/cli/service"
+	"github.com/pritunl/pritunl-client-electron/cli/utils"
 )
 
 var (
