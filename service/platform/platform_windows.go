@@ -18,19 +18,13 @@ func MkdirSecure(pth string) (err error) {
 		return
 	}
 
-	err = acl.Apply(
+	_ = acl.Apply(
 		pth,
 		true,
 		false,
 		acl.GrantName(windows.GENERIC_ALL, "SYSTEM"),
 		acl.GrantName(windows.GENERIC_ALL, "Administrators"),
 	)
-	if err != nil {
-		err = &errortypes.WriteError{
-			errors.Wrap(err, "utils: Failed to acl directory"),
-		}
-		return
-	}
 
 	return
 }
