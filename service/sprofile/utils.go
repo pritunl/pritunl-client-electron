@@ -215,7 +215,7 @@ func Reload(init bool) (err error) {
 		}
 
 		if init {
-			prfl.State = true
+			prfl.State = !prfl.Disabled
 		} else {
 			curPrfl := curPrfls[prfl.Id]
 			if curPrfl != nil {
