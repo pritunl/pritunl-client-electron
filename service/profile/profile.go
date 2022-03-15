@@ -908,7 +908,7 @@ func (p *Profile) parseLine(line string) {
 			evt.Init()
 
 			if p.SystemProfile != nil {
-				if p.SystemProfile.AuthErrorCount >= 2 {
+				if p.SystemProfile.AuthErrorCount >= 10 {
 					logrus.WithFields(logrus.Fields{
 						"profile_id": p.SystemProfile.Id,
 					}).Error("profile: Stopping system " +
@@ -925,10 +925,12 @@ func (p *Profile) parseLine(line string) {
 						p.SystemProfile.Id,
 						p.SystemProfile.AuthErrorCount+1,
 					)
-				}
-			}
 
-			time.Sleep(3 * time.Second)
+					time.Sleep(10 * time.Second)
+				}
+			} else {
+				time.Sleep(3 * time.Second)
+			}
 		}
 	} else if strings.Contains(line, "link remote:") {
 		sIndex := strings.LastIndex(line, "]") + 1
