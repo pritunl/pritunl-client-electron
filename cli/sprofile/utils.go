@@ -1,10 +1,13 @@
 package sprofile
 
 import (
+	"archive/tar"
 	"bytes"
 	"crypto/tls"
 	"encoding/json"
+	"io"
 	"net/http"
+	"os"
 	"regexp"
 	"runtime"
 	"strings"
@@ -448,6 +451,48 @@ func Import(data string) (err error) {
 			),
 		}
 		return
+	}
+
+	return
+}
+
+func ImportTar(filename string) (err error) {
+	tarFile, err := os.Open(filename)
+	if err != nil {
+		err = errortypes.ReadError{
+			errors.Wrapf(err, "sprofile: Failed to open tar '%s'", tarFile),
+		}
+		return
+	}
+
+	tr := tar.NewReader(tarFile)
+	for {
+		_, err = tr.Next()
+		if err != nil {
+			if err == io.EOF {
+				err = nil
+				break
+			}
+
+			err = errortypes.ReadError{
+				errors.Wrap(err, "sprofile: Failed to read tar header"),
+			}
+			return
+		}
+
+		data := bytes.NewBuffer(nil)
+		_, err = io.Copy(data, tr)
+		if err != nil {
+			err = errortypes.ReadError{
+				errors.Wrap(err, "sprofile: Failed to read tar data"),
+			}
+			return
+		}
+
+		err = Import(data.String())
+		if err != nil {
+			return
+		}
 	}
 
 	return
