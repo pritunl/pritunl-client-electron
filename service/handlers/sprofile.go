@@ -25,7 +25,7 @@ type sprofileData struct {
 	PasswordMode       string   `json:"password_mode"`
 	Token              bool     `json:"token"`
 	TokenTtl           int      `json:"token_ttl"`
-	DisableReconnect   bool     `json:"disable_reconnect"`
+	Disabled           bool     `json:"disabled"`
 	SyncHosts          []string `json:"sync_hosts"`
 	SyncHash           string   `json:"sync_hash"`
 	SyncSecret         string   `json:"sync_secret"`
@@ -88,7 +88,7 @@ func sprofilePut(c *gin.Context) {
 		PasswordMode:       data.PasswordMode,
 		Token:              data.Token,
 		TokenTtl:           data.TokenTtl,
-		DisableReconnect:   data.DisableReconnect,
+		Disabled:           data.Disabled,
 		SyncHosts:          data.SyncHosts,
 		SyncHash:           data.SyncHash,
 		SyncSecret:         data.SyncSecret,

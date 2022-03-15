@@ -49,6 +49,7 @@ var (
 type SprofileData struct {
 	Id                 string `json:"id"`
 	Mode               string `json:"mode"`
+	Disabled           bool   `json:"disabled"`
 	OrgId              string `json:"org_id"`
 	UserId             string `json:"user_id"`
 	ServerId           string `json:"server_id"`

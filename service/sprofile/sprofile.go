@@ -57,7 +57,7 @@ type Sprofile struct {
 	PasswordMode       string   `json:"password_mode"`
 	Token              bool     `json:"token"`
 	TokenTtl           int      `json:"token_ttl"`
-	DisableReconnect   bool     `json:"disable_reconnect"`
+	Disabled           bool     `json:"disabled"`
 	SyncHosts          []string `json:"sync_hosts"`
 	SyncHash           string   `json:"sync_hash"`
 	SyncSecret         string   `json:"sync_secret"`
@@ -86,7 +86,7 @@ type SprofileClient struct {
 	PasswordMode       string   `json:"password_mode"`
 	Token              bool     `json:"token"`
 	TokenTtl           int      `json:"token_ttl"`
-	DisableReconnect   bool     `json:"disable_reconnect"`
+	Disabled           bool     `json:"disabled"`
 	SyncHosts          []string `json:"sync_hosts"`
 	SyncHash           string   `json:"sync_hash"`
 	SyncSecret         string   `json:"sync_secret"`
@@ -118,7 +118,7 @@ func (s *Sprofile) Client() (sprflc *SprofileClient) {
 		PasswordMode:       s.PasswordMode,
 		Token:              s.Token,
 		TokenTtl:           s.TokenTtl,
-		DisableReconnect:   s.DisableReconnect,
+		Disabled:           s.Disabled,
 		SyncHosts:          s.SyncHosts,
 		SyncHash:           s.SyncHash,
 		SyncSecret:         s.SyncSecret,
@@ -164,7 +164,7 @@ func (s *Sprofile) Copy() (sprfl *Sprofile) {
 		PasswordMode:       s.PasswordMode,
 		Token:              s.Token,
 		TokenTtl:           s.TokenTtl,
-		DisableReconnect:   s.DisableReconnect,
+		Disabled:           s.Disabled,
 		SyncHosts:          syncHosts,
 		SyncHash:           s.SyncHash,
 		SyncSecret:         s.SyncSecret,
@@ -327,7 +327,7 @@ func (s *Sprofile) syncUpdate(data string) (updated bool, err error) {
 		s.PasswordMode = confData.PasswordMode
 		s.Token = confData.Token
 		s.TokenTtl = confData.TokenTtl
-		s.DisableReconnect = confData.DisableReconnect
+		s.Disabled = confData.Disabled
 		s.SyncHosts = confData.SyncHosts
 		s.SyncHash = confData.SyncHash
 		s.ServerPublicKey = confData.ServerPublicKey

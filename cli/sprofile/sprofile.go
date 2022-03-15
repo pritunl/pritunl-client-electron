@@ -28,7 +28,7 @@ type Sprofile struct {
 	PasswordMode       string           `json:"password_mode"`
 	Token              bool             `json:"token"`
 	TokenTtl           int              `json:"token_ttl"`
-	DisableReconnect   bool             `json:"disable_reconnect"`
+	Disabled           bool             `json:"disabled"`
 	SyncHosts          []string         `json:"sync_hosts"`
 	SyncHash           string           `json:"sync_hash"`
 	SyncSecret         string           `json:"sync_secret"`
