@@ -2,6 +2,40 @@ import process from "process";
 import path from "path";
 import electron from "electron";
 
+let connTray
+let disconnTray
+if (process.platform === "darwin") {
+	connTray = path.join(__dirname, "img",
+		"tray_connected_osxTemplate.png")
+	disconnTray = path.join(__dirname, "img",
+		"tray_disconnected_osxTemplate.png")
+} else if (process.platform === "win32") {
+	connTray = path.join(__dirname, "img",
+		"tray_connected_win.png")
+	disconnTray = path.join(__dirname, "img",
+		"tray_disconnected_win.png");
+} else if (process.platform === "linux") {
+	connTray = path.join(__dirname, "img",
+		"tray_connected_linux_light.png")
+	disconnTray = path.join(__dirname, "img",
+		"tray_disconnected_linux_light.png")
+} else {
+	connTray = path.join(__dirname, "img",
+		"tray_connected.png")
+	disconnTray = path.join(__dirname, "img",
+		"tray_disconnected.png")
+}
+let icon = path.join(__dirname, "img", "logo.png")
+
+let orig = true
+if (process.argv.indexOf('--beta') !== -1) {
+	orig = false
+}
+
+if (orig) {
+	require("@electron/remote/main").initialize()
+}
+
 class Main {
 	window: electron.BrowserWindow;
 
@@ -33,27 +67,52 @@ class Main {
 			zoomFactor = 0.8;
 		}
 
-		this.window = new electron.BrowserWindow({
-			title: 'Pritunl Client',
-			icon: path.join(__dirname, '..', 'logo.png'),
-			frame: true,
-			autoHideMenuBar: true,
-			fullscreen: false,
-			show: false,
-			width: width,
-			height: height,
-			minWidth: minWidth,
-			minHeight: minHeight,
-			maxWidth: maxWidth,
-			maxHeight: maxHeight,
-			backgroundColor: '#151719',
-			webPreferences: {
-				zoomFactor: zoomFactor,
-				devTools: true,
-				nodeIntegration: true,
-				contextIsolation: false
-			}
-		});
+		if (orig) {
+			this.window = new electron.BrowserWindow({
+				title: 'Pritunl Client',
+				icon: path.join(__dirname, '..', 'logo.png'),
+				frame: true,
+				autoHideMenuBar: true,
+				fullscreen: false,
+				show: false,
+				width: width,
+				height: height,
+				minWidth: minWidth,
+				minHeight: minHeight,
+				maxWidth: maxWidth,
+				maxHeight: maxHeight,
+				backgroundColor: '#151719',
+				webPreferences: {
+					zoomFactor: zoomFactor,
+					devTools: true,
+					enableRemoteModule: true,
+					nodeIntegration: true,
+					contextIsolation: false
+				} as any
+			});
+		} else {
+			this.window = new electron.BrowserWindow({
+				title: 'Pritunl Client',
+				icon: path.join(__dirname, '..', 'logo.png'),
+				frame: true,
+				autoHideMenuBar: true,
+				fullscreen: false,
+				show: false,
+				width: width,
+				height: height,
+				minWidth: minWidth,
+				minHeight: minHeight,
+				maxWidth: maxWidth,
+				maxHeight: maxHeight,
+				backgroundColor: '#151719',
+				webPreferences: {
+					zoomFactor: zoomFactor,
+					devTools: true,
+					nodeIntegration: true,
+					contextIsolation: false
+				}
+			});
+		}
 
 		this.window.on('closed', (): void => {
 			electron.app.quit();
@@ -84,7 +143,14 @@ class Main {
 			}
 		}, 800);
 
-		let indexUrl = 'file://' + path.join(__dirname, '..', 'index.html');
+		let indexUrl = ''
+		if (orig) {
+			indexUrl = 'file://' + path.join(__dirname, '..',
+				'index_orig.html');
+		} else {
+			indexUrl = 'file://' + path.join(__dirname, '..',
+				'index.html');
+		}
 		indexUrl += '?dev=' + (process.argv.indexOf('--dev') !== -1 ?
 			'true' : 'false');
 		indexUrl += '&dataPath=' + encodeURIComponent(
