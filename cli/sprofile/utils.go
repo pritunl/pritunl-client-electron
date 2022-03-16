@@ -345,7 +345,68 @@ func Start(sprflId, mode, password string) (err error) {
 
 	if resp.StatusCode != 200 {
 		err = errortypes.RequestError{
-			errors.Wrap(err, "sprofile: Unknown request error"),
+			errors.Wrapf(err, "sprofile: Unknown request error %d",
+				resp.StatusCode),
+		}
+		return
+	}
+
+	return
+}
+
+func SetState(sprflId string, state bool) (err error) {
+	sprfl, err := Match(sprflId)
+	if err != nil {
+		return
+	}
+
+	sprfl.Disabled = !state
+
+	reqUrl := service.GetAddress() + "/sprofile"
+
+	authKey, err := service.GetAuthKey()
+	if err != nil {
+		return
+	}
+
+	data, err := json.Marshal(sprfl)
+	if err != nil {
+		err = errortypes.RequestError{
+			errors.Wrap(err, "sprofile: Json marshal error"),
+		}
+		return
+	}
+
+	body := bytes.NewBuffer(data)
+
+	req, err := http.NewRequest("PUT", reqUrl, body)
+	if err != nil {
+		err = errortypes.RequestError{
+			errors.Wrap(err, "sprofile: Post request failed"),
+		}
+		return
+	}
+
+	if runtime.GOOS == "linux" || runtime.GOOS == "darwin" {
+		req.Host = "unix"
+	}
+	req.Header.Set("Auth-Key", authKey)
+	req.Header.Set("User-Agent", "pritunl")
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := service.GetClient().Do(req)
+	if err != nil {
+		err = errortypes.RequestError{
+			errors.Wrap(err, "sprofile: Request failed"),
+		}
+		return
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		err = errortypes.RequestError{
+			errors.Wrapf(err, "sprofile: Unknown request error %d",
+				resp.StatusCode),
 		}
 		return
 	}
