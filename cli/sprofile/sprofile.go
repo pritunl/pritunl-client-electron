@@ -61,6 +61,22 @@ func (s *Sprofile) FormatedName() (name string) {
 	return
 }
 
+func (s *Sprofile) FormatedRunState() string {
+	if s.State {
+		return "Active"
+	} else {
+		return "Inactive"
+	}
+}
+
+func (s *Sprofile) FormatedState() string {
+	if s.Disabled {
+		return "Disabled"
+	} else {
+		return "Enabled"
+	}
+}
+
 func (s *Sprofile) GetLogs() (data string, err error) {
 	reqUrl := service.GetAddress() + "/sprofile/" + s.Id + "/log"
 
