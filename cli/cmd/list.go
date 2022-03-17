@@ -22,6 +22,8 @@ var ListCmd = &cobra.Command{
 		table.SetHeader([]string{
 			"ID",
 			"Name",
+			"State",
+			"Autostart",
 			"Online For",
 			"Server Address",
 			"Client Address",
@@ -33,6 +35,8 @@ var ListCmd = &cobra.Command{
 				table.Append([]string{
 					sprfl.Id,
 					sprfl.FormatedName(),
+					sprfl.FormatedRunState(),
+					sprfl.FormatedState(),
 					sprfl.Profile.FormatedTime(),
 					sprfl.Profile.ServerAddr,
 					sprfl.Profile.ClientAddr,
@@ -41,6 +45,8 @@ var ListCmd = &cobra.Command{
 				table.Append([]string{
 					sprfl.Id,
 					sprfl.FormatedName(),
+					sprfl.FormatedRunState(),
+					sprfl.FormatedState(),
 					"Disconnected",
 					"-",
 					"-",
