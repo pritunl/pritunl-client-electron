@@ -148,7 +148,8 @@ func Stop(sprflId string) (err error) {
 
 	if resp.StatusCode != 200 {
 		err = errortypes.RequestError{
-			errors.Wrap(err, "sprofile: Unknown request error"),
+			errors.Wrapf(err, "sprofile: Unknown request error %d",
+				resp.StatusCode),
 		}
 		return
 	}
@@ -207,7 +208,8 @@ func Delete(sprflId string) (err error) {
 
 	if resp.StatusCode != 200 {
 		err = errortypes.RequestError{
-			errors.Wrap(err, "sprofile: Unknown request error"),
+			errors.Wrapf(err, "sprofile: Unknown request error %d",
+				resp.StatusCode),
 		}
 		return
 	}
@@ -506,11 +508,8 @@ func Import(data string) (err error) {
 
 	if resp.StatusCode != 200 {
 		err = errortypes.RequestError{
-			errors.Wrapf(
-				err,
-				"sprofile: Unknown request error %d",
-				resp.StatusCode,
-			),
+			errors.Wrapf(err, "sprofile: Unknown request error %d",
+				resp.StatusCode),
 		}
 		return
 	}
