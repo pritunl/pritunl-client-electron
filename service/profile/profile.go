@@ -281,6 +281,8 @@ func (p *Profile) write() (pth string, err error) {
 		data += line + "\n"
 	}
 
+	data = strings.ReplaceAll(data, "ping-restart", "ping-exit")
+
 	_ = os.Remove(pth)
 	err = ioutil.WriteFile(pth, []byte(data), os.FileMode(0600))
 	if err != nil {
