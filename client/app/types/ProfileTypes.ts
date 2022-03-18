@@ -98,6 +98,9 @@ export interface ProfileData {
 
 export function New(data: Profile): Profile {
 	data.formattedName = function(): string {
+		if (this.name) {
+			return this.name
+		}
 		return this.server + " (" + this.user + ")"
 	}
 
