@@ -11,7 +11,7 @@ function push(level: string, msg: string): void {
 
 	console.error(msg)
 
-	let logPath = path.join(electron.app.getPath("userData"), "pritunl.json")
+	let logPath = path.join(electron.app.getPath("userData"), "pritunl.log")
 
 	fs.appendFile(logPath, msg, (err: Error): void => {
 		if (err) {
