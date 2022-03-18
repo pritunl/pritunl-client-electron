@@ -6,12 +6,12 @@ import (
 	"runtime/debug"
 	"time"
 
-	"github.com/sirupsen/logrus"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"github.com/pritunl/pritunl-client-electron/service/event"
 	"github.com/pritunl/pritunl-client-electron/service/profile"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
+	"github.com/sirupsen/logrus"
 )
 
 const (
@@ -32,6 +32,8 @@ var (
 )
 
 func eventsGet(c *gin.Context) {
+	event.LastPong = time.Now()
+
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
 		utils.AbortWithError(c, 500, err)
@@ -40,6 +42,7 @@ func eventsGet(c *gin.Context) {
 
 	conn.SetReadDeadline(time.Now().Add(pingWait))
 	conn.SetPongHandler(func(x string) (err error) {
+		event.LastPong = time.Now()
 		conn.SetReadDeadline(time.Now().Add(pingWait))
 		return
 	})

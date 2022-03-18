@@ -10,6 +10,7 @@ import (
 
 var (
 	LastAwake = time.Now()
+	LastPong  = time.Time{}
 	listeners = struct {
 		sync.RWMutex
 		s set.Set
