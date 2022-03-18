@@ -40,7 +40,7 @@ export default class Profiles extends React.Component<{}, State> {
 
 		this.state.profiles.forEach((prfl: ProfileTypes.ProfileRo): void => {
 			profilesDom.push(<Profile
-				key={prfl.server_id}
+				key={prfl.id}
 				profile={prfl}
 			/>);
 		});
