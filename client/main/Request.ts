@@ -1,23 +1,9 @@
 import http from "http"
 import https from "https"
+import * as Logger from "./Logger"
+import * as Errors from "./Errors"
 
 export var DefaultTimeout = 5
-
-export class RequestError extends Error {
-	constructor(wrapErr: Error, message: string) {
-		super()
-
-		if (wrapErr) {
-			message += "\n" + wrapErr
-		}
-
-		this.name = "RequestError"
-		this.message = message
-		if (wrapErr) {
-			this.stack = wrapErr.stack
-		}
-	}
-}
 
 export class Response {
 	response: http.IncomingMessage
@@ -183,13 +169,16 @@ export class Request {
 				}
 
 				req.on("timeout", () => {
-					let err = new RequestError(null, "Request: Timeout error")
+					let err = new Errors.RequestError(null, "Request: Timeout error")
 					req.destroy(err)
+					Logger.error(err.message)
 					reject(err)
 				})
 
 				req.on("error", (err) => {
-					reject(new RequestError(err, "Request: HTTP error"))
+					err = new Errors.RequestError(err, "Request: HTTP error")
+					Logger.error(err.message)
+					reject(err)
 				})
 
 				if (this.data) {
@@ -198,7 +187,9 @@ export class Request {
 
 				req.end()
 			} catch (err) {
-				reject(new RequestError(err, "Request: Exception"))
+				err = new Errors.RequestError(err, "Request: Exception")
+				Logger.error(err.message)
+				reject(err)
 			}
 		})
 	}
