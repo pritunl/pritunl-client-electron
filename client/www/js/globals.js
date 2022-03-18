@@ -1,4 +1,7 @@
 var util = require('util');
+var process = require('process');
+var path = require('path');
+var constants = require('./constants.js');
 
 global.ErrorInit = function(name, args) {
   var message;
@@ -28,3 +31,34 @@ global.remoteRequire = function() {
   }
   return require('electron');
 };
+
+if (process.platform === 'linux' || process.platform === 'darwin') {
+  global.unixSocket = true;
+  constants.unixSocket = true;
+}
+
+var args = {};
+var queryVals = window.location.search.substring(1).split('&');
+for (var item of queryVals) {
+  var items = item.split('=');
+  if (items.length < 2) {
+    continue;
+  }
+
+  var key = items[0];
+  var value = items.slice(1).join('=');
+
+  args[key] = decodeURIComponent(value);
+}
+
+if (args['dev'] === 'true') {
+  global.production = false;
+  global.authPath = path.join(__dirname, '..', '..', 'dev', 'auth');
+} else {
+  if (process.platform === 'win32') {
+    global.authPath = path.join(
+      'C:\\', 'Program Files (x86)', 'Pritunl', 'auth');
+  } else {
+    global.authPath = path.join(path.sep, 'var', 'run', 'pritunl.auth');
+  }
+}
