@@ -824,8 +824,7 @@ func (p *Profile) parseLine(line string) {
 
 		p.stop = true
 	} else if strings.Contains(line, "Inactivity timeout") ||
-		strings.Contains(line, "Connection reset") ||
-		strings.Contains(line, "Duplicate nonce") {
+		strings.Contains(line, "Connection reset") {
 
 		go func() {
 			defer func() {
