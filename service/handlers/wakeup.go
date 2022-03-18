@@ -1,10 +1,11 @@
 package handlers
 
 import (
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/pritunl/pritunl-client-electron/service/event"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
-	"time"
 )
 
 func wakeupPost(c *gin.Context) {
@@ -14,9 +15,13 @@ func wakeupPost(c *gin.Context) {
 	}
 	evt.Init()
 
-	for i := 0; i < 50; i++ {
+	if time.Since(event.LastPong) > 45*time.Second {
+		c.String(404, "")
+	}
+
+	for i := 0; i < 100; i++ {
 		time.Sleep(5 * time.Millisecond)
-		if utils.SinceSafe(event.LastAwake) < 200*time.Millisecond {
+		if utils.SinceSafe(event.LastAwake) < 300*time.Millisecond {
 			c.String(200, "")
 			return
 		}
