@@ -2,8 +2,10 @@ import process from "process"
 import path from "path"
 import electron from "electron"
 
-let connTray
-let disconnTray
+import * as Service from "./Service"
+
+let connTray = ""
+let disconnTray = ""
 if (process.platform === "darwin") {
 	connTray = path.join(__dirname, "..", "img",
 		"tray_connected_osxTemplate.png")
@@ -336,8 +338,25 @@ electron.app.on("ready", (): void => {
 		] as any)
 		electron.Menu.setApplicationMenu(appMenu)
 
-		let main = new Main()
-		main.run()
+		Service.connect(process.argv.indexOf("--dev") !== -1).then(() => {
+			Service.wakeup().then((awake: boolean) => {
+				if (awake) {
+					electron.app.quit()
+				} else {
+					let main = new Main()
+					main.run()
+
+					Service.subscribe((event: Service.Event): void => {
+						if (event.type === "wakeup") {
+							Service.send("awake")
+
+							let main = new Main()
+							main.run()
+						}
+					})
+				}
+			})
+		})
 	} catch (error) {
 		throw error
 	}
