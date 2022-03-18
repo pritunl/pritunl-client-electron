@@ -1810,7 +1810,7 @@ func (p *Profile) reqWg(remote string) (wgData *WgData, err error) {
 
 	if res.StatusCode != 200 {
 		err = &errortypes.RequestError{
-			errors.Wrapf(err, "profile: Bad status %n code from server",
+			errors.Wrapf(err, "profile: Bad status %d code from server",
 				res.StatusCode),
 		}
 		return
@@ -2108,7 +2108,7 @@ func (p *Profile) pingWg() (wgData *WgPingData, retry bool, err error) {
 		}
 
 		err = &errortypes.RequestError{
-			errors.Wrapf(err, "profile: Bad status %n code from server",
+			errors.Wrapf(err, "profile: Bad status %d code from server",
 				res.StatusCode),
 		}
 		return
