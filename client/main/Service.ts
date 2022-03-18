@@ -33,7 +33,7 @@ function getAuthPath(): string {
 		return path.join(__dirname, "..", "..", "dev", "auth")
 	} else {
 		if (process.platform === "win32") {
-			return path.join("C:\\", "ProgramData", "Pritunl", "auth")
+			return path.join("C:\\", "Program Files (x86)", "Pritunl", "auth")
 		} else {
 			return path.join(path.sep, "var", "run", "pritunl.auth")
 		}
