@@ -38,6 +38,5 @@ var AddCmd = &cobra.Command{
 				return
 			}
 		}
-
 	},
 }
