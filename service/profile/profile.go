@@ -40,6 +40,7 @@ import (
 	"github.com/pritunl/pritunl-client-electron/service/errortypes"
 	"github.com/pritunl/pritunl-client-electron/service/event"
 	"github.com/pritunl/pritunl-client-electron/service/network"
+	"github.com/pritunl/pritunl-client-electron/service/parser"
 	"github.com/pritunl/pritunl-client-electron/service/platform"
 	"github.com/pritunl/pritunl-client-electron/service/sprofile"
 	"github.com/pritunl/pritunl-client-electron/service/token"
@@ -225,7 +226,8 @@ func (p *Profile) write() (pth string, err error) {
 
 	pth = filepath.Join(rootDir, p.Id)
 
-	data := ""
+	prsr := parser.Import(p.Data)
+	data := prsr.Export()
 
 	if runtime.GOOS == "windows" {
 		p.managementPort = ManagementPortAcquire()
@@ -243,45 +245,6 @@ func (p *Profile) write() (pth string, err error) {
 			strings.ReplaceAll(managementPassPath, "\\", "\\\\"),
 		)
 	}
-
-	inData := strings.ReplaceAll(p.Data, ";", "")
-	inData = strings.ReplaceAll(inData, "\r", "")
-
-	for _, line := range strings.Split(inData, "\n") {
-		trimLine := strings.ToLower(line)
-		trimLine = profileReg.ReplaceAllString(trimLine, "")
-		trimLine = strings.TrimSpace(trimLine)
-
-		if (strings.Contains(trimLine, "setenv ") ||
-			strings.HasPrefix(trimLine, "setenv")) &&
-			!strings.HasPrefix(trimLine, "setenv uv_id ") &&
-			!strings.HasPrefix(trimLine, "setenv uv_name ") {
-
-			continue
-		}
-
-		if trimLine == "" ||
-			strings.Contains(trimLine, "ld_preload") ||
-			strings.Contains(trimLine, "script-security") ||
-			strings.HasPrefix(trimLine, "log ") ||
-			strings.HasPrefix(trimLine, "log-append ") ||
-			strings.HasPrefix(trimLine, "syslog ") ||
-			strings.HasPrefix(trimLine, "management ") ||
-			strings.HasPrefix(trimLine, "plugin ") ||
-			strings.HasPrefix(trimLine, "up ") ||
-			strings.HasPrefix(trimLine, "down ") ||
-			strings.HasPrefix(trimLine, "route-pre-down ") ||
-			strings.HasPrefix(trimLine, "tls-verify ") ||
-			strings.HasPrefix(trimLine, "ipchange ") ||
-			strings.HasPrefix(trimLine, "route-up ") ||
-			strings.HasPrefix(trimLine, "iproute ") {
-
-			continue
-		}
-		data += line + "\n"
-	}
-
-	data = strings.ReplaceAll(data, "ping-restart", "ping-exit")
 
 	_ = os.Remove(pth)
 	err = ioutil.WriteFile(pth, []byte(data), os.FileMode(0600))
