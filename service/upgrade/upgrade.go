@@ -10,6 +10,7 @@ import (
 
 	"github.com/dropbox/godropbox/errors"
 	"github.com/pritunl/pritunl-client-electron/service/errortypes"
+	"github.com/pritunl/pritunl-client-electron/service/platform"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
 	"github.com/sirupsen/logrus"
 )
@@ -41,6 +42,11 @@ func WindowsUpgrade() (err error) {
 			}
 			return
 		}
+	}
+
+	err = platform.MkdirSecure(destDir)
+	if err != nil {
+		return
 	}
 
 	for _, file := range files {
