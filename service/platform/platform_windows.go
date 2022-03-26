@@ -2,6 +2,7 @@ package platform
 
 import (
 	"os"
+	"strings"
 
 	"github.com/dropbox/godropbox/errors"
 	"github.com/hectane/go-acl"
@@ -18,13 +19,15 @@ func MkdirSecure(pth string) (err error) {
 		return
 	}
 
-	_ = acl.Apply(
-		pth,
-		true,
-		false,
-		acl.GrantName(windows.GENERIC_ALL, "SYSTEM"),
-		acl.GrantName(windows.GENERIC_ALL, "Administrators"),
-	)
+	if !strings.Contains(pth, "System32") {
+		_ = acl.Apply(
+			pth,
+			true,
+			false,
+			acl.GrantName(windows.GENERIC_ALL, "SYSTEM"),
+			acl.GrantName(windows.GENERIC_ALL, "Administrators"),
+		)
+	}
 
 	return
 }
