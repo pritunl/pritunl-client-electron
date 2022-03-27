@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"path"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -85,8 +84,7 @@ func SetAuthErrorCount(prflId string, errorCount int) {
 func GetPath() string {
 	switch runtime.GOOS {
 	case "windows":
-		return filepath.Join("C:\\", "Windows", "System32",
-			"Pritunl", "Profiles")
+		return filepath.Join("C:\\", "ProgramData", "Pritunl", "Profiles")
 	case "darwin":
 		return filepath.Join("/", "var",
 			"lib", "pritunl-client", "profiles")
@@ -151,8 +149,8 @@ func GetAllClient() (prfls []*SprofileClient, err error) {
 
 func Remove(prflId string) {
 	prflsPath := GetPath()
-	prflPth := path.Join(prflsPath, fmt.Sprintf("%s.conf", prflId))
-	logPth := path.Join(prflsPath, fmt.Sprintf("%s.log", prflId))
+	prflPth := filepath.Join(prflsPath, fmt.Sprintf("%s.conf", prflId))
+	logPth := filepath.Join(prflsPath, fmt.Sprintf("%s.log", prflId))
 
 	_ = os.Remove(prflPth)
 	_ = os.Remove(logPth)
@@ -187,7 +185,7 @@ func Reload(init bool) (err error) {
 
 	for _, file := range files {
 		name := file.Name()
-		pth := path.Join(prflsPath, name)
+		pth := filepath.Join(prflsPath, name)
 
 		if !strings.HasSuffix(name, ".conf") {
 			continue
@@ -235,7 +233,7 @@ func Reload(init bool) (err error) {
 
 func ClearLog(prflId string) (err error) {
 	prflsPath := GetPath()
-	pth := path.Join(prflsPath, fmt.Sprintf("%s.log", prflId))
+	pth := filepath.Join(prflsPath, fmt.Sprintf("%s.log", prflId))
 
 	err = utils.CreateWrite(pth, "", 0600)
 	if err != nil {
