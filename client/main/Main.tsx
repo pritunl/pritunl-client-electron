@@ -8,6 +8,7 @@ import Config from "./Config"
 let tray: electron.Tray
 let awaken: boolean
 let ready: boolean
+let readyError: string
 
 let orig = true
 if (process.argv.indexOf("--beta") !== -1) {
@@ -28,6 +29,11 @@ process.on("uncaughtException", function (error) {
 		errorMsg = error.stack
 	} else {
 		errorMsg = String(error)
+	}
+
+	if (!ready) {
+		readyError = errorMsg
+		return
 	}
 
 	electron.dialog.showMessageBox(null, {
@@ -405,6 +411,18 @@ electron.app.on("ready", (): void => {
 	})
 
 	try {
+		if (readyError) {
+			electron.dialog.showMessageBox(null, {
+				type: "error",
+				buttons: ["Exit"],
+				title: "Pritunl Client - Process Error",
+				message: "Error occured in main process:\n\n" + readyError,
+			}).then(function() {
+				electron.app.quit()
+			})
+			return
+		}
+
 		ready = true
 		init()
 	} catch (error) {
