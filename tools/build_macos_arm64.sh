@@ -5,14 +5,13 @@ cd "$( dirname "${BASH_SOURCE[0]}" )"
 cd ../
 
 rm -rf build
-git pull
 
 export APP_VER="$(cat client/package.json | grep version | cut -d '"' -f 4)"
 
 # Service
 cd service
-GO111MODULE=off go get -u -f
-GO111MODULE=off go build -v
+go get -u
+go build -v
 cd ..
 mkdir -p build/resources
 cp service/service build/resources/pritunl-service
@@ -20,8 +19,8 @@ codesign --force --timestamp --options=runtime -s "Developer ID Application: Pri
 
 # CLI
 cd cli
-GO111MODULE=off go get -u -f
-GO111MODULE=off go build -v
+go get -u
+go build -v
 cd ..
 mkdir -p build/resources
 cp cli/cli build/resources/pritunl-client

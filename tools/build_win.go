@@ -66,7 +66,7 @@ func main() {
 		panic(err)
 	}
 
-	cmd = exec.Command("go", "get", "-u", "-f")
+	cmd = exec.Command("go", "get", "-u")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err = cmd.Run()
