@@ -226,5 +226,14 @@ func Copy(src, dst string) (err error) {
 		}
 		return
 	}
-	return out.Close()
+
+	err = out.Close()
+	if err != nil {
+		err = &errortypes.WriteError{
+			errors.Wrapf(err, "utils: Failed to write file '%s'", dst),
+		}
+		return
+	}
+
+	return
 }
