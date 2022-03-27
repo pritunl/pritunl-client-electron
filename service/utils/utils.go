@@ -646,22 +646,19 @@ func GetAuthPath() (pth string) {
 	if constants.Development {
 		pth = filepath.Join(GetRootDir(), "..", "dev")
 
-		err := os.MkdirAll(pth, 0755)
-		if err != nil {
-			err = &IoError{
-				errors.Wrap(err, "utils: Failed to create dev directory"),
-			}
-			panic(err)
-		}
+		_ = os.MkdirAll(pth, 0755)
 
 		pth = filepath.Join(pth, "auth")
-
 		return
 	}
 
 	switch runtime.GOOS {
 	case "windows":
-		pth = filepath.Join("C:\\", "ProgramData", "Pritunl", "auth")
+		pth = filepath.Join("C:\\", "ProgramData", "Pritunl")
+
+		_ = platform.MkdirReadSecure(pth)
+
+		pth = filepath.Join(pth, "auth")
 		break
 	case "linux", "darwin":
 		pth = filepath.Join(string(filepath.Separator),
@@ -678,16 +675,9 @@ func GetLogPath() (pth string) {
 	if constants.Development {
 		pth = filepath.Join(GetRootDir(), "..", "dev", "log")
 
-		err := os.MkdirAll(pth, 0755)
-		if err != nil {
-			err = &IoError{
-				errors.Wrap(err, "utils: Failed to create dev directory"),
-			}
-			panic(err)
-		}
+		_ = os.MkdirAll(pth, 0755)
 
 		pth = filepath.Join(pth, "pritunl-client.log")
-
 		return
 	}
 
@@ -695,10 +685,7 @@ func GetLogPath() (pth string) {
 	case "windows":
 		pth = filepath.Join("C:\\", "ProgramData", "Pritunl")
 
-		err := platform.MkdirSecure(pth)
-		if err != nil {
-			panic(err)
-		}
+		_ = platform.MkdirReadSecure(pth)
 
 		pth = filepath.Join(pth, "pritunl-client.log")
 		break
@@ -717,16 +704,9 @@ func GetLogPath2() (pth string) {
 	if constants.Development {
 		pth = filepath.Join(GetRootDir(), "..", "dev", "log")
 
-		err := os.MkdirAll(pth, 0755)
-		if err != nil {
-			err = &IoError{
-				errors.Wrap(err, "utils: Failed to create dev directory"),
-			}
-			panic(err)
-		}
+		_ = os.MkdirAll(pth, 0755)
 
 		pth = filepath.Join(pth, "pritunl-client.log.1")
-
 		return
 	}
 
@@ -734,13 +714,7 @@ func GetLogPath2() (pth string) {
 	case "windows":
 		pth = filepath.Join("C:\\", "ProgramData", "Pritunl")
 
-		err := platform.MkdirSecure(pth)
-		if err != nil {
-			err = &IoError{
-				errors.Wrap(err, "utils: Failed to create data directory"),
-			}
-			panic(err)
-		}
+		_ = platform.MkdirReadSecure(pth)
 
 		pth = filepath.Join(pth, "pritunl-client.log.1")
 		break
@@ -789,7 +763,7 @@ func GetTempDir() (pth string, err error) {
 	}
 
 	if runtime.GOOS == "windows" {
-		pth = filepath.Join("C:\\", "Windows", "System32", "Pritunl")
+		pth = filepath.Join("C:\\", "ProgramData", "Pritunl", "Temp")
 		err = platform.MkdirSecure(pth)
 		if err != nil {
 			err = &IoError{
@@ -817,16 +791,9 @@ func GetPidPath() (pth string) {
 	if constants.Development {
 		pth = filepath.Join(GetRootDir(), "..", "dev")
 
-		err := os.MkdirAll(pth, 0755)
-		if err != nil {
-			err = &IoError{
-				errors.Wrap(err, "utils: Failed to create dev directory"),
-			}
-			panic(err)
-		}
+		_ = os.MkdirAll(pth, 0755)
 
 		pth = filepath.Join(pth, "pritunl.pid")
-
 		return
 	}
 
