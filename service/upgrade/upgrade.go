@@ -16,8 +16,10 @@ import (
 )
 
 func WindowsUpgrade() (err error) {
-	sourceDir := filepath.Join("C:\\", "ProgramData", "Pritunl")
-	destDir := filepath.Join("C:\\", "Windows", "System32", "Pritunl")
+	dataDir := filepath.Join("C:\\", "ProgramData", "Pritunl")
+	sourceDir := filepath.Join("C:\\", "ProgramData", "Pritunl", "Profiles")
+	destDir := filepath.Join("C:\\", "Windows", "System32",
+		"Pritunl", "Profiles")
 	checkPath := filepath.Join(destDir, "upgraded")
 
 	exists, err := utils.Exists(checkPath)
@@ -62,6 +64,11 @@ func WindowsUpgrade() (err error) {
 		if err != nil {
 			return
 		}
+	}
+
+	err = utils.RemoveAll(dataDir)
+	if err != nil {
+		return
 	}
 
 	err = utils.CreateWrite(checkPath, "1", 0644)
