@@ -1,5 +1,6 @@
 import process from "process"
 import path from "path"
+import fs from "fs"
 import electron from "electron"
 import * as Service from "./Service"
 import Config from "./Config"
@@ -396,6 +397,13 @@ electron.app.on("quit", (): void => {
 })
 
 electron.app.on("ready", (): void => {
+	let profilesPth = path.join(electron.app.getPath("userData"), "profiles")
+		fs.exists(profilesPth, function(exists) {
+		if (!exists) {
+			fs.mkdir(profilesPth, function() {})
+		}
+	})
+
 	try {
 		ready = true
 		init()
