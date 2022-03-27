@@ -11,7 +11,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"path"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -98,7 +98,7 @@ type SprofileClient struct {
 
 func (s *Sprofile) BasePath() string {
 	prflsPath := GetPath()
-	return path.Join(prflsPath, s.Id)
+	return filepath.Join(prflsPath, s.Id)
 }
 
 func (s *Sprofile) Client() (sprflc *SprofileClient) {
@@ -440,7 +440,7 @@ func (s *Sprofile) syncProfile(host string) (updated bool, err error) {
 
 	if res.StatusCode != 200 {
 		err = &errortypes.RequestError{
-			errors.Wrapf(err, "profile: Bad status %n code from server",
+			errors.Wrapf(err, "profile: Bad status %d code from server",
 				res.StatusCode),
 		}
 		return
@@ -502,7 +502,7 @@ func (s *Sprofile) Commit() (err error) {
 		return
 	}
 
-	pth := path.Join(prflsPath, s.Id+".conf")
+	pth := filepath.Join(prflsPath, s.Id+".conf")
 
 	data, err := json.Marshal(s)
 	if err != nil {
