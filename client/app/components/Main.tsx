@@ -1,13 +1,12 @@
 /// <reference path="../References.d.ts"/>
 import * as React from 'react';
-import * as ReactRouter from 'react-router-dom';
 import * as Theme from '../Theme';
 import * as ProfileActions from '../actions/ProfileActions';
-import * as Constants from '../Constants';
 import LoadingBar from './LoadingBar';
 import Profiles from './Profiles';
 
 interface State {
+	path: string;
 	disabled: boolean;
 }
 
@@ -63,6 +62,7 @@ export default class Main extends React.Component<{}, State> {
 	constructor(props: any, context: any) {
 		super(props, context);
 		this.state = {
+			path: "/",
 			disabled: false,
 		};
 	}
@@ -89,69 +89,78 @@ export default class Main extends React.Component<{}, State> {
 			themeIcon = "bp3-icon-moon"
 		}
 
-		return <ReactRouter.HashRouter>
-			<div style={css.container} className="layout vertical">
-				<LoadingBar intent="primary" style={css.loading}/>
-				<nav className="bp3-navbar layout horizontal" style={css.nav}>
+		let page: JSX.Element;
+		switch (this.state.path) {
+			case "/":
+				page = <Profiles/>
+				break
+			case "/profiles":
+				page = <Profiles/>
+				break
+		}
+
+		return <div style={css.container} className="layout vertical">
+			<LoadingBar intent="primary" style={css.loading}/>
+			<nav className="bp3-navbar layout horizontal" style={css.nav}>
+				<div
+					className="bp3-navbar-group bp3-align-left flex"
+					style={css.navTitle}
+				>
+					<div className="bp3-navbar-heading"
+							 style={css.heading}
+					>pritunl</div>
+				</div>
+				<div
+					className="bp3-navbar-group bp3-align-right"
+					style={css.navGroup}
+				>
 					<div
-						className="bp3-navbar-group bp3-align-left flex"
-						style={css.navTitle}
+						className="bp3-button bp3-minimal bp3-icon-people"
+						style={css.link}
 					>
-						<div className="bp3-navbar-heading"
-								 style={css.heading}
-						>pritunl</div>
+						Profiles
 					</div>
-					<div
-						className="bp3-navbar-group bp3-align-right"
-						style={css.navGroup}
-					>
-						<ReactRouter.Link
-							className="bp3-button bp3-minimal bp3-icon-people"
-							style={css.link}
-							to="/profiles"
-						>
-							Profiles
-						</ReactRouter.Link>
-						<ReactRouter.Route render={(props) => (
-							<button
-								className="bp3-button bp3-minimal bp3-icon-refresh"
-								disabled={this.state.disabled}
-								onClick={() => {
-									let pathname = props.location.pathname;
+					<div>
+						<button
+							className="bp3-button bp3-minimal bp3-icon-refresh"
+							disabled={this.state.disabled}
+							onClick={() => {
+								let pathname = "";
 
-									this.setState({
-										...this.state,
-										disabled: true,
+								this.setState({
+									...this.state,
+									disabled: true,
+								});
+
+								if (pathname === '/profiles') {
+									ProfileActions.sync().then((): void => {
+										this.setState({
+											...this.state,
+											disabled: false,
+										});
+									}).catch((): void => {
+										this.setState({
+											...this.state,
+											disabled: false,
+										});
 									});
-
-									if (pathname === '/profiles') {
-										ProfileActions.sync().then((): void => {
-											this.setState({
-												...this.state,
-												disabled: false,
-											});
-										}).catch((): void => {
-											this.setState({
-												...this.state,
-												disabled: false,
-											});
+								} else {
+									ProfileActions.sync().then((): void => {
+										this.setState({
+											...this.state,
+											disabled: false,
 										});
-									} else {
-										ProfileActions.sync().then((): void => {
-											this.setState({
-												...this.state,
-												disabled: false,
-											});
-										}).catch((): void => {
-											this.setState({
-												...this.state,
-												disabled: false,
-											});
+									}).catch((): void => {
+										this.setState({
+											...this.state,
+											disabled: false,
 										});
-									}
-								}}
-							>Refresh</button>
-						)}/>
+									});
+								}
+							}}
+						>Refresh</button>
+					</div>
+					<div>
 						<button
 							className={"bp3-button bp3-minimal " + themeIcon}
 							onClick={(): void => {
@@ -160,19 +169,11 @@ export default class Main extends React.Component<{}, State> {
 							}}
 						/>
 					</div>
-				</nav>
-				<div className="flex" style={css.content}>
-					<ReactRouter.Route path="/" exact={true} render={() => (
-						<Profiles/>
-					)}/>
-					<ReactRouter.Route path="/reload" render={() => (
-						<ReactRouter.Redirect to="/"/>
-					)}/>
-					<ReactRouter.Route path="/profiles" render={() => (
-						<Profiles/>
-					)}/>
 				</div>
+			</nav>
+			<div className="flex" style={css.content}>
+				{page}
 			</div>
-		</ReactRouter.HashRouter>;
+		</div>
 	}
 }
