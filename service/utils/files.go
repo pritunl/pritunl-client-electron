@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"io"
 	"io/ioutil"
 	"os"
 
@@ -196,4 +197,34 @@ func CreateWrite(path string, data string, perm os.FileMode) (err error) {
 	}
 
 	return
+}
+
+func Copy(src, dst string) (err error) {
+	in, err := os.Open(src)
+	if err != nil {
+		err = &errortypes.ReadError{
+			errors.Wrapf(err, "utils: Failed to read file '%s'", src),
+		}
+		return
+	}
+	defer in.Close()
+
+	out, err := os.Create(dst)
+	if err != nil {
+		err = &errortypes.WriteError{
+			errors.Wrapf(err, "utils: Failed to create file '%s'", dst),
+		}
+		return
+	}
+	defer out.Close()
+
+	_, err = io.Copy(out, in)
+	if err != nil {
+		err = &errortypes.WriteError{
+			errors.Wrapf(err,
+				"utils: Failed to copy file '%s' to '%s'", src, dst),
+		}
+		return
+	}
+	return out.Close()
 }
