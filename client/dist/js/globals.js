@@ -56,7 +56,8 @@ if (args['dev'] === 'true') {
   global.authPath = path.join(__dirname, '..', '..', 'dev', 'auth');
 } else {
   if (process.platform === 'win32') {
-    global.authPath = path.join('C:\\', 'ProgramData', 'Pritunl', 'auth');
+    global.authPath = path.join(
+      'C:\\', 'ProgramData', 'Pritunl', 'auth');
   } else {
     global.authPath = path.join(path.sep, 'var', 'run', 'pritunl.auth');
   }

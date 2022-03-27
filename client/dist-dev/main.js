@@ -12,6 +12,7 @@ var Tray = require('electron').Tray;
 var Menu = require('electron').Menu;
 var constants = require('./js/constants.js');
 var events = require('./js/events.js');
+var profile = require('./js/profile.js');
 var service = require('./js/service.js');
 var errors = require('./js/errors.js');
 var logger = require('./js/logger.js');
@@ -50,7 +51,7 @@ if (process.argv.indexOf('--dev') !== -1) {
   authPath = path.join('..', 'dev', 'auth');
 } else {
   if (process.platform === 'win32') {
-    authPath = path.join('C:\\', 'Program Files (x86)', 'Pritunl', 'auth');
+    authPath = path.join('C:\\', 'ProgramData', 'Pritunl', 'auth');
   } else {
     authPath = path.join(path.sep, 'var', 'run', 'pritunl.auth');
   }
