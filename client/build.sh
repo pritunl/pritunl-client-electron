@@ -50,3 +50,7 @@ mv dist/static/app.js dist/static/app.${APP_HASH}.js
 mv dist/static/app.js.map dist/static/app.${APP_HASH}.js.map
 
 sed -i -e "s|static/app.js|static/app.${APP_HASH}.js|g" dist/index.html
+
+# orig
+cp -r www/* dist/
+cp -r www/* dist-dev/
