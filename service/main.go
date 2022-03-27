@@ -23,7 +23,6 @@ import (
 	"github.com/pritunl/pritunl-client-electron/service/handlers"
 	"github.com/pritunl/pritunl-client-electron/service/logger"
 	"github.com/pritunl/pritunl-client-electron/service/profile"
-	"github.com/pritunl/pritunl-client-electron/service/upgrade"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
 	"github.com/pritunl/pritunl-client-electron/service/watch"
 	"github.com/sirupsen/logrus"
@@ -64,13 +63,6 @@ func main() {
 	logrus.WithFields(logrus.Fields{
 		"version": constants.Version,
 	}).Info("main: Service starting")
-
-	if runtime.GOOS == "windows" {
-		err = upgrade.WindowsUpgrade()
-		if err != nil {
-			return
-		}
-	}
 
 	defer func() {
 		panc := recover()
