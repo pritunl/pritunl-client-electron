@@ -8,8 +8,8 @@ import (
 	"runtime"
 
 	"github.com/dropbox/godropbox/errors"
+	"github.com/pritunl/pritunl-client-electron/cli/constants"
 	"github.com/pritunl/pritunl-client-electron/cli/errortypes"
-	"github.com/pritunl/pritunl-client-electron/service/constants"
 )
 
 func Uuid() (id string) {
