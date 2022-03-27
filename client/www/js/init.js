@@ -17,10 +17,47 @@ var getGlobal = remoteRequire().getGlobal;
 var Menu = remoteRequire().Menu;
 var app = remoteRequire().app;
 
-constants.key = getGlobal('key');
-constants.unixSocket = getGlobal('unixSocket');
-constants.icon = getGlobal('icon');
-profileView.init();
+fs.readFile(global.authPath, 'utf8', function(err, data) {
+  if (err) {
+    remote.dialog.showMessageBox(null, {
+      type: 'warning',
+      buttons: ['Exit'],
+      title: 'Pritunl - Service Error',
+      message: 'Failed to load service key. ' +
+        'Restart computer and verify background service is running. ' + err,
+    }).then(function() {
+      app.quit();
+    });
+  } else {
+    constants.key = data;
+
+    service.ping(function(status, statusCode) {
+      if (statusCode === 401) {
+        remote.dialog.showMessageBox(null, {
+          type: 'warning',
+          buttons: ['Exit'],
+          title: 'Pritunl - Service Error',
+          message: 'Unable to establish communication with background ' +
+            'service, try restarting computer'
+        }).then(function() {
+          app.quit();
+        });
+      } else if (!status) {
+        remote.dialog.showMessageBox(null, {
+          type: 'warning',
+          buttons: ['Exit'],
+          title: 'Pritunl - Service Error',
+          message: 'Unable to communicate with background service, ' +
+            'try restarting computer'
+        }).then(function() {
+          app.quit();
+        });
+      } else {
+        profileView.init();
+      }
+    });
+  }
+});
 
 var systemEdtr;
 var serviceEdtr;
