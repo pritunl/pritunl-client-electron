@@ -13,6 +13,7 @@ import (
 	"github.com/dropbox/godropbox/container/set"
 	"github.com/pritunl/pritunl-client-electron/service/constants"
 	"github.com/pritunl/pritunl-client-electron/service/sprofile"
+	"github.com/pritunl/pritunl-client-electron/service/update"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
 	"github.com/sirupsen/logrus"
 )
@@ -455,10 +456,17 @@ func watchSystemProfiles() {
 	sprofile.Reload(true)
 
 	for {
-		time.Sleep(1 * time.Second)
+		time.Sleep(2 * time.Second)
 
 		if shutdown {
 			return
+		}
+
+		Profiles.RLock()
+		n := len(Profiles.m)
+		Profiles.RUnlock()
+		if n == 0 {
+			_ = update.Check()
 		}
 
 		err := SyncSystemProfiles()

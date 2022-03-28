@@ -23,6 +23,7 @@ import (
 	"github.com/pritunl/pritunl-client-electron/service/handlers"
 	"github.com/pritunl/pritunl-client-electron/service/logger"
 	"github.com/pritunl/pritunl-client-electron/service/profile"
+	"github.com/pritunl/pritunl-client-electron/service/update"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
 	"github.com/pritunl/pritunl-client-electron/service/watch"
 	"github.com/sirupsen/logrus"
@@ -63,6 +64,8 @@ func main() {
 	logrus.WithFields(logrus.Fields{
 		"version": constants.Version,
 	}).Info("main: Service starting")
+
+	_ = update.Check()
 
 	defer func() {
 		panc := recover()
