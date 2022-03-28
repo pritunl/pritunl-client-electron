@@ -17,6 +17,7 @@ func wakeupPost(c *gin.Context) {
 
 	if time.Since(event.LastPong) > 45*time.Second {
 		c.String(404, "")
+		return
 	}
 
 	for i := 0; i < 100; i++ {
