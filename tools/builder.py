@@ -20,7 +20,7 @@ from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 CHANGES_PATH = 'CHANGES'
 CONSTANTS_PATH = 'service/constants/constants.go'
 CONSTANTS_PATH2 = 'client/package.json'
-CONSTANTS_PATH3 = 'client/www/js/constants.js'
+CONSTANTS_PATH3 = 'cli/constants/constants.go'
 CONSTANTS_PATH4 = 'resources_win/setup.iss'
 STABLE_PACUR_PATH = '../pritunl-pacur'
 TEST_PACUR_PATH = '../pritunl-pacur-test'
@@ -273,8 +273,8 @@ if cmd == 'set-version':
 
     with open(CONSTANTS_PATH3, 'w') as constants_file:
         constants_file.write(re.sub(
-            '(version: \'.*?\')',
-            'version: \'%s\'' % new_version,
+            '(Version = ".*?")',
+            'Version = "%s"' % new_version,
             constants_data,
             count=1,
         ))
