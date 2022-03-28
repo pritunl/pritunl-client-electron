@@ -665,8 +665,6 @@ var refreshProfiles = function() {
 };
 
 var init = function() {
-  $('.version').text('v' + constants.version);
-
   events.subscribe(function(evt) {
     var prfl;
     var err;
@@ -730,8 +728,15 @@ var init = function() {
   });
 
   service.state(function(err, state) {
-    if (!err && state && state.wg) {
+    if (!err && state) {
       constants.wg = state.wg;
+      constants.version = state.version;
+      $('.version').text('v' + constants.version);
+      $('.main-menu .menu-version').text('Pritunl v' + constants.version);
+
+      if (state.upgrade) {
+        $('.alerts .upgrade').show();
+      }
     }
 
     initProfiles();

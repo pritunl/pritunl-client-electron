@@ -231,7 +231,6 @@ $('.main-menu .menu-version').click(function(evt) {
     return;
   }
 });
-$('.main-menu .menu-version').text('Pritunl v' + constants.version);
 $('.main-menu .menu-system-logs').click(function (){
   closeServiceEditor();
   openSystemEditor();

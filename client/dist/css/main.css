@@ -387,6 +387,9 @@ input:active {
 .alerts .error {
   background-color: #830202;
 }
+.alerts .upgrade {
+  display: none;
+}
 
 
 .ubuntu {
