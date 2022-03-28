@@ -29,19 +29,23 @@ func Exec(name string, arg ...string) (err error) {
 	return
 }
 
-func ExecInput(input, name string, arg ...string) (err error) {
-	cmd := command.Command(name, arg...)
+func ExecInput(dir, input, name string, arg ...string) (err error) {
+	cmd := exec.Command(name, arg...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
 	stdin, err := cmd.StdinPipe()
 	if err != nil {
 		err = &errortypes.ExecError{
-			errors.Wrapf(err, "utils: Failed to get stdin in exec '%s'", name),
+			errors.Wrapf(err,
+				"utils: Failed to get stdin in exec '%s'", name),
 		}
 		return
 	}
-	defer stdin.Close()
+
+	if dir != "" {
+		cmd.Dir = dir
+	}
 
 	err = cmd.Start()
 	if err != nil {
@@ -55,6 +59,15 @@ func ExecInput(input, name string, arg ...string) (err error) {
 	if err != nil {
 		err = &errortypes.ExecError{
 			errors.Wrapf(err, "utils: Failed to write stdin in exec '%s'",
+				name),
+		}
+		return
+	}
+
+	err = stdin.Close()
+	if err != nil {
+		err = &errortypes.ExecError{
+			errors.Wrapf(err, "utils: Failed to close stdin in exec '%s'",
 				name),
 		}
 		return
