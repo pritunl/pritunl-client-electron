@@ -269,11 +269,17 @@ func Import(data string) (o *Ovpn) {
 			case "udp6", "udp6-client":
 				remote.Proto = "udp6"
 				break
-			case "tcp", "tcp-client":
+			case "tcp":
 				remote.Proto = "tcp"
 				break
-			case "tcp6", "tcp6-client":
+			case "tcp6":
 				remote.Proto = "tcp6"
+				break
+			case "tcp-client":
+				remote.Proto = "tcp-client"
+				break
+			case "tcp6-client":
+				remote.Proto = "tcp6-client"
 				break
 			default:
 				logrus.WithFields(logrus.Fields{
