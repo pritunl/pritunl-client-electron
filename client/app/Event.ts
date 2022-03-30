@@ -54,16 +54,18 @@ function connect(): void {
 	});
 
 	socket.on('error', (err: Error) => {
-		err = new Errors.RequestError(err, null, "Events: Socket error");
-		Logger.errorAlert(err.message);
+		err = new Errors.RequestError(
+			err, "Failed to connect to background service, retrying");
+		Logger.errorAlert(err.message, 3);
 
 		showConnect = true;
 		reconnect();
 	});
 
 	socket.on('onerror', (err) => {
-		err = new Errors.RequestError(err, null, "Events: Socket error");
-		Logger.errorAlert(err.message);
+		err = new Errors.RequestError(
+			err, "Failed to connect to background service, retrying");
+		Logger.errorAlert(err.message, 3);
 
 		showConnect = true;
 		reconnect();
