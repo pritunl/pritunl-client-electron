@@ -44,6 +44,14 @@ export class Response {
 		return JSON.parse(this.data || null)
 	}
 
+	jsonPassive(): object {
+		try {
+			return JSON.parse(this.data || null)
+		} catch {
+			return null
+		}
+	}
+
 	string(): string {
 		return this.data
 	}
