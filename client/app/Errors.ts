@@ -1,5 +1,4 @@
 /// <reference path="./References.d.ts"/>
-import * as SuperAgent from "superagent";
 
 export class BaseError extends Error {
 	constructor(name: string, wrapErr: Error, message: string,
@@ -38,14 +37,7 @@ export class WriteError extends BaseError {
 }
 
 export class RequestError extends BaseError {
-	constructor(wrapErr: Error, res: SuperAgent.Response,
-		message: string, args?: {[key: string]: any}) {
-
-		try {
-			message = res.body.error_msg || message
-		} catch(err) {
-		}
-
+	constructor(wrapErr: Error, message: string, args?: {[key: string]: any}) {
 		super("RequestError", wrapErr, message, args)
 	}
 }
