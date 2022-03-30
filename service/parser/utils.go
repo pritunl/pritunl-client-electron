@@ -68,6 +68,7 @@ var safeChars = set.NewSet(
 	'8',
 	'9',
 	'-',
+	':',
 	'+',
 	'=',
 	'_',
