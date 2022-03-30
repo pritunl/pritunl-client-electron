@@ -1,6 +1,4 @@
 /// <reference path="../References.d.ts"/>
-import * as SuperAgent from 'superagent';
-import * as Auth from "../Auth";
 import Dispatcher from '../dispatcher/Dispatcher';
 import EventDispatcher from '../dispatcher/EventDispatcher';
 import * as Alert from '../Alert';
@@ -14,6 +12,7 @@ import fs from "fs";
 import path from "path";
 import * as Errors from "../Errors";
 import * as Logger from "../Logger";
+import * as Request from "../Request"
 import os from "os";
 
 let syncId: string;
@@ -23,16 +22,15 @@ function loadSystemProfiles(): Promise<ProfileTypes.Profiles> {
 		RequestUtils
 			.get('/sprofile')
 			.set('Accept', 'application/json')
-			.end((err: any, res: SuperAgent.Response): void => {
-				if (err) {
-					err = new Errors.RequestError(err, res,
-						"Profiles: Service load error")
-					Logger.errorAlert(err.message)
-					resolve([])
-					return
-				}
-
-				resolve(res.body)
+			.end()
+			.then((resp: Request.Response) => {
+				resolve(resp.json() as ProfileTypes.Profiles)
+			}, (err) => {
+				err = new Errors.RequestError(err,
+					"Profiles: Service load error")
+				Logger.errorAlert(err.message)
+				resolve([])
+				return
 			})
 	})
 }
@@ -43,7 +41,7 @@ function loadProfile(prflId: string,
 	let ovpnPath = prflPath.substring(0, prflPath.length-5) + ".ovpn"
 	let logPath = prflPath.substring(0, prflPath.length-5) + ".log"
 
-	return new Promise<ProfileTypes.Profile>((resolve): void => {
+	return new Promise<ProfileTypes.Profile>((resolve, reject): void => {
 		if (os.platform() !== "win32") {
 			fs.stat(
 				prflPath,
@@ -139,13 +137,25 @@ function loadProfile(prflId: string,
 		fs.readFile(
 			prflPath, "utf-8",
 			(err: NodeJS.ErrnoException, data: string): void => {
+				if (err) {
+					err = new Errors.ReadError(
+						err, "Profiles: Failed to read profile",
+						{profile_log_path: logPath})
+					reject(err)
+					return
+				}
+
 				let prfl: ProfileTypes.Profile = JSON.parse(data)
 				prfl.id = prflId
 
 				fs.readFile(
 					ovpnPath, "utf-8",
 					(err: NodeJS.ErrnoException, data: string): void => {
-						if (err && err.code === "ENOENT") {
+						if (err) {
+							err = new Errors.ReadError(
+								err, "Profiles: Failed to read profile",
+								{profile_log_path: logPath})
+							reject(err)
 							return
 						}
 
@@ -196,8 +206,16 @@ function loadProfiles(): Promise<ProfileTypes.Profiles> {
 							let prflPath = path.join(profilesPath, filename);
 							let prflId = filename.split(".")[0]
 
-							let prfl = await loadProfile(prflId, prflPath);
-							prfls.push(prfl);
+							let prfl: ProfileTypes.Profile;
+							try {
+								prfl = await loadProfile(prflId, prflPath);
+							} catch(err) {
+								Logger.error(err.message || err)
+							}
+
+							if (prfl) {
+								prfls.push(prfl);
+							}
 						}
 
 						resolve(prfls);
@@ -214,16 +232,16 @@ function loadProfilesState(): Promise<ProfileTypes.ProfilesMap> {
 		RequestUtils
 			.get('/profile')
 			.set('Accept', 'application/json')
-			.end((err: any, res: SuperAgent.Response): void => {
-				if (err) {
-					err = new Errors.RequestError(err, res, "Profiles: Status error")
-					Logger.errorAlert(err.message)
-					resolve({})
-					return
-				}
-
-				resolve(res.body);
-			});
+			.end()
+			.then((resp: Request.Response) => {
+				resolve(resp.json() as ProfileTypes.ProfilesMap)
+			}, (err) => {
+				err = new Errors.RequestError(err,
+					"Profiles: Status error")
+				Logger.errorAlert(err.message)
+				resolve({})
+				return
+			})
 	});
 }
 
@@ -347,112 +365,25 @@ function commitSystem(prfl: ProfileTypes.Profile): Promise<void> {
 
 	return new Promise<void>((resolve, reject): void => {
 		RequestUtils
-			.put("/sprofile")
+			.put('/sprofile')
+			.set('Accept', 'application/json')
 			.send(prfl.exportSystem())
-			.set("Accept", "application/json")
-			.end((err: any, res: SuperAgent.Response): void => {
+			.end()
+			.then((resp: Request.Response) => {
 				loader.done()
 
-				if (err) {
-					Alert.errorRes(res, "Failed to save profile")
-					reject(err)
-					return
-				}
-
 				resolve()
-
 				sync()
+			}, (err) => {
+				loader.done()
+
+				err = new Errors.RequestError(err,
+					"Profiles: Failed to save profile")
+				Logger.errorAlert(err.message)
+				reject(err)
+				return
 			})
 	})
-}
-
-export function create(profile: ProfileTypes.Profile): Promise<void> {
-	let loader = new Loader().loading();
-
-	return new Promise<void>((resolve, reject): void => {
-		SuperAgent
-			.post('/profile')
-			.send(profile)
-			.set('Accept', 'application/json')
-			.set('User-Agent', 'pritunl')
-			.set('Auth-Token', Auth.token)
-			.end((err: any, res: SuperAgent.Response): void => {
-				loader.done();
-
-				if (res && res.status === 401) {
-					window.location.href = '/login';
-					resolve();
-					return;
-				}
-
-				if (err) {
-					Alert.errorRes(res, 'Failed to create profile');
-					reject(err);
-					return;
-				}
-
-				resolve();
-			});
-	});
-}
-
-export function remove(profileId: string): Promise<void> {
-	let loader = new Loader().loading();
-
-	return new Promise<void>((resolve, reject): void => {
-		SuperAgent
-			.delete('/profile/' + profileId)
-			.set('Accept', 'application/json')
-			.set('User-Agent', 'pritunl')
-			.set('Auth-Token', Auth.token)
-			.end((err: any, res: SuperAgent.Response): void => {
-				loader.done();
-
-				if (res && res.status === 401) {
-					window.location.href = '/login';
-					resolve();
-					return;
-				}
-
-				if (err) {
-					Alert.errorRes(res, 'Failed to delete profile');
-					reject(err);
-					return;
-				}
-
-				resolve();
-			});
-	});
-}
-
-export function removeMulti(profileIds: string[]): Promise<void> {
-	let loader = new Loader().loading();
-
-	return new Promise<void>((resolve, reject): void => {
-		SuperAgent
-			.delete('/profile')
-			.send(profileIds)
-			.set('Accept', 'application/json')
-			.set('User-Agent', 'pritunl')
-			.set('Auth-Token', Auth.token)
-			.end((err: any, res: SuperAgent.Response): void => {
-				loader.done();
-
-				if (res && res.status === 401) {
-					window.location.href = '/login';
-					resolve();
-					return;
-				}
-
-				if (err) {
-					Alert.errorRes(res, 'Failed to delete profiles');
-					reject(err);
-					return;
-				}
-
-				resolve();
-			});
-	});
 }
 
 EventDispatcher.register((action: ProfileTypes.ProfileDispatch) => {
