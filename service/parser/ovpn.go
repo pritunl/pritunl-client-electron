@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+
+	"github.com/sirupsen/logrus"
 )
 
 type Remote struct {
@@ -150,8 +152,15 @@ func Import(data string) (o *Ovpn) {
 
 	data = strings.ReplaceAll(data, "\r", "")
 
-	for _, line := range strings.Split(data, "\n") {
-		line = FilterStr(line, 256)
+	for _, origLine := range strings.Split(data, "\n") {
+		line := FilterStr(origLine, 256)
+
+		if line != origLine {
+			logrus.WithFields(logrus.Fields{
+				"orig_line": origLine,
+				"new_line":  line,
+			}).Warn("parser: Configuration line filtered")
+		}
 
 		if inCa {
 			if line == "</ca>" {
@@ -198,6 +207,9 @@ func Import(data string) (o *Ovpn) {
 			break
 		case "setenv":
 			if len(lines) != 3 {
+				logrus.WithFields(logrus.Fields{
+					"line": line,
+				}).Warn("parser: Configuration line ignored [1]")
 				continue
 			}
 			switch strings.ToLower(lines[1]) {
@@ -231,11 +243,17 @@ func Import(data string) (o *Ovpn) {
 			break
 		case "remote":
 			if len(lines) != 4 {
+				logrus.WithFields(logrus.Fields{
+					"line": line,
+				}).Warn("parser: Configuration line  [2]")
 				continue
 			}
 
 			port, e := strconv.Atoi(lines[2])
 			if e != nil {
+				logrus.WithFields(logrus.Fields{
+					"line": line,
+				}).Warn("parser: Configuration line ignored [3]")
 				continue
 			}
 
@@ -258,6 +276,9 @@ func Import(data string) (o *Ovpn) {
 				remote.Proto = "tcp6"
 				break
 			default:
+				logrus.WithFields(logrus.Fields{
+					"line": line,
+				}).Warn("parser: Configuration line ignored [4]")
 				continue
 			}
 
@@ -275,6 +296,9 @@ func Import(data string) (o *Ovpn) {
 			break
 		case "cipher":
 			if len(lines) != 2 {
+				logrus.WithFields(logrus.Fields{
+					"line": line,
+				}).Warn("parser: Configuration line ignored [5]")
 				continue
 			}
 
@@ -282,6 +306,9 @@ func Import(data string) (o *Ovpn) {
 			break
 		case "auth":
 			if len(lines) != 2 {
+				logrus.WithFields(logrus.Fields{
+					"line": line,
+				}).Warn("parser: Configuration line ignored [6]")
 				continue
 			}
 
@@ -289,11 +316,17 @@ func Import(data string) (o *Ovpn) {
 			break
 		case "verb":
 			if len(lines) != 2 {
+				logrus.WithFields(logrus.Fields{
+					"line": line,
+				}).Warn("parser: Configuration line ignored [7]")
 				continue
 			}
 
 			verb, e := strconv.Atoi(lines[1])
 			if e != nil {
+				logrus.WithFields(logrus.Fields{
+					"line": line,
+				}).Warn("parser: Configuration line ignored [8]")
 				continue
 			}
 
@@ -301,11 +334,17 @@ func Import(data string) (o *Ovpn) {
 			break
 		case "mute":
 			if len(lines) != 2 {
+				logrus.WithFields(logrus.Fields{
+					"line": line,
+				}).Warn("parser: Configuration line ignored [9]")
 				continue
 			}
 
 			mute, e := strconv.Atoi(lines[1])
 			if e != nil {
+				logrus.WithFields(logrus.Fields{
+					"line": line,
+				}).Warn("parser: Configuration line ignored [10]")
 				continue
 			}
 
@@ -316,11 +355,17 @@ func Import(data string) (o *Ovpn) {
 			break
 		case "ping":
 			if len(lines) != 2 {
+				logrus.WithFields(logrus.Fields{
+					"line": line,
+				}).Warn("parser: Configuration line ignored [11]")
 				continue
 			}
 
 			ping, e := strconv.Atoi(lines[1])
 			if e != nil {
+				logrus.WithFields(logrus.Fields{
+					"line": line,
+				}).Warn("parser: Configuration line ignored [12]")
 				continue
 			}
 
@@ -328,11 +373,17 @@ func Import(data string) (o *Ovpn) {
 			break
 		case "ping-restart":
 			if len(lines) != 2 {
+				logrus.WithFields(logrus.Fields{
+					"line": line,
+				}).Warn("parser: Configuration line ignored [13]")
 				continue
 			}
 
 			pingRestart, e := strconv.Atoi(lines[1])
 			if e != nil {
+				logrus.WithFields(logrus.Fields{
+					"line": line,
+				}).Warn("parser: Configuration line ignored [14]")
 				continue
 			}
 
@@ -340,11 +391,17 @@ func Import(data string) (o *Ovpn) {
 			break
 		case "ping-exit":
 			if len(lines) != 2 {
+				logrus.WithFields(logrus.Fields{
+					"line": line,
+				}).Warn("parser: Configuration line ignored [15]")
 				continue
 			}
 
 			pingExit, e := strconv.Atoi(lines[1])
 			if e != nil {
+				logrus.WithFields(logrus.Fields{
+					"line": line,
+				}).Warn("parser: Configuration line ignored [16]")
 				continue
 			}
 
@@ -352,11 +409,17 @@ func Import(data string) (o *Ovpn) {
 			break
 		case "hand-window":
 			if len(lines) != 2 {
+				logrus.WithFields(logrus.Fields{
+					"line": line,
+				}).Warn("parser: Configuration line ignored [17]")
 				continue
 			}
 
 			handWindow, e := strconv.Atoi(lines[1])
 			if e != nil {
+				logrus.WithFields(logrus.Fields{
+					"line": line,
+				}).Warn("parser: Configuration line ignored [18]")
 				continue
 			}
 
@@ -364,11 +427,17 @@ func Import(data string) (o *Ovpn) {
 			break
 		case "server-poll-timeout":
 			if len(lines) != 2 {
+				logrus.WithFields(logrus.Fields{
+					"line": line,
+				}).Warn("parser: Configuration line ignored [19]")
 				continue
 			}
 
 			serverPollTimeout, e := strconv.Atoi(lines[1])
 			if e != nil {
+				logrus.WithFields(logrus.Fields{
+					"line": line,
+				}).Warn("parser: Configuration line ignored [20]")
 				continue
 			}
 
@@ -376,11 +445,17 @@ func Import(data string) (o *Ovpn) {
 			break
 		case "reneg-sec":
 			if len(lines) != 2 {
+				logrus.WithFields(logrus.Fields{
+					"line": line,
+				}).Warn("parser: Configuration line ignored [21]")
 				continue
 			}
 
 			renegSec, e := strconv.Atoi(lines[1])
 			if e != nil {
+				logrus.WithFields(logrus.Fields{
+					"line": line,
+				}).Warn("parser: Configuration line ignored [22]")
 				continue
 			}
 
@@ -388,11 +463,17 @@ func Import(data string) (o *Ovpn) {
 			break
 		case "sndbuf":
 			if len(lines) != 2 {
+				logrus.WithFields(logrus.Fields{
+					"line": line,
+				}).Warn("parser: Configuration line ignored [23]")
 				continue
 			}
 
 			sndbuf, e := strconv.Atoi(lines[1])
 			if e != nil {
+				logrus.WithFields(logrus.Fields{
+					"line": line,
+				}).Warn("parser: Configuration line ignored [24]")
 				continue
 			}
 
@@ -400,11 +481,17 @@ func Import(data string) (o *Ovpn) {
 			break
 		case "rcvbuf":
 			if len(lines) != 2 {
+				logrus.WithFields(logrus.Fields{
+					"line": line,
+				}).Warn("parser: Configuration line ignored [25]")
 				continue
 			}
 
 			rcvbuf, e := strconv.Atoi(lines[1])
 			if e != nil {
+				logrus.WithFields(logrus.Fields{
+					"line": line,
+				}).Warn("parser: Configuration line ignored [26]")
 				continue
 			}
 
@@ -412,6 +499,9 @@ func Import(data string) (o *Ovpn) {
 			break
 		case "remote-cert-tls":
 			if len(lines) != 2 {
+				logrus.WithFields(logrus.Fields{
+					"line": line,
+				}).Warn("parser: Configuration line ignored [27]")
 				continue
 			}
 
@@ -420,26 +510,41 @@ func Import(data string) (o *Ovpn) {
 				o.RemoteCertTls = "server"
 				break
 			default:
+				logrus.WithFields(logrus.Fields{
+					"line": line,
+				}).Warn("parser: Configuration line ignored [28]")
 				continue
 			}
 
 			break
 		case "comp-lzo":
 			if len(lines) != 2 {
+				logrus.WithFields(logrus.Fields{
+					"line": line,
+				}).Warn("parser: Configuration line ignored [29]")
 				continue
 			}
 
 			switch strings.ToLower(lines[1]) {
-			case "on":
+			case "on", "yes":
 				o.Compress = "lzo"
 				break
+			case "off", "no":
+				o.Compress = ""
+				break
 			default:
+				logrus.WithFields(logrus.Fields{
+					"line": line,
+				}).Warn("parser: Configuration line ignored [30]")
 				continue
 			}
 
 			break
 		case "compress":
 			if len(lines) != 2 {
+				logrus.WithFields(logrus.Fields{
+					"line": line,
+				}).Warn("parser: Configuration line ignored [31]")
 				continue
 			}
 
@@ -451,6 +556,9 @@ func Import(data string) (o *Ovpn) {
 				o.Compress = "lz4"
 				break
 			default:
+				logrus.WithFields(logrus.Fields{
+					"line": line,
+				}).Warn("parser: Configuration line ignored [32]")
 				continue
 			}
 
@@ -460,11 +568,17 @@ func Import(data string) (o *Ovpn) {
 			break
 		case "key-direction":
 			if len(lines) != 2 {
+				logrus.WithFields(logrus.Fields{
+					"line": line,
+				}).Warn("parser: Configuration line ignored [33]")
 				continue
 			}
 
 			keyDirection, e := strconv.Atoi(lines[1])
 			if e != nil {
+				logrus.WithFields(logrus.Fields{
+					"line": line,
+				}).Warn("parser: Configuration line ignored [34]")
 				continue
 			}
 
