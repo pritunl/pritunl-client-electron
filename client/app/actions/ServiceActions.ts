@@ -1,8 +1,9 @@
 /// <reference path="../References.d.ts"/>
-import * as SuperAgent from "superagent"
 import * as ProfileTypes from "../types/ProfileTypes"
-import * as Alert from "../Alert"
 import * as RequestUtils from "../utils/RequestUtils"
+import * as Errors from "../Errors";
+import * as Logger from "../Logger";
+import * as Request from "../Request"
 import Loader from "../Loader"
 
 export function connect(prfl: ProfileTypes.ProfileData,
@@ -14,21 +15,26 @@ export function connect(prfl: ProfileTypes.ProfileData,
 
 	return new Promise<void>((resolve, reject): void => {
 		RequestUtils
-			.post("/profile")
+			.post('/profile')
+			.set('Accept', 'application/json')
 			.send(prfl)
-			.set("Accept", "application/json")
-			.end((err: any, res: SuperAgent.Response): void => {
+			.end()
+			.then((resp: Request.Response) => {
 				if (loader) {
 					loader.done()
 				}
 
-				if (err) {
-					Alert.errorRes(res, "Profile connect failed")
-					reject(err)
-					return
+				resolve()
+			}, (err) => {
+				if (loader) {
+					loader.done()
 				}
 
-				resolve()
+				err = new Errors.RequestError(err,
+					"Profiles: Profile connect failed")
+				Logger.errorAlert(err.message)
+				reject(err)
+				return
 			})
 	})
 }
