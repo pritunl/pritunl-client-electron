@@ -1,7 +1,6 @@
 /// <reference path="../References.d.ts"/>
 import * as React from 'react';
 import * as Blueprint from '@blueprintjs/core';
-import * as Constants from '../Constants';
 import * as MiscUtils from '../utils/MiscUtils';
 
 interface Props {
@@ -164,7 +163,7 @@ export default class ConfirmButton extends React.Component<Props, State> {
 	}
 
 	render(): JSX.Element {
-		let dialog = Constants.mobile || this.props.safe;
+		let dialog = this.props.safe;
 
 		let style = {
 			...this.props.style,

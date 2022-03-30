@@ -1,6 +1,5 @@
 /// <reference path="../References.d.ts"/>
 import * as React from 'react';
-import * as Constants from "../Constants";
 
 interface Props {
 	value: string;
@@ -110,17 +109,7 @@ export default class CopyButton extends React.Component<Props, State> {
 				elem.value = this.props.value;
 				this.elem.parentElement.append(elem);
 
-				if (Constants.mobileOs === 'iOS') {
-					let range = document.createRange();
-					range.selectNodeContents(elem);
-
-					let selection = window.getSelection();
-					selection.removeAllRanges();
-					selection.addRange(range);
-					elem.setSelectionRange(0, 999999);
-				} else {
-					elem.select();
-				}
+				elem.select();
 
 				document.execCommand('copy');
 				elem.remove();
