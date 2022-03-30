@@ -4,6 +4,7 @@
 [![package-windows](https://img.shields.io/badge/package-windows-00adef.svg?style=flat)](https://github.com/pritunl/pritunl-client-electron/releases)
 [![github](https://img.shields.io/badge/github-pritunl-11bdc2.svg?style=flat)](https://github.com/pritunl)
 [![twitter](https://img.shields.io/badge/twitter-pritunl-55acee.svg?style=flat)](https://twitter.com/pritunl)
+[![medium](https://img.shields.io/badge/medium-pritunl-b32b2b.svg?style=flat)](https://pritunl.medium.com)
 
 [Pritunl-client-electron](https://github.com/pritunl/pritunl-client-electron)
 is an open source openvpn client. Documentation and more information can be
