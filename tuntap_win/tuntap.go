@@ -3,7 +3,6 @@ package main
 import (
 	"os"
 	"os/exec"
-	"path"
 	"path/filepath"
 )
 
@@ -13,7 +12,7 @@ func main() {
 		panic(err)
 	}
 
-	tapInstallPath := path.Join(rootDir, "tapinstall.exe")
+	tapInstallPath := filepath.Join(rootDir, "tapinstall.exe")
 
 	if os.Args[1] == "install" {
 		cmd := exec.Command(
