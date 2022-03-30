@@ -1,5 +1,4 @@
 /// <reference path="./References.d.ts"/>
-import * as SuperAgent from "superagent";
 import * as Blueprint from "@blueprintjs/core";
 
 let toaster: Blueprint.IToaster;
@@ -51,26 +50,6 @@ export function error(message: string, timeout?: number): string {
 		timeout = 10000;
 	} else {
 		timeout = timeout * 1000;
-	}
-
-	return toaster.show({
-		intent: Blueprint.Intent.DANGER,
-		message: message,
-		timeout: timeout,
-	});
-}
-
-export function errorRes(res: SuperAgent.Response, message: string,
-		timeout?: number): string {
-	if (timeout === undefined) {
-		timeout = 10000;
-	} else {
-		timeout = timeout * 1000;
-	}
-
-	try {
-		message = res.body.error_msg || message;
-	} catch(err) {
 	}
 
 	return toaster.show({
