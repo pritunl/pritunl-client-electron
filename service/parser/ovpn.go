@@ -22,7 +22,7 @@ type Ovpn struct {
 	Remotes           []Remote
 	RemoteRandom      bool
 	NoBind            bool
-	PersisitTun       bool
+	PersistTun        bool
 	Cipher            string
 	Auth              string
 	Verb              int
@@ -72,7 +72,7 @@ func (o *Ovpn) Export() string {
 	if o.NoBind {
 		output += "nobind\n"
 	}
-	if o.PersisitTun {
+	if o.PersistTun {
 		output += "persist-tun\n"
 	}
 	if o.Cipher != "" {
@@ -263,16 +263,16 @@ func Import(data string) (o *Ovpn) {
 			}
 
 			switch strings.ToLower(lines[3]) {
-			case "udp":
+			case "udp", "udp-client":
 				remote.Proto = "udp"
 				break
-			case "udp6":
+			case "udp6", "udp6-client":
 				remote.Proto = "udp6"
 				break
-			case "tcp":
+			case "tcp", "tcp-client":
 				remote.Proto = "tcp"
 				break
-			case "tcp6":
+			case "tcp6", "tcp6-client":
 				remote.Proto = "tcp6"
 				break
 			default:
@@ -292,7 +292,7 @@ func Import(data string) (o *Ovpn) {
 			o.NoBind = true
 			break
 		case "persist-tun":
-			o.PersisitTun = true
+			o.PersistTun = true
 			break
 		case "cipher":
 			if len(lines) != 2 {
