@@ -44,6 +44,7 @@ import (
 	"github.com/pritunl/pritunl-client-electron/service/platform"
 	"github.com/pritunl/pritunl-client-electron/service/sprofile"
 	"github.com/pritunl/pritunl-client-electron/service/token"
+	"github.com/pritunl/pritunl-client-electron/service/tuntap"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/crypto/nacl/box"
@@ -1185,6 +1186,17 @@ func (p *Profile) Start(timeout bool) (err error) {
 }
 
 func (p *Profile) startOvpn(timeout bool) (err error) {
+	if runtime.GOOS == "windows" {
+		Profiles.Lock()
+		n := len(Profiles.m)
+		Profiles.Unlock()
+
+		err = tuntap.Resize(n)
+		if err != nil {
+			return
+		}
+	}
+
 	confPath, err := p.write()
 	if err != nil {
 		p.clearStatus(p.startTime)
