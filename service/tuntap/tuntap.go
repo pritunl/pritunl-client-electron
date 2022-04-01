@@ -1,7 +1,9 @@
 package tuntap
 
 import (
+	"fmt"
 	"path/filepath"
+	"strings"
 
 	"github.com/pritunl/pritunl-client-electron/service/constants"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
@@ -11,41 +13,66 @@ var (
 	curSize = 0
 )
 
-func getInstallPath() (pth string) {
+func getToolpath() (pth string) {
 	if constants.Development {
 		return filepath.Join(utils.GetRootDir(), "..",
 			"tuntap_win", "tapinstall.exe")
 	}
 
-	return filepath.Join(utils.GetRootDir(), "tuntap", "tapinstall.exe")
+	return filepath.Join(utils.GetRootDir(), "openvpn", "tapctl.exe")
 }
 
-func getDriverPath() (pth string) {
-	if constants.Development {
-		return filepath.Join(utils.GetRootDir(), "..",
-			"tuntap_win", "OemVista.inf")
+func Get() (adpaters []string, err error) {
+	toolpath := getToolpath()
+
+	output, err := utils.ExecCombinedOutputLogged(
+		nil,
+		toolpath,
+		"list",
+	)
+	if err != nil {
+		return
 	}
 
-	return filepath.Join(utils.GetRootDir(), "tuntap", "OemVista.inf")
+	adpaters = []string{}
+	for _, line := range strings.Split(output, "\n") {
+		lines := strings.Fields(line)
+		if len(lines) < 2 {
+			continue
+		}
+
+		adpaters = append(adpaters, lines[0])
+	}
+
+	return
 }
 
 func Clean() (err error) {
-	installPath := getInstallPath()
+	toolpath := getToolpath()
 
-	_, _ = utils.ExecCombinedOutputLogged(
-		[]string{
-			"No devices",
-		},
-		installPath,
-		"remove", "tap0901",
-	)
+	adapters, err := Get()
+	if err != nil {
+		return
+	}
+
+	for _, adapter := range adapters {
+		_, _ = utils.ExecCombinedOutputLogged(
+			[]string{
+				"No devices",
+			},
+			toolpath,
+			"delete",
+			adapter,
+		)
+	}
+
+	curSize = 0
 
 	return
 }
 
 func Resize(size int) (err error) {
-	installPath := getInstallPath()
-	driverPath := getDriverPath()
+	toolpath := getToolpath()
 
 	if size <= 3 {
 		size = 3
@@ -60,11 +87,30 @@ func Resize(size int) (err error) {
 	for i := 0; i < add; i++ {
 		_, err = utils.ExecCombinedOutputLogged(
 			nil,
-			installPath,
-			"install", driverPath, "tap0901",
+			toolpath,
+			"create",
+			"--name", fmt.Sprintf("Pritunl %d", curSize+1),
 		)
 		if err != nil {
-			return
+			_, _ = utils.ExecCombinedOutputLogged(
+				[]string{
+					"No devices",
+				},
+				toolpath,
+				"delete",
+				fmt.Sprintf("Pritunl %d", curSize+1),
+			)
+
+			_, err = utils.ExecCombinedOutputLogged(
+				nil,
+				toolpath,
+				"create",
+				"--name", fmt.Sprintf("Pritunl %d", curSize+1),
+			)
+			if err != nil {
+				_ = Clean()
+				return
+			}
 		}
 
 		curSize += 1
