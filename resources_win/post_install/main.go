@@ -50,13 +50,13 @@ func main() {
 	go func() {
 		defer wait.Done()
 
-		cmd := exec.Command(filepath.Join(rootDir, "tuntap", "tuntap.exe"),
-			"uninstall")
+		cmd = exec.Command(filepath.Join(rootDir, "tuntap", "tuntap.exe"),
+			"install")
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
 		cmd.Run()
 		cmd = exec.Command(filepath.Join(rootDir, "tuntap", "tuntap.exe"),
-			"install")
+			"uninstall")
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
 		cmd.Run()

@@ -3,16 +3,19 @@ package tuntap
 import (
 	"fmt"
 	"path/filepath"
+	"sort"
 	"strings"
+	"sync"
+	"time"
 
-	"github.com/dropbox/godropbox/container/set"
 	"github.com/pritunl/pritunl-client-electron/service/constants"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
 )
 
 var (
-	curSize = 0
-	taps    = set.NewSet()
+	curSize  = 0
+	taps     = []string{}
+	tapsLock = sync.Mutex{}
 )
 
 func getToolpath() (pth string) {
@@ -78,6 +81,9 @@ func Clean() (err error) {
 }
 
 func Resize(size int) (err error) {
+	tapsLock.Lock()
+	defer tapsLock.Unlock()
+
 	toolpath := getToolpath()
 
 	if size <= 3 {
@@ -122,8 +128,12 @@ func Resize(size int) (err error) {
 		}
 
 		curSize += 1
-		taps.Add(tapName)
+		taps = append(taps, tapName)
+
+		time.Sleep(200 * time.Millisecond)
 	}
+
+	sort.Strings(taps)
 
 	return
 }
@@ -133,14 +143,18 @@ func Size() int {
 }
 
 func Acquire() (tap string) {
-	for tapInf := range taps.Iter() {
-		tap = tapInf.(string)
-	}
-	taps.Remove(tap)
+	tapsLock.Lock()
+	defer tapsLock.Unlock()
+
+	tap, taps = taps[0], taps[1:]
 
 	return
 }
 
 func Release(tap string) {
-	taps.Add(tap)
+	tapsLock.Lock()
+	defer tapsLock.Unlock()
+
+	taps = append(taps, tap)
+	sort.Strings(taps)
 }
