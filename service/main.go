@@ -23,7 +23,6 @@ import (
 	"github.com/pritunl/pritunl-client-electron/service/handlers"
 	"github.com/pritunl/pritunl-client-electron/service/logger"
 	"github.com/pritunl/pritunl-client-electron/service/profile"
-	"github.com/pritunl/pritunl-client-electron/service/tuntap"
 	"github.com/pritunl/pritunl-client-electron/service/update"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
 	"github.com/pritunl/pritunl-client-electron/service/watch"
@@ -93,13 +92,6 @@ func main() {
 			"error": err,
 		}).Error("main: Failed to run check and clean")
 		panic(err)
-	}
-
-	if runtime.GOOS == "windows" {
-		err = tuntap.Clean()
-		if err != nil {
-			return
-		}
 	}
 
 	gin.SetMode(gin.ReleaseMode)
