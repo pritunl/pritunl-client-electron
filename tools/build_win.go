@@ -31,7 +31,7 @@ func main() {
 		panic(err)
 	}
 
-	cmd = exec.Command(signtool,
+	cmd := exec.Command(signtool,
 		"sign",
 		"/a",
 		"/n", "Pritunl",
