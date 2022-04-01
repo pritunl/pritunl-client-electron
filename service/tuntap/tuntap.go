@@ -16,7 +16,7 @@ var (
 func getToolpath() (pth string) {
 	if constants.Development {
 		return filepath.Join(utils.GetRootDir(), "..",
-			"tuntap_win", "tapinstall.exe")
+			"openvpn", "tapctl.exe")
 	}
 
 	return filepath.Join(utils.GetRootDir(), "openvpn", "tapctl.exe")
