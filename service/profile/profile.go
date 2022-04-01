@@ -1223,18 +1223,6 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 		"--verb", "2",
 	}
 
-	if runtime.GOOS == "windows" {
-		p.intf, err = utils.AcquireTap()
-		if err != nil {
-			p.clearStatus(p.startTime)
-			return
-		}
-
-		if p.intf != nil {
-			args = append(args, "--dev-node", p.intf.Name)
-		}
-	}
-
 	blockPath, e := p.writeBlock()
 	if e != nil {
 		err = e
