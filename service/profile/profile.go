@@ -44,6 +44,7 @@ import (
 	"github.com/pritunl/pritunl-client-electron/service/platform"
 	"github.com/pritunl/pritunl-client-electron/service/sprofile"
 	"github.com/pritunl/pritunl-client-electron/service/token"
+	"github.com/pritunl/pritunl-client-electron/service/tuntap"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/crypto/nacl/box"
@@ -169,7 +170,7 @@ type Profile struct {
 	wgServerPublicKey  string             `json:"-"`
 	wgReqCancel        context.CancelFunc `json:"-"`
 	cmd                *exec.Cmd          `json:"-"`
-	intf               *utils.Interface   `json:"-"`
+	tap                string             `json:"-"`
 	lastAuthErr        time.Time          `json:"-"`
 	token              *token.Token       `json:"-"`
 	managementPass     string             `json:"-"`
@@ -1028,8 +1029,8 @@ func (p *Profile) clearWg() {
 }
 
 func (p *Profile) clearStatus(start time.Time) {
-	if p.intf != nil {
-		utils.ReleaseTap(p.intf)
+	if p.tap != "" {
+		tuntap.Release(p.tap)
 	}
 
 	if p.managementPort != 0 {
@@ -1185,6 +1186,17 @@ func (p *Profile) Start(timeout bool) (err error) {
 }
 
 func (p *Profile) startOvpn(timeout bool) (err error) {
+	if runtime.GOOS == "windows" {
+		Profiles.Lock()
+		n := len(Profiles.m)
+		Profiles.Unlock()
+
+		err = tuntap.Resize(n)
+		if err != nil {
+			return
+		}
+	}
+
 	confPath, err := p.write()
 	if err != nil {
 		p.clearStatus(p.startTime)
@@ -1209,6 +1221,18 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 	args := []string{
 		"--config", confPath,
 		"--verb", "2",
+	}
+
+	if runtime.GOOS == "windows" {
+		p.tap = tuntap.Acquire()
+
+		if p.tap != "" {
+			args = append(args, "--dev-node", p.tap)
+		} else {
+			logrus.WithFields(logrus.Fields{
+				"tap_size": tuntap.Size(),
+			}).Error("profile: Failed to acquire tap")
+		}
 	}
 
 	blockPath, e := p.writeBlock()
