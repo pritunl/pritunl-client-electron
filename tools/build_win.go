@@ -31,7 +31,20 @@ func main() {
 		panic(err)
 	}
 
-	cmd := exec.Command(signtool,
+	err = os.Chdir("tuntap_win")
+	if err != nil {
+		panic(err)
+	}
+
+	cmd := exec.Command("go", "build", "-v", "-o", "tuntap.exe")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err = cmd.Run()
+	if err != nil {
+		panic(err)
+	}
+
+	cmd = exec.Command(signtool,
 		"sign",
 		"/a",
 		"/n", "Pritunl",
