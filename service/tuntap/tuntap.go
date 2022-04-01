@@ -21,10 +21,10 @@ var (
 func getToolpath() (pth string) {
 	if constants.Development {
 		return filepath.Join(utils.GetRootDir(), "..",
-			"openvpn", "tapctl.exe")
+			"tuntap_win", "tapctl.exe")
 	}
 
-	return filepath.Join(utils.GetRootDir(), "openvpn", "tapctl.exe")
+	return filepath.Join(utils.GetRootDir(), "tuntap", "tapctl.exe")
 }
 
 func Get() (adpaters []string, err error) {
