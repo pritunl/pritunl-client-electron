@@ -43,7 +43,7 @@ func Get(rootDir string) (adpaters []string, err error) {
 
 		name := strings.ToLower(lines[1])
 
-		if name != "ethernet" && name != "local" {
+		if name != "ethernet" && name != "local" && name != "pritunl" {
 			continue
 		}
 
