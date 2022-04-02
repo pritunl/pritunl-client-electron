@@ -1,7 +1,8 @@
 Pritunl Client Changelog
 ========================
 
-<%= version %>
+Version 1.2.3124.65 2022-04-02
+------------------------------
 
 Fix issue with Windows network adapters
 Add silent install to Windows installer
