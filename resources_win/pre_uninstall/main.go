@@ -40,7 +40,7 @@ func main() {
 	cmd.Stderr = os.Stderr
 	cmd.Run()
 	cmd = exec.Command(filepath.Join(rootDir, "tuntap", "tuntap.exe"),
-		"uninstall")
+		"clean")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Run()
