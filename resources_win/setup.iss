@@ -29,6 +29,10 @@ SignTool=signtool
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
+[Registry]
+Root: HKLM; Subkey: "Software\PritunlClient"; Flags: uninsdeletekey
+Root: HKLM; Subkey: "Software\PritunlClient"; ValueType: string; ValueName: "Version"; ValueData: "{#MyAppVersion}"
+
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: checkedonce
 
