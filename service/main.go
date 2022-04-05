@@ -98,7 +98,10 @@ func main() {
 	if runtime.GOOS == "windows" {
 		err = tuntap.Clean()
 		if err != nil {
-			return
+			logrus.WithFields(logrus.Fields{
+				"error": err,
+			}).Error("main: Failed to clear interfaces")
+			err = nil
 		}
 	}
 
