@@ -1,6 +1,10 @@
 Pritunl Client Changelog
 ========================
 
+<%= version %>
+
+Fix startup issue on Windows
+
 Version 1.2.3124.65 2022-04-02
 ------------------------------
 
