@@ -1,7 +1,8 @@
 Pritunl Client Changelog
 ========================
 
-<%= version %>
+Version 1.2.3128.59 2022-04-06
+------------------------------
 
 Fix compatibility issues on Windows
 
