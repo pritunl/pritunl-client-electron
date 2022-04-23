@@ -1,6 +1,10 @@
 Pritunl Client Changelog
 ========================
 
+<%= version %>
+
+Add support for systemd update
+
 Version 1.2.3128.59 2022-04-06
 ------------------------------
 
