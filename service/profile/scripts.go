@@ -265,7 +265,7 @@ get_link_info() {
   shift
 
   link=''
-  link="$(/sbin/ip link show dev "$dev")" || return $?
+  link="$(ip link show dev "$dev")" || return $?
 
   echo "$dev" "${link%%:*}"
 }
@@ -628,7 +628,7 @@ main() {
 
     "$script_type" "$link" "$if_index" "$@" || return 1
     # Flush the DNS cache
-    systemd-resolve --flush-caches
+    resolvectl flush-caches || true
   fi
 }
 
