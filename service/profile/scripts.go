@@ -253,7 +253,7 @@ usage() {
 
 busctl_call() {
   # Preserve busctl's exit status
-  busctl call "$DBUS_DEST" "$DBUS_NODE" "${DBUS_DEST}.Manager" "$@" || {
+  /usr/bin/busctl call "$DBUS_DEST" "$DBUS_NODE" "${DBUS_DEST}.Manager" "$@" || {
     local -i status=$?
     emerg "'busctl' exited with status $status"
     return $status
@@ -265,7 +265,7 @@ get_link_info() {
   shift
 
   link=''
-  link="$(ip link show dev "$dev")" || return $?
+  link="$(/usr/sbin/ip link show dev "$dev")" || return $?
 
   echo "$dev" "${link%%:*}"
 }
@@ -628,7 +628,7 @@ main() {
 
     "$script_type" "$link" "$if_index" "$@" || return 1
     # Flush the DNS cache
-    resolvectl flush-caches || true
+    /usr/bin/resolvectl flush-caches || true
   fi
 }
 
