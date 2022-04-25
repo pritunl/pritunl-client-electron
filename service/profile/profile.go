@@ -1478,7 +1478,7 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 		if !p.stop {
 			logrus.WithFields(logrus.Fields{
 				"profile_id": p.Id,
-			}).Error("profile: Unexpected profile exit")
+			}).Info("profile: Profile exit, reconnecting")
 		}
 
 		p.clearStatus(p.startTime)
