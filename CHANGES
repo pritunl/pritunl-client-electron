@@ -1,8 +1,7 @@
 Pritunl Client Changelog
 ========================
 
-Version 1.2.3148.66 2022-04-26
-------------------------------
+<%= version %>
 
 Fix connection issues on Fedora
 
