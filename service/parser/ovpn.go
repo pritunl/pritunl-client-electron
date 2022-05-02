@@ -116,6 +116,8 @@ func (o *Ovpn) Export() string {
 	}
 	if o.Compress != "" {
 		output += fmt.Sprintf("compress %s\n", o.Compress)
+	} else {
+		output += fmt.Sprintf("comp-lzo no\n")
 	}
 	if o.AuthUserPass {
 		output += "auth-user-pass\n"
