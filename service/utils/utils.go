@@ -594,6 +594,7 @@ func ClearDNSCache() {
 		break
 	case "linux":
 		command.Command("systemd-resolve", "--flush-caches").Run()
+		command.Command("resolvectl", "--flush-caches").Run()
 		go func() {
 			defer func() {
 				panc := recover()
