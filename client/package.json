@@ -1,6 +1,6 @@
 {
   "name": "pritunl",
-  "version": "1.2.3148.66",
+  "version": "1.2.3154.57",
   "main": "dist/static/main.js",
   "dependencies": {
     "@blueprintjs/core": "3.53.0",
