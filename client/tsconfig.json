@@ -3,6 +3,7 @@
     "target": "es2018",
     "module": "es2015",
     "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
     "noImplicitAny": true,
     "noImplicitReturns": true,
     "removeComments": true,
