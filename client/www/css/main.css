@@ -387,6 +387,9 @@ input:active {
 .alerts .error {
   background-color: #830202;
 }
+.alerts .upgrade {
+  display: none;
+}
 
 
 .ubuntu {
@@ -475,9 +478,6 @@ input:active {
 }
 .main-menu.linux.show {
   height: 170px;
-}
-.main-menu.linux .tray-icon {
-  display: none;
 }
 .main-menu .btn {
   color: #fff;
