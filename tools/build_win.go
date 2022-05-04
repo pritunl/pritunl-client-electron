@@ -99,6 +99,27 @@ func main() {
 		panic(err)
 	}
 
+	err = os.Chdir(filepath.Join("..", "cli"))
+	if err != nil {
+		panic(err)
+	}
+
+	cmd = exec.Command("go", "get", "-u")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err = cmd.Run()
+	if err != nil {
+		panic(err)
+	}
+
+	cmd = exec.Command("go", "build", "-v")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err = cmd.Run()
+	if err != nil {
+		panic(err)
+	}
+
 	err = os.Chdir(filepath.Join("..", "client"))
 	if err != nil {
 		panic(err)
