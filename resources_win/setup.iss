@@ -40,6 +40,7 @@ Source: "..\resources_win\post_install\post_install.exe"; DestDir: "{app}"; Flag
 Source: "..\resources_win\pre_uninstall\pre_uninstall.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\service_win\nssm.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\service\service.exe"; DestDir: "{app}"; DestName: "pritunl-service.exe"; Flags: ignoreversion
+Source: "..\cli\cli.exe"; DestDir: "{app}"; DestName: "pritunl-client.exe"; Flags: ignoreversion
 
 [Code]
 var ResultCode: Integer;
