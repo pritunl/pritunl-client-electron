@@ -44,6 +44,14 @@ export class Response {
 		return JSON.parse(this.data || null)
 	}
 
+	jsonPassive(): object {
+		try {
+			return JSON.parse(this.data || null)
+		} catch {
+			return null
+		}
+	}
+
 	string(): string {
 		return this.data
 	}
@@ -153,7 +161,9 @@ export class Request {
 					let resp = new Response(nodeResp)
 
 					nodeResp.on("data", (data) => {
-						resp.data = data
+						if (data) {
+							resp.data = data.toString()
+						}
 					})
 
 					nodeResp.on("end", () => {
