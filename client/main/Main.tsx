@@ -9,6 +9,7 @@ let tray: electron.Tray
 let awaken: boolean
 let ready: boolean
 let readyError: string
+let main: Main
 
 let orig = true
 if (process.argv.indexOf("--beta") !== -1) {
@@ -74,7 +75,11 @@ Service.wakeup().then((awake: boolean) => {
 class Main {
 	window: electron.BrowserWindow
 
-	mainWindow(): void {
+	showWindow(): void {
+		this.window.show()
+	}
+
+	createWindow(): void {
 		let width: number
 		let height: number
 		let minWidth: number
@@ -125,6 +130,10 @@ class Main {
 					contextIsolation: false
 				} as any
 			})
+			let main = require("@electron/remote/main")
+			if (main && main.enable) {
+				main.enable(this.window.webContents)
+			}
 		} else {
 			this.window = new electron.BrowserWindow({
 				title: "Pritunl Client",
@@ -153,7 +162,7 @@ class Main {
 			if (Config.disable_tray_icon || !tray) {
 				electron.app.quit()
 			}
-			this.window = null
+			main = null
 		})
 
 		let shown = false
@@ -203,7 +212,13 @@ class Main {
 	}
 
 	run(): void {
-		this.mainWindow()
+		if (main) {
+			main.showWindow()
+			return
+		}
+
+		this.createWindow()
+		main = this
 	}
 }
 
