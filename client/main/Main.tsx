@@ -46,6 +46,24 @@ process.on("uncaughtException", function (error) {
 	})
 })
 
+process.on("unhandledRejection", function (error) {
+	let errorMsg: string = String(error)
+
+	if (!ready) {
+		readyError = errorMsg
+		return
+	}
+
+	electron.dialog.showMessageBox(null, {
+		type: "error",
+		buttons: ["Exit"],
+		title: "Pritunl Client - Process Error",
+		message: "Error occured in main process:\n\n" + errorMsg,
+	}).then(function() {
+		electron.app.quit()
+	})
+})
+
 Service.wakeup().then((awake: boolean) => {
 	awaken = awake
 	if (ready) {
