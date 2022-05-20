@@ -1,70 +1,66 @@
 /// <reference path="../References.d.ts"/>
-import * as SuperAgent from "superagent"
 import * as Constants from "../Constants";
 import * as Auth from "../Auth";
+import * as Request from "../Request"
 
-export function get(path: string): SuperAgent.SuperAgentRequest {
-	let reqHost = ""
+export function get(path: string): Request.Request {
+	let req = new Request.Request()
+
 	if (Constants.unix) {
-		reqHost = Constants.unixHost
+		req.unix(Constants.unixPath)
 	} else {
-		reqHost = Constants.webHost
+		req.tcp(Constants.webHost)
 	}
 
-	let req = SuperAgent
-		.get(reqHost + path)
+	req.get(path)
 		.set("Auth-Token", Auth.token)
 		.set("User-Agent", "pritunl")
 
 	return req
 }
 
-export function put(path: string): SuperAgent.SuperAgentRequest {
-	let reqHost = ""
+export function put(path: string): Request.Request {
+	let req = new Request.Request()
+
 	if (Constants.unix) {
-		reqHost = Constants.unixHost
+		req.unix(Constants.unixPath)
 	} else {
-		reqHost = Constants.webHost
+		req.tcp(Constants.webHost)
 	}
 
-	let req = SuperAgent
-		.put(reqHost + path)
-		.set("Auth-Token", Auth.token)
-		.set("User-Agent", "pritunl")
-
-	if (Constants.unix) {
-		req.set("Host", "unix")
-	}
-
-	return req
-}
-
-export function post(path: string): SuperAgent.SuperAgentRequest {
-	let reqHost = ""
-	if (Constants.unix) {
-		reqHost = Constants.unixHost
-	} else {
-		reqHost = Constants.webHost
-	}
-
-	let req = SuperAgent
-		.post(reqHost + path)
+	req.put(path)
 		.set("Auth-Token", Auth.token)
 		.set("User-Agent", "pritunl")
 
 	return req
 }
 
-export function del(path: string): SuperAgent.SuperAgentRequest {
-	let reqHost = ""
+export function post(path: string): Request.Request {
+	let req = new Request.Request()
+
 	if (Constants.unix) {
-		reqHost = Constants.unixHost
+		req.unix(Constants.unixPath)
 	} else {
-		reqHost = Constants.webHost
+		req.tcp(Constants.webHost)
 	}
 
-	let req = SuperAgent
-		.delete(reqHost + path)
+	req.post(path)
+		.set("Auth-Token", Auth.token)
+		.set("User-Agent", "pritunl")
+
+	return req
+}
+
+export function del(path: string): Request.Request {
+	let req = new Request.Request()
+
+	if (Constants.unix) {
+		req.unix(Constants.unixPath)
+	} else {
+		req.tcp(Constants.webHost)
+	}
+
+	req.delete(path)
 		.set("Auth-Token", Auth.token)
 		.set("User-Agent", "pritunl")
 
