@@ -1,20 +1,9 @@
 /// <reference path="../References.d.ts"/>
 import * as React from "react"
-import * as Theme from "../Theme"
-import ProfilesStore from "../stores/ProfilesStore"
 import * as ProfileTypes from "../types/ProfileTypes"
 import * as ProfileActions from "../actions/ProfileActions"
 import * as ServiceActions from "../actions/ServiceActions"
 import * as Blueprint from "@blueprintjs/core"
-import PageInfo from "./PageInfo"
-import PageSwitch from "./PageSwitch"
-import AceEditor from "react-ace"
-
-import "ace-builds/src-noconflict/mode-text"
-import "ace-builds/src-noconflict/theme-dracula"
-import "ace-builds/src-noconflict/theme-eclipse"
-import * as MiscUtils from "../utils/MiscUtils"
-import * as Constants from "../Constants"
 
 interface Props {
 	profile: ProfileTypes.ProfileRo
@@ -120,13 +109,12 @@ export default class ProfileConnect extends React.Component<Props, State> {
 	}
 
 	closeDialogConfirm = (): void => {
+		this.connect("ovpn", this.state.password)
 		this.setState({
 			...this.state,
 			dialog: false,
+			password: "",
 		})
-		if (this.props.onConfirm) {
-			this.props.onConfirm()
-		}
 	}
 
 	clearConfirm = (): void => {
