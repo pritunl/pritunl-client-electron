@@ -39,7 +39,7 @@ function connect(): void {
 			}
 			reconnected = true;
 			connect();
-		}, 1000);
+		}, 3500);
 	};
 
 	let socket = new WebSocket(wsHost + '/events', {
