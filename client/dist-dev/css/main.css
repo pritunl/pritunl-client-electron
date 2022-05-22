@@ -479,9 +479,6 @@ input:active {
 .main-menu.linux.show {
   height: 170px;
 }
-.main-menu.linux .tray-icon {
-  display: none;
-}
 .main-menu .btn {
   color: #fff;
   width: 190px;
