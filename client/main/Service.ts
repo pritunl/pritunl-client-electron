@@ -15,7 +15,7 @@ export type Callback = (event: Event) => void
 
 let unix = false
 const unixPath = "/var/run/pritunl.sock"
-const webHost = "https://127.0.0.1:9770"
+const webHost = "http://127.0.0.1:9770"
 const unixWsHost = "ws+unix://" + path.join(
 	path.sep, "var", "run", "pritunl.sock") + ":"
 const webWsHost = "ws://127.0.0.1:9770"
