@@ -28,6 +28,14 @@ func Uuid() (id string) {
 	return
 }
 
+func GetWinDrive() string {
+	systemDrv := os.Getenv("SYSTEMDRIVE")
+	if systemDrv == "" {
+		return "C:\\"
+	}
+	return systemDrv + "\\"
+}
+
 func GetRootDir() (pth string) {
 	pth, err := filepath.Abs(filepath.Dir(os.Args[0]))
 	if err != nil {
