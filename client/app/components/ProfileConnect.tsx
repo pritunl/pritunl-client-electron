@@ -77,6 +77,7 @@ export default class ProfileConnect extends React.Component<Props, State> {
 				sync_secret: prfl.sync_secret,
 				username: "pritunl",
 				password: password,
+				dynamic_firewall: prfl.dynamic_firewall,
 				server_public_key: serverPubKey,
 				server_box_public_key: serverBoxPubKey,
 				token_ttl: prfl.token_ttl,
