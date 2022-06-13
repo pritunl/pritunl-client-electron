@@ -64,7 +64,7 @@ func GetAuthPath() (pth string) {
 
 	switch runtime.GOOS {
 	case "windows":
-		pth = filepath.Join("C:\\", "ProgramData", "Pritunl", "auth")
+		pth = filepath.Join(GetWinDrive(), "ProgramData", "Pritunl", "auth")
 		break
 	case "linux", "darwin":
 		pth = filepath.Join(string(filepath.Separator),
