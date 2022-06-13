@@ -26,6 +26,7 @@ type Sprofile struct {
 	UserId             string           `json:"user_id"`
 	User               string           `json:"user"`
 	PreConnectMsg      string           `json:"pre_connect_msg"`
+	DynamicFirewall    bool             `json:"dynamic_firewall"`
 	PasswordMode       string           `json:"password_mode"`
 	Token              bool             `json:"token"`
 	TokenTtl           int              `json:"token_ttl"`
