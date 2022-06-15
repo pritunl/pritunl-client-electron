@@ -244,7 +244,9 @@ type AuthData struct {
 	Timestamp int64  `json:"timestamp"`
 }
 
-func (p *Profile) write() (pth string, err error) {
+func (p *Profile) write(fixedRemote, fixedRemote6 string) (
+	pth string, err error) {
+
 	rootDir, err := utils.GetTempDir()
 	if err != nil {
 		return
@@ -252,7 +254,7 @@ func (p *Profile) write() (pth string, err error) {
 
 	pth = filepath.Join(rootDir, p.Id)
 
-	prsr := parser.Import(p.Data)
+	prsr := parser.Import(p.Data, fixedRemote, fixedRemote6)
 	data := prsr.Export()
 
 	if runtime.GOOS == "windows" {
@@ -445,7 +447,7 @@ func (p *Profile) writeManagementPass() (pth string, err error) {
 	return
 }
 
-func (p *Profile) writeAuth() (pth string, err error) {
+func (p *Profile) writeAuth(fwToken string) (pth string, err error) {
 	rootDir, err := utils.GetTempDir()
 	if err != nil {
 		return
@@ -1243,6 +1245,30 @@ func (p *Profile) Start(timeout bool, delay bool) (err error) {
 }
 
 func (p *Profile) startOvpn(timeout bool) (err error) {
+	var data *OvpnData
+
+	if p.DynamicFirewall {
+		data, err = p.openOvpn()
+		if err != nil {
+			return
+		}
+
+		if data != nil && !data.Allow {
+			logrus.WithFields(logrus.Fields{
+				"reason": data.Reason,
+			}).Error("profile: Failed to authenticate ovpn")
+
+			evt := event.Event{
+				Type: "auth_error",
+				Data: p,
+			}
+			evt.Init()
+
+			p.clearStatus(p.startTime)
+			return
+		}
+	}
+
 	if runtime.GOOS == "windows" {
 		Profiles.Lock()
 		n := len(Profiles.m)
@@ -1254,7 +1280,16 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 		}
 	}
 
-	confPath, err := p.write()
+	fixedRemote := ""
+	fixedRemote6 := ""
+	fwToken := ""
+	if data != nil {
+		fixedRemote = data.Remote
+		fixedRemote6 = data.Remote6
+		fwToken = data.Token
+	}
+
+	confPath, err := p.write(fixedRemote, fixedRemote6)
 	if err != nil {
 		p.clearStatus(p.startTime)
 		return
@@ -1265,7 +1300,7 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 	if (p.Username != "" && p.Password != "") ||
 		p.ServerBoxPublicKey != "" || p.ServerPublicKey != "" {
 
-		authPath, err = p.writeAuth()
+		authPath, err = p.writeAuth(fwToken)
 		if err != nil {
 			p.clearStatus(p.startTime)
 			return
