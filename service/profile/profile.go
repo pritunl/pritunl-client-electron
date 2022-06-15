@@ -2525,7 +2525,7 @@ func (p *Profile) confWgWin() (err error) {
 
 		_, err = utils.ExecCombinedOutputLogged(
 			nil,
-			WgWinPath,
+			GetWgUtilPath(),
 			"/installtunnelservice", p.wgConfPth,
 		)
 		if err == nil {

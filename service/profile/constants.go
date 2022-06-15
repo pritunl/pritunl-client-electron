@@ -6,7 +6,6 @@ import (
 )
 
 const (
-	WgWinPath       = "C:\\Program Files\\WireGuard\\wireguard.exe"
 	WgLinuxConfPath = "/etc/wireguard"
 	WgMacConfPath   = "/usr/local/etc/wireguard"
 	Ovpn            = "ovpn"

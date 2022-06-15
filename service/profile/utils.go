@@ -62,6 +62,11 @@ func GetWgPath() string {
 	return ""
 }
 
+func GetWgUtilPath() string {
+	return filepath.Join(utils.GetWinDrive(),
+		"Program Files", "WireGuard", "wireguard.exe")
+}
+
 func GetWgQuickPath() string {
 	switch runtime.GOOS {
 	case "windows":
