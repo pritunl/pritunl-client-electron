@@ -1086,6 +1086,22 @@ func (p *Profile) clearWg() {
 	return
 }
 
+func (p *Profile) clearOvpn() {
+	switch runtime.GOOS {
+	case "linux":
+		p.clearWgLinux()
+		break
+	case "darwin":
+		p.clearWgMac()
+		break
+	case "windows":
+		p.clearWgWin()
+		break
+	}
+
+	return
+}
+
 func (p *Profile) clearStatus(start time.Time) {
 	if p.tap != "" {
 		tuntap.Release(p.tap)
@@ -1113,6 +1129,7 @@ func (p *Profile) clearStatus(start time.Time) {
 		}
 
 		p.clearWg()
+		_ = p.stopOvpn()
 
 		p.Status = "disconnected"
 		p.Timestamp = 0
@@ -1125,7 +1142,10 @@ func (p *Profile) clearStatus(start time.Time) {
 		}
 
 		Profiles.Lock()
-		delete(Profiles.m, p.Id)
+		prfl := Profiles.m[p.Id]
+		if prfl == p {
+			delete(Profiles.m, p.Id)
+		}
 		if runtime.GOOS == "darwin" && len(Profiles.m) == 0 {
 			err := utils.ClearScutilKeys()
 			if err != nil {
@@ -1216,6 +1236,12 @@ func (p *Profile) Start(timeout bool, delay bool) (err error) {
 	}
 
 	Profiles.Lock()
+	prfl := Profiles.m[p.Id]
+	if prfl != nil {
+		go func() {
+			_ = prfl.Stop()
+		}()
+	}
 	Profiles.m[p.Id] = p
 	Profiles.Unlock()
 
@@ -1228,6 +1254,13 @@ func (p *Profile) Start(timeout bool, delay bool) (err error) {
 			}).Error("profile: Failed to sync system profile")
 		} else if updated {
 			UpdateSystemProfile(p, p.SystemProfile)
+		}
+	}
+
+	if delay {
+		time.Sleep(3 * time.Second)
+		if p.stop {
+			return
 		}
 	}
 
@@ -1417,6 +1450,11 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 		err = &ExecError{
 			errors.Wrap(err, "profile: Failed to get stderr"),
 		}
+		p.clearStatus(p.startTime)
+		return
+	}
+
+	if p.stop {
 		p.clearStatus(p.startTime)
 		return
 	}
@@ -1830,6 +1868,7 @@ func (p *Profile) reqWg(remote string) (wgData *WgData, err error) {
 		err = &errortypes.RequestError{
 			errors.Wrap(err, "profile: Request put error"),
 		}
+		cancel()
 		return
 	}
 
@@ -1839,6 +1878,7 @@ func (p *Profile) reqWg(remote string) (wgData *WgData, err error) {
 	timestamp := strconv.FormatInt(time.Now().Unix(), 10)
 	authNonce, err := utils.RandStr(32)
 	if err != nil {
+		cancel()
 		return
 	}
 
@@ -1864,7 +1904,7 @@ func (p *Profile) reqWg(remote string) (wgData *WgData, err error) {
 	req.Header.Set("Auth-Nonce", authNonce)
 	req.Header.Set("Auth-Signature", sig)
 
-	p.wgReqCancel = cancel
+	p.openReqCancel = cancel
 	res, err := clientConnInsecure.Do(req)
 	if err != nil {
 		err = &errortypes.RequestError{
@@ -1873,7 +1913,7 @@ func (p *Profile) reqWg(remote string) (wgData *WgData, err error) {
 		return
 	}
 	defer res.Body.Close()
-	p.wgReqCancel = nil
+	p.openReqCancel = nil
 
 	if res.StatusCode != 200 {
 		err = &errortypes.RequestError{
@@ -2181,7 +2221,7 @@ func (p *Profile) pingWg() (wgData *WgPingData, retry bool, err error) {
 		return
 	}
 
-	wgResp := &WgKeyResp{}
+	wgResp := &KeyResp{}
 	err = json.NewDecoder(res.Body).Decode(&wgResp)
 	if err != nil {
 		err = &errortypes.ParseError{
@@ -2625,7 +2665,7 @@ func (p *Profile) restart() {
 	p.Wait()
 
 	if prfl.Reconnect {
-		err = prfl.Start(false)
+		err = prfl.Start(false, false)
 		if err != nil {
 			logrus.WithFields(logrus.Fields{
 				"error": err,
@@ -2915,10 +2955,10 @@ func (p *Profile) startWg(timeout bool) (err error) {
 
 		time.Sleep(3 * time.Second)
 
+		p.clearStatus(p.startTime)
 		if p.connected && !p.stop {
 			go p.restart()
 		}
-		p.clearStatus(p.startTime)
 		return
 	}
 
@@ -3097,6 +3137,10 @@ func (p *Profile) stopWg() (err error) {
 }
 
 func (p *Profile) stopOvpn() (err error) {
+	if p.cmd == nil || p.cmd.Process == nil {
+		return
+	}
+
 	if runtime.GOOS == "windows" {
 		done := false
 
@@ -3114,6 +3158,7 @@ func (p *Profile) stopOvpn() (err error) {
 
 			err = p.sendManagementCommand("signal SIGTERM")
 			if err != nil {
+				err = nil
 				_ = p.cmd.Process.Kill()
 				return
 			}
@@ -3158,19 +3203,22 @@ func (p *Profile) stopOvpn() (err error) {
 }
 
 func (p *Profile) Stop() (err error) {
-	if p.stop || (p.Mode != Wg && (p.cmd == nil || p.cmd.Process == nil)) {
+	p.stateLock.Lock()
+	if p.stop {
+		p.stateLock.Unlock()
 		return
 	}
+	p.stop = true
+	p.stateLock.Unlock()
 
 	logrus.WithFields(logrus.Fields{
 		"profile_id": p.Id,
 	}).Info("profile: Disconnecting")
 
-	p.stop = true
 	p.Status = "disconnecting"
 	p.update()
 
-	cancel := p.wgReqCancel
+	cancel := p.openReqCancel
 	if cancel != nil {
 		cancel()
 	}
