@@ -94,19 +94,35 @@ type WgKeyReq struct {
 }
 
 type WgKeyBox struct {
-	DeviceId    string   `json:"device_id"`
-	DeviceName  string   `json:"device_name"`
-	Platform    string   `json:"platform"`
-	MacAddr     string   `json:"mac_addr"`
-	MacAddrs    []string `json:"mac_addrs"`
-	Token       string   `json:"token"`
-	Nonce       string   `json:"nonce"`
-	Password    string   `json:"password"`
-	Timestamp   int64    `json:"timestamp"`
-	WgPublicKey string   `json:"wg_public_key"`
+	DeviceId       string   `json:"device_id"`
+	DeviceName     string   `json:"device_name"`
+	Platform       string   `json:"platform"`
+	MacAddr        string   `json:"mac_addr"`
+	MacAddrs       []string `json:"mac_addrs"`
+	Token          string   `json:"token"`
+	Nonce          string   `json:"nonce"`
+	Password       string   `json:"password"`
+	Timestamp      int64    `json:"timestamp"`
+	WgPublicKey    string   `json:"wg_public_key"`
+	PublicAddress  string   `json:"public_address"`
+	PublicAddress6 string   `json:"public_address6"`
 }
 
-type WgKeyResp struct {
+type OvpnKeyBox struct {
+	DeviceId       string   `json:"device_id"`
+	DeviceName     string   `json:"device_name"`
+	Platform       string   `json:"platform"`
+	MacAddr        string   `json:"mac_addr"`
+	MacAddrs       []string `json:"mac_addrs"`
+	Token          string   `json:"token"`
+	Nonce          string   `json:"nonce"`
+	Password       string   `json:"password"`
+	Timestamp      int64    `json:"timestamp"`
+	PublicAddress  string   `json:"public_address"`
+	PublicAddress6 string   `json:"public_address6"`
+}
+
+type KeyResp struct {
 	Data      string `json:"data"`
 	Nonce     string `json:"nonce"`
 	Signature string `json:"signature"`
@@ -142,6 +158,14 @@ type WgData struct {
 	Configuration *WgConf `json:"configuration"`
 }
 
+type OvpnData struct {
+	Allow   bool   `json:"allow"`
+	Reason  string `json:"reason"`
+	Token   string `json:"token"`
+	Remote  string `json:"remote"`
+	Remote6 string `json:"remote6"`
+}
+
 type WgPingData struct {
 	Status    bool `json:"status"`
 	Timestamp int  `json:"timestamp"`
@@ -168,7 +192,7 @@ type Profile struct {
 	wgConfPth          string             `json:"-"`
 	wgHandshake        int                `json:"-"`
 	wgServerPublicKey  string             `json:"-"`
-	wgReqCancel        context.CancelFunc `json:"-"`
+	openReqCancel      context.CancelFunc `json:"-"`
 	cmd                *exec.Cmd          `json:"-"`
 	tap                string             `json:"-"`
 	lastAuthErr        time.Time          `json:"-"`
@@ -191,6 +215,7 @@ type Profile struct {
 	Data               string             `json:"-"`
 	Username           string             `json:"-"`
 	Password           string             `json:"-"`
+	DynamicFirewall    bool               `json:"-"`
 	ServerPublicKey    string             `json:"-"`
 	ServerBoxPublicKey string             `json:"-"`
 	TokenTtl           int                `json:"-"`
@@ -429,7 +454,38 @@ func (p *Profile) writeAuth() (pth string, err error) {
 	username := p.Username
 	password := p.Password
 
-	if p.ServerBoxPublicKey != "" {
+	if fwToken != "" {
+		var serverPubKey [32]byte
+		serverPubKeySlic, e := base64.StdEncoding.DecodeString(
+			p.ServerBoxPublicKey)
+		if e != nil {
+			err = &errortypes.ParseError{
+				errors.Wrap(e, "profile: Failed to decode server box key"),
+			}
+			return
+		}
+		copy(serverPubKey[:], serverPubKeySlic)
+
+		senderPubKey, senderPrivKey, e := box.GenerateKey(rand.Reader)
+		if e != nil {
+			err = &errortypes.ReadError{
+				errors.Wrap(e, "profile: Failed to generate nacl key"),
+			}
+			return
+		}
+
+		var nonce [24]byte
+		nonceHash := sha256.Sum256(senderPubKey[:])
+		copy(nonce[:], nonceHash[:24])
+
+		username = base64.RawStdEncoding.EncodeToString(senderPubKey[:])
+
+		encrypted := box.Seal([]byte{}, []byte(fwToken),
+			&nonce, &serverPubKey, senderPrivKey)
+
+		ciphertext64 := base64.RawStdEncoding.EncodeToString(encrypted)
+		password = "$f$" + ciphertext64
+	} else if p.ServerBoxPublicKey != "" {
 		var serverPubKey [32]byte
 		serverPubKeySlic, e := base64.StdEncoding.DecodeString(
 			p.ServerBoxPublicKey)
@@ -822,7 +878,7 @@ func (p *Profile) parseLine(line string) {
 			p.Wait()
 
 			if prfl.Reconnect {
-				err = prfl.Start(false)
+				err = prfl.Start(false, true)
 				if err != nil {
 					logrus.WithFields(logrus.Fields{
 						"error": err,
@@ -1105,6 +1161,7 @@ func (p *Profile) Copy() (prfl *Profile) {
 		Data:               p.Data,
 		Username:           p.Username,
 		Password:           p.Password,
+		DynamicFirewall:    p.DynamicFirewall,
 		ServerPublicKey:    p.ServerPublicKey,
 		ServerBoxPublicKey: p.ServerBoxPublicKey,
 		Reconnect:          p.Reconnect,
@@ -1125,7 +1182,7 @@ func (p *Profile) Init() {
 	p.wgQuickPath = GetWgQuickPath()
 }
 
-func (p *Profile) Start(timeout bool) (err error) {
+func (p *Profile) Start(timeout bool, delay bool) (err error) {
 	if shutdown {
 		return
 	}
