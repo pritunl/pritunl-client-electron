@@ -142,7 +142,7 @@ func (o *Ovpn) Export() string {
 	return output
 }
 
-func Import(data string) (o *Ovpn) {
+func Import(data, fixedRemote, fixedRemote6 string) (o *Ovpn) {
 	o = &Ovpn{
 		Remotes: []Remote{},
 	}
@@ -153,6 +153,9 @@ func Import(data string) (o *Ovpn) {
 	inKey := false
 
 	data = strings.ReplaceAll(data, "\r", "")
+
+	fixedPort := 0
+	fixedProto := ""
 
 	for _, origLine := range strings.Split(data, "\n") {
 		line := FilterStr(origLine, 256)
@@ -290,7 +293,12 @@ func Import(data string) (o *Ovpn) {
 				continue
 			}
 
-			o.Remotes = append(o.Remotes, remote)
+			if fixedRemote != "" || fixedRemote6 != "" {
+				fixedPort = remote.Port
+				fixedProto = remote.Proto
+			} else {
+				o.Remotes = append(o.Remotes, remote)
+			}
 
 			break
 		case "remote-random":
@@ -600,6 +608,21 @@ func Import(data string) (o *Ovpn) {
 	}
 	if o.DevType == "" {
 		o.DevType = "tun"
+	}
+
+	if fixedRemote != "" {
+		o.Remotes = append(o.Remotes, Remote{
+			Host:  fixedRemote,
+			Port:  fixedPort,
+			Proto: fixedProto,
+		})
+	}
+	if fixedRemote6 != "" {
+		o.Remotes = append(o.Remotes, Remote{
+			Host:  fixedRemote6,
+			Port:  fixedPort,
+			Proto: fixedProto,
+		})
 	}
 
 	return
