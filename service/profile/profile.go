@@ -921,7 +921,7 @@ func (p *Profile) parseLine(line string) {
 			tokn.Init()
 		}
 
-		if utils.SinceSafe(p.lastAuthErr) > 10*time.Second {
+		if utils.SinceAbs(p.lastAuthErr) > 10*time.Second {
 			p.lastAuthErr = time.Now()
 
 			evt := event.Event{
@@ -1107,7 +1107,7 @@ func (p *Profile) clearStatus(start time.Time) {
 			}
 		}()
 
-		diff := utils.SinceSafe(start)
+		diff := utils.SinceAbs(start)
 		if diff < 1*time.Second {
 			time.Sleep(1 * time.Second)
 		}
@@ -3175,7 +3175,7 @@ func (p *Profile) Stop() (err error) {
 		cancel()
 	}
 
-	diff := utils.SinceSafe(p.startTime)
+	diff := utils.SinceAbs(p.startTime)
 	if diff < 8*time.Second {
 		delay := time.Duration(8-int64(diff.Seconds())) * time.Second
 		time.Sleep(delay)
