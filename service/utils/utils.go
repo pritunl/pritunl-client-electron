@@ -663,7 +663,7 @@ func GetAuthPath() (pth string) {
 
 	switch runtime.GOOS {
 	case "windows":
-		pth = filepath.Join("C:\\", "ProgramData", "Pritunl")
+		pth = filepath.Join(GetWinDrive(), "ProgramData", "Pritunl")
 
 		_ = platform.MkdirReadSecure(pth)
 
@@ -692,7 +692,7 @@ func GetLogPath() (pth string) {
 
 	switch runtime.GOOS {
 	case "windows":
-		pth = filepath.Join("C:\\", "ProgramData", "Pritunl")
+		pth = filepath.Join(GetWinDrive(), "ProgramData", "Pritunl")
 
 		_ = platform.MkdirReadSecure(pth)
 
@@ -721,7 +721,7 @@ func GetLogPath2() (pth string) {
 
 	switch runtime.GOOS {
 	case "windows":
-		pth = filepath.Join("C:\\", "ProgramData", "Pritunl")
+		pth = filepath.Join(GetWinDrive(), "ProgramData", "Pritunl")
 
 		_ = platform.MkdirReadSecure(pth)
 
@@ -772,7 +772,7 @@ func GetTempDir() (pth string, err error) {
 	}
 
 	if runtime.GOOS == "windows" {
-		pth = filepath.Join("C:\\", "ProgramData", "Pritunl", "Temp")
+		pth = filepath.Join(GetWinDrive(), "ProgramData", "Pritunl", "Temp")
 		err = platform.MkdirSecure(pth)
 		if err != nil {
 			err = &IoError{
