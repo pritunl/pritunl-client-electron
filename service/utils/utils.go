@@ -643,6 +643,14 @@ func GetRootDir() (pth string) {
 	return
 }
 
+func GetWinDrive() string {
+	systemDrv := os.Getenv("SYSTEMDRIVE")
+	if systemDrv == "" {
+		return "C:\\"
+	}
+	return systemDrv + "\\"
+}
+
 func GetAuthPath() (pth string) {
 	if constants.Development {
 		pth = filepath.Join(GetRootDir(), "..", "dev")
