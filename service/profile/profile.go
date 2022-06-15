@@ -1678,6 +1678,454 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 	return
 }
 
+func (p *Profile) openOvpn() (data *OvpnData, err error) {
+	remotesSet := set.NewSet()
+	remotes := []string{}
+
+	ifaces, err := net.Interfaces()
+	if err != nil {
+		err = &errortypes.ReadError{
+			errors.New("profile: Failed to load interfaces"),
+		}
+
+		p.clearStatus(p.startTime)
+		return
+	}
+
+	macAddr := ""
+	macAddrs := []string{}
+	for _, iface := range ifaces {
+		if iface.Flags&net.FlagUp == 0 ||
+			iface.Flags&net.FlagLoopback != 0 ||
+			iface.HardwareAddr == nil ||
+			iface.HardwareAddr.String() == "" {
+
+			continue
+		}
+
+		macAddr = iface.HardwareAddr.String()
+		if p.MacAddr == "" {
+			p.MacAddr = macAddr
+		}
+		macAddrs = append(macAddrs, macAddr)
+	}
+	p.MacAddrs = macAddrs
+
+	rangeKey := false
+	for _, line := range strings.Split(p.Data, "\n") {
+		if !rangeKey {
+			if strings.HasPrefix(line, "setenv UV_ID") {
+				lineSpl := strings.Split(line, " ")
+				if len(lineSpl) < 3 {
+					continue
+				}
+
+				p.DeviceId = lineSpl[2]
+			} else if strings.HasPrefix(line, "setenv UV_NAME") {
+				lineSpl := strings.Split(line, " ")
+				if len(lineSpl) < 3 {
+					continue
+				}
+
+				p.DeviceName = lineSpl[2]
+			} else if strings.HasPrefix(line, "remote ") {
+				lineSpl := strings.Split(line, " ")
+				if len(lineSpl) < 4 {
+					continue
+				}
+
+				remote := lineSpl[1]
+				if !remotesSet.Contains(remote) {
+					remotesSet.Add(remote)
+					remotes = append(remotes, remote)
+				}
+			} else if strings.HasPrefix(line, "<key>") {
+				rangeKey = true
+			}
+		} else {
+			if strings.HasPrefix(line, "</key>") {
+				rangeKey = false
+			} else {
+				p.PrivateKey += line + "\n"
+			}
+		}
+	}
+
+	for _, syncAddr := range p.SyncHosts {
+		syncUrl, e := url.Parse(syncAddr)
+		if e != nil {
+			err = &errortypes.ParseError{
+				errors.Wrap(e, "profile: Sync address parse error"),
+			}
+
+			logrus.WithFields(logrus.Fields{
+				"error": err,
+			}).Error("profile: Failed to parse sync address")
+
+			err = nil
+
+			continue
+		}
+
+		remote := syncUrl.Host
+
+		if !remotesSet.Contains(remote) {
+			remotesSet.Add(remote)
+			remotes = append(remotes, remote)
+		}
+	}
+
+	for _, i := range mathrand.Perm(len(remotes)) {
+		remote := remotes[i]
+
+		data, err = p.reqOvpn(remote)
+		if err == nil {
+			break
+		}
+
+		logrus.WithFields(logrus.Fields{
+			"error": err,
+		}).Warn("profile: Request ovpn connection error")
+
+		if p.stop {
+			p.clearStatus(p.startTime)
+			return
+		}
+	}
+	if err != nil {
+		evt := event.Event{
+			Type: "connection_error",
+			Data: p,
+		}
+		evt.Init()
+
+		logrus.WithFields(logrus.Fields{
+			"error": err,
+		}).Error("profile: Request ovpn connection failed")
+		err = nil
+
+		time.Sleep(3 * time.Second)
+
+		p.clearStatus(p.startTime)
+		if p.connected && !p.stop {
+			go p.restart()
+		}
+		return
+	}
+
+	return
+}
+
+func (p *Profile) reqOvpn(remote string) (ovpnData *OvpnData, err error) {
+	if p.ServerBoxPublicKey == "" {
+		err = &errortypes.ReadError{
+			errors.Wrap(err, "profile: Server box public key not set"),
+		}
+		return
+	}
+
+	var serverPubKey [32]byte
+	serverPubKeySlic, err := base64.StdEncoding.DecodeString(
+		p.ServerBoxPublicKey)
+	if err != nil {
+		err = &errortypes.ParseError{
+			errors.Wrap(err, "profile: Failed to decode server box key"),
+		}
+		return
+	}
+	copy(serverPubKey[:], serverPubKeySlic)
+
+	tokn := token.Get(p.Id, p.ServerPublicKey, p.ServerBoxPublicKey)
+	p.token = tokn
+
+	authToken := ""
+	if tokn != nil {
+		err = tokn.Update()
+		if err != nil {
+			return
+		}
+
+		authToken = tokn.Token
+	} else {
+		authToken, err = utils.RandStrComplex(16)
+		if err != nil {
+			return
+		}
+	}
+
+	tokenNonce, err := utils.RandStr(16)
+	if err != nil {
+		return
+	}
+
+	pltfrm := ""
+	switch runtime.GOOS {
+	case "linux":
+		pltfrm = "linux"
+		break
+	case "windows":
+		pltfrm = "win"
+		break
+	case "darwin":
+		pltfrm = "mac"
+		break
+	default:
+		pltfrm = "unknown"
+		break
+	}
+
+	ovpnBox := &OvpnKeyBox{
+		DeviceId:       p.DeviceId,
+		DeviceName:     p.DeviceName,
+		Platform:       pltfrm,
+		MacAddr:        p.MacAddr,
+		MacAddrs:       p.MacAddrs,
+		Token:          authToken,
+		Nonce:          tokenNonce,
+		Password:       p.Password,
+		Timestamp:      time.Now().Unix(),
+		PublicAddress:  "", // TODO
+		PublicAddress6: "", // TODO
+	}
+
+	ovpnBoxData, err := json.Marshal(ovpnBox)
+	if err != nil {
+		err = &errortypes.ParseError{
+			errors.Wrap(err, "profile: Failed to marshal wg key box"),
+		}
+		return
+	}
+
+	senderPubKey, senderPrivKey, err := box.GenerateKey(rand.Reader)
+	if err != nil {
+		err = &errortypes.ReadError{
+			errors.Wrap(err, "profile: Failed to generate nacl key"),
+		}
+		return
+	}
+	senderPubKey64 := base64.StdEncoding.EncodeToString(senderPubKey[:])
+
+	var nonce [24]byte
+	nonceSl := make([]byte, 24)
+	_, err = rand.Read(nonceSl)
+	if err != nil {
+		err = &errortypes.ReadError{
+			errors.Wrap(err, "profile: Failed to generate nacl nonce"),
+		}
+		return
+	}
+	copy(nonce[:], nonceSl)
+
+	encrypted := box.Seal([]byte{}, ovpnBoxData,
+		&nonce, &serverPubKey, senderPrivKey)
+
+	nonce64 := base64.StdEncoding.EncodeToString(nonceSl)
+	ciphertext64 := base64.StdEncoding.EncodeToString(encrypted)
+
+	ovpnReq := &WgKeyReq{
+		Data:      ciphertext64,
+		Nonce:     nonce64,
+		PublicKey: senderPubKey64,
+	}
+
+	userPrivKeyBlock, _ := pem.Decode([]byte(p.PrivateKey))
+	if userPrivKeyBlock == nil {
+		err = &errortypes.ParseError{
+			errors.New("profile: Failed to decode private key"),
+		}
+		return
+	}
+
+	userPrivKey, err := x509.ParsePKCS1PrivateKey(userPrivKeyBlock.Bytes)
+	if err != nil {
+		userPrivKeyInf, e := x509.ParsePKCS8PrivateKey(
+			userPrivKeyBlock.Bytes)
+		if e != nil {
+			err = &errortypes.ParseError{
+				errors.Wrap(e, "profile: Failed to parse private key"),
+			}
+			return
+		}
+
+		userPrivKey = userPrivKeyInf.(*rsa.PrivateKey)
+	}
+
+	reqHash := sha512.Sum512([]byte(strings.Join([]string{
+		ovpnReq.Data,
+		ovpnReq.Nonce,
+		ovpnReq.PublicKey,
+	}, "&")))
+
+	rsaSig, err := rsa.SignPSS(
+		rand.Reader,
+		userPrivKey,
+		crypto.SHA512,
+		reqHash[:],
+		&rsa.PSSOptions{
+			SaltLength: 0,
+			Hash:       crypto.SHA512,
+		},
+	)
+	if err != nil {
+		err = &errortypes.ParseError{
+			errors.Wrap(err, "profile: Failed to rsa sign data"),
+		}
+		return
+	}
+
+	ovpnReq.Signature = base64.StdEncoding.EncodeToString(rsaSig)
+
+	ovpnReqData, err := json.Marshal(ovpnReq)
+	if err != nil {
+		return
+	}
+
+	reqPath := fmt.Sprintf(
+		"/key/ovpn/%s/%s/%s",
+		p.OrgId, p.UserId, p.ServerId,
+	)
+
+	if strings.Count(remote, ":") > 1 {
+		remote = "[" + remote + "]"
+	}
+
+	u := &url.URL{
+		Scheme: "https",
+		Host:   remote,
+		Path:   reqPath,
+	}
+
+	conx, cancel := context.WithCancel(context.Background())
+
+	req, err := http.NewRequestWithContext(
+		conx,
+		"POST",
+		u.String(),
+		bytes.NewBuffer(ovpnReqData),
+	)
+	if err != nil {
+		err = &errortypes.RequestError{
+			errors.Wrap(err, "profile: Request put error"),
+		}
+		cancel()
+		return
+	}
+
+	req.Header.Set("User-Agent", "pritunl-client")
+	req.Header.Set("Content-Type", "application/json")
+
+	timestamp := strconv.FormatInt(time.Now().Unix(), 10)
+	authNonce, err := utils.RandStr(32)
+	if err != nil {
+		cancel()
+		return
+	}
+
+	authStr := strings.Join([]string{
+		p.SyncToken,
+		timestamp,
+		authNonce,
+		"POST",
+		reqPath,
+		ovpnReq.Data,
+		ovpnReq.Nonce,
+		ovpnReq.PublicKey,
+		ovpnReq.Signature,
+	}, "&")
+
+	hashFunc := hmac.New(sha512.New, []byte(p.SyncSecret))
+	hashFunc.Write([]byte(authStr))
+	rawSignature := hashFunc.Sum(nil)
+	sig := base64.StdEncoding.EncodeToString(rawSignature)
+
+	req.Header.Set("Auth-Token", p.SyncToken)
+	req.Header.Set("Auth-Timestamp", timestamp)
+	req.Header.Set("Auth-Nonce", authNonce)
+	req.Header.Set("Auth-Signature", sig)
+
+	p.openReqCancel = cancel
+	res, err := clientConnInsecure.Do(req)
+	if err != nil {
+		err = &errortypes.RequestError{
+			errors.Wrap(err, "profile: Request put error"),
+		}
+		return
+	}
+	defer res.Body.Close()
+	p.openReqCancel = nil
+
+	if res.StatusCode != 200 {
+		// TODO Show Server offline error for 429
+		err = &errortypes.RequestError{
+			errors.Wrapf(err, "profile: Bad status %d code from server",
+				res.StatusCode),
+		}
+		return
+	}
+
+	ovpnResp := &KeyResp{}
+	err = json.NewDecoder(res.Body).Decode(&ovpnResp)
+	if err != nil {
+		err = &errortypes.ParseError{
+			errors.Wrap(err, "profile: Failed to parse response body"),
+		}
+		return
+	}
+
+	respHashFunc := hmac.New(sha512.New, []byte(p.SyncSecret))
+	respHashFunc.Write([]byte(ovpnResp.Data + "&" + ovpnResp.Nonce))
+	respRawSignature := respHashFunc.Sum(nil)
+	respSig := base64.StdEncoding.EncodeToString(respRawSignature)
+
+	if subtle.ConstantTimeCompare(
+		[]byte(respSig), []byte(ovpnResp.Signature)) != 1 {
+
+		err = &errortypes.ParseError{
+			errors.Wrap(err, "profile: Response signature invalid"),
+		}
+		return
+	}
+
+	respCiphertext, err := base64.StdEncoding.DecodeString(ovpnResp.Data)
+	if err != nil {
+		err = &errortypes.ParseError{
+			errors.Wrap(err, "profile: Failed to parse response data"),
+		}
+		return
+	}
+
+	var respNonce [24]byte
+	respNonceSl, err := base64.StdEncoding.DecodeString(ovpnResp.Nonce)
+	if err != nil {
+		err = &errortypes.ParseError{
+			errors.Wrap(err, "profile: Failed to parse response nonce"),
+		}
+		return
+	}
+	copy(respNonce[:], respNonceSl)
+
+	respPlaintext, ok := box.Open([]byte{}, respCiphertext,
+		&respNonce, &serverPubKey, senderPrivKey)
+
+	if !ok {
+		err = &errortypes.ParseError{
+			errors.New("profile: Failed to decrypt response"),
+		}
+		return
+	}
+
+	ovpnData = &OvpnData{}
+	err = json.Unmarshal(respPlaintext, ovpnData)
+	if err != nil {
+		err = &errortypes.ParseError{
+			errors.New("profile: Failed to parse response"),
+		}
+		return
+	}
+
+	return
+}
+
 func (p *Profile) reqWg(remote string) (wgData *WgData, err error) {
 	if p.ServerBoxPublicKey == "" {
 		err = &errortypes.ReadError{
@@ -1720,33 +2168,35 @@ func (p *Profile) reqWg(remote string) (wgData *WgData, err error) {
 		return
 	}
 
-	platform := ""
+	pltfrm := ""
 	switch runtime.GOOS {
 	case "linux":
-		platform = "linux"
+		pltfrm = "linux"
 		break
 	case "windows":
-		platform = "win"
+		pltfrm = "win"
 		break
 	case "darwin":
-		platform = "mac"
+		pltfrm = "mac"
 		break
 	default:
-		platform = "unknown"
+		pltfrm = "unknown"
 		break
 	}
 
 	wgBox := &WgKeyBox{
-		DeviceId:    p.DeviceId,
-		DeviceName:  p.DeviceName,
-		Platform:    platform,
-		MacAddr:     p.MacAddr,
-		MacAddrs:    p.MacAddrs,
-		Token:       authToken,
-		Nonce:       tokenNonce,
-		Password:    p.Password,
-		Timestamp:   time.Now().Unix(),
-		WgPublicKey: p.PublicKeyWg,
+		DeviceId:       p.DeviceId,
+		DeviceName:     p.DeviceName,
+		Platform:       pltfrm,
+		MacAddr:        p.MacAddr,
+		MacAddrs:       p.MacAddrs,
+		Token:          authToken,
+		Nonce:          tokenNonce,
+		Password:       p.Password,
+		Timestamp:      time.Now().Unix(),
+		PublicAddress:  "", // TODO SET ADDR
+		PublicAddress6: "", // TODO SET ADDR
+		WgPublicKey:    p.PublicKeyWg,
 	}
 
 	wgBoxData, err := json.Marshal(wgBox)
@@ -1923,7 +2373,7 @@ func (p *Profile) reqWg(remote string) (wgData *WgData, err error) {
 		return
 	}
 
-	wgResp := &WgKeyResp{}
+	wgResp := &KeyResp{}
 	err = json.NewDecoder(res.Body).Decode(&wgResp)
 	if err != nil {
 		err = &errortypes.ParseError{
