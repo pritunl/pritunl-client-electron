@@ -250,6 +250,7 @@ func UpdateSystemProfile(prfl *Profile, sPrfl *sprofile.Sprofile) {
 	prfl.Data = sPrfl.OvpnData
 	prfl.Username = "pritunl"
 	prfl.Password = sPrfl.Password
+	prfl.DynamicFirewall = sPrfl.DynamicFirewall
 	prfl.ServerPublicKey = serverPublicKey
 	prfl.ServerBoxPublicKey = sPrfl.ServerBoxPublicKey
 	prfl.TokenTtl = sPrfl.TokenTtl
@@ -352,7 +353,7 @@ func RestartProfiles(resetNet bool) (err error) {
 
 	for _, prfl := range prfls2 {
 		if prfl.Reconnect {
-			err = prfl.Start(false)
+			err = prfl.Start(false, true)
 			if err != nil {
 				return
 			}
@@ -382,7 +383,7 @@ func SyncSystemProfiles() (err error) {
 				waiter.Add(1)
 
 				go func() {
-					err = prfl.Start(false)
+					err = prfl.Start(false, false)
 					if err != nil {
 						logrus.WithFields(logrus.Fields{
 							"profile_id": prfl.Id,
@@ -411,7 +412,7 @@ func SyncSystemProfiles() (err error) {
 					}
 
 					prfl := ImportSystemProfile(sPrfl)
-					err = prfl.Start(false)
+					err = prfl.Start(false, false)
 					if err != nil {
 						logrus.WithFields(logrus.Fields{
 							"profile_id": curPrfl.Id,
