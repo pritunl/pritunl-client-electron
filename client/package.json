@@ -35,7 +35,7 @@
   },
   "devDependencies": {
     "@electron/remote": "1.2.1",
-    "electron": "15.4.2",
+    "electron": "15.5.5",
     "electron-packager": "15.4.0",
     "electron-rebuild": "3.2.7",
     "rcedit": "3.0.1",
