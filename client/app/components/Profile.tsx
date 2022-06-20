@@ -199,6 +199,7 @@ export default class Profile extends React.Component<Props, State> {
 			<label
 				className="bp3-label"
 				style={css.editor}
+				hidden={true}
 			>
 				Profile Output
 				<AceEditor
