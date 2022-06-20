@@ -3,6 +3,17 @@ export function uuid(): string {
 	return (+new Date() + Math.floor(Math.random() * 999999)).toString(36);
 }
 
+export function nonce(): string {
+	let nonce = ''
+
+	for (let i = 0; i < 8; i++) {
+		nonce += Math.floor((1 + Math.random()) * 0x10000).toString(
+			16).substring(1)
+	}
+
+	return nonce
+}
+
 export function objectIdNil(objId: string): boolean {
 	return !objId || objId == '000000000000000000000000';
 }
