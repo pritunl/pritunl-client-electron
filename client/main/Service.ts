@@ -48,6 +48,47 @@ function getAuthToken(): Promise<string> {
 	})
 }
 
+export function sync(): Promise<boolean> {
+	return new Promise<boolean>(async (resolve) => {
+		let token: string
+		try {
+			token = await getAuthToken()
+		} catch(err) {
+			Logger.error(err.message || err)
+			resolve(false)
+			return
+		}
+
+		let req = new Request.Request()
+
+		if (unix) {
+			req.unix(unixPath)
+		} else {
+			req.tcp(webHost)
+		}
+
+		req.get("/status")
+			.set("Auth-Token", token)
+			.set("User-Agent", "pritunl")
+			.end()
+			.then((resp: Request.Response) => {
+				if (resp.status === 200) {
+					let data = resp.jsonPassive() as any
+					if (data) {
+						resolve(data.status)
+					} else {
+						resolve(false)
+					}
+				} {
+					resolve(false)
+				}
+			}, (err) => {
+				Logger.error(err.message)
+				resolve(false)
+			})
+	})
+}
+
 export function wakeup(): Promise<boolean> {
 	return new Promise<boolean>(async (resolve) => {
 		let token: string
