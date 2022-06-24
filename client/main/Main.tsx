@@ -223,7 +223,7 @@ class Main {
 }
 
 function initTray() {
-	tray = new electron.Tray(getTrayIcon())
+	tray = new electron.Tray(getTrayIcon(false))
 
 	tray.on("click", function() {
 		let main = new Main()
@@ -355,7 +355,7 @@ function init() {
 	})
 }
 
-function getTrayIcon(): string {
+function getTrayIcon(state: boolean): string {
 	let connTray = ""
 	let disconnTray = ""
 
@@ -381,7 +381,11 @@ function getTrayIcon(): string {
 			"tray_disconnected.png")
 	}
 
-	return disconnTray
+	if (state) {
+		return connTray
+	} else {
+		return disconnTray
+	}
 }
 
 electron.app.on("window-all-closed", (): void => {
