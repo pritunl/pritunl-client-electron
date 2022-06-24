@@ -252,6 +252,10 @@ function initTray() {
 
 	tray.setToolTip("Pritunl vTODO")
 	tray.setContextMenu(trayMenu)
+
+	Service.sync().then((status: boolean): void => {
+		tray.setImage(getTrayIcon(status))
+	})
 }
 
 function initAppMenu() {
@@ -344,7 +348,15 @@ function init() {
 			}
 
 			Service.subscribe((event: Service.Event): void => {
-				if (event.type === "wakeup") {
+				if (event.type === "connected") {
+					if (tray) {
+						tray.setImage(getTrayIcon(true))
+					}
+				} else if (event.type === "disconnected") {
+					if (tray) {
+						tray.setImage(getTrayIcon(false))
+					}
+				} else if (event.type === "wakeup") {
 					Service.send("awake")
 
 					let main = new Main()
