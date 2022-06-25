@@ -1,5 +1,6 @@
 import http from "http"
 import https from "https"
+import tls from "tls"
 import * as Logger from "./Logger"
 import * as Errors from "./Errors"
 
@@ -16,6 +17,7 @@ export class Response {
 		this.response = res
 		this.status = res.statusCode
 		this.message = res.statusMessage
+		this.data = ""
 	}
 
 	get(key: string): string {
@@ -59,6 +61,7 @@ export class Response {
 
 export class Request {
 	ssl: boolean
+	skipVerify: boolean
 	hostname: string
 	port: number
 	socketPath: string
@@ -82,7 +85,11 @@ export class Request {
 		if (hosts.length > 1) {
 			this.port = parseInt(hosts.pop(), 10)
 		} else {
-			this.port = 80
+			if (this.ssl) {
+				this.port = 443
+			} else {
+				this.port = 80
+			}
 		}
 
 		this.hostname = hosts.join(":")
@@ -95,8 +102,9 @@ export class Request {
 		return this
 	}
 
-	timeout(timeout: number) {
+	timeout(timeout: number): Request {
 		this.ttl = timeout * 1000
+		return this
 	}
 
 	get(path: string): Request {
@@ -128,6 +136,11 @@ export class Request {
 		return this
 	}
 
+	insecure(): Request {
+		this.skipVerify = true
+		return this
+	}
+
 	send(data: string|object): Request {
 		if (typeof data === "string") {
 			this.data = data
@@ -142,7 +155,7 @@ export class Request {
 	end(): Promise<Response> {
 		return new Promise<Response>((resolve, reject): void => {
 			try {
-				let options: http.RequestOptions = {
+				let options: https.RequestOptions = {
 					path: this.path,
 					method: this.method,
 					headers: Object.fromEntries(this.headers)
@@ -155,6 +168,10 @@ export class Request {
 					options.port = this.port
 				}
 
+				if (this.skipVerify) {
+					options.rejectUnauthorized = false
+				}
+
 				options.timeout = this.ttl || (DefaultTimeout * 1000)
 
 				let callback = (nodeResp: http.IncomingMessage) => {
@@ -162,7 +179,7 @@ export class Request {
 
 					nodeResp.on("data", (data) => {
 						if (data) {
-							resp.data = data.toString()
+							resp.data += data.toString()
 						}
 					})
 
