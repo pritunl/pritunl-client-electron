@@ -109,7 +109,8 @@ var clearSystemLogs = function(callback) {
 var readServiceLogs = function(callback) {
   var pth;
   if (process.platform === 'win32') {
-    pth = path.join('C:\\', 'ProgramData', 'Pritunl', 'pritunl-client.log');
+    pth = path.join(constants.winDrive, 'ProgramData',
+      'Pritunl', 'pritunl-client.log');
   } else {
     pth = path.join(path.sep, 'var', 'log', 'pritunl-client.log');
   }
@@ -231,7 +232,6 @@ $('.main-menu .menu-version').click(function(evt) {
     return;
   }
 });
-$('.main-menu .menu-version').text('Pritunl v' + constants.version);
 $('.main-menu .menu-system-logs').click(function (){
   closeServiceEditor();
   openSystemEditor();
