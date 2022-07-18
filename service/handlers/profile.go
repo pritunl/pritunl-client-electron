@@ -21,6 +21,7 @@ type profileData struct {
 	Data               string   `json:"data"`
 	Username           string   `json:"username"`
 	Password           string   `json:"password"`
+	DynamicFirewall    bool     `json:"dynamic_firewall"`
 	ServerPublicKey    string   `json:"server_public_key"`
 	ServerBoxPublicKey string   `json:"server_box_public_key"`
 	TokenTtl           int      `json:"token_ttl"`
@@ -86,6 +87,7 @@ func profilePost(c *gin.Context) {
 		Data:               data.Data,
 		Username:           data.Username,
 		Password:           data.Password,
+		DynamicFirewall:    data.DynamicFirewall,
 		ServerPublicKey:    data.ServerPublicKey,
 		ServerBoxPublicKey: data.ServerBoxPublicKey,
 		TokenTtl:           data.TokenTtl,
@@ -93,7 +95,7 @@ func profilePost(c *gin.Context) {
 	}
 	prfl.Init()
 
-	err = prfl.Start(data.Timeout)
+	err = prfl.Start(data.Timeout, false)
 	if err != nil {
 		err = &errortypes.ParseError{
 			errors.Wrap(err, "handler: Bind error"),
