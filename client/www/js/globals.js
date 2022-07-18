@@ -37,6 +37,11 @@ if (process.platform === 'linux' || process.platform === 'darwin') {
   constants.unixSocket = true;
 }
 
+var systemDrv = process.env.SYSTEMDRIVE;
+if (systemDrv) {
+  constants.winDrive = systemDrv + '\\';
+}
+
 var args = {};
 var queryVals = window.location.search.substring(1).split('&');
 for (var item of queryVals) {
@@ -57,7 +62,7 @@ if (args['dev'] === 'true') {
 } else {
   if (process.platform === 'win32') {
     global.authPath = path.join(
-      'C:\\', 'ProgramData', 'Pritunl', 'auth');
+      constants.winDrive, 'ProgramData', 'Pritunl', 'auth');
   } else {
     global.authPath = path.join(path.sep, 'var', 'run', 'pritunl.auth');
   }
