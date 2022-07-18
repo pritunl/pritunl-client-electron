@@ -18,7 +18,8 @@ func Init() (err error) {
 	pth := utils.GetAuthPath()
 
 	if runtime.GOOS == "windows" {
-		tempPth := filepath.Join("C:\\", "ProgramData", "Pritunl", "Temp")
+		tempPth := filepath.Join(
+			utils.GetWinDrive(), "ProgramData", "Pritunl", "Temp")
 
 		exists, _ := utils.ExistsDir(tempPth)
 		if exists {
@@ -34,7 +35,7 @@ func Init() (err error) {
 			return
 		}
 
-		dataPth := filepath.Join("C:\\", "ProgramData", "Pritunl")
+		dataPth := filepath.Join(utils.GetWinDrive(), "ProgramData", "Pritunl")
 		err = platform.MkdirReadSecure(dataPth)
 		if err != nil {
 			err = &WriteError{
@@ -44,7 +45,7 @@ func Init() (err error) {
 			return
 		}
 
-		profilesPth := filepath.Join("C:\\", "ProgramData",
+		profilesPth := filepath.Join(utils.GetWinDrive(), "ProgramData",
 			"Pritunl", "Profiles")
 		err = platform.MkdirSecure(profilesPth)
 		if err != nil {
