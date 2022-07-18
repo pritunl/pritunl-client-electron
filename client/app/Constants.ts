@@ -14,6 +14,12 @@ export const args = new Map<string, string>();
 export let production = true;
 export let authPath = '';
 
+export let winDrive = 'C:\\';
+let systemDrv = process.env.SYSTEMDRIVE;
+if (systemDrv) {
+	winDrive = systemDrv + '\\';
+}
+
 if (process.platform === 'linux' || process.platform === 'darwin') {
 	unix = true;
 }
@@ -36,7 +42,7 @@ if (args.get('dev') === 'true') {
 	authPath = path.join(__dirname, '..', '..', 'dev', 'auth');
 } else {
 	if (process.platform === 'win32') {
-		authPath = path.join('C:\\', 'ProgramData', 'Pritunl', 'auth');
+		authPath = path.join(winDrive, 'ProgramData', 'Pritunl', 'auth');
 	} else {
 		authPath = path.join(path.sep, 'var', 'run', 'pritunl.auth');
 	}
