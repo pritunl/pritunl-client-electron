@@ -8,6 +8,14 @@ import (
 	"sync"
 )
 
+func GetWinDrive() string {
+	systemDrv := os.Getenv("SYSTEMDRIVE")
+	if systemDrv == "" {
+		return "C:\\"
+	}
+	return systemDrv + "\\"
+}
+
 func main() {
 	wait := &sync.WaitGroup{}
 
@@ -102,13 +110,13 @@ func main() {
 	cmd.Run()
 	cmd = exec.Command(filepath.Join(rootDir, "nssm.exe"),
 		"set", "pritunl", "AppStdout",
-		"C:\\ProgramData\\Pritunl\\service.log")
+		filepath.Join(GetWinDrive(), "ProgramData", "Pritunl", "service.log"))
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Run()
 	cmd = exec.Command(filepath.Join(rootDir, "nssm.exe"),
 		"set", "pritunl", "AppStderr",
-		"C:\\ProgramData\\Pritunl\\service.log")
+		filepath.Join(GetWinDrive(), "ProgramData", "Pritunl", "service.log"))
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Run()
