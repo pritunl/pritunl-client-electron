@@ -24,6 +24,12 @@ let showConnect = false
 let socket: WebSocket.WebSocket
 let callbacks: Callback[] = []
 
+export let winDrive = 'C:\\';
+let systemDrv = process.env.SYSTEMDRIVE;
+if (systemDrv) {
+	winDrive = systemDrv + '\\';
+}
+
 if (process.platform === "linux" || process.platform === "darwin") {
 	unix = true
 }
@@ -33,7 +39,7 @@ function getAuthPath(): string {
 		return path.join(__dirname, "..", "..", "dev", "auth")
 	} else {
 		if (process.platform === "win32") {
-			return path.join("C:\\", "Program Files (x86)", "Pritunl", "auth")
+			return path.join(winDrive, "ProgramData", "Pritunl", "auth")
 		} else {
 			return path.join(path.sep, "var", "run", "pritunl.auth")
 		}
