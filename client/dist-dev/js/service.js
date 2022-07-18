@@ -142,7 +142,7 @@ var start = function(prfl, mode, timeout, serverPubKey, serverBoxPubKey,
 
   username = username || 'pritunl';
 
-  if (serverPubKey && (mode === 'wg' || prfl.token || password)) {
+  if (serverPubKey) {
     serverPubKey = serverPubKey.join('\n');
   } else {
     serverPubKey = null;
@@ -178,6 +178,7 @@ var start = function(prfl, mode, timeout, serverPubKey, serverBoxPubKey,
         sync_secret: prfl.syncSecret,
         username: username,
         password: password,
+        dynamic_firewall: prfl.dynamicFirewall,
         server_public_key: serverPubKey,
         server_box_public_key: serverBoxPubKey,
         token_ttl: prfl.tokenTtl,
