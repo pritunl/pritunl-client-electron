@@ -84,7 +84,8 @@ func SetAuthErrorCount(prflId string, errorCount int) {
 func GetPath() string {
 	switch runtime.GOOS {
 	case "windows":
-		return filepath.Join("C:\\", "ProgramData", "Pritunl", "Profiles")
+		return filepath.Join(utils.GetWinDrive(), "ProgramData",
+			"Pritunl", "Profiles")
 	case "darwin":
 		return filepath.Join("/", "var",
 			"lib", "pritunl-client", "profiles")
