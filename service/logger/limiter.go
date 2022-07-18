@@ -16,7 +16,7 @@ func (l limiter) Check(entry *logrus.Entry, limit time.Duration) bool {
 	key := hash.Sum32()
 
 	if timestamp, ok := l[key]; ok &&
-		utils.SinceSafe(timestamp) < limit {
+		utils.SinceAbs(timestamp) < limit {
 
 		return false
 	}
