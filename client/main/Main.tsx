@@ -236,7 +236,7 @@ function initTray() {
 
 	let trayMenu = electron.Menu.buildFromTemplate([
 		{
-			label: "Pritunl vTODO",
+			label: "Open Pritunl Client",
 			click: function () {
 				let main = new Main()
 				main.run()
@@ -250,7 +250,7 @@ function initTray() {
 		}
 	])
 
-	tray.setToolTip("Pritunl vTODO")
+	tray.setToolTip("Pritunl Client")
 	tray.setContextMenu(trayMenu)
 
 	Service.sync().then((status: boolean): void => {
@@ -264,7 +264,7 @@ function initAppMenu() {
 			label: "Pritunl",
 			submenu: [
 				{
-					label: "Pritunl vTODO",
+					label: "Pritunl Client",
 				},
 				{
 					label: "Close",
