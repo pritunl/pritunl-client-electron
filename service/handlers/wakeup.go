@@ -22,7 +22,7 @@ func wakeupPost(c *gin.Context) {
 
 	for i := 0; i < 100; i++ {
 		time.Sleep(5 * time.Millisecond)
-		if utils.SinceSafe(event.LastAwake) < 300*time.Millisecond {
+		if utils.SinceAbs(event.LastAwake) < 300*time.Millisecond {
 			c.String(200, "")
 			return
 		}
