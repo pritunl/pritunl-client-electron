@@ -22,6 +22,7 @@ type sprofileData struct {
 	UserId             string   `json:"user_id"`
 	User               string   `json:"user"`
 	PreConnectMsg      string   `json:"pre_connect_msg"`
+	DynamicFirewall    bool     `json:"dynamic_firewall"`
 	PasswordMode       string   `json:"password_mode"`
 	Token              bool     `json:"token"`
 	TokenTtl           int      `json:"token_ttl"`
@@ -75,7 +76,6 @@ func sprofilePut(c *gin.Context) {
 	prfl := &sprofile.Sprofile{
 		Id:                 data.Id,
 		Name:               data.Name,
-		State:              true,
 		Wg:                 data.Wg,
 		LastMode:           data.LastMode,
 		OrganizationId:     data.OrganizationId,
@@ -85,6 +85,7 @@ func sprofilePut(c *gin.Context) {
 		UserId:             data.UserId,
 		User:               data.User,
 		PreConnectMsg:      data.PreConnectMsg,
+		DynamicFirewall:    data.DynamicFirewall,
 		PasswordMode:       data.PasswordMode,
 		Token:              data.Token,
 		TokenTtl:           data.TokenTtl,
