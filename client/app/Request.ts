@@ -203,7 +203,7 @@ export class Request {
 				})
 
 				req.on("error", (err) => {
-					err = new Errors.RequestError(err, "Request: HTTP error")
+					err = new Errors.RequestError(err, "Request: Client error")
 					Logger.error(err.message)
 					reject(err)
 				})
