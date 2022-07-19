@@ -5,7 +5,9 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"runtime/debug"
 	"strings"
+	"time"
 
 	"github.com/dropbox/godropbox/errors"
 	"github.com/pritunl/pritunl-client-electron/service/command"
@@ -246,4 +248,66 @@ func ExecCombinedOutputLogged(ignores []string, name string, arg ...string) (
 	}
 
 	return
+}
+
+func ExecWaitTimeout(proc *os.Process, timeout time.Duration) {
+	defer func() {
+		panc := recover()
+		if panc != nil {
+			logrus.WithFields(logrus.Fields{
+				"stack": string(debug.Stack()),
+				"panic": panc,
+			}).Error("utils: Panic")
+			panic(panc)
+		}
+	}()
+
+	waiter := make(chan bool, 2)
+
+	go func() {
+		defer func() {
+			panc := recover()
+			if panc != nil {
+				logrus.WithFields(logrus.Fields{
+					"stack": string(debug.Stack()),
+					"panic": panc,
+				}).Error("utils: Panic")
+				panic(panc)
+			}
+		}()
+		proc.Wait()
+		waiter <- true
+	}()
+	go func() {
+		defer func() {
+			panc := recover()
+			if panc != nil {
+				logrus.WithFields(logrus.Fields{
+					"stack": string(debug.Stack()),
+					"panic": panc,
+				}).Error("utils: Panic")
+				panic(panc)
+			}
+		}()
+		time.Sleep(timeout)
+		go func() {
+			defer func() {
+				panc := recover()
+				if panc != nil {
+					logrus.WithFields(logrus.Fields{
+						"stack": string(debug.Stack()),
+						"panic": panc,
+					}).Error("utils: Panic")
+					panic(panc)
+				}
+			}()
+			proc.Kill()
+			proc.Kill()
+			proc.Kill()
+		}()
+		time.Sleep(1 * time.Second)
+		waiter <- true
+	}()
+
+	<-waiter
 }
