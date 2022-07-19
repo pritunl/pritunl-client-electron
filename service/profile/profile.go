@@ -1087,16 +1087,10 @@ func (p *Profile) clearWg() {
 }
 
 func (p *Profile) clearOvpn() {
-	switch runtime.GOOS {
-	case "linux":
-		p.clearWgLinux()
-		break
-	case "darwin":
-		p.clearWgMac()
-		break
-	case "windows":
-		p.clearWgWin()
-		break
+	if p.cmd != nil {
+		_ = p.cmd.Process.Kill()
+		_ = p.cmd.Process.Kill()
+		time.Sleep(1 * time.Second)
 	}
 
 	return
@@ -1129,7 +1123,7 @@ func (p *Profile) clearStatus(start time.Time) {
 		}
 
 		p.clearWg()
-		_ = p.stopOvpn()
+		p.clearOvpn()
 
 		p.Status = "disconnected"
 		p.Timestamp = 0
