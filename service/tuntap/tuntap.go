@@ -8,7 +8,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/pritunl/pritunl-client-electron/service/constants"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
 )
 
@@ -18,10 +17,13 @@ var (
 	tapsLock = sync.Mutex{}
 )
 
-func getToolpath() (pth string) {
-	if constants.Development {
-		return filepath.Join(utils.GetRootDir(), "..",
-			"tuntap_win", "tapctl.exe")
+func getToolpath() string {
+	pth := filepath.Join(utils.GetRootDir(), "..",
+		"tuntap_win", "tapctl.exe")
+
+	exists, _ := utils.ExistsFile(pth)
+	if exists {
+		return pth
 	}
 
 	return filepath.Join(utils.GetRootDir(), "tuntap", "tapctl.exe")
