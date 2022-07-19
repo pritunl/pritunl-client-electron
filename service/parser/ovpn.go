@@ -58,6 +58,7 @@ func (o *Ovpn) Export() string {
 	output += "client\n"
 	output += fmt.Sprintf("dev %s\n", o.Dev)
 	output += fmt.Sprintf("dev-type %s\n", o.DevType)
+	output += "single-session\n"
 	for _, remote := range o.Remotes {
 		output += fmt.Sprintf(
 			"remote %s %d %s\n",
