@@ -1657,7 +1657,7 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 						_ = p.cmd.Process.Kill()
 					}()
 
-					_, _ = p.cmd.Process.Wait()
+					utils.ExecWaitTimeout(p.cmd.Process, 10*time.Second)
 					done = true
 				}
 
@@ -3615,7 +3615,7 @@ func (p *Profile) stopOvpn() (err error) {
 			_ = p.cmd.Process.Kill()
 		}()
 
-		_, _ = p.cmd.Process.Wait()
+		utils.ExecWaitTimeout(p.cmd.Process, 10*time.Second)
 		done = true
 	} else {
 		p.cmd.Process.Signal(os.Interrupt)
@@ -3640,7 +3640,7 @@ func (p *Profile) stopOvpn() (err error) {
 			p.cmd.Process.Kill()
 		}()
 
-		p.cmd.Process.Wait()
+		utils.ExecWaitTimeout(p.cmd.Process, 10*time.Second)
 		done = true
 	}
 
