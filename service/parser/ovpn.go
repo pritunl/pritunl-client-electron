@@ -271,11 +271,17 @@ func Import(data, fixedRemote, fixedRemote6 string) (o *Ovpn) {
 			case "udp", "udp-client":
 				remote.Proto = "udp"
 				break
+			case "udp4":
+				remote.Proto = "udp4"
+				break
 			case "udp6", "udp6-client":
 				remote.Proto = "udp6"
 				break
 			case "tcp":
 				remote.Proto = "tcp"
+				break
+			case "tcp4":
+				remote.Proto = "tcp4"
 				break
 			case "tcp6":
 				remote.Proto = "tcp6"
