@@ -1227,8 +1227,9 @@ func (p *Profile) Start(timeout bool, delay bool) (err error) {
 	}
 
 	logrus.WithFields(logrus.Fields{
-		"profile_id": p.Id,
-		"mode":       p.Mode,
+		"profile_id":       p.Id,
+		"mode":             p.Mode,
+		"dynamic_firewall": p.DynamicFirewall,
 	}).Info("profile: Connecting")
 
 	if runtime.GOOS == "darwin" && n == 0 {
