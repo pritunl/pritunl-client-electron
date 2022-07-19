@@ -2,10 +2,12 @@ package logger
 
 import (
 	"fmt"
-	"github.com/sirupsen/logrus"
-	"github.com/pritunl/pritunl-client-electron/service/colorize"
+	"runtime"
 	"sort"
 	"time"
+
+	"github.com/pritunl/pritunl-client-electron/service/colorize"
+	"github.com/sirupsen/logrus"
 )
 
 var (
@@ -151,5 +153,8 @@ func formatLevelPlain(lvl logrus.Level) string {
 type formatter struct{}
 
 func (f *formatter) Format(entry *logrus.Entry) ([]byte, error) {
+	if runtime.GOOS == "windows" {
+		return formatPlain(entry), nil
+	}
 	return format(entry), nil
 }

@@ -2,6 +2,7 @@ package logger
 
 import (
 	"fmt"
+	"runtime"
 
 	"github.com/sirupsen/logrus"
 )
@@ -20,7 +21,12 @@ func (s *stdoutSender) Parse(entry *logrus.Entry) {
 }
 
 func (s *stdoutSender) send(entry *logrus.Entry) (err error) {
-	msg := format(entry)
+	var msg []byte
+	if runtime.GOOS == "windows" {
+		msg = formatPlain(entry)
+	} else {
+		msg = format(entry)
+	}
 
 	fmt.Print(string(msg))
 
