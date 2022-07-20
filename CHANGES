@@ -1,6 +1,10 @@
 Pritunl Client Changelog
 ========================
 
+<%= version %>
+
+Add dynamic firewall support
+
 Version 1.2.3154.57 2022-05-02
 ------------------------------
 
