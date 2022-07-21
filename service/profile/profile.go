@@ -1869,6 +1869,27 @@ func (p *Profile) reqOvpn(remote string) (ovpnData *OvpnData, err error) {
 		break
 	}
 
+	addr4 := ""
+	addr6 := ""
+
+	if p.DynamicFirewall {
+		addr4, err = utils.GetPublicAddress4()
+		if err != nil {
+			logrus.WithFields(logrus.Fields{
+				"error": err,
+			}).Info("profile: Failed to get public IPv4 address")
+			err = nil
+		}
+
+		addr6, err = utils.GetPublicAddress6()
+		if err != nil {
+			logrus.WithFields(logrus.Fields{
+				"error": err,
+			}).Info("profile: Failed to get public IPv6 address")
+			err = nil
+		}
+	}
+
 	ovpnBox := &OvpnKeyBox{
 		DeviceId:       p.DeviceId,
 		DeviceName:     p.DeviceName,
@@ -1879,8 +1900,8 @@ func (p *Profile) reqOvpn(remote string) (ovpnData *OvpnData, err error) {
 		Nonce:          tokenNonce,
 		Password:       p.Password,
 		Timestamp:      time.Now().Unix(),
-		PublicAddress:  "", // TODO
-		PublicAddress6: "", // TODO
+		PublicAddress:  addr4,
+		PublicAddress6: addr6,
 	}
 
 	ovpnBoxData, err := json.Marshal(ovpnBox)
@@ -2179,6 +2200,27 @@ func (p *Profile) reqWg(remote string) (wgData *WgData, err error) {
 		break
 	}
 
+	addr4 := ""
+	addr6 := ""
+
+	if p.DynamicFirewall {
+		addr4, err = utils.GetPublicAddress4()
+		if err != nil {
+			logrus.WithFields(logrus.Fields{
+				"error": err,
+			}).Info("profile: Failed to get public IPv4 address")
+			err = nil
+		}
+
+		addr6, err = utils.GetPublicAddress6()
+		if err != nil {
+			logrus.WithFields(logrus.Fields{
+				"error": err,
+			}).Info("profile: Failed to get public IPv6 address")
+			err = nil
+		}
+	}
+
 	wgBox := &WgKeyBox{
 		DeviceId:       p.DeviceId,
 		DeviceName:     p.DeviceName,
@@ -2189,8 +2231,8 @@ func (p *Profile) reqWg(remote string) (wgData *WgData, err error) {
 		Nonce:          tokenNonce,
 		Password:       p.Password,
 		Timestamp:      time.Now().Unix(),
-		PublicAddress:  "", // TODO SET ADDR
-		PublicAddress6: "", // TODO SET ADDR
+		PublicAddress:  addr4,
+		PublicAddress6: addr6,
 		WgPublicKey:    p.PublicKeyWg,
 	}
 
@@ -2369,7 +2411,7 @@ func (p *Profile) reqWg(remote string) (wgData *WgData, err error) {
 	}
 
 	wgResp := &KeyResp{}
-	err = json.NewDecoder(res.Body).Decode(&wgResp)
+	err = json.NewDecoder(res.Body).Decode(wgResp)
 	if err != nil {
 		err = &errortypes.ParseError{
 			errors.Wrap(err, "profile: Failed to parse response body"),
