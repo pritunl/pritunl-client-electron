@@ -1,14 +1,44 @@
 package utils
 
 import (
+	"context"
+	"crypto/tls"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"strings"
+	"time"
 
+	"github.com/dropbox/godropbox/errors"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/render"
+	"github.com/pritunl/pritunl-client-electron/service/errortypes"
 )
+
+var (
+	clientTransport = &http.Transport{
+		DisableKeepAlives:   true,
+		TLSHandshakeTimeout: 5 * time.Second,
+		TLSClientConfig: &tls.Config{
+			MinVersion: tls.VersionTLS12,
+			MaxVersion: tls.VersionTLS13,
+		},
+	}
+	client4 = &http.Client{
+		Transport: clientTransport,
+		Timeout:   8 * time.Second,
+	}
+	client6 = &http.Client{
+		Transport: clientTransport,
+		Timeout:   3 * time.Second,
+	}
+)
+
+type ipResp struct {
+	Ip string `json:"ip"`
+}
 
 type NopCloser struct {
 	io.Reader
@@ -145,4 +175,114 @@ func GetLocation(r *http.Request) string {
 	}
 
 	return "https://" + host
+}
+
+func GetPublicAddress4() (addr4 string, err error) {
+	u := &url.URL{
+		Scheme: "https",
+		Host:   "app4.pritunl.com",
+		Path:   "/ip",
+	}
+
+	req, err := http.NewRequestWithContext(
+		context.Background(),
+		"POST",
+		u.String(),
+		nil,
+	)
+	if err != nil {
+		err = &errortypes.RequestError{
+			errors.Wrap(err, "utils: Request put error"),
+		}
+		return
+	}
+
+	req.Header.Set("User-Agent", "pritunl-client")
+
+	res, err := client4.Do(req)
+	if err != nil {
+		err = &errortypes.RequestError{
+			errors.Wrap(err, "utils: Request put error"),
+		}
+		return
+	}
+	defer func() {
+		_ = res.Body.Close()
+	}()
+
+	if res.StatusCode != 200 {
+		err = &errortypes.RequestError{
+			errors.Wrapf(err, "utils: Bad status %d code from app4 server",
+				res.StatusCode),
+		}
+		return
+	}
+
+	data := &ipResp{}
+	err = json.NewDecoder(res.Body).Decode(data)
+	if err != nil {
+		err = &errortypes.ParseError{
+			errors.Wrap(err, "utils: Failed to parse app4 response body"),
+		}
+		return
+	}
+
+	addr4 = data.Ip
+
+	return
+}
+
+func GetPublicAddress6() (addr6 string, err error) {
+	u := &url.URL{
+		Scheme: "https",
+		Host:   "app6.pritunl.com",
+		Path:   "/ip",
+	}
+
+	req, err := http.NewRequestWithContext(
+		context.Background(),
+		"POST",
+		u.String(),
+		nil,
+	)
+	if err != nil {
+		err = &errortypes.RequestError{
+			errors.Wrap(err, "utils: Request put error"),
+		}
+		return
+	}
+
+	req.Header.Set("User-Agent", "pritunl-client")
+
+	res, err := client6.Do(req)
+	if err != nil {
+		err = &errortypes.RequestError{
+			errors.Wrap(err, "utils: Request put error"),
+		}
+		return
+	}
+	defer func() {
+		_ = res.Body.Close()
+	}()
+
+	if res.StatusCode != 200 {
+		err = &errortypes.RequestError{
+			errors.Wrapf(err, "utils: Bad status %d code from app6 server",
+				res.StatusCode),
+		}
+		return
+	}
+
+	data := &ipResp{}
+	err = json.NewDecoder(res.Body).Decode(data)
+	if err != nil {
+		err = &errortypes.ParseError{
+			errors.Wrap(err, "utils: Failed to parse app6 response body"),
+		}
+		return
+	}
+
+	addr6 = data.Ip
+
+	return
 }
