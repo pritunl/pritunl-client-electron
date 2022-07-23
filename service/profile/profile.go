@@ -1087,7 +1087,7 @@ func (p *Profile) clearWg() {
 }
 
 func (p *Profile) clearOvpn() {
-	if p.cmd != nil {
+	if p.cmd != nil && p.cmd.Process != nil {
 		_ = p.cmd.Process.Kill()
 		_ = p.cmd.Process.Kill()
 		time.Sleep(1 * time.Second)
