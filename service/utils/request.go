@@ -28,11 +28,11 @@ var (
 	}
 	client4 = &http.Client{
 		Transport: clientTransport,
-		Timeout:   8 * time.Second,
+		Timeout:   12 * time.Second,
 	}
 	client6 = &http.Client{
 		Transport: clientTransport,
-		Timeout:   3 * time.Second,
+		Timeout:   6 * time.Second,
 	}
 )
 
