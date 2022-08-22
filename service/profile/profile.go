@@ -1385,12 +1385,12 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 		p.remPaths = append(p.remPaths, downPath)
 
 		args = append(args, "--script-security", "2",
-			"--up", upPath,
-			"--down", downPath,
-			"--route-pre-down", blockPath,
+			"--up", blockPath,
+			"--down", blockPath,
+			"--route-pre-down", downPath,
 			"--tls-verify", blockPath,
 			"--ipchange", blockPath,
-			"--route-up", blockPath,
+			"--route-up", upPath,
 		)
 		break
 	case "linux":
