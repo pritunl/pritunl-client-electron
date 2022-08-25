@@ -1,8 +1,9 @@
 package cmd
 
 var (
-	mode     string
-	password string
+	mode           string
+	password       string
+	passwordPrompt bool
 )
 
 func init() {
@@ -19,5 +20,12 @@ func init() {
 		"p",
 		"",
 		"VPN password",
+	)
+	StartCmd.Flags().BoolVarP(
+		&passwordPrompt,
+		"password-read",
+		"r",
+		false,
+		"Prompt for VPN password",
 	)
 }

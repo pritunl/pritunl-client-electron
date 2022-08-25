@@ -1,10 +1,13 @@
 package cmd
 
 import (
-	"github.com/dropbox/godropbox/errors"
-	"github.com/pritunl/pritunl-client-electron/cli/errortypes"
+	"fmt"
+	"os"
+	"syscall"
+
 	"github.com/pritunl/pritunl-client-electron/cli/sprofile"
 	"github.com/spf13/cobra"
+	"golang.org/x/term"
 )
 
 var StartCmd = &cobra.Command{
@@ -12,16 +15,25 @@ var StartCmd = &cobra.Command{
 	Short: "Start profile",
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
-			err := errortypes.NotFoundError{
-				errors.New("cmd: Missing profile ID"),
+			fmt.Fprintln(os.Stderr, "cmd: Missing profile ID")
+			return
+		}
+
+		if passwordPrompt {
+			fmt.Print("Password: ")
+			passwordByt, err := term.ReadPassword(syscall.Stdin)
+			if err != nil {
+				fmt.Fprintln(os.Stderr, "cmd: Failed to read password")
+				return
 			}
-			panic(err)
+			fmt.Println("")
+
+			password = string(passwordByt)
 		}
 
 		err := sprofile.Start(args[0], mode, password)
 		if err != nil {
 			panic(err)
-			return
 		}
 	},
 }
