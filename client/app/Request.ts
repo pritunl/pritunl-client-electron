@@ -43,7 +43,12 @@ export class Response {
 	}
 
 	json(): object {
-		return JSON.parse(this.data || null)
+		try {
+			return JSON.parse(this.data || null)
+		} catch(err) {
+			err = new Errors.ReadError(err, "Request: JSON parse failed")
+			throw err
+		}
 	}
 
 	jsonPassive(): object {
@@ -198,13 +203,13 @@ export class Request {
 				req.on("timeout", () => {
 					let err = new Errors.RequestError(null, "Request: Timeout error")
 					req.destroy(err)
-					Logger.error(err.message)
+					Logger.error(err)
 					reject(err)
 				})
 
 				req.on("error", (err) => {
 					err = new Errors.RequestError(err, "Request: Client error")
-					Logger.error(err.message)
+					Logger.error(err)
 					reject(err)
 				})
 
@@ -215,7 +220,7 @@ export class Request {
 				req.end()
 			} catch (err) {
 				err = new Errors.RequestError(err, "Request: Exception")
-				Logger.error(err.message)
+				Logger.error(err)
 				reject(err)
 			}
 		})
