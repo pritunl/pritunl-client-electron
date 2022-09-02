@@ -7,14 +7,13 @@ import * as ProfileActions from "../actions/ProfileActions"
 import * as ServiceActions from "../actions/ServiceActions"
 import * as Blueprint from "@blueprintjs/core"
 import PageInfo from "./PageInfo"
+import PageInput from "./PageInput"
 import PageSwitch from "./PageSwitch"
 import AceEditor from "react-ace"
 
 import "ace-builds/src-noconflict/mode-text"
 import "ace-builds/src-noconflict/theme-dracula"
 import "ace-builds/src-noconflict/theme-eclipse"
-import * as MiscUtils from "../utils/MiscUtils"
-import * as Constants from "../Constants"
 
 interface Props {
 	profile: ProfileTypes.ProfileRo
@@ -25,6 +24,8 @@ interface State {
 	changed: boolean
 	dialog: boolean
 	profile: ProfileTypes.Profile
+	setAutoStart: boolean
+	setSystem: boolean
 }
 
 const css = {
@@ -56,6 +57,8 @@ export default class ProfileSettings extends React.Component<Props, State> {
 			changed: false,
 			dialog: false,
 			profile: null,
+			setAutoStart: null,
+			setSystem: null,
 		}
 	}
 
@@ -74,17 +77,66 @@ export default class ProfileSettings extends React.Component<Props, State> {
 
 		profile[name] = val
 
-		this.setState({
-			...this.state,
-			changed: true,
-			profile: profile,
-		})
+		if (name === "disabled") {
+			this.setState({
+				...this.state,
+				changed: true,
+				profile: profile,
+				setAutoStart: !profile.disabled,
+			})
+		} else {
+			this.setState({
+				...this.state,
+				changed: true,
+				profile: profile,
+			})
+		}
 	}
 
 	onSave = (): void => {
-		ProfileActions.commit(this.state.profile).then(() => {
-			this.closeDialog()
-		})
+		let prfl = this.state.profile
+
+		if (prfl) {
+			if (this.state.setAutoStart !== null) {
+				prfl.disabled = !this.state.setAutoStart
+			}
+
+			ProfileActions.commit(this.state.profile).then(() => {
+				this.setState({
+					...this.state,
+					changed: false,
+					profile: null,
+				})
+
+				if (this.state.setSystem !== null) {
+					this.onSaveSystem()
+				} else {
+					this.closeDialog()
+				}
+			})
+		} else {
+			if (this.state.setSystem !== null) {
+				this.onSaveSystem()
+			} else {
+				this.closeDialog()
+			}
+		}
+	}
+
+	onSaveSystem = (): void => {
+		let prfl: ProfileTypes.Profile = this.state.profile ||
+			this.props.profile;
+
+		if (this.state.setSystem && !prfl.system) {
+			prfl.disabled = !this.state.setAutoStart
+			prfl.convertSystem().then((): void => {
+				this.closeDialog()
+			})
+		} else if (!this.state.setSystem && !!prfl.system) {
+			prfl.convertUser().then((): void => {
+				this.closeDialog()
+			})
+		}
 	}
 
 	openDialog = (): void => {
@@ -106,6 +158,16 @@ export default class ProfileSettings extends React.Component<Props, State> {
 		let profile: ProfileTypes.Profile = this.state.profile ||
 			this.props.profile;
 
+		let system = !!profile.system
+		if (this.state.setSystem !== null) {
+			system = this.state.setSystem
+		}
+
+		let autostart = !profile.disabled && !!profile.system
+		if (this.state.setAutoStart !== null) {
+			autostart = this.state.setAutoStart
+		}
+
 		return <div style={css.box}>
 			<button
 				className="bp3-button bp3-icon-cog"
@@ -125,24 +187,48 @@ export default class ProfileSettings extends React.Component<Props, State> {
 				onClose={this.closeDialog}
 			>
 				<div className="bp3-dialog-body">
-					<label
-						className="bp3-label"
-						style={css.label}
-					>
-						Name
-						<input
-							className="bp3-input"
-							style={css.input}
-							disabled={this.state.disabled}
-							autoCapitalize="off"
-							spellCheck={false}
-							placeholder="Enter name"
-							value={profile.name || ""}
-							onChange={(evt): void => {
-								this.set("name", evt.target.value)
-							}}
-						/>
-					</label>
+					<PageInput
+						disabled={this.state.disabled}
+						label="Name"
+						help="Profile name."
+						type="text"
+						placeholder="Enter name"
+						value={profile.name || ""}
+						onChange={(val: string): void => {
+							this.set("name", val)
+						}}
+					/>
+					<PageSwitch
+						disabled={this.state.disabled}
+						label="System Profile"
+						help="Automatically start profile with system service. Autostart profiles will run for all users."
+						checked={system}
+						onToggle={(): void => {
+							if (!system && this.state.setAutoStart === null) {
+								this.setState({
+									...this.state,
+									changed: true,
+									setSystem: !system,
+									setAutoStart: true,
+								})
+							} else {
+								this.setState({
+									...this.state,
+									changed: true,
+									setSystem: !system,
+								})
+							}
+						}}
+					/>
+					<PageSwitch
+						disabled={this.state.disabled || !system}
+						label="Autostart"
+						help="Automatically start profile with system service. Autostart profiles will run for all users. Must be system profile to use autostart."
+						checked={autostart && system}
+						onToggle={(): void => {
+							this.set("disabled", !!autostart)
+						}}
+					/>
 				</div>
 				<div className="bp3-dialog-footer">
 					<div className="bp3-dialog-footer-actions">
