@@ -28,7 +28,7 @@ function loadSystemProfiles(): Promise<ProfileTypes.Profiles> {
 			}, (err) => {
 				err = new Errors.RequestError(err,
 					"Profiles: Service load error")
-				Logger.errorAlert(err.message)
+				Logger.errorAlert(err)
 				resolve([])
 				return
 			})
@@ -57,7 +57,7 @@ function loadProfile(prflId: string,
 						err = new Errors.ReadError(
 							err, "Profiles: Failed to stat profile",
 							{profile_path: prflPath})
-						Logger.errorAlert(err.message)
+						Logger.errorAlert(err)
 						return
 					}
 					if (mode !== "600") {
@@ -66,7 +66,7 @@ function loadProfile(prflId: string,
 								err = new Errors.ReadError(
 									err, "Profiles: Failed to stat profile",
 									{profile_path: prflPath})
-								Logger.errorAlert(err.message)
+								Logger.errorAlert(err)
 							}
 						});
 					}
@@ -86,7 +86,7 @@ function loadProfile(prflId: string,
 						err = new Errors.ReadError(
 							err, "Profiles: Failed to stat profile ovpn",
 							{profile_ovpn_path: ovpnPath})
-						Logger.errorAlert(err.message)
+						Logger.errorAlert(err)
 						return
 					}
 
@@ -96,7 +96,7 @@ function loadProfile(prflId: string,
 								err = new Errors.ReadError(
 									err, "Profiles: Failed to stat profile ovpn",
 									{profile_ovpn_path: ovpnPath})
-								Logger.errorAlert(err.message)
+								Logger.errorAlert(err)
 							}
 						});
 					}
@@ -116,7 +116,7 @@ function loadProfile(prflId: string,
 						err = new Errors.ReadError(
 							err, "Profiles: Failed to stat profile log",
 							{profile_log_path: logPath})
-						Logger.errorAlert(err.message)
+						Logger.errorAlert(err)
 						return
 					}
 
@@ -126,7 +126,7 @@ function loadProfile(prflId: string,
 								err = new Errors.ReadError(
 									err, "Profiles: Failed to stat profile log",
 									{profile_log_path: logPath})
-								Logger.errorAlert(err.message)
+								Logger.errorAlert(err)
 							}
 						});
 					}
@@ -179,7 +179,7 @@ function loadProfiles(): Promise<ProfileTypes.Profiles> {
 				if (err) {
 					if (err.code !== "ENOENT") {
 						err = new Errors.ReadError(err, "Profiles: Read error");
-						Logger.errorAlert(err.message);
+						Logger.errorAlert(err);
 					}
 
 					resolve([]);
@@ -191,7 +191,7 @@ function loadProfiles(): Promise<ProfileTypes.Profiles> {
 					async (err: NodeJS.ErrnoException, filenames: string[]) => {
 						if (err) {
 							err = new Errors.ReadError(err, "Profiles: Read error");
-							Logger.errorAlert(err.message);
+							Logger.errorAlert(err);
 
 							resolve([]);
 							return;
@@ -210,7 +210,7 @@ function loadProfiles(): Promise<ProfileTypes.Profiles> {
 							try {
 								prfl = await loadProfile(prflId, prflPath);
 							} catch(err) {
-								Logger.error(err.message || err)
+								Logger.error(err)
 							}
 
 							if (prfl) {
@@ -238,7 +238,7 @@ function loadProfilesState(): Promise<ProfileTypes.ProfilesMap> {
 			}, (err) => {
 				err = new Errors.RequestError(err,
 					"Profiles: Status error")
-				Logger.errorAlert(err.message)
+				Logger.errorAlert(err)
 				resolve({})
 				return
 			})
@@ -254,7 +254,7 @@ export function sync(noLoading?: boolean): Promise<void> {
 		loader = new Loader().loading();
 	}
 
-	return new Promise<void>((resolve, reject): void => {
+	return new Promise<void>((resolve): void => {
 		loadProfiles().then((prfls: ProfileTypes.Profiles): void => {
 			if (loader) {
 				loader.done();
@@ -284,28 +284,6 @@ export function sync(noLoading?: boolean): Promise<void> {
 	});
 }
 
-export function loadData(prfl: ProfileTypes.Profile): Promise<string> {
-	return new Promise<string>((resolve): void => {
-		let profilePath = prfl.dataPath()
-
-		fs.readFile(
-			profilePath, "utf-8",
-			(err: NodeJS.ErrnoException, data: string): void => {
-				if (err) {
-					err = new Errors.ReadError(
-						err, "Profiles: Profile read error")
-					Logger.errorAlert(err.message, 10)
-
-					resolve("")
-					return
-				}
-
-				resolve(data)
-			},
-		)
-	})
-}
-
 export function traverse(page: number): Promise<void> {
 	Dispatcher.dispatch({
 		type: ProfileTypes.TRAVERSE,
@@ -329,65 +307,16 @@ export function filter(filt: ProfileTypes.Filter): Promise<void> {
 }
 
 export function commit(prfl: ProfileTypes.Profile): Promise<void> {
-	if (prfl.system) {
-		return commitSystem(prfl)
-	} else {
-		return commitConf(prfl)
-	}
-}
-
-function commitConf(prfl: ProfileTypes.Profile): Promise<void> {
 	return new Promise<void>((resolve): void => {
-		let profilePath = prfl.confPath()
-
-		fs.writeFile(
-			profilePath, prfl.exportConf(),
-			(err: NodeJS.ErrnoException): void => {
-				if (err) {
-					err = new Errors.ReadError(
-						err, "Profiles: Profile read error")
-					Logger.errorAlert(err.message, 10)
-
-					resolve()
-					return
-				}
-
-				resolve()
-
-				sync()
-			},
-		)
-	})
-}
-
-function commitSystem(prfl: ProfileTypes.Profile): Promise<void> {
-	let loader = new Loader().loading();
-
-	return new Promise<void>((resolve, reject): void => {
-		RequestUtils
-			.put('/sprofile')
-			.set('Accept', 'application/json')
-			.send(prfl.exportSystem())
-			.end()
-			.then((resp: Request.Response) => {
-				loader.done()
-
-				resolve()
-				sync()
-			}, (err) => {
-				loader.done()
-
-				err = new Errors.RequestError(err,
-					"Profiles: Failed to save profile")
-				Logger.errorAlert(err.message)
-				reject(err)
-				return
-			})
+		prfl.writeConf().then(() => {
+			sync()
+			resolve()
+		})
 	})
 }
 
 EventDispatcher.register((action: ProfileTypes.ProfileDispatch) => {
 	if (action.type === "update") {
-		sync();
+		sync(true);
 	}
 });
