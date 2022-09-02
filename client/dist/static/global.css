@@ -42,6 +42,10 @@
   background: #293742;
 }
 
+.bp3-portal {
+  top: 37px !important;
+}
+
 .ace-dracula .ace_gutter {
   background-color: #23242e !important;
   border-right: 1px solid rgb(255 255 255 / 15%) !important;

@@ -67,6 +67,10 @@ body.bp3-dark {
   background-color: #293742;
 }
 
+.bp3-portal {
+  top: 37px !important;
+}
+
 .bp3-button:disabled, .bp3-button.bp3-disabled {
   cursor: default !important;
 }
