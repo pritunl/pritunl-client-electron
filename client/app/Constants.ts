@@ -1,13 +1,12 @@
 /// <reference path="./References.d.ts"/>
-import path from "path";
-import process from "process";
-import os from "os";
-
 import * as RequestUtils from "./utils/RequestUtils";
 import * as Request from "./Request"
 import * as Errors from "./Errors";
 import * as Logger from "./Logger";
 import * as Auth from "./Auth";
+import path from "path";
+import process from "process";
+import os from "os";
 
 export const loadDelay = 700;
 export let unix = false;
