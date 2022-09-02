@@ -5,6 +5,8 @@ import ProfilesStore from '../stores/ProfilesStore';
 import * as ProfileTypes from '../types/ProfileTypes';
 import * as ProfileActions from '../actions/ProfileActions';
 import * as ServiceActions from '../actions/ServiceActions';
+import * as Constants from "../Constants";
+import * as MiscUtils from "../utils/MiscUtils";
 import * as Blueprint from "@blueprintjs/core";
 import ConfirmButton from "./ConfirmButton";
 import PageInfo from './PageInfo';
@@ -82,11 +84,11 @@ export default class Profile extends React.Component<Props, State> {
 	}
 
 	componentDidMount(): void {
-		Theme.addChangeListener(this.onChange);
+		Constants.addChangeListener(this.onChange);
 	}
 
 	componentWillUnmount(): void {
-		Theme.removeChangeListener(this.onChange);
+		Constants.removeChangeListener(this.onChange);
 	}
 
 	onChange = (): void => {
@@ -98,7 +100,19 @@ export default class Profile extends React.Component<Props, State> {
 	onDelete = (): void => {
 		this.setState({
 			...this.state,
-		});
+			disabled: true,
+		})
+
+		let profile: ProfileTypes.Profile = this.state.profile ||
+			this.props.profile
+
+		profile.delete().then((): void => {
+			this.setState({
+				...this.state,
+				disabled: false,
+			})
+			ProfileActions.sync()
+		})
 	}
 
 	render(): JSX.Element {
@@ -106,7 +120,21 @@ export default class Profile extends React.Component<Props, State> {
 			this.props.profile;
 
 		let syncHosts = profile.formatedHosts();
-		syncHosts.push('Last Sync: 11/22/3333 11:22');
+
+		let statusLabel = "Online For"
+		let statusVal = profile.formattedUptime()
+		if (statusVal === "") {
+			statusLabel = "Status"
+			statusVal = profile.formattedStatus()
+		}
+
+		let lastSync = ""
+		if (profile.sync_time) {
+			lastSync = MiscUtils.formatDateLess(profile.sync_time)
+		} else {
+			lastSync = "Never"
+		}
+		syncHosts.push('Last Sync: ' + lastSync)
 
 		return <div className="bp3-card" style={css.card}>
 			<div style={css.deleteButtonBox}>
@@ -128,6 +156,10 @@ export default class Profile extends React.Component<Props, State> {
 					style={css.label}
 					fields={[
 						{
+							label: 'ID',
+							value: profile.id.substring(0, 18) || '-',
+						},
+						{
 							label: 'Name',
 							value: profile.formattedName() || '-',
 						},
@@ -145,16 +177,21 @@ export default class Profile extends React.Component<Props, State> {
 					style={css.label}
 					fields={[
 						{
-							label: 'Status',
-							value: profile.formattedStatus(),
+							label: statusLabel,
+							value: statusVal,
 						},
 						{
 							label: 'Organization',
 							value: profile.organization || '-',
 						},
 						{
+							label: 'Type',
+							value: profile.system ? 'System' : 'User',
+						},
+						{
 							label: 'Autostart',
-							value: profile.system ? 'Enabled' : 'Disabled',
+							value: (profile.system &&
+								!profile.disabled) ? 'Enabled' : 'Disabled',
 						},
 					]}
 				/>
