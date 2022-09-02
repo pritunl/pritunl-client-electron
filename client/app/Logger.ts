@@ -5,15 +5,23 @@ import * as Errors from "./Errors"
 import * as Paths from "./Paths"
 import fs from "fs"
 
-function push(level: string, msg: string): void {
+function push(level: string, err: any): void {
+	if (!err) {
+		err = "Undefined error"
+	}
+
 	let time = new Date()
+	let msg = err.message || err
+
 	msg = "[" + time.getFullYear() + "-" + (time.getMonth() + 1) + "-" +
 		time.getDate() + " " + time.getHours() + ":" + time.getMinutes() + ":" +
-		time.getSeconds() + "][" + level  + "] " + msg + "\n"
+		time.getSeconds() + "][" + level  + "] " + msg + "\n" + (err.stack || "")
+
+	msg = msg.trim()
 
 	console.error(msg)
 
-	fs.appendFile(Paths.log(), msg, (err: Error): void => {
+	fs.appendFile(Paths.log(), msg + "\n", (err: Error): void => {
 		if (err) {
 			err = new Errors.WriteError(err, "Logger: Failed to write log")
 			Alert.error(err.message, 10)
@@ -21,19 +29,23 @@ function push(level: string, msg: string): void {
 	})
 }
 
-export function info(msg: string): void {
-	push("INFO", msg)
+export function info(err: any): void {
+	push("INFO", err)
 }
 
-export function warning(msg: string): void {
-	push("WARN", msg)
+export function warning(err: any): void {
+	push("WARN", err)
 }
 
-export function error(msg: string): void {
-	push("ERROR", msg)
+export function error(err: any): void {
+	push("ERROR", err)
 }
 
-export function errorAlert(msg: string, timeout?: number): void {
-	push("ERROR", msg)
-	Alert.error(msg, timeout)
+export function errorAlert(err: any, timeout?: number): void {
+	if (!err) {
+		err = "Undefined error"
+	}
+
+	push("ERROR", err)
+	Alert.error(err.message || err, timeout)
 }
