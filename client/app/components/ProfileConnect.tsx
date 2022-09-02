@@ -54,16 +54,20 @@ export default class ProfileConnect extends React.Component<Props, State> {
 	connect(mode: string, password: string): void {
 		let prfl = this.props.profile;
 
-		let serverPubKey = "";
-		let serverBoxPubKey = "";
+		let serverPubKey = ""
+		let serverBoxPubKey = ""
 		if (prfl.server_public_key && (mode === "wg" || prfl.token || password)) {
-			serverPubKey = prfl.server_public_key.join("\n");
-			serverBoxPubKey = prfl.server_box_public_key;
+			serverPubKey = prfl.server_public_key.join("\n")
+			serverBoxPubKey = prfl.server_box_public_key
 		}
 
-		ProfileActions.loadData(prfl).then((data: string): void => {
+		prfl.readData().then((data: string): void => {
 			if (!data) {
-				return;
+				this.setState({
+					...this.state,
+					disabled: false,
+				})
+				return
 			}
 
 			let connData: ProfileTypes.ProfileData = {
@@ -83,22 +87,53 @@ export default class ProfileConnect extends React.Component<Props, State> {
 				token_ttl: prfl.token_ttl,
 				timeout: true,
 				data: data,
-			};
+			}
 
-			ServiceActions.connect(connData);
+			ServiceActions.connect(connData).then((): void => {
+				this.setState({
+					...this.state,
+					disabled: false,
+				})
+			})
+		})
+	}
+
+	disconnect(): void {
+		let prfl = this.props.profile;
+
+		let disconnData: ProfileTypes.ProfileData = {
+			id: prfl.id,
+		}
+
+		ServiceActions.disconnect(disconnData).then((): void => {
+			this.setState({
+				...this.state,
+				disabled: false,
+			})
 		})
 	}
 
 	onConnect = (): void => {
-		if (this.props.profile.password_mode ||
-			this.props.profile.pre_connect_msg) {
-
-			this.setState({
-				...this.state,
-				dialog: true,
-			})
+		this.setState({
+			...this.state,
+			disabled: true,
+		})
+		if (this.connected()) {
+			this.disconnect()
 		} else {
-			this.connect("ovpn", "")
+			this.props.profile.sync().then((): void => {
+				if (this.props.profile.password_mode ||
+					this.props.profile.pre_connect_msg) {
+
+					this.setState({
+						...this.state,
+						disabled: false,
+						dialog: true,
+					})
+				} else {
+					this.connect("ovpn", "")
+				}
+			})
 		}
 	}
 
@@ -126,17 +161,25 @@ export default class ProfileConnect extends React.Component<Props, State> {
 		})
 	}
 
+	connected = (): boolean => {
+		let prfl = this.props.profile
+
+		if (prfl.system) {
+			return prfl.state
+		} else {
+			return !!prfl.status && prfl.status !== "disconnected"
+		}
+	}
+
 	render(): JSX.Element {
 		let buttonClass = ""
 		let buttonLabel = ""
-		if (!this.props.profile.status ||
-			this.props.profile.status === "disconnected") {
-
-			buttonClass = "bp3-intent-success bp3-icon-link"
-			buttonLabel = "Connect"
-		} else {
+		if (this.connected()) {
 			buttonClass = "bp3-intent-danger bp3-icon-link"
 			buttonLabel = "Disconnect"
+		} else {
+			buttonClass = "bp3-intent-success bp3-icon-link"
+			buttonLabel = "Connect"
 		}
 
 		return <div style={css.box}>
