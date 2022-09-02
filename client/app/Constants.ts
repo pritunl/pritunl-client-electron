@@ -1,6 +1,13 @@
 /// <reference path="./References.d.ts"/>
 import path from "path";
 import process from "process";
+import os from "os";
+
+import * as RequestUtils from "./utils/RequestUtils";
+import * as Request from "./Request"
+import * as Errors from "./Errors";
+import * as Logger from "./Logger";
+import * as Auth from "./Auth";
 
 export const loadDelay = 700;
 export let unix = false;
@@ -9,6 +16,7 @@ export const webHost = 'http://127.0.0.1:9770';
 export const unixWsHost = 'ws+unix://' + path.join(
 	path.sep, 'var', 'run', 'pritunl.sock') + ':';
 export const webWsHost = 'ws://127.0.0.1:9770';
+export const platform = os.platform()
 
 export const args = new Map<string, string>();
 export let production = true;
@@ -50,5 +58,67 @@ if (args.get('dev') === 'true') {
 
 export const dataPath = args.get('dataPath');
 
+export let state: State = {}
+
+export interface State {
+	wg?: boolean
+	version?: string
+	upgrade?: boolean
+}
+
+function syncState(): void {
+	RequestUtils
+		.get("/state")
+		.set('Accept', 'application/json')
+		.end()
+		.then((resp: Request.Response) => {
+			state = (resp.json() || {}) as State
+			triggerChange()
+		}, (err) => {
+			err = new Errors.RequestError(err,
+				"Constants: Failed to load state")
+			Logger.errorAlert(err)
+		})
+}
+
+function _load(): void {
+	if (Auth.token === '') {
+		setTimeout(() => {
+
+			_load()
+		}, 100);
+		return;
+	}
+
+	syncState()
+	setInterval(syncState, 5000)
+}
+
+let started = false
 export function load(): void {
+	if (started) {
+		return
+	}
+	started = true
+	_load()
+}
+
+export interface Callback {
+	(): void;
+}
+
+let callbacks: Set<Callback> = new Set<Callback>();
+
+export function triggerChange(): void {
+	callbacks.forEach((callback: Callback): void => {
+		callback();
+	})
+}
+
+export function addChangeListener(callback: Callback): void {
+	callbacks.add(callback);
+}
+
+export function removeChangeListener(callback: () => void): void {
+	callbacks.delete(callback);
 }
