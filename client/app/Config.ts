@@ -17,7 +17,7 @@ class ConfigData {
 					if (err) {
 						if (err.code !== "ENOENT") {
 							err = new Errors.ReadError(err, "Config: Read error");
-							Logger.errorAlert(err.message, 10);
+							Logger.errorAlert(err, 10);
 						}
 
 						resolve();
@@ -29,7 +29,7 @@ class ConfigData {
 						configData = JSON.parse(data);
 					} catch (err) {
 						err = new Errors.ReadError(err, "Config: Parse error");
-						Logger.errorAlert(err.message, 10);
+						Logger.errorAlert(err, 10);
 
 						configData = {};
 					}
@@ -57,7 +57,7 @@ class ConfigData {
 				(err: NodeJS.ErrnoException): void => {
 					if (err) {
 						err = new Errors.ReadError(err, "Config: Write error");
-						Logger.errorAlert(err.message);
+						Logger.errorAlert(err);
 					}
 
 					resolve();
