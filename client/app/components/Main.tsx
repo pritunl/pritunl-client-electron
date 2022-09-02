@@ -1,13 +1,17 @@
 /// <reference path="../References.d.ts"/>
 import * as React from 'react';
+import * as Electron from "electron";
 import * as Theme from '../Theme';
+import * as Constants from '../Constants';
 import * as ProfileActions from '../actions/ProfileActions';
 import LoadingBar from './LoadingBar';
 import Profiles from './Profiles';
+import * as Blueprint from "@blueprintjs/core";
 
 interface State {
-	path: string;
-	disabled: boolean;
+	path: string
+	disabled: boolean
+	menu: boolean
 }
 
 const css = {
@@ -56,6 +60,9 @@ const css = {
 	content: {
 		overflowY: 'auto',
 	} as React.CSSProperties,
+	menuLabel: {
+		fontWeight: "bold",
+	} as React.CSSProperties,
 };
 
 export default class Main extends React.Component<{}, State> {
@@ -64,15 +71,16 @@ export default class Main extends React.Component<{}, State> {
 		this.state = {
 			path: "/",
 			disabled: false,
+			menu: false,
 		};
 	}
 
 	componentDidMount(): void {
-		Theme.addChangeListener(this.onChange);
+		Constants.addChangeListener(this.onChange);
 	}
 
 	componentWillUnmount(): void {
-		Theme.removeChangeListener(this.onChange);
+		Constants.removeChangeListener(this.onChange);
 	}
 
 	onChange = (): void => {
@@ -82,11 +90,14 @@ export default class Main extends React.Component<{}, State> {
 	}
 
 	render(): JSX.Element {
-		let themeIcon = ""
+		let themeLabel = ""
+		let themeIcon: Blueprint.IconName;
 		if (Theme.theme() === "dark") {
-			themeIcon = "bp3-icon-flash"
+			themeLabel = "Light Theme"
+			themeIcon = "flash"
 		} else {
-			themeIcon = "bp3-icon-moon"
+			themeLabel = "Dark Theme"
+			themeIcon = "moon"
 		}
 
 		let page: JSX.Element;
@@ -99,6 +110,78 @@ export default class Main extends React.Component<{}, State> {
 				break
 		}
 
+		let version = Constants.state.version
+		if (Constants.state.version) {
+			version = " v" + Constants.state.version
+		}
+
+		let menu: JSX.Element = <Blueprint.Menu>
+			<li
+				className="bp3-menu-header"
+				style={css.menuLabel}
+			>{"Pritunl Client" + version}</li>
+			<Blueprint.MenuDivider/>
+			<Blueprint.MenuItem
+				text={themeLabel}
+				icon={themeIcon}
+				onClick={(): void => {
+					Theme.toggle()
+					Theme.save()
+				}}
+			/>
+			<Blueprint.MenuItem
+				text="Refresh"
+				icon="refresh"
+				disabled={this.state.disabled}
+				onClick={(): void => {
+					let pathname = "";
+
+					this.setState({
+						...this.state,
+						disabled: true,
+					});
+
+					if (pathname === '/profiles') {
+						ProfileActions.sync().then((): void => {
+							this.setState({
+								...this.state,
+								disabled: false,
+							});
+						}).catch((): void => {
+							this.setState({
+								...this.state,
+								disabled: false,
+							});
+						});
+					} else {
+						ProfileActions.sync().then((): void => {
+							this.setState({
+								...this.state,
+								disabled: false,
+							});
+						}).catch((): void => {
+							this.setState({
+								...this.state,
+								disabled: false,
+							});
+						});
+					}
+				}}
+			/>
+			<Blueprint.MenuItem
+				text="Developer Tools"
+				icon="code"
+				onClick={(): void => {
+					Electron.ipcRenderer.send("control", "dev-tools")
+				}}
+			/>
+		</Blueprint.Menu>
+
+		let menuToggle: JSX.Element = <Blueprint.Button
+			minimal={true}
+			icon="menu"
+		/>
+
 		return <div style={css.container} className="layout vertical">
 			<LoadingBar intent="primary" style={css.loading}/>
 			<nav className="bp3-navbar layout horizontal" style={css.nav}>
@@ -106,67 +189,43 @@ export default class Main extends React.Component<{}, State> {
 					className="bp3-navbar-group bp3-align-left flex"
 					style={css.navTitle}
 				>
-					<div className="bp3-navbar-heading"
-							 style={css.heading}
+					<div
+						className="bp3-navbar-heading"
+						style={css.heading}
+						onClick={(): void => {
+							Electron.ipcRenderer.send("control", "reload")
+						}}
 					>pritunl</div>
 				</div>
 				<div
 					className="bp3-navbar-group bp3-align-right"
 					style={css.navGroup}
 				>
-					<div
+					<button
 						className="bp3-button bp3-minimal bp3-icon-people"
 						style={css.link}
 					>
 						Profiles
-					</div>
+					</button>
+					<button
+						className="bp3-button bp3-minimal bp3-icon-import"
+						style={css.link}
+					>
+						Import
+					</button>
+					<button
+						className="bp3-button bp3-minimal bp3-icon-history"
+						style={css.link}
+					>
+						Logs
+					</button>
 					<div>
-						<button
-							className="bp3-button bp3-minimal bp3-icon-refresh"
-							disabled={this.state.disabled}
-							onClick={() => {
-								let pathname = "";
-
-								this.setState({
-									...this.state,
-									disabled: true,
-								});
-
-								if (pathname === '/profiles') {
-									ProfileActions.sync().then((): void => {
-										this.setState({
-											...this.state,
-											disabled: false,
-										});
-									}).catch((): void => {
-										this.setState({
-											...this.state,
-											disabled: false,
-										});
-									});
-								} else {
-									ProfileActions.sync().then((): void => {
-										this.setState({
-											...this.state,
-											disabled: false,
-										});
-									}).catch((): void => {
-										this.setState({
-											...this.state,
-											disabled: false,
-										});
-									});
-								}
-							}}
-						>Refresh</button>
-					</div>
-					<div>
-						<button
-							className={"bp3-button bp3-minimal " + themeIcon}
-							onClick={(): void => {
-								Theme.toggle();
-								Theme.save();
-							}}
+						<Blueprint.Popover
+							position={Blueprint.Position.BOTTOM}
+							content={menu}
+							target={menuToggle}
+							usePortal={true}
+							minimal={true}
 						/>
 					</div>
 				</div>
