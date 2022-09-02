@@ -24,7 +24,7 @@ class ProfilesStore extends EventEmitter {
 	}
 
 	get profiles(): ProfileTypes.ProfilesRo {
-		return Object.freeze(this._profiles);
+		return this._profiles;
 	}
 
 	get profilesM(): ProfileTypes.Profiles {
@@ -100,12 +100,36 @@ class ProfilesStore extends EventEmitter {
 			prfl.system = true
 		}
 
-		let profiles: ProfileTypes.Profiles = prfls.concat(systemPrfls)
-		this._map = {}
+		let profiles: ProfileTypes.Profiles = []
+		let profilesData: ProfileTypes.Profiles = prfls.concat(systemPrfls)
+		let names: string[] = []
+		let namesMap: {[key: string]: ProfileTypes.Profile[]} = {}
 
-		for (let i = 0; i < profiles.length; i++) {
-			profiles[i] = Object.freeze(ProfileTypes.New(profiles[i]))
-			this._map[profiles[i].id] = i
+		for (let prflData of profilesData) {
+			let prfl = ProfileTypes.New(prflData)
+			let name = prfl.formattedName()
+
+			let prflsName: ProfileTypes.Profile[] = namesMap[name]
+			if (!prflsName) {
+				prflsName = []
+			}
+			prflsName.push(prfl)
+
+			names.push(name)
+			namesMap[name] = prflsName
+		}
+
+		names.sort()
+
+		this._map = {}
+		let count = 0
+
+		for (let name of names) {
+			for (let prlf of namesMap[name]) {
+				this._map[prlf.id] = count
+				profiles.push(prlf)
+				count += 1
+			}
 		}
 
 		this._count = profiles.length
@@ -131,7 +155,7 @@ class ProfilesStore extends EventEmitter {
 			prfl.server_addr = prflState.server_addr
 			prfl.client_addr = prflState.client_addr
 
-			this._profiles[index] = Object.freeze(prfl)
+			this._profiles[index] = prfl
 		}
 	}
 
