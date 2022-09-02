@@ -1,6 +1,10 @@
 /// <reference path="./References.d.ts"/>
 
 export class BaseError extends Error {
+	name: string
+	message: string
+	stack: string
+
 	constructor(name: string, wrapErr: Error, message: string,
 		args?: {[key: string]: any}) {
 
@@ -36,8 +40,20 @@ export class WriteError extends BaseError {
 	}
 }
 
+export class ParseError extends BaseError {
+	constructor(wrapErr: Error, message: string, args?: {[key: string]: any}) {
+		super("ParseError", wrapErr, message, args)
+	}
+}
+
 export class RequestError extends BaseError {
 	constructor(wrapErr: Error, message: string, args?: {[key: string]: any}) {
 		super("RequestError", wrapErr, message, args)
+	}
+}
+
+export class ExecError extends BaseError {
+	constructor(wrapErr: Error, message: string, args?: {[key: string]: any}) {
+		super("ExecError", wrapErr, message, args)
 	}
 }
