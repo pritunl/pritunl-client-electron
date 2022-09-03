@@ -68,11 +68,7 @@ func profilePost(c *gin.Context) {
 
 	prfl := profile.GetProfile(data.Id)
 	if prfl != nil {
-		err := prfl.Stop()
-		if err != nil {
-			utils.AbortWithError(c, 500, err)
-			return
-		}
+		prfl.Stop()
 	}
 
 	prfl = &profile.Profile{
@@ -134,11 +130,32 @@ func profileDel(c *gin.Context) {
 
 	prfl := profile.GetProfile(data.Id)
 	if prfl != nil {
-		err := prfl.Stop()
-		if err != nil {
-			utils.AbortWithError(c, 500, err)
-			return
+		prfl.Stop()
+	}
+
+	c.JSON(200, nil)
+}
+
+func profileDel2(c *gin.Context) {
+	prflId := utils.FilterStr(c.Param("profile_id"))
+	if prflId == "" {
+		err := &errortypes.ParseError{
+			errors.New("handler: Invalid profile ID"),
 		}
+		utils.AbortWithError(c, 400, err)
+		return
+	}
+
+	sprfl := sprofile.Get(prflId)
+	if sprfl != nil {
+		sprofile.Deactivate(prflId)
+		c.JSON(200, nil)
+		return
+	}
+
+	prfl := profile.GetProfile(prflId)
+	if prfl != nil {
+		prfl.Stop()
 	}
 
 	c.JSON(200, nil)
