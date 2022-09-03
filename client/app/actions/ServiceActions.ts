@@ -71,3 +71,75 @@ export function disconnect(prfl: ProfileTypes.ProfileData,
 			})
 	})
 }
+
+export async function tokenUpdate(prfl: ProfileTypes.Profile,
+	noLoading?: boolean): Promise<boolean> {
+
+	let loader: Loader
+	if (!noLoading) {
+		loader = new Loader().loading()
+	}
+
+	let valid = false
+
+	let serverPubKey = ""
+	if (prfl.server_public_key) {
+		serverPubKey = prfl.server_public_key.join("\n")
+	}
+
+	try {
+		let resp = await RequestUtils
+			.put('/token')
+			.set('Accept', 'application/json')
+			.send({
+				profile: prfl.id,
+				server_public_key: serverPubKey,
+				server_box_public_key: prfl.server_box_public_key,
+				ttl: prfl.token_ttl,
+			})
+			.end()
+		if (resp.status !== 200) {
+			let err = new Errors.RequestError(null,
+				"Profiles: Token update request error " + resp.status)
+			Logger.errorAlert(err, 10)
+		} else {
+			let data = resp.jsonPassive()
+			if (data) {
+				valid = !!data.valid
+			}
+		}
+	} catch (err) {
+		err = new Errors.RequestError(
+			err, "Profiles: Token update request failed")
+		Logger.errorAlert(err, 10)
+	}
+
+	if (loader) {
+		loader.done()
+	}
+
+	return valid
+}
+
+export async function tokenDelete(prfl: ProfileTypes.Profile,
+	noLoading?: boolean): Promise<void> {
+
+	let loader: Loader
+	if (!noLoading) {
+		loader = new Loader().loading()
+	}
+
+	try {
+		await RequestUtils
+			.del('/token/' + prfl.id)
+			.end()
+	} catch (err) {
+		err = new Errors.RequestError(
+			err, "Profiles: Token update request failed")
+		Logger.errorAlert(err, 10)
+	}
+
+	if (loader) {
+		loader.done()
+	}
+}
