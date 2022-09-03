@@ -27,6 +27,7 @@ type sprofileData struct {
 	Token              bool     `json:"token"`
 	TokenTtl           int      `json:"token_ttl"`
 	Disabled           bool     `json:"disabled"`
+	SyncTime           int64    `json:"sync_time"`
 	SyncHosts          []string `json:"sync_hosts"`
 	SyncHash           string   `json:"sync_hash"`
 	SyncSecret         string   `json:"sync_secret"`
@@ -90,6 +91,7 @@ func sprofilePut(c *gin.Context) {
 		Token:              data.Token,
 		TokenTtl:           data.TokenTtl,
 		Disabled:           data.Disabled,
+		SyncTime:           data.SyncTime,
 		SyncHosts:          data.SyncHosts,
 		SyncHash:           data.SyncHash,
 		SyncSecret:         data.SyncSecret,
@@ -131,14 +133,30 @@ func sprofileDel(c *gin.Context) {
 
 	prfl := profile.GetProfile(data.Id)
 	if prfl != nil {
-		err := prfl.Stop()
-		if err != nil {
-			utils.AbortWithError(c, 500, err)
-			return
-		}
+		prfl.Stop()
 	}
 
 	sprofile.Remove(data.Id)
+
+	c.JSON(200, nil)
+}
+
+func sprofileDel2(c *gin.Context) {
+	prflId := utils.FilterStr(c.Param("profile_id"))
+	if prflId == "" {
+		err := &errortypes.ParseError{
+			errors.New("handler: Invalid profile ID"),
+		}
+		utils.AbortWithError(c, 400, err)
+		return
+	}
+
+	prfl := profile.GetProfile(prflId)
+	if prfl != nil {
+		prfl.Stop()
+	}
+
+	sprofile.Remove(prflId)
 
 	c.JSON(200, nil)
 }
