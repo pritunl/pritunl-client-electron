@@ -9,11 +9,6 @@ import * as Blueprint from "@blueprintjs/core"
 import PageInfo from "./PageInfo"
 import PageInput from "./PageInput"
 import PageSwitch from "./PageSwitch"
-import AceEditor from "react-ace"
-
-import "ace-builds/src-noconflict/mode-text"
-import "ace-builds/src-noconflict/theme-dracula"
-import "ace-builds/src-noconflict/theme-eclipse"
 
 interface Props {
 	profile: ProfileTypes.ProfileRo
@@ -33,6 +28,7 @@ const css = {
 		display: "inline-block"
 	} as React.CSSProperties,
 	button: {
+		marginTop: "10px",
 		marginRight: "10px",
 	} as React.CSSProperties,
 	dialog: {
@@ -233,12 +229,13 @@ export default class ProfileSettings extends React.Component<Props, State> {
 				<div className="bp3-dialog-footer">
 					<div className="bp3-dialog-footer-actions">
 						<button
-							className="bp3-button bp3-intent-danger"
+							className="bp3-button bp3-intent-danger bp3-icon-cross"
 							type="button"
+							disabled={this.state.disabled}
 							onClick={this.closeDialog}
 						>Cancel</button>
 						<button
-							className="bp3-button bp3-intent-success bp3-icon-link"
+							className="bp3-button bp3-intent-success bp3-icon-tick"
 							type="button"
 							disabled={this.state.disabled || !this.state.changed}
 							onClick={this.onSave}
