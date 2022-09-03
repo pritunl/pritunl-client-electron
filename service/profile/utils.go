@@ -12,6 +12,7 @@ import (
 
 	"github.com/dropbox/godropbox/container/set"
 	"github.com/pritunl/pritunl-client-electron/service/constants"
+	"github.com/pritunl/pritunl-client-electron/service/event"
 	"github.com/pritunl/pritunl-client-electron/service/sprofile"
 	"github.com/pritunl/pritunl-client-electron/service/update"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
@@ -339,10 +340,7 @@ func RestartProfiles(resetNet bool) (err error) {
 		prfl2 := prfl.Copy()
 		prfls2[prfl2.Id] = prfl2
 
-		err = prfl.Stop()
-		if err != nil {
-			return
-		}
+		prfl.StopBackground()
 	}
 
 	for _, prfl := range prfls {
@@ -376,6 +374,7 @@ func SyncSystemProfiles() (err error) {
 
 	prfls := GetProfiles()
 
+	update := false
 	waiter := sync.WaitGroup{}
 
 	for _, sPrfl := range sprfls {
@@ -385,6 +384,7 @@ func SyncSystemProfiles() (err error) {
 			if curPrfl == nil {
 				prfl := ImportSystemProfile(sPrfl)
 
+				update = true
 				waiter.Add(1)
 
 				go func() {
@@ -402,19 +402,11 @@ func SyncSystemProfiles() (err error) {
 			} else if curPrfl.Mode != sPrfl.LastMode &&
 				!(curPrfl.Mode == "ovpn" && sPrfl.LastMode == "") {
 
+				update = true
 				waiter.Add(1)
 
 				go func() {
-					err = curPrfl.Stop()
-					if err != nil {
-						logrus.WithFields(logrus.Fields{
-							"profile_id": curPrfl.Id,
-							"error":      err,
-						}).Error("profile: Failed to stop system profile")
-						err = nil
-
-						time.Sleep(1 * time.Second)
-					}
+					curPrfl.Stop()
 
 					prfl := ImportSystemProfile(sPrfl)
 					err = prfl.Start(false, false)
@@ -430,24 +422,41 @@ func SyncSystemProfiles() (err error) {
 				}()
 			}
 		} else if curPrfl != nil {
+			update = true
 			waiter.Add(1)
 
 			go func() {
-				err = curPrfl.Stop()
-				if err != nil {
-					logrus.WithFields(logrus.Fields{
-						"profile_id": curPrfl.Id,
-						"error":      err,
-					}).Error("profile: Failed to stop system profile")
-					err = nil
-				}
-
+				curPrfl.Stop()
 				waiter.Done()
 			}()
 		}
 	}
 
 	waiter.Wait()
+
+	if update {
+		evt := event.Event{
+			Type: "update",
+			Data: &Profile{
+				Id: "",
+			},
+		}
+		evt.Init()
+
+		status := GetStatus()
+
+		if status {
+			evt := event.Event{
+				Type: "connected",
+			}
+			evt.Init()
+		} else {
+			evt := event.Event{
+				Type: "disconnected",
+			}
+			evt.Init()
+		}
+	}
 
 	return
 }
