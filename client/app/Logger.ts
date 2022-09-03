@@ -1,5 +1,4 @@
 /// <reference path="./References.d.ts"/>
-import * as Constants from "./Constants"
 import * as Alert from "./Alert"
 import * as Errors from "./Errors"
 import * as Paths from "./Paths"
@@ -19,12 +18,25 @@ function push(level: string, err: any): void {
 
 	msg = msg.trim()
 
-	console.error(msg)
+	let pth = Paths.log()
 
-	fs.appendFile(Paths.log(), msg + "\n", (err: Error): void => {
-		if (err) {
-			err = new Errors.WriteError(err, "Logger: Failed to write log")
-			Alert.error(err.message, 10)
+	fs.stat(pth, (err: Error, stat) => {
+		if (stat && stat.size > 200000) {
+			fs.unlink(pth, () => {
+				fs.appendFile(Paths.log(), msg + "\n", (err: Error): void => {
+					if (err) {
+						err = new Errors.WriteError(err, "Logger: Failed to write log")
+						Alert.error(err.message, 10)
+					}
+				})
+			})
+		} else {
+			fs.appendFile(Paths.log(), msg + "\n", (err: Error): void => {
+				if (err) {
+					err = new Errors.WriteError(err, "Logger: Failed to write log")
+					Alert.error(err.message, 10)
+				}
+			})
 		}
 	})
 }
