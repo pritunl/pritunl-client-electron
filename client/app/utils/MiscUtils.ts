@@ -1,6 +1,22 @@
 /// <reference path="../References.d.ts"/>
+import * as Errors from "../Errors"
+import os from "os";
+import fs from "fs";
+import childProcess from "child_process";
+
 export function uuid(): string {
 	return (+new Date() + Math.floor(Math.random() * 999999)).toString(36);
+}
+
+export function uuidRand(): string {
+	let id = ""
+
+	for (let i = 0; i < 4; i++) {
+		id += Math.floor((1 + Math.random()) * 0x10000).toString(
+			16).substring(1);
+	}
+
+	return id;
 }
 
 export function nonce(): string {
@@ -12,6 +28,16 @@ export function nonce(): string {
 	}
 
 	return nonce
+}
+
+export function shuffle(n: any[]): any[] {
+	let i = n.length, j
+	while (i != 0) {
+		j = Math.floor(Math.random() * i)
+		i--
+		[n[i], n[j]] = [n[j], n[i]]
+	}
+	return n
 }
 
 export function objectIdNil(objId: string): boolean {
@@ -36,12 +62,19 @@ export function formatAmount(amount: number): string {
 	return '$' + (amount / 100).toFixed(2);
 }
 
-export function formatDate(dateStr: string): string {
-	if (!dateStr || dateStr === '0001-01-01T00:00:00Z') {
+export function formatDate(dateData: any): string {
+	if (!dateData || dateData === '0001-01-01T00:00:00Z') {
 		return '';
 	}
 
-	let date = new Date(dateStr);
+	let date: Date;
+	if (dateData instanceof String) {
+		date = new Date(dateData as string);
+	} else {
+		date = new Date(0)
+		date.setUTCSeconds(dateData as number)
+	}
+
 	let str = '';
 
 	let hours = date.getHours();
@@ -131,12 +164,94 @@ export function formatDate(dateStr: string): string {
 	return str;
 }
 
-export function formatDateShort(dateStr: string): string {
-	if (!dateStr || dateStr === '0001-01-01T00:00:00Z') {
+export function formatDateLess(dateData: any): string {
+	if (!dateData || dateData === '0001-01-01T00:00:00Z') {
 		return '';
 	}
 
-	let date = new Date(dateStr);
+	let date: Date;
+	if (dateData instanceof String) {
+		date = new Date(dateData as string);
+	} else {
+		date = new Date(0)
+		date.setUTCSeconds(dateData as number)
+	}
+
+	let str = '';
+
+	let hours = date.getHours();
+	let period = 'AM';
+
+	if (hours > 12) {
+		period = 'PM';
+		hours -= 12;
+	} else if (hours === 0) {
+		hours = 12;
+	}
+
+	let month;
+	switch (date.getMonth()) {
+		case 0:
+			month = 'Jan';
+			break;
+		case 1:
+			month = 'Feb';
+			break;
+		case 2:
+			month = 'Mar';
+			break;
+		case 3:
+			month = 'Apr';
+			break;
+		case 4:
+			month = 'May';
+			break;
+		case 5:
+			month = 'Jun';
+			break;
+		case 6:
+			month = 'Jul';
+			break;
+		case 7:
+			month = 'Aug';
+			break;
+		case 8:
+			month = 'Sep';
+			break;
+		case 9:
+			month = 'Oct';
+			break;
+		case 10:
+			month = 'Nov';
+			break;
+		case 11:
+			month = 'Dec';
+			break;
+	}
+
+	str += month + ' ';
+	str += date.getDate() + ' ';
+	str += date.getFullYear() + ', ';
+	str += hours + ':';
+	str += zeroPad(date.getMinutes(), 2);
+	str += period;
+
+	return str;
+}
+
+export function formatDateShort(dateData: any): string {
+	if (!dateData || dateData === '0001-01-01T00:00:00Z') {
+		return '';
+	}
+
+	let date: Date
+	if (dateData instanceof String) {
+		date = new Date(dateData as string)
+	} else {
+		date = new Date(0)
+		date.setUTCSeconds(dateData as number)
+	}
+
 	let curDate = new Date();
 
 	let month;
@@ -188,12 +303,19 @@ export function formatDateShort(dateStr: string): string {
 	return str;
 }
 
-export function formatDateShortTime(dateStr: string): string {
-	if (!dateStr || dateStr === '0001-01-01T00:00:00Z') {
+export function formatDateShortTime(dateData: any): string {
+	if (!dateData || dateData === '0001-01-01T00:00:00Z') {
 		return '';
 	}
 
-	let date = new Date(dateStr);
+	let date: Date
+	if (dateData instanceof String) {
+		date = new Date(dateData as string)
+	} else {
+		date = new Date(0)
+		date.setUTCSeconds(dateData as number)
+	}
+
 	let curDate = new Date();
 
 	let month;
@@ -259,4 +381,80 @@ export function formatDateShortTime(dateStr: string): string {
 	}
 
 	return str;
+}
+
+export interface ExecOutput {
+	stdout: string
+	stderr: string
+	error: Errors.ExecError
+}
+
+export function exec(path: string,
+	...args: string[]): Promise<ExecOutput> {
+
+	return new Promise<ExecOutput>((resolve): void => {
+		childProcess.execFile(path, args, (err, stdout, stderr) => {
+			if (err) {
+				err = new Errors.ExecError(err, "Utils: Exec error");
+			}
+
+			resolve({
+				stdout: stdout,
+				stderr: stderr,
+				error: err,
+			} as ExecOutput)
+		})
+	})
+}
+
+export function fileDelete(path: string): Promise<void> {
+	return new Promise<void>((resolve, reject): void => {
+		fs.exists(path, (exists: boolean): void => {
+			if (!exists) {
+				resolve()
+				return
+			}
+			fs.unlink(path, (err) => {
+				if (err) {
+					err = new Errors.WriteError(err, "Utils: Failed to delete file");
+					reject(err)
+					return
+				}
+				resolve()
+			})
+		})
+	})
+}
+
+export function fileRead(path: string): Promise<string> {
+	return new Promise<string>((resolve, reject): void => {
+		fs.readFile(
+			path, "utf-8",
+			(err: NodeJS.ErrnoException, data: string): void => {
+				if (err) {
+					err = new Errors.ReadError(err, "Utils: Failed to read file");
+					reject(err)
+					return
+				}
+
+				resolve(data)
+			},
+		)
+	})
+}
+
+export function fileWrite(path: string, data: string): Promise<void> {
+	return new Promise<void>((resolve, reject): void => {
+		fs.writeFile(
+			path, data,
+			(err: NodeJS.ErrnoException): void => {
+				if (err) {
+					err = new Errors.ReadError(err, "Utils: Failed to write file");
+					reject(err)
+					return
+				}
+				resolve()
+			},
+		)
+	})
 }
