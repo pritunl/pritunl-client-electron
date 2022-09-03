@@ -39,6 +39,7 @@ import (
 	"github.com/pritunl/pritunl-client-electron/service/command"
 	"github.com/pritunl/pritunl-client-electron/service/errortypes"
 	"github.com/pritunl/pritunl-client-electron/service/event"
+	"github.com/pritunl/pritunl-client-electron/service/log"
 	"github.com/pritunl/pritunl-client-electron/service/network"
 	"github.com/pritunl/pritunl-client-electron/service/parser"
 	"github.com/pritunl/pritunl-client-electron/service/platform"
@@ -84,6 +85,7 @@ var (
 	}
 	ipReg      = regexp.MustCompile(`(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}`)
 	profileReg = regexp.MustCompile(`[^a-z0-9_\- ]+`)
+	stateLock  = sync.Mutex{}
 )
 
 type WgKeyReq struct {
@@ -177,14 +179,16 @@ type OutputData struct {
 }
 
 type Profile struct {
-	state              bool               `json:"-"`
-	stateLock          sync.Mutex         `json:"-"`
+	state          bool        `json:"-"`
+	stopping       bool        `json:"-"`
+	connected      bool        `json:"-"`
+	stop           bool        `json:"-"`
+	waiters        []chan bool `json:"-"`
+	managementLock sync.Mutex  `json:"-"`
+
 	wgQuickLock        sync.Mutex         `json:"-"`
-	connected          bool               `json:"-"`
-	stop               bool               `json:"-"`
 	startTime          time.Time          `json:"-"`
 	authFailed         bool               `json:"-"`
-	waiters            []chan bool        `json:"-"`
 	remPaths           []string           `json:"-"`
 	bashPath           string             `json:"-"`
 	wgPath             string             `json:"-"`
@@ -787,15 +791,8 @@ func (p *Profile) update() {
 }
 
 func (p *Profile) pushOutput(output string) {
-	if p.SystemProfile != nil {
-		err := p.SystemProfile.PushOutput(output + "\n")
-		if err != nil {
-			logrus.WithFields(logrus.Fields{
-				"output": output,
-				"error":  err,
-			}).Error("profile: Failed to push profile log output")
-		}
-	} else {
+	// TODO classic client
+	if p.SystemProfile == nil {
 		evt := &event.Event{
 			Type: "output",
 			Data: &OutputData{
@@ -806,6 +803,14 @@ func (p *Profile) pushOutput(output string) {
 		evt.Init()
 	}
 
+	err := log.ProfilePushLog(p.Id, output+"/n")
+	if err != nil {
+		logrus.WithFields(logrus.Fields{
+			"output": output,
+			"error":  err,
+		}).Error("profile: Failed to push profile log output")
+	}
+
 	return
 }
 
@@ -813,6 +818,11 @@ func (p *Profile) parseLine(line string) {
 	p.pushOutput(line)
 
 	if strings.Contains(line, "Initialization Sequence Completed") {
+		if p.stop {
+			p.StopBackground()
+			return
+		}
+
 		p.connected = true
 		p.Status = "connected"
 		p.Timestamp = time.Now().Unix() - 5
@@ -837,58 +847,17 @@ func (p *Profile) parseLine(line string) {
 
 			utils.ClearDNSCache()
 		}()
-	} else if strings.Contains(line, "Inactivity timeout (--inactive)") {
+	} else if strings.Contains(line, "Inactivity timeout (--inactive)") ||
+		strings.Contains(line, "Inactivity timeout") ||
+		strings.Contains(line, "Connection reset") {
+
 		evt := event.Event{
 			Type: "inactive",
 			Data: p,
 		}
 		evt.Init()
 
-		p.stop = true
-	} else if strings.Contains(line, "Inactivity timeout") ||
-		strings.Contains(line, "Connection reset") {
-
-		go func() {
-			defer func() {
-				panc := recover()
-				if panc != nil {
-					logrus.WithFields(logrus.Fields{
-						"stack": string(debug.Stack()),
-						"panic": panc,
-					}).Error("profile: Panic")
-					panic(panc)
-				}
-			}()
-
-			restartLock.Lock()
-			if p.stop {
-				restartLock.Unlock()
-				return
-			}
-
-			prfl := p.Copy()
-			restartLock.Unlock()
-
-			err := p.Stop()
-			if err != nil {
-				logrus.WithFields(logrus.Fields{
-					"error": err,
-				}).Error("profile: Stop error")
-				return
-			}
-
-			p.Wait()
-
-			if prfl.Reconnect {
-				err = prfl.Start(false, true)
-				if err != nil {
-					logrus.WithFields(logrus.Fields{
-						"error": err,
-					}).Error("profile: Restart error")
-					return
-				}
-			}
-		}()
+		p.StopBackgroundDelay(5 * time.Second)
 	} else if strings.Contains(
 		line, "Can't assign requested address (code=49)") {
 
@@ -907,7 +876,7 @@ func (p *Profile) parseLine(line string) {
 			time.Sleep(3 * time.Second)
 
 			if !p.stop {
-				RestartProfiles(true)
+				go RestartProfiles(true)
 			}
 		}()
 	} else if strings.Contains(line, "AUTH_FAILED") || strings.Contains(
@@ -959,12 +928,22 @@ func (p *Profile) parseLine(line string) {
 		sIndex := strings.LastIndex(line, "]") + 1
 		eIndex := strings.LastIndex(line, ":")
 
+		if p.stop {
+			p.StopBackground()
+			return
+		}
+
 		p.ServerAddr = line[sIndex:eIndex]
 		p.update()
 	} else if strings.Contains(line, "network/local/netmask") {
 		eIndex := strings.LastIndex(line, "/")
 		line = line[:eIndex]
 		sIndex := strings.LastIndex(line, "/") + 1
+
+		if p.stop {
+			p.StopBackground()
+			return
+		}
 
 		p.ClientAddr = line[sIndex:]
 		p.update()
@@ -977,6 +956,11 @@ func (p *Profile) parseLine(line string) {
 
 		split := strings.Split(line, " ")
 		if len(split) > 2 {
+			if p.stop {
+				p.StopBackground()
+				return
+			}
+
 			p.ClientAddr = split[1]
 			p.update()
 		}
@@ -1003,6 +987,11 @@ func (p *Profile) parseLine(line string) {
 		}
 
 		if clientAddr != "" {
+			if p.stop {
+				p.StopBackground()
+				return
+			}
+
 			p.ClientAddr = clientAddr
 			p.update()
 		}
@@ -1017,6 +1006,11 @@ func (p *Profile) parseLine(line string) {
 		}
 
 		if clientAddr != "" {
+			if p.stop {
+				p.StopBackground()
+				return
+			}
+
 			p.ClientAddr = clientAddr
 			p.update()
 		}
@@ -1090,78 +1084,10 @@ func (p *Profile) clearOvpn() {
 	if p.cmd != nil && p.cmd.Process != nil {
 		_ = p.cmd.Process.Kill()
 		_ = p.cmd.Process.Kill()
-		time.Sleep(1 * time.Second)
+		time.Sleep(500 * time.Millisecond)
 	}
 
 	return
-}
-
-func (p *Profile) clearStatus(start time.Time) {
-	if p.tap != "" {
-		tuntap.Release(p.tap)
-	}
-
-	if p.managementPort != 0 {
-		ManagementPortRelease(p.managementPort)
-	}
-
-	go func() {
-		defer func() {
-			panc := recover()
-			if panc != nil {
-				logrus.WithFields(logrus.Fields{
-					"stack": string(debug.Stack()),
-					"panic": panc,
-				}).Error("profile: Panic")
-				panic(panc)
-			}
-		}()
-
-		diff := utils.SinceAbs(start)
-		if diff < 1*time.Second {
-			time.Sleep(1 * time.Second)
-		}
-
-		p.clearWg()
-		p.clearOvpn()
-
-		p.Status = "disconnected"
-		p.Timestamp = 0
-		p.ClientAddr = ""
-		p.ServerAddr = ""
-		p.update()
-
-		for _, path := range p.remPaths {
-			os.Remove(path)
-		}
-
-		Profiles.Lock()
-		prfl := Profiles.m[p.Id]
-		if prfl == p {
-			delete(Profiles.m, p.Id)
-		}
-		if runtime.GOOS == "darwin" && len(Profiles.m) == 0 {
-			err := utils.ClearScutilKeys()
-			if err != nil {
-				logrus.WithFields(logrus.Fields{
-					"error": err,
-				}).Error("profile: Failed to clear scutil keys")
-			}
-		}
-		Profiles.Unlock()
-
-		p.stateLock.Lock()
-		p.state = false
-		for _, waiter := range p.waiters {
-			waiter <- true
-		}
-		p.waiters = []chan bool{}
-		p.stateLock.Unlock()
-
-		logrus.WithFields(logrus.Fields{
-			"profile_id": p.Id,
-		}).Info("profile: Disconnected")
-	}()
 }
 
 func (p *Profile) Copy() (prfl *Profile) {
@@ -1191,7 +1117,6 @@ func (p *Profile) Copy() (prfl *Profile) {
 
 func (p *Profile) Init() {
 	p.Id = utils.FilterStr(p.Id)
-	p.stateLock = sync.Mutex{}
 	p.waiters = []chan bool{}
 	p.bashPath = GetBashPath()
 	p.wgPath = GetWgPath()
@@ -1208,9 +1133,9 @@ func (p *Profile) Start(timeout bool, delay bool) (err error) {
 	p.remPaths = []string{}
 
 	p.Status = "connecting"
-	p.stateLock.Lock()
+	stateLock.Lock()
 	p.state = true
-	p.stateLock.Unlock()
+	stateLock.Unlock()
 
 	Profiles.RLock()
 	n := len(Profiles.m)
@@ -1232,13 +1157,12 @@ func (p *Profile) Start(timeout bool, delay bool) (err error) {
 
 	Profiles.Lock()
 	prfl := Profiles.m[p.Id]
-	if prfl != nil {
-		go func() {
-			_ = prfl.Stop()
-		}()
-	}
 	Profiles.m[p.Id] = p
 	Profiles.Unlock()
+
+	if prfl != nil {
+		prfl.Stop()
+	}
 
 	if p.SystemProfile != nil {
 		updated, e := p.SystemProfile.Sync()
@@ -1255,6 +1179,7 @@ func (p *Profile) Start(timeout bool, delay bool) (err error) {
 	if delay {
 		time.Sleep(3 * time.Second)
 		if p.stop {
+			p.stopSafe()
 			return
 		}
 	}
@@ -1264,9 +1189,12 @@ func (p *Profile) Start(timeout bool, delay bool) (err error) {
 	} else {
 		err = p.startOvpn(timeout)
 	}
-
-	if p.stop {
-		err = nil
+	if err != nil {
+		if p.stop {
+			err = nil
+		}
+		p.stopSafe()
+		return
 	}
 
 	return
@@ -1292,9 +1220,14 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 			}
 			evt.Init()
 
-			p.clearStatus(p.startTime)
+			p.stopSafe()
 			return
 		}
+	}
+
+	if p.stop {
+		p.stopSafe()
+		return
 	}
 
 	if runtime.GOOS == "windows" {
@@ -1317,9 +1250,13 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 		fwToken = data.Token
 	}
 
+	if p.stop {
+		p.stopSafe()
+		return
+	}
+
 	confPath, err := p.write(fixedRemote, fixedRemote6)
 	if err != nil {
-		p.clearStatus(p.startTime)
 		return
 	}
 	p.remPaths = append(p.remPaths, confPath)
@@ -1330,10 +1267,14 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 
 		authPath, err = p.writeAuth(fwToken)
 		if err != nil {
-			p.clearStatus(p.startTime)
 			return
 		}
 		p.remPaths = append(p.remPaths, authPath)
+	}
+
+	if p.stop {
+		p.stopSafe()
+		return
 	}
 
 	p.update()
@@ -1341,6 +1282,11 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 	args := []string{
 		"--config", confPath,
 		"--verb", "2",
+	}
+
+	if p.stop {
+		p.stopSafe()
+		return
 	}
 
 	if runtime.GOOS == "windows" {
@@ -1355,13 +1301,22 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 		}
 	}
 
+	if p.stop {
+		p.stopSafe()
+		return
+	}
+
 	blockPath, e := p.writeBlock()
 	if e != nil {
 		err = e
-		p.clearStatus(p.startTime)
 		return
 	}
 	p.remPaths = append(p.remPaths, blockPath)
+
+	if p.stop {
+		p.stopSafe()
+		return
+	}
 
 	switch runtime.GOOS {
 	case "windows":
@@ -1371,7 +1326,6 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 		upPath, e := p.writeUp()
 		if e != nil {
 			err = e
-			p.clearStatus(p.startTime)
 			return
 		}
 		p.remPaths = append(p.remPaths, upPath)
@@ -1379,7 +1333,6 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 		downPath, e := p.writeDown()
 		if e != nil {
 			err = e
-			p.clearStatus(p.startTime)
 			return
 		}
 		p.remPaths = append(p.remPaths, downPath)
@@ -1397,7 +1350,6 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 		upPath, e := p.writeUp()
 		if e != nil {
 			err = e
-			p.clearStatus(p.startTime)
 			return
 		}
 		p.remPaths = append(p.remPaths, upPath)
@@ -1405,7 +1357,6 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 		downPath, e := p.writeDown()
 		if e != nil {
 			err = e
-			p.clearStatus(p.startTime)
 			return
 		}
 		p.remPaths = append(p.remPaths, downPath)
@@ -1427,6 +1378,11 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 		args = append(args, "--auth-user-pass", authPath)
 	}
 
+	if p.stop {
+		p.stopSafe()
+		return
+	}
+
 	cmd := command.Command(getOpenvpnPath(), args...)
 	cmd.Dir = getOpenvpnDir()
 	p.cmd = cmd
@@ -1436,7 +1392,6 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 		err = &ExecError{
 			errors.Wrap(err, "profile: Failed to get stdout"),
 		}
-		p.clearStatus(p.startTime)
 		return
 	}
 
@@ -1445,12 +1400,11 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 		err = &ExecError{
 			errors.Wrap(err, "profile: Failed to get stderr"),
 		}
-		p.clearStatus(p.startTime)
 		return
 	}
 
 	if p.stop {
-		p.clearStatus(p.startTime)
+		p.stopSafe()
 		return
 	}
 
@@ -1570,7 +1524,6 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 		err = &ExecError{
 			errors.Wrap(err, "profile: Failed to start openvpn"),
 		}
-		p.clearStatus(p.startTime)
 		return
 	}
 
@@ -1606,7 +1559,14 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 			}).Info("profile: Profile exit, reconnecting")
 		}
 
-		p.clearStatus(p.startTime)
+		p.StopBackground()
+	}()
+
+	go func() {
+		time.Sleep(1 * time.Second)
+		if p.stop {
+			p.StopBackground()
+		}
 	}()
 
 	if timeout {
@@ -1682,8 +1642,6 @@ func (p *Profile) openOvpn() (data *OvpnData, err error) {
 		err = &errortypes.ReadError{
 			errors.New("profile: Failed to load interfaces"),
 		}
-
-		p.clearStatus(p.startTime)
 		return
 	}
 
@@ -1783,28 +1741,22 @@ func (p *Profile) openOvpn() (data *OvpnData, err error) {
 		}).Warn("profile: Request ovpn connection error")
 
 		if p.stop {
-			p.clearStatus(p.startTime)
+			p.stopSafe()
 			return
 		}
 	}
 	if err != nil {
+		err = nil
+
 		evt := event.Event{
 			Type: "connection_error",
 			Data: p,
 		}
 		evt.Init()
 
-		logrus.WithFields(logrus.Fields{
-			"error": err,
-		}).Error("profile: Request ovpn connection failed")
-		err = nil
-
 		time.Sleep(3 * time.Second)
 
-		p.clearStatus(p.startTime)
-		if p.connected && !p.stop {
-			go p.restart()
-		}
+		p.stopSafe()
 		return
 	}
 
@@ -2922,6 +2874,9 @@ func (p *Profile) confWgLinux(data *WgConf) (err error) {
 }
 
 func (p *Profile) sendManagementCommand(cmd string) (err error) {
+	p.managementLock.Lock()
+	defer p.managementLock.Unlock()
+
 	conn, err := net.DialTimeout(
 		"tcp",
 		fmt.Sprintf("127.0.0.1:%d", p.managementPort),
@@ -3131,37 +3086,6 @@ func (p *Profile) confWg(data *WgConf) (err error) {
 	return
 }
 
-func (p *Profile) restart() {
-	restartLock.Lock()
-	if p.stop {
-		restartLock.Unlock()
-		return
-	}
-
-	prfl := p.Copy()
-	restartLock.Unlock()
-
-	err := p.Stop()
-	if err != nil {
-		logrus.WithFields(logrus.Fields{
-			"error": err,
-		}).Error("profile: Stop error")
-		return
-	}
-
-	p.Wait()
-
-	if prfl.Reconnect {
-		err = prfl.Start(false, false)
-		if err != nil {
-			logrus.WithFields(logrus.Fields{
-				"error": err,
-			}).Error("profile: Restart error")
-			return
-		}
-	}
-}
-
 func (p *Profile) updateWgHandshake() (err error) {
 	iface := ""
 	if runtime.GOOS == "darwin" {
@@ -3215,12 +3139,13 @@ func (p *Profile) watchWg() {
 		}
 	}()
 
-	defer p.clearStatus(p.startTime)
+	defer p.stopSafe()
 
 	time.Sleep(1 * time.Second)
 
 	for i := 0; i < 30; i++ {
 		if p.stop {
+			p.stopSafe()
 			return
 		}
 
@@ -3233,11 +3158,12 @@ func (p *Profile) watchWg() {
 			logrus.WithFields(logrus.Fields{
 				"error": err,
 			}).Error("profile: Check handshake status failed")
-			p.Stop()
+			p.stopSafe()
 			return
 		}
 
 		if p.stop {
+			p.stopSafe()
 			return
 		}
 
@@ -3254,6 +3180,7 @@ func (p *Profile) watchWg() {
 
 	if p.wgHandshake == 0 {
 		if p.stop {
+			p.stopSafe()
 			return
 		}
 
@@ -3263,13 +3190,14 @@ func (p *Profile) watchWg() {
 		}
 		evt.Init()
 
-		go p.restart()
+		p.restartSafe()
 		return
 	}
 
 	for {
 		for i := 0; i < 10; i++ {
 			if p.stop {
+				p.stopSafe()
 				return
 			}
 			time.Sleep(1 * time.Second)
@@ -3291,18 +3219,19 @@ func (p *Profile) watchWg() {
 				"error": err,
 			}).Error("profile: Keepalive failed")
 
-			go p.restart()
+			p.restartSafe()
 			return
 		}
 
 		if p.stop {
+			p.stopSafe()
 			return
 		}
 
 		if data == nil || !data.Status {
 			logrus.Error("profile: Keepalive bad status")
 
-			go p.restart()
+			p.restartSafe()
 			return
 		}
 	}
@@ -3311,7 +3240,11 @@ func (p *Profile) watchWg() {
 func (p *Profile) startWg(timeout bool) (err error) {
 	err = p.generateWgKey()
 	if err != nil {
-		p.clearStatus(p.startTime)
+		return
+	}
+
+	if p.stop {
+		p.stopSafe()
 		return
 	}
 
@@ -3326,8 +3259,6 @@ func (p *Profile) startWg(timeout bool) (err error) {
 		err = &errortypes.ReadError{
 			errors.New("profile: Failed to load interfaces"),
 		}
-
-		p.clearStatus(p.startTime)
 		return
 	}
 
@@ -3424,7 +3355,7 @@ func (p *Profile) startWg(timeout bool) (err error) {
 		}
 
 		if p.stop {
-			p.clearStatus(p.startTime)
+			p.stopSafe()
 			return
 		}
 	}
@@ -3440,17 +3371,18 @@ func (p *Profile) startWg(timeout bool) (err error) {
 		}).Error("profile: Request wg connection failed")
 		err = nil
 
-		time.Sleep(3 * time.Second)
-
-		p.clearStatus(p.startTime)
 		if p.connected && !p.stop {
-			go p.restart()
+			time.Sleep(3 * time.Second)
+			p.restartSafe()
+		} else {
+			time.Sleep(1 * time.Second)
+			p.stopSafe()
 		}
 		return
 	}
 
 	if p.stop {
-		p.clearStatus(p.startTime)
+		p.stopSafe()
 		return
 	}
 
@@ -3458,8 +3390,6 @@ func (p *Profile) startWg(timeout bool) (err error) {
 		err = &errortypes.ParseError{
 			errors.Wrap(err, "profile: Request wg returned empty data"),
 		}
-
-		p.clearStatus(p.startTime)
 		return
 	}
 
@@ -3497,7 +3427,7 @@ func (p *Profile) startWg(timeout bool) (err error) {
 
 		time.Sleep(3 * time.Second)
 
-		p.clearStatus(p.startTime)
+		p.stopSafe()
 		return
 	}
 
@@ -3508,8 +3438,6 @@ func (p *Profile) startWg(timeout bool) (err error) {
 				"profile: Request wg returned empty configuration",
 			),
 		}
-
-		p.clearStatus(p.startTime)
 		return
 	}
 
@@ -3518,15 +3446,12 @@ func (p *Profile) startWg(timeout bool) (err error) {
 		err = &errortypes.ReadError{
 			errors.New("profile: Failed to acquire interface"),
 		}
-
-		p.clearStatus(p.startTime)
 		return
 	}
 	p.Iface = iface
 
 	wgConfPth, err := p.writeWgConf(data.Configuration)
 	if err != nil {
-		p.clearStatus(p.startTime)
 		return
 	}
 	p.remPaths = append(p.remPaths, wgConfPth)
@@ -3543,9 +3468,8 @@ func (p *Profile) startWg(timeout bool) (err error) {
 		logrus.WithFields(logrus.Fields{
 			"error": err,
 		}).Error("profile: Failed to configure wg")
-		err = nil
 
-		p.clearStatus(p.startTime)
+		p.stopSafe()
 		return
 	}
 
@@ -3657,6 +3581,8 @@ func (p *Profile) stopOvpn() (err error) {
 			_ = p.cmd.Process.Kill()
 		}()
 
+		time.Sleep(100 * time.Millisecond)
+
 		utils.ExecWaitTimeout(p.cmd.Process, 10*time.Second)
 		done = true
 	} else {
@@ -3689,14 +3615,154 @@ func (p *Profile) stopOvpn() (err error) {
 	return
 }
 
-func (p *Profile) Stop() (err error) {
-	p.stateLock.Lock()
-	if p.stop {
-		p.stateLock.Unlock()
+func (p *Profile) restartSafe() {
+	if p.cmd != nil && p.cmd.Process != nil {
+		err := &errortypes.ExecError{
+			errors.New("profile: Attempted restart with running process"),
+		}
+		panic(err)
+	}
+	p.Restart()
+}
+
+func (p *Profile) Restart() {
+	var err error
+
+	if !p.Reconnect {
+		p.Stop()
 		return
 	}
+
+	stateLock.Lock()
+	if p.stopping {
+		stateLock.Unlock()
+		p.Wait()
+		return
+	}
+	p.stopping = true
+	prflCopy := p.Copy()
+	stateLock.Unlock()
+
+	logrus.WithFields(logrus.Fields{
+		"profile_id": p.Id,
+	}).Info("profile: Reconnecting")
+
+	p.Status = "reconnecting"
+	p.update()
+
+	cancel := p.openReqCancel
+	if cancel != nil {
+		cancel()
+	}
+
+	diff := utils.SinceAbs(p.startTime)
+	if diff < 6*time.Second {
+		delay := 5 * time.Second
+		time.Sleep(delay)
+	}
+
+	if p.Mode == Wg {
+		err = p.stopWg()
+	} else {
+		err = p.stopOvpn()
+	}
+	if err != nil {
+		logrus.WithFields(logrus.Fields{
+			"error": err,
+		}).Error("profile: Stop error")
+		panic(err)
+	}
+
+	if p.tap != "" {
+		tuntap.Release(p.tap)
+	}
+
+	if p.managementPort != 0 {
+		ManagementPortRelease(p.managementPort)
+	}
+
+	p.clearWg()
+	p.clearOvpn()
+
+	for _, path := range p.remPaths {
+		os.Remove(path)
+	}
+
+	Profiles.Lock()
+	prfl := Profiles.m[p.Id]
+	if prfl == p {
+		delete(Profiles.m, p.Id)
+	}
+	if runtime.GOOS == "darwin" && len(Profiles.m) == 0 {
+		err := utils.ClearScutilKeys()
+		if err != nil {
+			logrus.WithFields(logrus.Fields{
+				"error": err,
+			}).Error("profile: Failed to clear scutil keys")
+		}
+	}
+	Profiles.Unlock()
+
+	logrus.WithFields(logrus.Fields{
+		"profile_id": p.Id,
+	}).Info("profile: Disconnected")
+
+	stateLock.Lock()
+	p.state = false
+	for _, waiter := range p.waiters {
+		waiter <- true
+	}
+	p.waiters = []chan bool{}
+	stateLock.Unlock()
+
+	err = prflCopy.Start(false, false)
+	if err != nil {
+		logrus.WithFields(logrus.Fields{
+			"error": err,
+		}).Error("profile: Restart error")
+		return
+	}
+
+	return
+}
+
+func (p *Profile) StopBackground() {
+	go func() {
+		p.Stop()
+	}()
+}
+
+func (p *Profile) StopBackgroundDelay(delay time.Duration) {
+	go func() {
+		if delay != 0 {
+			time.Sleep(delay)
+		}
+		p.Stop()
+	}()
+}
+
+func (p *Profile) stopSafe() {
+	if p.cmd != nil && p.cmd.Process != nil {
+		err := &errortypes.ExecError{
+			errors.New("profile: Attempted stop with running process"),
+		}
+		panic(err)
+	}
+	p.Stop()
+}
+
+func (p *Profile) Stop() {
+	var err error
+
+	stateLock.Lock()
+	if p.stopping {
+		stateLock.Unlock()
+		p.Wait()
+		return
+	}
+	p.stopping = true
 	p.stop = true
-	p.stateLock.Unlock()
+	stateLock.Unlock()
 
 	logrus.WithFields(logrus.Fields{
 		"profile_id": p.Id,
@@ -3711,9 +3777,8 @@ func (p *Profile) Stop() (err error) {
 	}
 
 	diff := utils.SinceAbs(p.startTime)
-	if diff < 8*time.Second {
-		delay := time.Duration(8-int64(diff.Seconds())) * time.Second
-		time.Sleep(delay)
+	if diff < 5*time.Second {
+		time.Sleep(1 * time.Second)
 	}
 
 	if p.Mode == Wg {
@@ -3721,19 +3786,74 @@ func (p *Profile) Stop() (err error) {
 	} else {
 		err = p.stopOvpn()
 	}
+	if err != nil {
+		logrus.WithFields(logrus.Fields{
+			"error": err,
+		}).Error("profile: Stop error")
+		panic(err)
+	}
+
+	if p.tap != "" {
+		tuntap.Release(p.tap)
+	}
+
+	if p.managementPort != 0 {
+		ManagementPortRelease(p.managementPort)
+	}
+
+	p.clearWg()
+	p.clearOvpn()
+
+	p.Status = "disconnected"
+	p.Timestamp = 0
+	p.ClientAddr = ""
+	p.ServerAddr = ""
+	p.update()
+
+	for _, path := range p.remPaths {
+		os.Remove(path)
+	}
+
+	Profiles.Lock()
+	prfl := Profiles.m[p.Id]
+	if prfl == p {
+		delete(Profiles.m, p.Id)
+	}
+	if runtime.GOOS == "darwin" && len(Profiles.m) == 0 {
+		err := utils.ClearScutilKeys()
+		if err != nil {
+			logrus.WithFields(logrus.Fields{
+				"error": err,
+			}).Error("profile: Failed to clear scutil keys")
+		}
+	}
+	Profiles.Unlock()
+
+	logrus.WithFields(logrus.Fields{
+		"profile_id": p.Id,
+	}).Info("profile: Disconnected")
+
+	stateLock.Lock()
+	p.state = false
+	for _, waiter := range p.waiters {
+		waiter <- true
+	}
+	p.waiters = []chan bool{}
+	stateLock.Unlock()
 
 	return
 }
 
 func (p *Profile) Wait() {
-	waiter := make(chan bool, 1)
+	waiter := make(chan bool, 3)
 
-	p.stateLock.Lock()
+	stateLock.Lock()
 	if !p.state {
+		stateLock.Unlock()
 		return
 	}
 	p.waiters = append(p.waiters, waiter)
-	p.stateLock.Unlock()
+	stateLock.Unlock()
 
 	<-waiter
 	time.Sleep(50 * time.Millisecond)
