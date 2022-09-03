@@ -1,19 +1,17 @@
 /// <reference path="../References.d.ts"/>
-import path from "path"
-import util from "util"
 import * as Constants from "../Constants"
 import * as Auth from "../Auth"
 import * as MiscUtils from "../utils/MiscUtils"
-import crypto from "crypto"
 import * as Request from "../Request"
 import * as RequestUtils from "../utils/RequestUtils"
-import * as ProfileActions from "../actions/ProfileActions";
-import * as ServiceActions from "../actions/ServiceActions";
+import * as ProfileActions from "../actions/ProfileActions"
+import * as ServiceActions from "../actions/ServiceActions"
 import * as Errors from "../Errors"
 import * as Logger from "../Logger"
+import path from "path"
+import util from "util"
+import crypto from "crypto"
 import fs from "fs"
-import os from "os"
-import childProcess from "child_process"
 
 export const SYNC = "profile.sync"
 export const SYNC_STATE = "profile.sync_state"
@@ -63,9 +61,9 @@ export interface Profile {
 	authTypes(): string[]
 	confPath(): string
 	dataPath(): string
-	logPath(): string
 	extractKey(data: string): Promise<string>
 	exportConf(): string
+	importConf(data: Profile): void
 	exportSystem(): string
 	convertSystem(): Promise<void>
 	convertUser(): Promise<void>
@@ -74,8 +72,9 @@ export interface Profile {
 	readData(): Promise<string>
 	writeData(data: string): Promise<void>
 	readLog(): Promise<string>
-	writeLog(data: string): Promise<void>
+	clearLog(): Promise<void>
 	delete(): Promise<void>
+	getAuthType(data: string): string
 	_importSync(data: string): Promise<void>
 	_sync(syncHost: string): Promise<string>
 	sync(): Promise<void>
@@ -247,10 +246,6 @@ export function New(self: Profile): Profile {
 		return path.join(Constants.dataPath, "profiles", this.id + ".ovpn")
 	}
 
-	self.logPath = function(): string {
-		return path.join(Constants.dataPath, "profiles", this.id + ".log")
-	}
-
 	self.extractKey = async function(data: string): Promise<string> {
 		let sIndex: number
 		let eIndex: number
@@ -327,6 +322,30 @@ export function New(self: Profile): Profile {
 			server_public_key: this.server_public_key,
 			server_box_public_key: this.server_box_public_key,
 		})
+	}
+
+	self.importConf = function(data: Profile): void {
+		this.name = data.name
+		this.wg = data.wg
+		this.organization_id = data.organization_id
+		this.organization = data.organization
+		this.server_id = data.server_id
+		this.server = data.server
+		this.user_id = data.user_id
+		this.user = data.user
+		this.pre_connect_msg = data.pre_connect_msg
+		this.dynamic_firewall = data.dynamic_firewall
+		this.password_mode = data.password_mode
+		this.token = data.token
+		this.token_ttl = data.token_ttl
+		this.disable_reconnect = data.disable_reconnect
+		this.sync_time = data.sync_time
+		this.sync_hosts = data.sync_hosts || []
+		this.sync_hash = data.sync_hash
+		this.sync_secret = data.sync_secret
+		this.sync_token = data.sync_token
+		this.server_public_key = data.server_public_key
+		this.server_box_public_key = data.server_box_public_key
 	}
 
 	self.exportSystem = function(): any {
@@ -432,12 +451,9 @@ export function New(self: Profile): Profile {
 			return
 		}
 
-		let logData = await this.readLog()
-
 		this.system = false
 		await this.writeConf()
 		await this.writeData(this.ovpn_data)
-		await this.writeLog(logData)
 
 		this.ovpn_data = ""
 
@@ -571,43 +587,30 @@ export function New(self: Profile): Profile {
 	}
 
 	self.readLog = async function(): Promise<string> {
-		if (this.system) {
-			let logData = ""
-
-			try {
-				let resp = await RequestUtils
-					.get('/sprofile/' + this.id + '/log')
-					.set('Accept', 'application/json')
-					.end()
-				logData = resp.data
-			} catch (err) {
-				err = new Errors.RequestError(
-					err, "Profiles: Profile log request error")
-				Logger.errorAlert(err, 10)
-			}
-
-			return  logData
-		}
-
 		let logData = ""
 
 		try {
-			logData = await MiscUtils.fileRead(this.logPath())
-		} catch(err) {
+			let resp = await RequestUtils
+				.get('/log/' + this.id)
+				.end()
+			logData = resp.data
+		} catch (err) {
+			err = new Errors.RequestError(
+				err, "Profiles: Profile log request error")
 			Logger.errorAlert(err, 10)
 		}
 
 		return logData
 	}
 
-	self.writeLog = async function(data: string): Promise<void> {
-		if (this.system) {
-			return
-		}
-
+	self.clearLog = async function(): Promise<void> {
 		try {
-			await MiscUtils.fileWrite(this.logPath(), data)
-		} catch(err) {
+			await RequestUtils
+				.del('/log/' + this.id)
+				.end()
+		} catch (err) {
+			err = new Errors.RequestError(
+				err, "Profiles: Profile log request error")
 			Logger.errorAlert(err, 10)
 		}
 	}
@@ -644,9 +647,6 @@ export function New(self: Profile): Profile {
 		try {
 			await MiscUtils.fileDelete(this.dataPath())
 		} catch {}
-		try {
-			await MiscUtils.fileDelete(this.logPath())
-		} catch {}
 	}
 
 	self._importSync = async function(data: string): Promise<void> {
@@ -658,7 +658,9 @@ export function New(self: Profile): Profile {
 		let jsonData = ""
 		let jsonFound = null
 
-		let dataLines = data.split("\n")
+		let origData = await this.readData()
+
+		let dataLines = origData.split("\n")
 		let line
 		let uvId
 		let uvName
@@ -770,7 +772,7 @@ export function New(self: Profile): Profile {
 			req.get(path)
 				.tcp(syncHost)
 				.timeout(5)
-				.insecure()
+				.secure(false)
 				.set("Auth-Token", Auth.token)
 				.set("User-Agent", "pritunl")
 				.set("Auth-Token", this.sync_token)
@@ -838,6 +840,30 @@ export function New(self: Profile): Profile {
 					return
 				})
 		})
+	}
+
+	self.getAuthType = function(data: string): string {
+		if (this.password_mode) {
+			return this.password_mode || null;
+		}
+
+		let n = data.indexOf("auth-user-pass")
+
+		if (n !== -1) {
+			let authStr = this.data.substring(n, this.data.indexOf("\n", n))
+			authStr = authStr.split(" ")
+			if (authStr.length > 1 && authStr[1]) {
+				return null
+			}
+
+			if (this.user) {
+				return "otp"
+			} else {
+				return "username_password"
+			}
+		} else {
+			return null
+		}
 	}
 
 	self.sync = async function(): Promise<void> {
