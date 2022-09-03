@@ -11,11 +11,6 @@ import * as Blueprint from "@blueprintjs/core";
 import ConfirmButton from "./ConfirmButton";
 import PageInfo from './PageInfo';
 import PageSwitch from './PageSwitch';
-import AceEditor from "react-ace";
-
-import "ace-builds/src-noconflict/mode-text";
-import "ace-builds/src-noconflict/theme-dracula";
-import "ace-builds/src-noconflict/theme-eclipse";
 import ProfileConnect from "./ProfileConnect";
 import ProfileSettings from "./ProfileSettings";
 
@@ -39,9 +34,13 @@ const css = {
 	label: {
 		marginBottom: '0',
 	} as React.CSSProperties,
+	labelLast: {
+		marginBottom: '-5px',
+	} as React.CSSProperties,
 	card: {
 		position: "relative",
 		margin: '8px',
+		paddingRight: 0,
 	} as React.CSSProperties,
 	progress: {
 		width: '100%',
@@ -63,7 +62,6 @@ const css = {
 		right: "5px",
 	} as React.CSSProperties,
 	buttons: {
-		flexShrink: 0,
 	} as React.CSSProperties,
 	editor: {
 		margin: '10px 0 0 0',
@@ -197,6 +195,7 @@ export default class Profile extends React.Component<Props, State> {
 				/>
 			</div>
 			<PageInfo
+				style={css.labelLast}
 				fields={[
 					{
 						label: 'Server Address',
@@ -233,36 +232,6 @@ export default class Profile extends React.Component<Props, State> {
 					<ProfileSettings profile={this.props.profile}/>
 				</div>
 			</div>
-			<label
-				className="bp3-label"
-				style={css.editor}
-				hidden={true}
-			>
-				Profile Output
-				<AceEditor
-					name={profile.id + "-logs"}
-					theme={Theme.editorTheme()}
-					height="400px"
-					width="100%"
-					mode="text"
-					fontSize="10px"
-					showPrintMargin={false}
-					showGutter={true}
-					defaultValue={"todo"}
-					editorProps={{
-						$blockScrolling: true,
-					}}
-					setOptions={{
-						showFoldWidgets: false,
-					}}
-					onChange={(value: string) => {
-						this.setState({
-							...this.state,
-							value: value,
-						})
-					}}
-				/>
-			</label>
 		</div>;
 	}
 }
