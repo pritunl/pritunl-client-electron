@@ -4,8 +4,10 @@ import * as Electron from "electron";
 import * as Theme from '../Theme';
 import * as Constants from '../Constants';
 import * as ProfileActions from '../actions/ProfileActions';
+import ProfileImport from "./ProfileImport";
 import LoadingBar from './LoadingBar';
 import Profiles from './Profiles';
+import Logs from './Logs';
 import * as Blueprint from "@blueprintjs/core";
 
 interface State {
@@ -108,6 +110,9 @@ export default class Main extends React.Component<{}, State> {
 			case "/profiles":
 				page = <Profiles/>
 				break
+			case "/logs":
+				page = <Logs/>
+				break
 		}
 
 		let version = Constants.state.version
@@ -142,6 +147,18 @@ export default class Main extends React.Component<{}, State> {
 					});
 
 					if (pathname === '/profiles') {
+						ProfileActions.sync().then((): void => {
+							this.setState({
+								...this.state,
+								disabled: false,
+							});
+						}).catch((): void => {
+							this.setState({
+								...this.state,
+								disabled: false,
+							});
+						});
+					} else if (pathname === '/logs') {
 						ProfileActions.sync().then((): void => {
 							this.setState({
 								...this.state,
@@ -204,18 +221,27 @@ export default class Main extends React.Component<{}, State> {
 					<button
 						className="bp3-button bp3-minimal bp3-icon-people"
 						style={css.link}
+						onClick={() => {
+							this.setState({
+								...this.state,
+								path: "/profiles",
+							})
+						}}
 					>
 						Profiles
 					</button>
-					<button
-						className="bp3-button bp3-minimal bp3-icon-import"
+					<ProfileImport
 						style={css.link}
-					>
-						Import
-					</button>
+					/>
 					<button
 						className="bp3-button bp3-minimal bp3-icon-history"
 						style={css.link}
+						onClick={() => {
+							this.setState({
+								...this.state,
+								path: "/logs",
+							})
+						}}
 					>
 						Logs
 					</button>
@@ -230,7 +256,7 @@ export default class Main extends React.Component<{}, State> {
 					</div>
 				</div>
 			</nav>
-			<div className="flex" style={css.content}>
+			<div className="layout vertical flex" style={css.content}>
 				{page}
 			</div>
 		</div>
