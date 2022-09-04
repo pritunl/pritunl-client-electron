@@ -4,9 +4,14 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
+	"sync"
 
 	"github.com/dropbox/godropbox/errors"
 	"github.com/pritunl/pritunl-client-electron/service/errortypes"
+)
+
+var (
+	writeLock = sync.Mutex{}
 )
 
 func Chmod(pth string, mode os.FileMode) (err error) {
@@ -174,6 +179,35 @@ func Create(path string, perm os.FileMode) (file *os.File, err error) {
 }
 
 func CreateWrite(path string, data string, perm os.FileMode) (err error) {
+	file, err := Create(path, perm)
+	if err != nil {
+		return
+	}
+	defer func() {
+		err = file.Close()
+		if err != nil {
+			err = &errortypes.WriteError{
+				errors.Wrapf(err, "utils: Failed to write '%s'", path),
+			}
+			return
+		}
+	}()
+
+	_, err = file.WriteString(data)
+	if err != nil {
+		err = &errortypes.WriteError{
+			errors.Wrapf(err, "utils: Failed to write to file '%s'", path),
+		}
+		return
+	}
+
+	return
+}
+
+func CreateWriteLock(path string, data string, perm os.FileMode) (err error) {
+	writeLock.Lock()
+	defer writeLock.Unlock()
+
 	file, err := Create(path, perm)
 	if err != nil {
 		return
