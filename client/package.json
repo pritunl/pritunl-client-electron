@@ -6,7 +6,6 @@
     "@blueprintjs/core": "3.53.0",
     "@blueprintjs/datetime": "3.23.20",
     "@blueprintjs/icons": "3.32.0",
-    "@electron/remote": "1.2.1",
     "@github/webauthn-json": "1.0.2",
     "@types/ace": "0.0.48",
     "@types/flux": "3.1.11",
@@ -26,7 +25,7 @@
     "react-transition-group": "4.4.2",
     "systemjs": "6.12.1",
     "tar": "6.1.11",
-    "terser-webpack-plugin": "5.3.1",
+    "terser-webpack-plugin": "5.3.6",
     "utf-8-validate": "5.0.9",
     "ws": "8.5.0",
     "jquery": "3.6.0",
@@ -34,9 +33,8 @@
     "request": "2.88.2"
   },
   "devDependencies": {
-    "@electron/remote": "1.2.1",
-    "electron": "15.5.5",
-    "electron-packager": "15.4.0",
+    "electron": "20.1.1",
+    "electron-packager": "16.0.0",
     "electron-rebuild": "3.2.7",
     "rcedit": "3.0.1",
     "rimraf": "3.0.2",
