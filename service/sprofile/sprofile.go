@@ -59,6 +59,7 @@ type Sprofile struct {
 	Token              bool     `json:"token"`
 	TokenTtl           int      `json:"token_ttl"`
 	Disabled           bool     `json:"disabled"`
+	SyncTime           int64    `json:"sync_time"`
 	SyncHosts          []string `json:"sync_hosts"`
 	SyncHash           string   `json:"sync_hash"`
 	SyncSecret         string   `json:"sync_secret"`
@@ -89,6 +90,7 @@ type SprofileClient struct {
 	Token              bool     `json:"token"`
 	TokenTtl           int      `json:"token_ttl"`
 	Disabled           bool     `json:"disabled"`
+	SyncTime           int64    `json:"sync_time"`
 	SyncHosts          []string `json:"sync_hosts"`
 	SyncHash           string   `json:"sync_hash"`
 	SyncSecret         string   `json:"sync_secret"`
@@ -122,6 +124,7 @@ func (s *Sprofile) Client() (sprflc *SprofileClient) {
 		Token:              s.Token,
 		TokenTtl:           s.TokenTtl,
 		Disabled:           s.Disabled,
+		SyncTime:           s.SyncTime,
 		SyncHosts:          s.SyncHosts,
 		SyncHash:           s.SyncHash,
 		SyncSecret:         s.SyncSecret,
@@ -169,6 +172,7 @@ func (s *Sprofile) Copy() (sprfl *Sprofile) {
 		Token:              s.Token,
 		TokenTtl:           s.TokenTtl,
 		Disabled:           s.Disabled,
+		SyncTime:           s.SyncTime,
 		SyncHosts:          syncHosts,
 		SyncHash:           s.SyncHash,
 		SyncSecret:         s.SyncSecret,
@@ -232,7 +236,7 @@ func (s *Sprofile) PushOutput(line string) (err error) {
 		return
 	}
 
-	if stat.Size() >= 1000000 {
+	if stat.Size() >= 200000 {
 		os.Remove(logPth2)
 		err = os.Rename(logPth1, logPth2)
 		if err != nil {
@@ -333,6 +337,7 @@ func (s *Sprofile) syncUpdate(data string) (updated bool, err error) {
 		s.Token = confData.Token
 		s.TokenTtl = confData.TokenTtl
 		s.Disabled = confData.Disabled
+		s.SyncTime = time.Now().Unix()
 		s.SyncHosts = confData.SyncHosts
 		s.SyncHash = confData.SyncHash
 		s.ServerPublicKey = confData.ServerPublicKey
