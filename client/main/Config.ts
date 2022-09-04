@@ -6,6 +6,7 @@ import * as Logger from "./Logger"
 
 class ConfigData {
 	disable_tray_icon = false
+	classic_interface = false
 	theme = "dark"
 
 	path(): string {
@@ -39,6 +40,9 @@ class ConfigData {
 					if (configData["disable_tray_icon"] !== undefined) {
 						this.disable_tray_icon = configData["disable_tray_icon"]
 					}
+					if (configData["classic_interface"] !== undefined) {
+						this.classic_interface = configData["classic_interface"]
+					}
 					if (configData["theme"] !== undefined) {
 						this.theme = configData["theme"]
 					}
@@ -54,6 +58,7 @@ class ConfigData {
 			fs.writeFile(
 				this.path(), JSON.stringify({
 					disable_tray_icon: this.disable_tray_icon,
+					classic_interface: this.classic_interface,
 					theme: this.theme,
 				}),
 				(err: NodeJS.ErrnoException): void => {

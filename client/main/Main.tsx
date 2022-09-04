@@ -93,12 +93,12 @@ class Main {
 			maxHeight = 800
 		}
 
+		let classicIface = Config.classic_interface
+
 		let zoomFactor = 1
-		if (process.platform === "darwin") {
+		if (process.platform === "darwin" && classicIface) {
 			zoomFactor = 0.8
 		}
-
-		let classicIface = Config.classic_interface
 
 		this.window = new electron.BrowserWindow({
 			title: "Pritunl Client",
@@ -122,10 +122,44 @@ class Main {
 			}
 		})
 
+		electron.ipcMain.on(
+			"control",
+			(evt: electron.IpcMainEvent, msg: string) => {
+				if (msg === "service-auth-error") {
+					electron.dialog.showMessageBox(null, {
+						type: "error",
+						buttons: ["Exit"],
+						title: "Pritunl - Service Error",
+						message: "Failed to load service key. Restart " +
+							"computer and verify background service is running",
+					}).then(function() {
+						electron.app.quit()
+					})
+				} else if (msg === "service-conn-error") {
+					electron.dialog.showMessageBox(null, {
+						type: "error",
+						buttons: ["Exit"],
+						title: "Pritunl - Service Error",
+						message: "Unable to establish communication with " +
+							"background service, try restarting computer",
+					}).then(function() {
+						electron.app.quit()
+					})
+				} else if (msg === "dev-tools") {
+					this.window.webContents.openDevTools({
+						"mode": "undocked",
+					})
+				} else if (msg === "reload") {
+					this.window.reload()
+				}
+			},
+		)
+
 		this.window.on("closed", (): void => {
 			if (Config.disable_tray_icon || !tray) {
 				electron.app.quit()
 			}
+			electron.ipcMain.removeAllListeners("control")
 			main = null
 		})
 
