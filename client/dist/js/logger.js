@@ -1,15 +1,7 @@
 var path = require('path');
 var fs = require('fs');
 var utils = require('./utils.js');
-
-var alert;
-try {
-  var remote = require('@electron/remote');
-  if (remote) {
-    alert = require('./alert.js');
-  }
-} catch (e) {
-}
+var alert = require('./alert.js')
 
 var pth = path.join(utils.getUserDataPath(), 'pritunl-client.log');
 

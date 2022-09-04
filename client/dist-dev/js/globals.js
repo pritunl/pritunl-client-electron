@@ -21,17 +21,6 @@ global.ErrorInit = function(name, args) {
   this.stack = (new Error()).stack;
 };
 
-global.remoteRequire = function() {
-  try {
-    var remote = require('@electron/remote');
-    if (remote) {
-      return remote;
-    }
-  } catch (e) {
-  }
-  return require('electron');
-};
-
 if (process.platform === 'linux' || process.platform === 'darwin') {
   global.unixSocket = true;
   constants.unixSocket = true;

@@ -476,9 +476,6 @@ input:active {
 .main-menu.show {
   height: 204px;
 }
-.main-menu.linux.show {
-  height: 170px;
-}
 .main-menu .btn {
   color: #fff;
   width: 190px;

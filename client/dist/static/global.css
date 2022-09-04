@@ -42,8 +42,8 @@
   background: #293742;
 }
 
-.bp3-portal {
-  top: 37px !important;
+.ace-eclipse.ace_editor {
+  border: 1px solid rgb(209, 209, 209);
 }
 
 .ace-dracula .ace_gutter {
@@ -69,6 +69,10 @@ h5 {
 
 body.bp3-dark {
   background-color: #293742;
+}
+
+.bp3-portal {
+  top: 37px !important;
 }
 
 .bp3-button:disabled, .bp3-button.bp3-disabled {

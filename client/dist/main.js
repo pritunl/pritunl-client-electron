@@ -5,7 +5,6 @@ var path = require('path');
 var fs = require('fs');
 var process = require('process');
 var request = require('request');
-var remote = require('@electron/remote/main');
 var dialog = require('electron').dialog;
 var BrowserWindow = require('electron').BrowserWindow;
 var Tray = require('electron').Tray;
@@ -21,8 +20,6 @@ var config = require('./js/config.js');
 var main = null;
 var tray = null;
 var wakeup = false;
-
-remote.initialize();
 
 process.on('uncaughtException', function (error) {
   var errorMsg;
@@ -236,7 +233,6 @@ var openMainWin = function() {
       backgroundColor: '#151719',
       webPreferences: {
         zoomFactor: zoomFactor,
-        enableRemoteModule: true,
         nodeIntegration: true,
         contextIsolation: false
       }

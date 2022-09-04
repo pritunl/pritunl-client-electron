@@ -10,48 +10,22 @@ var editor = require('./editor.js');
 var errors = require('./errors.js');
 var logger = require('./logger.js');
 var config = require('./config.js');
+var alert = require('./alert.js');
 var utils = require('./utils.js');
 var profileView = require('./profileView.js');
-var remote = require('@electron/remote');
-var getGlobal = remoteRequire().getGlobal;
-var Menu = remoteRequire().Menu;
-var app = remoteRequire().app;
+var ipcRenderer = require('electron').ipcRenderer;
 
 fs.readFile(global.authPath, 'utf8', function(err, data) {
   if (err) {
-    remote.dialog.showMessageBox(null, {
-      type: 'warning',
-      buttons: ['Exit'],
-      title: 'Pritunl - Service Error',
-      message: 'Failed to load service key. ' +
-        'Restart computer and verify background service is running. ' + err,
-    }).then(function() {
-      app.quit();
-    });
+    ipcRenderer.send("control", "service-auth-error")
   } else {
     constants.key = data;
 
     service.ping(function(status, statusCode) {
       if (statusCode === 401) {
-        remote.dialog.showMessageBox(null, {
-          type: 'warning',
-          buttons: ['Exit'],
-          title: 'Pritunl - Service Error',
-          message: 'Unable to establish communication with background ' +
-            'service, try restarting computer'
-        }).then(function() {
-          app.quit();
-        });
+        ipcRenderer.send("control", "service-conn-error")
       } else if (!status) {
-        remote.dialog.showMessageBox(null, {
-          type: 'warning',
-          buttons: ['Exit'],
-          title: 'Pritunl - Service Error',
-          message: 'Unable to communicate with background service, ' +
-            'try restarting computer'
-        }).then(function() {
-          app.quit();
-        });
+        ipcRenderer.send("control", "service-conn-error")
       } else {
         profileView.init();
       }
@@ -205,6 +179,8 @@ config.onReady(function() {
     (!config.settings.disable_reconnect ? 'On' : 'Off'));
   $('.tray-icon').text('Tray Icon ' +
     (!config.settings.disable_tray_icon ? 'On' : 'Off'));
+  $('.classic-interface').text('Use ' +
+    (!config.settings.classic_interface ? 'Classic' : 'New') + ' Interface');
 });
 
 $('.system-logs .close').click(function(){
@@ -228,8 +204,7 @@ $('.open-main-menu').click(function() {
 });
 $('.main-menu .menu-version').click(function(evt) {
   if (evt.shiftKey) {
-    remote.getCurrentWindow().openDevTools();
-    return;
+    ipcRenderer.send("control", "dev-tools")
   }
 });
 $('.main-menu .menu-system-logs').click(function (){
@@ -276,54 +251,16 @@ $('.main-menu .tray-icon').click(function (){
   $('.tray-icon').text('Tray Icon ' +
     (!config.settings.disable_tray_icon ? 'On' : 'Off'));
   config.save();
+  alert.info("Tray icon " + (!config.settings.disable_tray_icon ?
+      'enabled' : 'disabled') + ", restart client " +
+    "for configuration to take effect");
 });
-
-$('.header .close').click(function() {
-  remote.getCurrentWindow().close();
-});
-$('.header .maximize').click(function(evt) {
-  var win = remote.getCurrentWindow();
-
-  if (evt.shiftKey) {
-    $('.header .version').toggle();
-    return;
-  }
-
-  if (!win.maximizedPrev) {
-    win.maximizedPrev = win.getSize();
-    win.setSize(600, 790);
-  } else {
-    win.setSize(win.maximizedPrev[0], win.maximizedPrev[1]);
-    win.maximizedPrev = null;
-  }
-});
-$('.header .minimize').click(function(evt) {
-  if (evt.shiftKey) {
-    remote.getCurrentWindow().openDevTools();
-    return;
-  }
-
-  remote.getCurrentWindow().minimize();
-});
-$('.header .logo').click(function() {
-  var menu = Menu.buildFromTemplate([
-    {
-      label: 'Pritunl v' + constants.version
-    },
-    {
-      label: 'View System Logs',
-      click: function() {
-        closeServiceEditor();
-        openSystemEditor();
-      }
-    },
-    {
-      label: 'View Service Logs',
-      click: function() {
-        closeSystemEditor();
-        openServiceEditor();
-      }
-    }
-  ]);
-  menu.popup(remote.getCurrentWindow());
+$('.main-menu .classic-interface').click(function (){
+  config.settings.classic_interface = !config.settings.classic_interface;
+  $('.classic-interface').text('Use ' +
+    (!config.settings.classic_interface ? 'Classic' : 'New') + ' Interface');
+  config.save();
+  alert.info("Switched to " + (!config.settings.classic_interface ?
+      'new' : 'classic') + " interface, restart client " +
+      "for configuration to take effect");
 });
