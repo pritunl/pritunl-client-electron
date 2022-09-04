@@ -207,9 +207,12 @@ func Reload(init bool) (err error) {
 
 		e = json.Unmarshal(data, prfl)
 		if e != nil {
+			err = &errortypes.ParseError{
+				errors.Wrap(e, "sprofile: Failed to parse conf"),
+			}
 			logrus.WithFields(logrus.Fields{
 				"path":  pth,
-				"error": e,
+				"error": err,
 			}).Error("sprofile: Failed to parse profile configuration")
 			continue
 		}
@@ -236,7 +239,7 @@ func ClearLog(prflId string) (err error) {
 	prflsPath := GetPath()
 	pth := filepath.Join(prflsPath, fmt.Sprintf("%s.log", prflId))
 
-	err = utils.CreateWrite(pth, "", 0600)
+	err = utils.CreateWriteLock(pth, "", 0600)
 	if err != nil {
 		return
 	}
