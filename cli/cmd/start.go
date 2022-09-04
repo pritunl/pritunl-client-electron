@@ -3,11 +3,10 @@ package cmd
 import (
 	"fmt"
 	"os"
-	"syscall"
 
 	"github.com/pritunl/pritunl-client-electron/cli/sprofile"
+	"github.com/pritunl/pritunl-client-electron/cli/terminal"
 	"github.com/spf13/cobra"
-	"golang.org/x/term"
 )
 
 var StartCmd = &cobra.Command{
@@ -20,15 +19,10 @@ var StartCmd = &cobra.Command{
 		}
 
 		if passwordPrompt {
-			fmt.Print("Password: ")
-			passwordByt, err := term.ReadPassword(syscall.Stdin)
-			if err != nil {
-				fmt.Fprintln(os.Stderr, "cmd: Failed to read password")
+			password = terminal.ReadPassword()
+			if password == "" {
 				return
 			}
-			fmt.Println("")
-
-			password = string(passwordByt)
 		}
 
 		err := sprofile.Start(args[0], mode, password)
