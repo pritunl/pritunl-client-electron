@@ -11,15 +11,6 @@ let ready: boolean
 let readyError: string
 let main: Main
 
-let orig = true
-if (process.argv.indexOf("--beta") !== -1) {
-	orig = false
-}
-
-if (orig) {
-	require("@electron/remote/main").initialize()
-}
-
 if (electron.app.dock) {
 	electron.app.dock.hide()
 }
@@ -107,56 +98,29 @@ class Main {
 			zoomFactor = 0.8
 		}
 
-		if (orig) {
-			this.window = new electron.BrowserWindow({
-				title: "Pritunl Client",
-				icon: path.join(__dirname, "..", "logo.png"),
-				frame: true,
-				autoHideMenuBar: true,
-				fullscreen: false,
-				show: false,
-				width: width,
-				height: height,
-				minWidth: minWidth,
-				minHeight: minHeight,
-				maxWidth: maxWidth,
-				maxHeight: maxHeight,
-				backgroundColor: "#151719",
-				webPreferences: {
-					zoomFactor: zoomFactor,
-					devTools: true,
-					enableRemoteModule: true,
-					nodeIntegration: true,
-					contextIsolation: false
-				} as any
-			})
-			let main = require("@electron/remote/main")
-			if (main && main.enable) {
-				main.enable(this.window.webContents)
+		let classicIface = Config.classic_interface
+
+		this.window = new electron.BrowserWindow({
+			title: "Pritunl Client",
+			icon: path.join(__dirname, "..", "logo.png"),
+			frame: true,
+			autoHideMenuBar: true,
+			fullscreen: false,
+			show: false,
+			width: width,
+			height: height,
+			minWidth: minWidth,
+			minHeight: minHeight,
+			maxWidth: maxWidth,
+			maxHeight: maxHeight,
+			backgroundColor: "#151719",
+			webPreferences: {
+				zoomFactor: zoomFactor,
+				devTools: true,
+				nodeIntegration: true,
+				contextIsolation: false,
 			}
-		} else {
-			this.window = new electron.BrowserWindow({
-				title: "Pritunl Client",
-				icon: path.join(__dirname, "..", "logo.png"),
-				frame: true,
-				autoHideMenuBar: true,
-				fullscreen: false,
-				show: false,
-				width: width,
-				height: height,
-				minWidth: minWidth,
-				minHeight: minHeight,
-				maxWidth: maxWidth,
-				maxHeight: maxHeight,
-				backgroundColor: "#151719",
-				webPreferences: {
-					zoomFactor: zoomFactor,
-					devTools: true,
-					nodeIntegration: true,
-					contextIsolation: false
-				}
-			})
-		}
+		})
 
 		this.window.on("closed", (): void => {
 			if (Config.disable_tray_icon || !tray) {
@@ -190,7 +154,7 @@ class Main {
 		}, 800)
 
 		let indexUrl = ""
-		if (orig) {
+		if (classicIface) {
 			indexUrl = "file://" + path.join(__dirname, "..",
 				"index_orig.html")
 		} else {
