@@ -9,7 +9,8 @@ var waiting = [];
 var pth = path.join(utils.getUserDataPath(), 'pritunl.json');
 var settings = {
   disable_reconnect: false,
-  disable_tray_icon: false
+  disable_tray_icon: false,
+  classic_interface: false
 };
 
 var onReady = function(callback) {
@@ -23,6 +24,7 @@ var onReady = function(callback) {
 var importData = function(data, callback) {
   settings.disable_reconnect = !!data['disable_reconnect'];
   settings.disable_tray_icon = !!data['disable_tray_icon'];
+  settings.classic_interface = !!data['classic_interface'];
 
   if (callback) {
     callback();

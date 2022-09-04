@@ -1,5 +1,4 @@
 var path = require('path');
-var remote = require('@electron/remote');
 var $ = require('jquery');
 var Mustache = require('mustache');
 var constants = require('./constants.js');
@@ -11,6 +10,7 @@ var events = require('./events.js');
 var errors = require('./errors.js');
 var logger = require('./logger.js');
 var template = require('../templates/profile.js');
+var ipcRenderer = require('electron').ipcRenderer;
 
 var colors = [
   '#D32F2F',
@@ -420,21 +420,7 @@ var renderProfile = function(index, prfl) {
             preConnectMsg = preConnectMsg.join('\n');
           }
 
-          remote.dialog.showMessageBox(
-            {
-              type: 'none',
-              title: 'Pritunl - Connecting to Server',
-              message: 'Connecting to ' + data.name,
-              detail: preConnectMsg,
-              buttons: ['Disconnect', 'Connect'],
-            }
-          ).then(function(resp) {
-            if (resp.response === 1) {
-              prflConnect('ovpn');
-            } else {
-              closeMenu($profile);
-            }
-          });
+          prflConnect('ovpn');
         } else {
           prflConnect('ovpn');
         }
@@ -453,21 +439,7 @@ var renderProfile = function(index, prfl) {
         preConnectMsg = preConnectMsg.join('\n');
       }
 
-      remote.dialog.showMessageBox(
-        {
-          type: 'none',
-          title: 'Pritunl - Connecting to Server',
-          message: 'Connecting to ' + data.name,
-          detail: preConnectMsg,
-          buttons: ['Disconnect', 'Connect'],
-        }
-      ).then(function(resp) {
-        if (resp.response === 1) {
-          prflConnect('ovpn');
-        } else {
-          closeMenu($profile);
-        }
-      });
+      prflConnect('ovpn');
     } else {
       prflConnect('ovpn');
     }
@@ -484,21 +456,7 @@ var renderProfile = function(index, prfl) {
         preConnectMsg = preConnectMsg.join('\n');
       }
 
-      remote.dialog.showMessageBox(
-        {
-          type: 'none',
-          title: 'Pritunl - Connecting to Server',
-          message: 'Connecting to ' + data.name,
-          detail: preConnectMsg,
-          buttons: ['Disconnect', 'Connect'],
-        }
-      ).then(function(resp) {
-        if (resp.response === 1) {
-          prflConnect('wg');
-        } else {
-          closeMenu($profile);
-        }
-      });
+      prflConnect('wg');
     } else {
       prflConnect('wg');
     }
@@ -670,9 +628,11 @@ var init = function() {
 
     switch (evt.type) {
       case 'update':
-        prfl = service.get(evt.data.id);
-        if (prfl) {
-          prfl.update(evt.data);
+        if (evt.data) {
+          prfl = service.get(evt.data.id);
+          if (prfl) {
+            prfl.update(evt.data);
+          }
         }
         break;
       case 'output':
@@ -886,7 +846,7 @@ var initProfiles = function() {
         setTimeout(function() {
           service.ping(function(status) {
             if (!status) {
-              remote.getCurrentWindow().close();
+              ipcRenderer.send("control", "service-conn-error")
             }
           });
         }, 10000);

@@ -1,11 +1,10 @@
-var app = remoteRequire().app;
 var request = require('request');
 var crypto = require('crypto');
 
 var uuid = function() {
   var id = '';
 
-  for (var i = 0; i < 8; i++) {
+  for (var i = 0; i < 4; i++) {
     id += Math.floor((1 + Math.random()) * 0x10000).toString(
       16).substring(1);
   }
@@ -17,8 +16,22 @@ var time = function() {
   return Math.floor((new Date).getTime() / 1000);
 };
 
+var args = new Map();
+var queryVals = window.location.search.substring(1).split('&');
+for (var item of queryVals) {
+  var items = item.split('=');
+  if (items.length < 2) {
+    continue;
+  }
+
+  var key = items[0];
+  var value = items.slice(1).join('=');
+
+  args.set(key, decodeURIComponent(value));
+}
+
 var getUserDataPath = function() {
-  return app.getPath('userData');
+  return args.get('dataPath');
 };
 
 var authRequest = function(method, host, path, token, secret, jsonData,
