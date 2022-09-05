@@ -60,23 +60,37 @@ export default class ProfileImport extends React.Component<Props, State> {
 		}
 	}
 
-	onImportUri = (): void => {
+	onImport = (): void => {
 		this.setState({
 			...this.state,
 			disabled: true,
 		})
 
-		Importer.importUri(this.state.uri).then(() => {
-			this.setState({
-				...this.state,
-				dialog: false,
-				disabled: false,
-				changed: false,
-				uri: "",
-				path: "",
-				fullPath: "",
+		if (this.state.fullPath !== "") {
+			Importer.importFile(this.state.fullPath).then(() => {
+				this.setState({
+					...this.state,
+					dialog: false,
+					disabled: false,
+					changed: false,
+					uri: "",
+					path: "",
+					fullPath: "",
+				})
 			})
-		})
+		} else {
+			Importer.importUri(this.state.uri).then(() => {
+				this.setState({
+					...this.state,
+					dialog: false,
+					disabled: false,
+					changed: false,
+					uri: "",
+					path: "",
+					fullPath: "",
+				})
+			})
+		}
 	}
 
 	openDialog = (): void => {
@@ -159,7 +173,7 @@ export default class ProfileImport extends React.Component<Props, State> {
 							className="bp3-button bp3-intent-success bp3-icon-tick"
 							type="button"
 							disabled={this.state.disabled || !this.state.changed}
-							onClick={this.onImportUri}
+							onClick={this.onImport}
 						>Import</button>
 					</div>
 				</div>
