@@ -195,6 +195,18 @@ body.bp3-dark {
   position: fixed !important;
 }
 
+.webkit-drag {
+  -webkit-app-region: drag;
+}
+
+.close-button:hover {
+  background-color: #c42b1c !important;
+}
+
+.close-button:hover::before {
+  color: #ffffff !important;
+}
+
 /*******************************
           Flex Layout
 *******************************/
