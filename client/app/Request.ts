@@ -4,7 +4,7 @@ import tls from "tls"
 import * as Logger from "./Logger"
 import * as Errors from "./Errors"
 
-export var DefaultTimeout = 5
+export var DefaultTimeout = 20
 
 export class Response {
 	response: http.IncomingMessage
@@ -42,7 +42,7 @@ export class Response {
 		return this.headers.get(key)
 	}
 
-	json(): object {
+	json(): any {
 		try {
 			return JSON.parse(this.data || null)
 		} catch(err) {
@@ -51,7 +51,7 @@ export class Response {
 		}
 	}
 
-	jsonPassive(): object {
+	jsonPassive(): any {
 		try {
 			return JSON.parse(this.data || null)
 		} catch {
@@ -141,8 +141,8 @@ export class Request {
 		return this
 	}
 
-	insecure(): Request {
-		this.skipVerify = true
+	secure(secure: boolean): Request {
+		this.skipVerify = !secure
 		return this
 	}
 
