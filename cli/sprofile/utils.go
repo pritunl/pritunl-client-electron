@@ -417,7 +417,7 @@ func SetState(sprflId string, state bool) (err error) {
 }
 
 func Import(data string) (err error) {
-	proflId, err := utils.RandStr(32)
+	proflId, err := utils.RandStr(16)
 	if err != nil {
 		return
 	}
