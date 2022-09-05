@@ -77,7 +77,11 @@ class Main {
 		let minHeight: number
 		let maxWidth: number
 		let maxHeight: number
-		if (process.platform === "darwin") {
+		let titleBarStyle: string
+
+		let classicIface = Config.classic_interface
+
+		if (process.platform === "darwin" && classicIface) {
 			width = 340
 			height = 423
 			minWidth = 304
@@ -87,13 +91,28 @@ class Main {
 		} else {
 			width = 420
 			height = 528
-			minWidth = 380
+			minWidth = 405
 			minHeight = 440
 			maxWidth = 670
 			maxHeight = 800
 		}
 
-		let classicIface = Config.classic_interface
+		if (process.platform === "win32" && !classicIface) {
+			titleBarStyle = "hidden"
+			width = 440
+			minWidth = 440
+		}
+
+		if (Config.window_width && Config.window_height) {
+			width = Config.window_width
+			if (width < minWidth) {
+				width = minWidth
+			}
+			height = Config.window_height
+			if (height < minHeight) {
+				height = minHeight
+			}
+		}
 
 		let zoomFactor = 1
 		if (process.platform === "darwin" && classicIface) {
@@ -103,6 +122,7 @@ class Main {
 		this.window = new electron.BrowserWindow({
 			title: "Pritunl Client",
 			icon: path.join(__dirname, "..", "logo.png"),
+			titleBarStyle: titleBarStyle as any,
 			frame: true,
 			autoHideMenuBar: true,
 			fullscreen: false,
@@ -129,7 +149,7 @@ class Main {
 					electron.dialog.showMessageBox(null, {
 						type: "error",
 						buttons: ["Exit"],
-						title: "Pritunl - Service Error",
+						title: "Pritunl - Service Error (4827)",
 						message: "Failed to load service key. Restart " +
 							"computer and verify background service is running",
 					}).then(function() {
@@ -139,7 +159,7 @@ class Main {
 					electron.dialog.showMessageBox(null, {
 						type: "error",
 						buttons: ["Exit"],
-						title: "Pritunl - Service Error",
+						title: "Pritunl - Service Error (2754)",
 						message: "Unable to establish communication with " +
 							"background service, try restarting computer",
 					}).then(function() {
@@ -151,11 +171,25 @@ class Main {
 					})
 				} else if (msg === "reload") {
 					this.window.reload()
+				} else if (msg === "minimize") {
+					this.window.minimize()
 				}
 			},
 		)
 
-		this.window.on("closed", (): void => {
+		let windowSize: number[];
+		this.window.on("close", (): void => {
+			try {
+				windowSize = this.window.getSize()
+			} catch {}
+		})
+
+		this.window.on("closed", async (): Promise<void> => {
+			if (windowSize && windowSize.length == 2) {
+				Config.window_width = windowSize[0]
+				Config.window_height = windowSize[1]
+				await Config.save()
+			}
 			if (Config.disable_tray_icon || !tray) {
 				electron.app.quit()
 			}
@@ -172,7 +206,9 @@ class Main {
 			this.window.show()
 
 			if (process.argv.indexOf("--dev-tools") !== -1) {
-				this.window.webContents.openDevTools()
+				this.window.webContents.openDevTools({
+					"mode": "undocked",
+				})
 			}
 		})
 		setTimeout((): void => {
@@ -183,7 +219,9 @@ class Main {
 			this.window.show()
 
 			if (process.argv.indexOf("--dev-tools") !== -1) {
-				this.window.webContents.openDevTools()
+				this.window.webContents.openDevTools({
+					"mode": "undocked",
+				})
 			}
 		}, 800)
 
@@ -199,6 +237,7 @@ class Main {
 			"true" : "false")
 		indexUrl += "&dataPath=" + encodeURIComponent(
 			electron.app.getPath("userData"))
+		indexUrl += "&notitle=" + (titleBarStyle ? "true" : "false")
 
 		this.window.loadURL(indexUrl, {
 			userAgent: "pritunl",
