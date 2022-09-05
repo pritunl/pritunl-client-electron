@@ -4,6 +4,7 @@ import path from "path"
 import process from "process"
 import * as Request from "./Request"
 import * as Logger from "./Logger"
+import electron from "electron";
 
 export interface Event {
 	id: string
@@ -49,7 +50,7 @@ function getAuthPath(): string {
 function getAuthToken(): Promise<string> {
 	return new Promise<string>((resolve, reject): void => {
 		fs.readFile(getAuthPath(), "utf-8", (err, data: string): void => {
-			resolve(data.trim())
+			resolve(data ? data.trim() : "")
 		})
 	})
 }
@@ -131,6 +132,9 @@ export function wakeup(): Promise<boolean> {
 	})
 }
 
+let authAttempts = 0
+let connAttempts = 0
+
 export function connect(dev: boolean): Promise<void> {
 	return new Promise<void>(async (resolve, reject) => {
 		let token: string
@@ -141,20 +145,32 @@ export function connect(dev: boolean): Promise<void> {
 		}
 
 		if (!token) {
-			setTimeout((): void => {
-				connect(dev)
-			}, 200)
+			if (authAttempts > 10) {
+				electron.dialog.showMessageBox(null, {
+					type: "error",
+					buttons: ["Retry", "Exit"],
+					title: "Pritunl - Service Error (6729",
+					message: "Unable to authenticate communication with " +
+						"background service, try restarting computer",
+				}).then(function(evt) {
+					if (evt.response == 0) {
+						authAttempts = 0
+						connAttempts = 0
+						connect(dev)
+					} else {
+						electron.app.quit()
+					}
+				})
+			} else {
+				authAttempts += 1
+				setTimeout(() => {
+					connect(dev)
+				}, 500)
+			}
 			return
 		}
 
 		resolve()
-
-		if (token === "") {
-			setTimeout(() => {
-				connect(dev)
-			}, 300)
-			return
-		}
 
 		let reconnected = false
 		let wsHost = ""
@@ -176,6 +192,26 @@ export function connect(dev: boolean): Promise<void> {
 					return
 				}
 				reconnected = true
+
+				if (connAttempts > 10) {
+					electron.dialog.showMessageBox(null, {
+						type: "error",
+						buttons: ["Retry", "Exit"],
+						title: "Pritunl - Service Error (8362)",
+						message: "Unable to establish communication with " +
+							"background service, try restarting computer",
+					}).then(function(evt) {
+						if (evt.response == 0) {
+							authAttempts = 0
+							connAttempts = 0
+							connect(dev)
+						} else {
+							electron.app.quit()
+						}
+					})
+				} else {
+					connAttempts += 1
+				}
 				connect(dev)
 			}, 1000)
 		}
@@ -185,6 +221,7 @@ export function connect(dev: boolean): Promise<void> {
 		})
 
 		socket.on("open", (): void => {
+			connAttempts = 0
 			if (showConnect) {
 				showConnect = false
 				console.log("Events: Service reconnected")
