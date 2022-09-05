@@ -32,7 +32,8 @@ interface State {
 	hasYubikey: boolean
 	hasToken: boolean
 	mode: string
-	changed: boolean;
+	preConnMsgOnly: boolean
+	changed: boolean
 	dialog: boolean
 	confirm: number
 	confirming: string
@@ -89,6 +90,7 @@ export default class ProfileConnect extends React.Component<Props, State> {
 			hasYubikey: false,
 			hasToken: false,
 			mode: "",
+			preConnMsgOnly: false,
 			changed: false,
 			dialog: false,
 			confirm: 0,
@@ -188,6 +190,7 @@ export default class ProfileConnect extends React.Component<Props, State> {
 				hasOtp: hasOtp,
 				hasYubikey: hasYubikey,
 				hasToken: tokenValid,
+				preConnMsgOnly: !authTypes.length,
 				mode: mode,
 			})
 		} else {
@@ -288,6 +291,7 @@ export default class ProfileConnect extends React.Component<Props, State> {
 			hasYubikey: false,
 			hasToken: false,
 			mode: "",
+			preConnMsgOnly: false,
 			changed: false,
 		})
 	}
@@ -530,7 +534,8 @@ export default class ProfileConnect extends React.Component<Props, State> {
 						<button
 							className="bp3-button bp3-intent-success bp3-icon-link"
 							type="button"
-							disabled={this.state.disabled || !this.state.changed}
+							disabled={this.state.disabled || (!this.state.changed &&
+								!this.state.preConnMsgOnly)}
 							onClick={this.closeDialogConfirm}
 						>Connect</button>
 					</div>
