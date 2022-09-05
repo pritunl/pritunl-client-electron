@@ -2,6 +2,7 @@
 import * as React from 'react';
 import * as Electron from "electron";
 import * as Theme from '../Theme';
+import Config from '../Config';
 import * as Constants from '../Constants';
 import * as ProfileActions from '../actions/ProfileActions';
 import ProfileImport from "./ProfileImport";
@@ -9,6 +10,9 @@ import LoadingBar from './LoadingBar';
 import Profiles from './Profiles';
 import Logs from './Logs';
 import * as Blueprint from "@blueprintjs/core";
+import * as Alert from "../Alert";
+
+let upgradeShown = false
 
 interface State {
 	path: string
@@ -92,6 +96,12 @@ export default class Main extends React.Component<{}, State> {
 	}
 
 	render(): JSX.Element {
+		if (Constants.state.upgrade && !upgradeShown) {
+			upgradeShown = true
+			Alert.info("Update available, download the latest " +
+				"release from the Pritunl homepage", 0)
+		}
+
 		let themeLabel = ""
 		let themeIcon: Blueprint.IconName;
 		if (Theme.theme() === "dark") {
@@ -100,6 +110,20 @@ export default class Main extends React.Component<{}, State> {
 		} else {
 			themeLabel = "Dark Theme"
 			themeIcon = "moon"
+		}
+
+		let trayLabel = ""
+		if (Config.disable_tray_icon) {
+			trayLabel = "Enable Tray Icon"
+		} else {
+			trayLabel = "Disable Tray Icon"
+		}
+
+		let ifaceLabel = ""
+		if (Config.classic_interface) {
+			ifaceLabel = "Use New Interface"
+		} else {
+			ifaceLabel = "Use Classic Interface"
 		}
 
 		let page: JSX.Element;
@@ -137,6 +161,7 @@ export default class Main extends React.Component<{}, State> {
 			<Blueprint.MenuItem
 				text="Refresh"
 				icon="refresh"
+				hidden={true}
 				disabled={this.state.disabled}
 				onClick={(): void => {
 					let pathname = "";
@@ -186,6 +211,45 @@ export default class Main extends React.Component<{}, State> {
 				}}
 			/>
 			<Blueprint.MenuItem
+				text={trayLabel}
+				icon="dashboard"
+				onClick={async (): Promise<void> => {
+					Config.disable_tray_icon = !Config.disable_tray_icon
+					await Config.save()
+
+					if (Config.disable_tray_icon) {
+						Alert.success("Tray icon disabled, restart client " +
+							"for configuration to take effect")
+					} else {
+						Alert.success("Tray icon enabled, restart client " +
+							"for configuration to take effect")
+					}
+				}}
+			/>
+			<Blueprint.MenuItem
+				text={ifaceLabel}
+				icon="comparison"
+				onClick={async (): Promise<void> => {
+					Config.classic_interface = !Config.classic_interface
+					await Config.save()
+
+					if (Config.classic_interface) {
+						Alert.success("Switched to classic interface, restart client " +
+							"for configuration to take effect")
+					} else {
+						Alert.success("Switched to new interface, restart client " +
+							"for configuration to take effect")
+					}
+				}}
+			/>
+			<Blueprint.MenuItem
+				text="Reload App"
+				icon="refresh"
+				onClick={(): void => {
+					Electron.ipcRenderer.send("control", "reload")
+				}}
+			/>
+			<Blueprint.MenuItem
 				text="Developer Tools"
 				icon="code"
 				onClick={(): void => {
@@ -201,17 +265,17 @@ export default class Main extends React.Component<{}, State> {
 
 		return <div style={css.container} className="layout vertical">
 			<LoadingBar intent="primary" style={css.loading}/>
-			<nav className="bp3-navbar layout horizontal" style={css.nav}>
+			<nav
+				className="bp3-navbar layout horizontal"
+				style={css.nav}
+			>
 				<div
-					className="bp3-navbar-group bp3-align-left flex"
+					className="bp3-navbar-group bp3-align-left flex webkit-drag"
 					style={css.navTitle}
 				>
 					<div
 						className="bp3-navbar-heading"
 						style={css.heading}
-						onClick={(): void => {
-							Electron.ipcRenderer.send("control", "reload")
-						}}
 					>pritunl</div>
 				</div>
 				<div
@@ -254,6 +318,22 @@ export default class Main extends React.Component<{}, State> {
 							minimal={true}
 						/>
 					</div>
+					<button
+						className="bp3-button bp3-minimal bp3-icon-minus"
+						type="button"
+						hidden={!Constants.noTitle}
+						onClick={(): void => {
+							Electron.ipcRenderer.send("control", "minimize")
+						}}
+					/>
+					<button
+						className="bp3-button bp3-minimal bp3-icon-cross close-button"
+						type="button"
+						hidden={!Constants.noTitle}
+						onClick={(): void => {
+							window.close()
+						}}
+					/>
 				</div>
 			</nav>
 			<div className="layout vertical flex" style={css.content}>
