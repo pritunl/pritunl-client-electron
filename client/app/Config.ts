@@ -58,25 +58,41 @@ class ConfigData {
 		})
 	}
 
-	save(): Promise<void> {
-		return new Promise<void>((resolve, reject): void => {
-			fs.writeFile(
-				Paths.config(), JSON.stringify({
-					disable_tray_icon: this.disable_tray_icon,
-					classic_interface: this.classic_interface,
-					window_width: this.window_width,
-					window_height: this.window_height,
-					theme: this.theme,
-				}),
-				(err: NodeJS.ErrnoException): void => {
-					if (err) {
-						err = new Errors.ReadError(err, "Config: Write error")
-						Logger.errorAlert(err)
-					}
+	save(opts: {[key: string]: any}): Promise<void> {
+		let data = {
+			disable_tray_icon: opts["disable_tray_icon"],
+			classic_interface: opts["classic_interface"],
+			window_width: opts["window_width"],
+			window_height: opts["window_height"],
+			theme: opts["theme"],
+		}
 
-					resolve()
-				},
-			)
+		return new Promise<void>((resolve, reject): void => {
+			this.load().then((): void => {
+				if (data.disable_tray_icon === undefined) {
+					data.disable_tray_icon = this.disable_tray_icon
+				}
+				if (data.classic_interface === undefined) {
+					data.classic_interface = this.classic_interface
+				}
+				if (data.window_width === undefined) {
+					data.window_width = this.window_width
+				}
+				if (data.theme === undefined) {
+					data.theme = this.theme
+				}
+
+				fs.writeFile(
+					Paths.config(), JSON.stringify(data),
+					(err: NodeJS.ErrnoException): void => {
+						if (err) {
+							err = new Errors.ReadError(err, "Config: Write error")
+							Logger.errorAlert(err)
+						}
+						resolve()
+					},
+				)
+			})
 		})
 	}
 }
