@@ -5,6 +5,8 @@ import * as Errors from "./Errors"
 import * as Logger from "./Logger"
 
 class ConfigData {
+	window_width = 0
+	window_height = 0
 	disable_tray_icon = false
 	classic_interface = false
 	theme = "dark"
@@ -46,6 +48,12 @@ class ConfigData {
 					if (configData["theme"] !== undefined) {
 						this.theme = configData["theme"]
 					}
+					if (configData["window_width"] !== undefined) {
+						this.window_width = configData["window_width"]
+					}
+					if (configData["window_height"] !== undefined) {
+						this.window_height = configData["window_height"]
+					}
 
 					resolve()
 				},
@@ -59,6 +67,8 @@ class ConfigData {
 				this.path(), JSON.stringify({
 					disable_tray_icon: this.disable_tray_icon,
 					classic_interface: this.classic_interface,
+					window_width: this.window_width,
+					window_height: this.window_height,
 					theme: this.theme,
 				}),
 				(err: NodeJS.ErrnoException): void => {
