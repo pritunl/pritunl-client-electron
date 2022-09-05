@@ -1,7 +1,7 @@
 /// <reference path="../References.d.ts"/>
 import * as Errors from "../Errors"
-import os from "os";
 import fs from "fs";
+import tar from "tar";
 import childProcess from "child_process";
 
 export function uuid(): string {
@@ -407,6 +407,17 @@ export function exec(path: string,
 	})
 }
 
+export function fileSize(path: string): Promise<number> {
+	return new Promise<number>((resolve): void => {
+		fs.stat(path, (err: Error, stat) => {
+			if (err || !stat) {
+				resolve(0)
+			}
+			resolve(stat.size || 0)
+		})
+	})
+}
+
 export function fileDelete(path: string): Promise<void> {
 	return new Promise<void>((resolve, reject): void => {
 		fs.exists(path, (exists: boolean): void => {
@@ -449,12 +460,48 @@ export function fileWrite(path: string, data: string): Promise<void> {
 			path, data,
 			(err: NodeJS.ErrnoException): void => {
 				if (err) {
-					err = new Errors.ReadError(err, "Utils: Failed to write file");
+					err = new Errors.WriteError(err, "Utils: Failed to write file");
 					reject(err)
 					return
 				}
 				resolve()
 			},
 		)
+	})
+}
+
+export interface TarData {
+	path: string
+	data: string
+}
+
+export function tarRead(path: string): Promise<TarData[]> {
+	return new Promise<TarData[]>((resolve, reject): void => {
+		try {
+			let files: TarData[] = []
+			let parser = new tar.Parse()
+
+			fs.createReadStream(path)
+				.pipe(parser)
+				.on("entry", (entry) => {
+					let data = ""
+
+					entry.on("data", (content) => {
+						data += content.toString()
+					})
+					entry.on("end", () => {
+						files.push({
+							path: entry.path,
+							data: data,
+						})
+					})
+				})
+				.on("end", () => {
+					resolve(files)
+				})
+		} catch(err) {
+			err = new Errors.ReadError(err, "Utils: Failed to read tar file");
+			reject(err)
+		}
 	})
 }
