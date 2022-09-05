@@ -13,7 +13,7 @@ func ReadPassword() string {
 	if err != nil {
 		fmt.Println("")
 		fmt.Fprintln(os.Stderr, "cmd: Failed to read password")
-		return
+		return ""
 	}
 	fmt.Println("")
 
