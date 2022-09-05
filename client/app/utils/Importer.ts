@@ -1,10 +1,5 @@
 /// <reference path="../References.d.ts"/>
-import childProcess from "child_process"
 import path from "path"
-import util from "util"
-import crypto from "crypto"
-import fs from "fs"
-import os from "os"
 import * as MiscUtils from "../utils/MiscUtils"
 import * as Request from "../Request"
 import * as ProfileActions from "../actions/ProfileActions"
@@ -29,6 +24,14 @@ export class Importer {
 		this.files[pth] = await MiscUtils.fileRead(pth)
 	}
 
+	async addTar(pth: string): Promise<void> {
+		let files = await MiscUtils.tarRead(pth)
+
+		for (let file of files) {
+			this.addData(file.path, file.data)
+		}
+	}
+
 	async import(pth: string, data: string): Promise<void> {
 		data = data.replace(/\r/g, "")
 		let line: string
@@ -41,7 +44,7 @@ export class Importer {
 		let split: string[]
 		let fileName = path.basename(pth)
 		let fileNames = fileName.split(".")
-		fileName = fileNames.pop()
+		fileNames.pop()
 		fileName = fileNames.join(".")
 
 		for (let i = 0; i < lines.length; i++) {
@@ -174,6 +177,37 @@ export class Importer {
 
 			await this.import(pth, data)
 		}
+	}
+}
+
+export async function importFile(pth: string): Promise<void> {
+	try {
+		let imptr = new Importer()
+
+		let size = await MiscUtils.fileSize(pth)
+		if (size > 3000000) {
+			Alert.error("Importer: File too large")
+			return
+		}
+
+		switch (path.extname(pth)) {
+			case ".ovpn":
+			case ".conf":
+				await imptr.addPath(pth)
+				break
+			case ".tar":
+				await imptr.addTar(pth)
+				break
+			default:
+				let err = new Errors.ParseError(null,
+					"Importer: Unsupported file type")
+				Logger.errorAlert(err)
+				return
+		}
+
+		await imptr.parse()
+	} catch (err) {
+		Logger.errorAlert(err)
 	}
 }
 
