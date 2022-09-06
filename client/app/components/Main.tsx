@@ -215,7 +215,9 @@ export default class Main extends React.Component<{}, State> {
 				icon="dashboard"
 				onClick={async (): Promise<void> => {
 					Config.disable_tray_icon = !Config.disable_tray_icon
-					await Config.save()
+					await Config.save({
+						disable_tray_icon: Config.disable_tray_icon,
+					})
 
 					if (Config.disable_tray_icon) {
 						Alert.success("Tray icon disabled, restart client " +
@@ -231,7 +233,9 @@ export default class Main extends React.Component<{}, State> {
 				icon="comparison"
 				onClick={async (): Promise<void> => {
 					Config.classic_interface = !Config.classic_interface
-					await Config.save()
+					await Config.save({
+						classic_interface: Config.classic_interface,
+					})
 
 					if (Config.classic_interface) {
 						Alert.success("Switched to classic interface, restart client " +
