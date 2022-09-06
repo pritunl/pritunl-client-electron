@@ -526,7 +526,6 @@ var renderProfile = function(index, prfl) {
     $profile.find('.menu').addClass('autostarting');
   });
   $profile.find('.menu .autostart-on').click(function() {
-    // TODO Block if password is configured
     prfl.autostartOn(function() {
       closeMenu($profile);
       refreshProfiles();
