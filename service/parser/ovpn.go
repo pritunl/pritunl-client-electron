@@ -33,6 +33,7 @@ type Ovpn struct {
 	HandWindow        int
 	ServerPollTimeout int
 	RenegSec          int
+	RedirectGateway   string
 	SndBuf            int
 	RcvBuf            int
 	RemoteCertTls     string
@@ -105,6 +106,9 @@ func (o *Ovpn) Export() string {
 	}
 	if o.RenegSec > 0 {
 		output += fmt.Sprintf("reneg-sec %d\n", o.RenegSec)
+	}
+	if o.RedirectGateway != "" {
+		output += fmt.Sprintf("redirect-gateway %s\n", o.RedirectGateway)
 	}
 	if o.SndBuf > 0 {
 		output += fmt.Sprintf("sndbuf %d\n", o.SndBuf)
@@ -483,6 +487,47 @@ func Import(data, fixedRemote, fixedRemote6 string) (o *Ovpn) {
 			}
 
 			o.RenegSec = renegSec
+			break
+		case "redirect-gateway":
+			if len(lines) != 2 {
+				logrus.WithFields(logrus.Fields{
+					"line": line,
+				}).Warn("parser: Configuration line ignored [35]")
+				continue
+			}
+
+			switch strings.ToLower(lines[1]) {
+			case "local":
+				o.RedirectGateway = "local"
+				break
+			case "autolocal":
+				o.RedirectGateway = "autolocal"
+				break
+			case "def1":
+				o.RedirectGateway = "def1"
+				break
+			case "bypass-dhcp":
+				o.RedirectGateway = "bypass-dhcp"
+				break
+			case "bypass-dns":
+				o.RedirectGateway = "bypass-dns"
+				break
+			case "block-local":
+				o.RedirectGateway = "block-local"
+				break
+			case "ipv6":
+				o.RedirectGateway = "ipv6"
+				break
+			case "!ipv4":
+				o.RedirectGateway = "!ipv4"
+				break
+			default:
+				logrus.WithFields(logrus.Fields{
+					"line": line,
+				}).Warn("parser: Configuration line ignored [36]")
+				continue
+			}
+
 			break
 		case "sndbuf":
 			if len(lines) != 2 {
