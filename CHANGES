@@ -3,6 +3,7 @@ Pritunl Client Changelog
 
 <%= version %>
 
+Redesign client
 Fix connection state management
 
 Version 1.2.3236.80 2022-07-23
