@@ -42,6 +42,10 @@
   background: #293742;
 }
 
+.ace-eclipse.ace_editor {
+  border: 1px solid rgb(209, 209, 209);
+}
+
 .ace-dracula .ace_gutter {
   background-color: #23242e !important;
   border-right: 1px solid rgb(255 255 255 / 15%) !important;
@@ -65,6 +69,10 @@ h5 {
 
 body.bp3-dark {
   background-color: #293742;
+}
+
+.bp3-portal {
+  top: 37px !important;
 }
 
 .bp3-button:disabled, .bp3-button.bp3-disabled {
@@ -185,6 +193,18 @@ body.bp3-dark {
 }
 .bp3-toast-container.bp3-toast-container-inline {
   position: fixed !important;
+}
+
+.webkit-drag {
+  -webkit-app-region: drag;
+}
+
+.close-button:hover {
+  background-color: #c42b1c !important;
+}
+
+.close-button:hover::before {
+  color: #ffffff !important;
 }
 
 /*******************************
