@@ -1,7 +1,46 @@
 /// <reference path="./References.d.ts"/>
 import * as Blueprint from "@blueprintjs/core";
 
+const maxToasts = 3
+
 let toaster: Blueprint.IToaster;
+let toaster2: Blueprint.IToaster;
+
+export interface Callback {
+	(toasts: number): void;
+}
+
+let callbacks: Set<Callback> = new Set<Callback>();
+
+let observer = new MutationObserver((): void => {
+	let len = 0
+	if (toaster2) {
+		let toasts = toaster2.getToasts()
+		if (toasts) {
+			len = toasts.length
+		}
+	}
+
+	callbacks.forEach((callback: Callback): void => {
+		callback(len);
+	})
+})
+
+function clean(): void {
+	let toasts = toaster.getToasts()
+	if (toasts.length > maxToasts - 1) {
+		toaster.dismiss(toasts[toasts.length - 1].key)
+		clean()
+	}
+}
+
+function clean2(): void {
+	let toasts = toaster2.getToasts()
+	if (toasts.length > maxToasts - 1) {
+		toaster2.dismiss(toasts[toasts.length - 1].key)
+		clean2()
+	}
+}
 
 export function success(message: string, timeout?: number): string {
 	if (timeout === undefined) {
@@ -9,6 +48,8 @@ export function success(message: string, timeout?: number): string {
 	} else {
 		timeout = timeout * 1000;
 	}
+
+	clean()
 
 	return toaster.show({
 		intent: Blueprint.Intent.SUCCESS,
@@ -24,6 +65,8 @@ export function info(message: string, timeout?: number): string {
 		timeout = timeout * 1000;
 	}
 
+	clean()
+
 	return toaster.show({
 		intent: Blueprint.Intent.PRIMARY,
 		message: message,
@@ -37,6 +80,8 @@ export function warning(message: string, timeout?: number): string {
 	} else {
 		timeout = timeout * 1000;
 	}
+
+	clean()
 
 	return toaster.show({
 		intent: Blueprint.Intent.WARNING,
@@ -52,7 +97,25 @@ export function error(message: string, timeout?: number): string {
 		timeout = timeout * 1000;
 	}
 
+	clean()
+
 	return toaster.show({
+		intent: Blueprint.Intent.DANGER,
+		message: message,
+		timeout: timeout,
+	});
+}
+
+export function error2(message: string, timeout?: number): string {
+	if (timeout === undefined) {
+		timeout = 10000;
+	} else {
+		timeout = timeout * 1000;
+	}
+
+	clean2()
+
+	return toaster2.show({
 		intent: Blueprint.Intent.DANGER,
 		message: message,
 		timeout: timeout,
@@ -64,15 +127,40 @@ export function dismiss(key: string) {
 }
 
 export function init() {
-	if (toaster) {
-		return;
+	if (!toaster) {
+		if (Blueprint.Toaster) {
+			toaster = Blueprint.Toaster.create({
+				position: Blueprint.Position.BOTTOM,
+			}, document.getElementById("toaster"));
+		} else {
+			console.error("Failed to load toaster")
+		}
 	}
+	if (!toaster2) {
+		let elmt = document.getElementById("toaster2")
 
-	if (Blueprint.Toaster) {
-		toaster = Blueprint.Toaster.create({
-			position: Blueprint.Position.BOTTOM,
-		}, document.getElementById("toaster"));
-	} else {
-		console.error("Failed to load toaster")
+		if (Blueprint.Toaster) {
+			elmt.style.display = "none"
+			toaster2 = Blueprint.Toaster.create({
+				position: Blueprint.Position.TOP,
+			}, elmt);
+		} else {
+			console.error("Failed to load toaster2")
+		}
+
+		observer.observe(elmt, {
+			childList: true,
+			subtree: true,
+		})
 	}
+}
+
+export function addChangeListener(callback: Callback): void {
+	callbacks.add(callback);
+}
+
+export function removeChangeListener(
+	callback: (toasts: number) => void): void {
+
+	callbacks.delete(callback);
 }
