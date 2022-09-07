@@ -9,7 +9,29 @@ class ConfigData {
 	window_height = 0
 	disable_tray_icon = false
 	classic_interface = false
+	frameless: boolean = null
 	theme = "dark"
+
+	_load(data: {[key: string]: any}): void {
+		if (data["disable_tray_icon"] !== undefined) {
+			this.disable_tray_icon = data["disable_tray_icon"]
+		}
+		if (data["classic_interface"] !== undefined) {
+			this.classic_interface = data["classic_interface"]
+		}
+		if (data["theme"] !== undefined) {
+			this.theme = data["theme"]
+		}
+		if (data["window_width"] !== undefined) {
+			this.window_width = data["window_width"]
+		}
+		if (data["window_height"] !== undefined) {
+			this.window_height = data["window_height"]
+		}
+		if (data["frameless"] !== undefined) {
+			this.frameless = data["frameless"]
+		}
+	}
 
 	path(): string {
 		return path.join(electron.app.getPath("userData"), "pritunl.json")
@@ -30,14 +52,16 @@ class ConfigData {
 						return
 					}
 
-					let configData: any
-					try {
-						configData = JSON.parse(data)
-					} catch (err) {
-						err = new Errors.ReadError(err, "Config: Parse error")
-						Logger.error(err.message)
+					let configData: any = {}
+					if (data) {
+						try {
+							configData = JSON.parse(data)
+						} catch (err) {
+							err = new Errors.ReadError(err, "Config: Parse error")
+							Logger.error(err.message)
 
-						configData = {}
+							configData = {}
+						}
 					}
 
 					if (configData["disable_tray_icon"] !== undefined) {
@@ -55,6 +79,9 @@ class ConfigData {
 					if (configData["window_height"] !== undefined) {
 						this.window_height = configData["window_height"]
 					}
+					if (configData["frameless"] !== undefined) {
+						this.frameless = configData["frameless"]
+					}
 
 					resolve()
 				},
@@ -68,6 +95,7 @@ class ConfigData {
 			classic_interface: opts["classic_interface"],
 			window_width: opts["window_width"],
 			window_height: opts["window_height"],
+			frameless: opts["frameless"],
 			theme: opts["theme"],
 		}
 
@@ -85,6 +113,11 @@ class ConfigData {
 				if (data.theme === undefined) {
 					data.theme = this.theme
 				}
+				if (data.frameless === undefined) {
+					data.frameless = this.frameless
+				}
+
+				this._load(data)
 
 				fs.writeFile(
 					this.path(), JSON.stringify(data),
