@@ -195,6 +195,10 @@ body.bp3-dark {
   position: fixed !important;
 }
 
+#toaster2 .bp3-toast-container.bp3-toast-container-top {
+  top: 25px;
+}
+
 .webkit-drag {
   -webkit-app-region: drag;
 }
