@@ -1,5 +1,5 @@
 #define MyAppName "Pritunl"
-#define MyAppVersion "1.3.3281.66"
+#define MyAppVersion "1.3.3282.37"
 #define MyAppPublisher "Pritunl"
 #define MyAppURL "https://pritunl.com/"
 #define MyAppExeName "pritunl.exe"
