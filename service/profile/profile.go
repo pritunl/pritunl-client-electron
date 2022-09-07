@@ -1171,6 +1171,8 @@ func (p *Profile) Start(timeout bool, delay bool) (err error) {
 				"profile_id": p.Id,
 				"error":      e,
 			}).Error("profile: Failed to sync system profile")
+			p.SystemProfile.SyncTime = -1
+			p.SystemProfile.Commit()
 		} else if updated {
 			UpdateSystemProfile(p, p.SystemProfile)
 		}
