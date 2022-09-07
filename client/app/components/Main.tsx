@@ -18,6 +18,7 @@ interface State {
 	path: string
 	disabled: boolean
 	menu: boolean
+	showErrors: boolean
 }
 
 const css = {
@@ -45,7 +46,6 @@ const css = {
 	} as React.CSSProperties,
 	link: {
 		padding: '0 7px',
-		color: 'inherit',
 	} as React.CSSProperties,
 	sub: {
 		color: 'inherit',
@@ -78,21 +78,35 @@ export default class Main extends React.Component<{}, State> {
 			path: "/",
 			disabled: false,
 			menu: false,
-		};
+			showErrors: false,
+		}
 	}
 
 	componentDidMount(): void {
-		Constants.addChangeListener(this.onChange);
+		Constants.addChangeListener(this.onChange)
+		Alert.addChangeListener(this.onAlert)
 	}
 
 	componentWillUnmount(): void {
-		Constants.removeChangeListener(this.onChange);
+		Constants.removeChangeListener(this.onChange)
+		Alert.removeChangeListener(this.onAlert)
 	}
 
 	onChange = (): void => {
 		this.setState({
 			...this.state,
-		});
+		})
+	}
+
+	onAlert = (toasts: number): void => {
+		if (!toasts) {
+			document.getElementById("toaster2").style.display = "none"
+		}
+
+		this.setState({
+			...this.state,
+			showErrors: !!toasts,
+		})
 	}
 
 	render(): JSX.Element {
@@ -117,6 +131,13 @@ export default class Main extends React.Component<{}, State> {
 			trayLabel = "Enable Tray Icon"
 		} else {
 			trayLabel = "Disable Tray Icon"
+		}
+
+		let frameLabel = ""
+		if (Config.frameless) {
+			frameLabel = "Enable Window Frame"
+		} else {
+			frameLabel = "Disable Window Frame"
 		}
 
 		let ifaceLabel = ""
@@ -229,6 +250,25 @@ export default class Main extends React.Component<{}, State> {
 				}}
 			/>
 			<Blueprint.MenuItem
+				text={frameLabel}
+				icon="application"
+				hidden={Constants.platform === "win32"}
+				onClick={async (): Promise<void> => {
+					Config.frameless = !Config.frameless
+					await Config.save({
+						frameless: Config.frameless,
+					})
+
+					if (Config.frameless) {
+						Alert.success("Window frame disabled, restart client " +
+							"for configuration to take effect")
+					} else {
+						Alert.success("Window frame enabled, restart client " +
+							"for configuration to take effect")
+					}
+				}}
+			/>
+			<Blueprint.MenuItem
 				text={ifaceLabel}
 				icon="comparison"
 				onClick={async (): Promise<void> => {
@@ -244,6 +284,16 @@ export default class Main extends React.Component<{}, State> {
 						Alert.success("Switched to new interface, restart client " +
 							"for configuration to take effect")
 					}
+				}}
+			/>
+			<Blueprint.MenuItem
+				text="View Logs"
+				icon="history"
+				onClick={(): void => {
+					this.setState({
+						...this.state,
+						path: "/logs",
+					})
 				}}
 			/>
 			<Blueprint.MenuItem
@@ -287,6 +337,20 @@ export default class Main extends React.Component<{}, State> {
 					style={css.navGroup}
 				>
 					<button
+						className="bp3-button bp3-minimal bp3-intent-danger bp3-icon-error"
+						style={css.link}
+						hidden={!this.state.showErrors}
+						onClick={() => {
+							let elmnt = document.getElementById("toaster2")
+
+							if (elmnt.style.display === "block") {
+								elmnt.style.display = "none"
+							} else {
+								elmnt.style.display = "block"
+							}
+						}}
+					/>
+					<button
 						className="bp3-button bp3-minimal bp3-icon-people"
 						style={css.link}
 						onClick={() => {
@@ -303,6 +367,7 @@ export default class Main extends React.Component<{}, State> {
 					/>
 					<button
 						className="bp3-button bp3-minimal bp3-icon-history"
+						hidden={true}
 						style={css.link}
 						onClick={() => {
 							this.setState({
@@ -325,7 +390,7 @@ export default class Main extends React.Component<{}, State> {
 					<button
 						className="bp3-button bp3-minimal bp3-icon-minus"
 						type="button"
-						hidden={!Constants.noTitle}
+						hidden={!Constants.frameless}
 						onClick={(): void => {
 							Electron.ipcRenderer.send("control", "minimize")
 						}}
@@ -333,7 +398,7 @@ export default class Main extends React.Component<{}, State> {
 					<button
 						className="bp3-button bp3-minimal bp3-icon-cross close-button"
 						type="button"
-						hidden={!Constants.noTitle}
+						hidden={!Constants.frameless}
 						onClick={(): void => {
 							window.close()
 						}}
