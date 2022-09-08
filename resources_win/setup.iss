@@ -33,7 +33,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: checkedonce
 
 [Files]
-Source: "..\build\win\pritunl-win32-x64\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; BeforeInstall: PreInstall
+Source: "..\build\win\pritunl-win32-x64\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\tuntap_win\*"; DestDir: "{app}\tuntap"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\openvpn_win\*"; DestDir: "{app}\openvpn"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\resources_win\post_install\post_install.exe"; DestDir: "{app}"; Flags: ignoreversion
@@ -43,11 +43,12 @@ Source: "..\service\service.exe"; DestDir: "{app}"; DestName: "pritunl-service.e
 Source: "..\cli\cli.exe"; DestDir: "{app}"; DestName: "pritunl-client.exe"; Flags: ignoreversion
 
 [Code]
+function InitializeSetup(): Boolean;
 var ResultCode: Integer;
-procedure PreInstall();
 begin
     Exec('net.exe', 'stop pritunl', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
     Exec('taskkill.exe', '/F /IM pritunl.exe', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+    Result := True;
 end;
 
 [Icons]

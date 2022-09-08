@@ -17,8 +17,6 @@ func GetWinDrive() string {
 }
 
 func main() {
-	wait := &sync.WaitGroup{}
-
 	rootDir, err := filepath.Abs(filepath.Dir(os.Args[0]))
 	if err != nil {
 		panic(err)
@@ -130,6 +128,4 @@ func main() {
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Run()
-
-	wait.Wait()
 }
