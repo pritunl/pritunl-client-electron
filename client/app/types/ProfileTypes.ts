@@ -757,7 +757,7 @@ export function New(self: Profile): Profile {
 				this.organization_id,
 				this.user_id,
 				this.server_id,
-				this.sync_hash + "a",
+				this.sync_hash,
 			)
 
 			let authTimestamp = Math.floor(new Date().getTime() / 1000).toString()
@@ -882,7 +882,9 @@ export function New(self: Profile): Profile {
 		}
 
 		if (syncError) {
-			Logger.errorAlert(syncError)
+			Logger.error(syncError)
+			this.sync_time = -1
+			await this.writeConf();
 		}
 
 		if (syncData) {
@@ -891,7 +893,9 @@ export function New(self: Profile): Profile {
 			} catch(err) {
 				err = new Errors.ParseError(err,
 					"Profiles: Failed to parse profile sync")
-				Logger.errorAlert(err)
+				Logger.error(err)
+				this.sync_time = -1
+				await this.writeConf();
 			}
 		}
 	}
