@@ -46,8 +46,8 @@ Source: "..\cli\cli.exe"; DestDir: "{app}"; DestName: "pritunl-client.exe"; Flag
 function InitializeSetup(): Boolean;
 var ResultCode: Integer;
 begin
-    Exec('net.exe', 'stop pritunl', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
     Exec('taskkill.exe', '/F /IM pritunl.exe', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+    Exec('net.exe', 'stop pritunl', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
     Result := True;
 end;
 
