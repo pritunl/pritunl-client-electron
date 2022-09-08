@@ -41,7 +41,8 @@ class ConfigData {
 				(err: NodeJS.ErrnoException, data: string): void => {
 					if (err) {
 						if (err.code !== "ENOENT") {
-							err = new Errors.ReadError(err, "Config: Read error")
+							err = new Errors.ReadError(err, "Config: Read error",
+								{path: Paths.config()})
 							Logger.errorAlert(err, 10)
 						}
 
@@ -54,7 +55,8 @@ class ConfigData {
 						try {
 							configData = JSON.parse(data)
 						} catch (err) {
-							err = new Errors.ReadError(err, "Config: Parse error")
+							err = new Errors.ReadError(err, "Config: Parse error",
+								{path: Paths.config()})
 							Logger.errorAlert(err, 10)
 
 							configData = {}
@@ -104,7 +106,8 @@ class ConfigData {
 					Paths.config(), JSON.stringify(data),
 					(err: NodeJS.ErrnoException): void => {
 						if (err) {
-							err = new Errors.ReadError(err, "Config: Write error")
+							err = new Errors.ReadError(err, "Config: Write error",
+								{path: Paths.config()})
 							Logger.errorAlert(err)
 						}
 						Constants.triggerChange()

@@ -19,7 +19,7 @@ export async function readServiceLog(): Promise<string> {
 	} catch (err) {
 		err = new Errors.RequestError(
 			err, "Logs: Service log request error")
-		Logger.errorAlert(err, 10)
+		Logger.errorAlert2(err, 10)
 	}
 
 	return logData
@@ -33,7 +33,7 @@ export async function clearServiceLog(): Promise<void> {
 	} catch (err) {
 		err = new Errors.RequestError(
 			err, "Logs: Service log request error")
-		Logger.errorAlert(err, 10)
+		Logger.errorAlert2(err, 10)
 	}
 }
 
@@ -43,7 +43,7 @@ export async function readClientLog(): Promise<string> {
 	try {
 		logData = await MiscUtils.fileRead(Paths.log())
 	} catch(err) {
-		Logger.errorAlert(err, 10)
+		Logger.errorAlert2(err, 10)
 	}
 
 	return logData
@@ -53,6 +53,6 @@ export async function clearClientLog(): Promise<void> {
 	try {
 		await MiscUtils.fileWrite(Paths.log(), "")
 	} catch(err) {
-		Logger.errorAlert(err, 10)
+		Logger.errorAlert2(err, 10)
 	}
 }

@@ -56,7 +56,7 @@ function connect(): void {
 	socket.on('error', (err: Error) => {
 		err = new Errors.RequestError(
 			err, "Failed to connect to background service, retrying");
-		Logger.errorAlert(err, 3);
+		Logger.errorAlert2(err, 3);
 
 		showConnect = true;
 		reconnect();
@@ -65,7 +65,7 @@ function connect(): void {
 	socket.on('onerror', (err) => {
 		err = new Errors.RequestError(
 			err, "Failed to connect to background service, retrying");
-		Logger.errorAlert(err, 3);
+		Logger.errorAlert2(err, 3);
 
 		showConnect = true;
 		reconnect();

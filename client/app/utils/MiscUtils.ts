@@ -395,7 +395,8 @@ export function exec(path: string,
 	return new Promise<ExecOutput>((resolve): void => {
 		childProcess.execFile(path, args, (err, stdout, stderr) => {
 			if (err) {
-				err = new Errors.ExecError(err, "Utils: Exec error");
+				err = new Errors.ExecError(err, "Utils: Exec error",
+					{path: path, args: args, stdout: stdout, stderr: stderr});
 			}
 
 			resolve({
@@ -427,7 +428,8 @@ export function fileDelete(path: string): Promise<void> {
 			}
 			fs.unlink(path, (err) => {
 				if (err) {
-					err = new Errors.WriteError(err, "Utils: Failed to delete file");
+					err = new Errors.WriteError(err, "Utils: Failed to delete file",
+						{path: path});
 					reject(err)
 					return
 				}
@@ -443,7 +445,8 @@ export function fileRead(path: string): Promise<string> {
 			path, "utf-8",
 			(err: NodeJS.ErrnoException, data: string): void => {
 				if (err) {
-					err = new Errors.ReadError(err, "Utils: Failed to read file");
+					err = new Errors.ReadError(err, "Utils: Failed to read file",
+						{path: path});
 					reject(err)
 					return
 				}
@@ -460,7 +463,8 @@ export function fileWrite(path: string, data: string): Promise<void> {
 			path, data,
 			(err: NodeJS.ErrnoException): void => {
 				if (err) {
-					err = new Errors.WriteError(err, "Utils: Failed to write file");
+					err = new Errors.WriteError(err, "Utils: Failed to write file",
+						{path: path});
 					reject(err)
 					return
 				}
@@ -500,7 +504,8 @@ export function tarRead(path: string): Promise<TarData[]> {
 					resolve(files)
 				})
 		} catch(err) {
-			err = new Errors.ReadError(err, "Utils: Failed to read tar file");
+			err = new Errors.ReadError(err, "Utils: Failed to read tar file",
+				{path: path});
 			reject(err)
 		}
 	})

@@ -489,7 +489,8 @@ export function New(self: Profile): Profile {
 				(err: NodeJS.ErrnoException): void => {
 					if (err) {
 						err = new Errors.ReadError(
-							err, "Profiles: Profile write error")
+							err, "Profiles: Profile write error",
+							{profile_path: profilePath})
 						Logger.errorAlert(err, 10)
 
 						resolve()
@@ -572,7 +573,8 @@ export function New(self: Profile): Profile {
 					(err: NodeJS.ErrnoException): void => {
 						if (err) {
 							err = new Errors.WriteError(
-								err, "Profiles: Profile write error")
+								err, "Profiles: Profile write error",
+								{profile_path: profilePath})
 							Logger.errorAlert(err, 10)
 
 							resolve()
@@ -892,7 +894,8 @@ export function New(self: Profile): Profile {
 				await this._importSync(syncData)
 			} catch(err) {
 				err = new Errors.ParseError(err,
-					"Profiles: Failed to parse profile sync")
+					"Profiles: Failed to parse profile sync",
+					{profile_id: this.id})
 				Logger.error(err)
 				this.sync_time = -1
 				await this.writeConf();

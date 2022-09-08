@@ -25,16 +25,18 @@ function push(level: string, err: any): void {
 			fs.unlink(pth, () => {
 				fs.appendFile(Paths.log(), msg + "\n", (err: Error): void => {
 					if (err) {
-						err = new Errors.WriteError(err, "Logger: Failed to write log")
-						Alert.error(err.message, 10)
+						err = new Errors.WriteError(err, "Logger: Failed to write log",
+							{log_path: pth})
+						Alert.error2(err.message, 10)
 					}
 				})
 			})
 		} else {
 			fs.appendFile(Paths.log(), msg + "\n", (err: Error): void => {
 				if (err) {
-					err = new Errors.WriteError(err, "Logger: Failed to write log")
-					Alert.error(err.message, 10)
+					err = new Errors.WriteError(err, "Logger: Failed to write log",
+						{log_path: pth})
+					Alert.error2(err.message, 10)
 				}
 			})
 		}
@@ -60,4 +62,13 @@ export function errorAlert(err: any, timeout?: number): void {
 
 	push("ERROR", err)
 	Alert.error(err.message || err, timeout)
+}
+
+export function errorAlert2(err: any, timeout?: number): void {
+	if (!err) {
+		err = "Undefined error"
+	}
+
+	push("ERROR", err)
+	Alert.error2(err.message || err, timeout)
 }

@@ -200,7 +200,8 @@ export async function importFile(pth: string): Promise<void> {
 				break
 			default:
 				let err = new Errors.ParseError(null,
-					"Importer: Unsupported file type")
+					"Importer: Unsupported file type",
+					{path: pth})
 				Logger.errorAlert(err)
 				return
 		}

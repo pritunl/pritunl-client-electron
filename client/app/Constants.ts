@@ -76,14 +76,13 @@ function syncState(): void {
 		}, (err) => {
 			err = new Errors.RequestError(err,
 				"Constants: Failed to load state")
-			Logger.errorAlert(err)
+			Logger.errorAlert2(err)
 		})
 }
 
 function _load(): void {
 	if (Auth.token === '') {
 		setTimeout(() => {
-
 			_load()
 		}, 100);
 		return;

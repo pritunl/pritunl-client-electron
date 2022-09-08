@@ -28,7 +28,7 @@ function loadSystemProfiles(): Promise<ProfileTypes.Profiles> {
 			}, (err) => {
 				err = new Errors.RequestError(err,
 					"Profiles: Service load error")
-				Logger.errorAlert(err)
+				Logger.errorAlert2(err)
 				resolve([])
 				return
 			})
@@ -178,7 +178,8 @@ function loadProfiles(): Promise<ProfileTypes.Profiles> {
 			(err: NodeJS.ErrnoException, stats: fs.Stats): void => {
 				if (err) {
 					if (err.code !== "ENOENT") {
-						err = new Errors.ReadError(err, "Profiles: Read error");
+						err = new Errors.ReadError(err, "Profiles: Read error",
+							{profiles_path: profilesPath});
 						Logger.errorAlert(err);
 					}
 
@@ -190,7 +191,8 @@ function loadProfiles(): Promise<ProfileTypes.Profiles> {
 					profilesPath,
 					async (err: NodeJS.ErrnoException, filenames: string[]) => {
 						if (err) {
-							err = new Errors.ReadError(err, "Profiles: Read error");
+							err = new Errors.ReadError(err, "Profiles: Read error",
+								{profiles_path: profilesPath});
 							Logger.errorAlert(err);
 
 							resolve([]);
@@ -238,7 +240,7 @@ function loadProfilesState(): Promise<ProfileTypes.ProfilesMap> {
 			}, (err) => {
 				err = new Errors.RequestError(err,
 					"Profiles: Status error")
-				Logger.errorAlert(err)
+				Logger.errorAlert2(err)
 				resolve({})
 				return
 			})
