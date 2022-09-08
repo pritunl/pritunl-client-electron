@@ -79,6 +79,7 @@ class Main {
 		let maxHeight: number
 		let frameless = false
 		let titleBarStyle: string
+		let framelessClient = false
 
 		let classicIface = Config.classic_interface
 
@@ -102,6 +103,7 @@ class Main {
 			(Config.frameless && !classicIface)) {
 
 			frameless = true
+			framelessClient = true
 			width = 430
 			minWidth = 430
 
@@ -248,7 +250,7 @@ class Main {
 			"true" : "false")
 		indexUrl += "&dataPath=" + encodeURIComponent(
 			electron.app.getPath("userData"))
-		indexUrl += "&frameless=" + (frameless ? "true" : "false")
+		indexUrl += "&frameless=" + (framelessClient ? "true" : "false")
 
 		this.window.loadURL(indexUrl, {
 			userAgent: "pritunl",
