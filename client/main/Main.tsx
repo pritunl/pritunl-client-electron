@@ -77,6 +77,7 @@ class Main {
 		let minHeight: number
 		let maxWidth: number
 		let maxHeight: number
+		let frameless = false
 		let titleBarStyle: string
 
 		let classicIface = Config.classic_interface
@@ -97,10 +98,17 @@ class Main {
 			maxHeight = 800
 		}
 
-		if (process.platform === "win32" && !classicIface) {
-			titleBarStyle = "hidden"
-			width = 440
-			minWidth = 440
+		if ((process.platform === "win32" && !classicIface) ||
+			(Config.frameless && !classicIface)) {
+
+			frameless = true
+			width = 430
+			minWidth = 430
+
+			if (process.platform === "win32") {
+				frameless = false
+				titleBarStyle = "hidden"
+			}
 		}
 
 		if (Config.window_width && Config.window_height) {
@@ -123,7 +131,7 @@ class Main {
 			title: "Pritunl Client",
 			icon: path.join(__dirname, "..", "logo.png"),
 			titleBarStyle: titleBarStyle as any,
-			frame: true,
+			frame: !frameless,
 			autoHideMenuBar: true,
 			fullscreen: false,
 			show: false,
@@ -188,7 +196,10 @@ class Main {
 			if (windowSize && windowSize.length == 2) {
 				Config.window_width = windowSize[0]
 				Config.window_height = windowSize[1]
-				await Config.save()
+				await Config.save({
+					window_width: Config.window_width,
+					window_height: Config.window_height,
+				})
 			}
 			if (Config.disable_tray_icon || !tray) {
 				electron.app.quit()
@@ -237,7 +248,7 @@ class Main {
 			"true" : "false")
 		indexUrl += "&dataPath=" + encodeURIComponent(
 			electron.app.getPath("userData"))
-		indexUrl += "&notitle=" + (titleBarStyle ? "true" : "false")
+		indexUrl += "&frameless=" + (frameless ? "true" : "false")
 
 		this.window.loadURL(indexUrl, {
 			userAgent: "pritunl",
