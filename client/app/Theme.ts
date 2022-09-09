@@ -4,7 +4,9 @@ import * as Constants from "./Constants";
 import * as GlobalTypes from "./types/GlobalTypes";
 
 export function save(): Promise<void> {
-	return Config.save();
+	return Config.save({
+		theme: Config.theme,
+	});
 }
 
 export function light(): void {
