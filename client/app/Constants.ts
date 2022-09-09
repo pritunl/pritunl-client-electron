@@ -20,6 +20,7 @@ export const platform = os.platform()
 export const args = new Map<string, string>();
 export let production = true;
 export let authPath = '';
+export let frameless = false
 
 export let winDrive = 'C:\\';
 let systemDrv = process.env.SYSTEMDRIVE;
@@ -53,6 +54,10 @@ if (args.get('dev') === 'true') {
 	} else {
 		authPath = path.join(path.sep, 'var', 'run', 'pritunl.auth');
 	}
+}
+
+if (args.get("frameless") === "true") {
+	frameless = true
 }
 
 export const dataPath = args.get('dataPath');
