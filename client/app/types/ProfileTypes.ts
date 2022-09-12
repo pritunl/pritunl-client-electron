@@ -215,7 +215,7 @@ export function New(self: Profile): Profile {
 	self.formatedHosts = function(): string[] {
 		let hosts: string[] = []
 
-		for (let hostAddr of this.sync_hosts) {
+		for (let hostAddr of (this.sync_hosts || [])) {
 			let url = new URL(hostAddr)
 			hosts.push(url.hostname + (url.port ? (":" + url.port) : ""))
 		}
@@ -869,6 +869,10 @@ export function New(self: Profile): Profile {
 	}
 
 	self.sync = async function(): Promise<void> {
+		if (!this.sync_hosts || !this.sync_hosts.length) {
+			return
+		}
+
 		let syncHosts = MiscUtils.shuffle([...this.sync_hosts])
 		let syncData: string
 		let syncError: any
