@@ -1,6 +1,10 @@
 Pritunl Client Changelog
 ========================
 
+<%= version %>
+
+Fix issue with unformatted ovpn profiles
+
 Version 1.3.3283.46 2022-09-08
 ------------------------------
 
