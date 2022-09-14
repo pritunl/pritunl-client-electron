@@ -1,7 +1,8 @@
 Pritunl Client Changelog
 ========================
 
-<%= version %>
+Version 1.3.3289.99 2022-09-14
+------------------------------
 
 Fix issue disabling tray icon
 
