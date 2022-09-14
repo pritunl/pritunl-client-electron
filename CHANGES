@@ -1,6 +1,10 @@
 Pritunl Client Changelog
 ========================
 
+<%= version %>
+
+Improve Windows service management
+
 Version 1.3.3288.98 2022-09-13
 ------------------------------
 
