@@ -27,6 +27,7 @@ import (
 	"github.com/pritunl/pritunl-client-electron/service/update"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
 	"github.com/pritunl/pritunl-client-electron/service/watch"
+	"github.com/pritunl/pritunl-client-electron/service/winsvc"
 	"github.com/sirupsen/logrus"
 )
 
@@ -172,9 +173,21 @@ func main() {
 
 	profile.WatchSystemProfiles()
 
-	sig := make(chan os.Signal, 2)
-	signal.Notify(sig, os.Interrupt, syscall.SIGTERM)
-	<-sig
+	if winsvc.IsWindowsService() {
+		service := winsvc.New()
+
+		err = service.Run()
+		if err != nil {
+			logrus.WithFields(logrus.Fields{
+				"error": err,
+			}).Error("main: Service error")
+			panic(err)
+		}
+	} else {
+		sig := make(chan os.Signal, 2)
+		signal.Notify(sig, os.Interrupt, syscall.SIGTERM)
+		<-sig
+	}
 
 	webCtx, webCancel := context.WithTimeout(
 		context.Background(),
