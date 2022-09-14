@@ -16,39 +16,19 @@ func main() {
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Run()
-	cmd = exec.Command("taskkill.exe", "/F", "/IM", "pritunl-service.exe")
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	cmd.Run()
-	cmd = exec.Command(filepath.Join(rootDir, "nssm.exe"),
+	cmd = exec.Command(filepath.Join(rootDir, "sc.exe"),
 		"stop", "pritunl")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Run()
-	cmd = exec.Command(filepath.Join(rootDir, "nssm.exe"),
-		"remove", "pritunl", "confirm")
+	cmd = exec.Command(filepath.Join(rootDir, "sc.exe"),
+		"delete", "pritunl")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Run()
-	cmd = exec.Command(filepath.Join(rootDir, "nssm.exe"),
-		"stop", "pritunl")
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	cmd.Run()
-	cmd = exec.Command("taskkill.exe", "/F", "/IM", "openvpn.exe")
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	cmd.Run()
+
 	cmd = exec.Command(filepath.Join(rootDir, "tuntap", "tuntap.exe"),
 		"clean")
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	cmd.Run()
-	cmd = exec.Command("taskkill.exe", "/F", "/IM", "pritunl.exe")
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	cmd.Run()
-	cmd = exec.Command("taskkill.exe", "/F", "/IM", "pritunl-service.exe")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Run()
