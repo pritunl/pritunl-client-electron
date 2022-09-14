@@ -84,7 +84,7 @@ export function authGet(host: string, path: string,
 	let authSignature = crypto.createHmac("sha512", secret).update(
 		authString).digest("base64")
 
-	req.insecure()
+	req.secure(false)
 		.set("Auth-Token", token)
 		.set("Auth-Timestamp", authTimestamp)
 		.set("Auth-Nonce", authNonce)
