@@ -5,5 +5,6 @@ import (
 )
 
 func IsWindowsService() bool {
-	return svc.IsWindowsService
+	isSvc, _ := svc.IsWindowsService()
+	return isSvc
 }
