@@ -16,13 +16,11 @@ func main() {
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Run()
-	cmd = exec.Command(filepath.Join(rootDir, "sc.exe"),
-		"stop", "pritunl")
+	cmd = exec.Command("sc.exe", "stop", "pritunl")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Run()
-	cmd = exec.Command(filepath.Join(rootDir, "sc.exe"),
-		"delete", "pritunl")
+	cmd = exec.Command("sc.exe", "delete", "pritunl")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Run()
