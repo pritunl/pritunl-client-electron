@@ -7,9 +7,10 @@ require (
 	github.com/gin-gonic/gin v1.7.7
 	github.com/gorilla/websocket v1.5.0
 	github.com/hectane/go-acl v0.0.0-20190604041725-da78bae5fc95
+	github.com/judwhite/go-svc v1.2.1
 	github.com/sirupsen/logrus v1.8.1
 	golang.org/x/crypto v0.0.0-20220307211146-efcb8507fb70
-	golang.org/x/sys v0.0.0-20220310020820-b874c991c1a5
+	golang.org/x/sys v0.0.0-20220913175220-63ea55921009
 )
 
 require (
