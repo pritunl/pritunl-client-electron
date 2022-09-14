@@ -17,8 +17,7 @@ func main() {
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Run()
-	cmd = exec.Command(filepath.Join(rootDir, "sc.exe"),
-		"stop", "pritunl")
+	cmd = exec.Command("sc.exe", "stop", "pritunl")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Run()
@@ -34,22 +33,11 @@ func main() {
 	cmd.Stderr = os.Stderr
 	cmd.Run()
 
-	cmd = exec.Command(filepath.Join(rootDir, "sc.exe"),
-		"stop", "pritunl")
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	cmd.Run()
-	cmd = exec.Command(filepath.Join(rootDir, "sc.exe"),
-		"delete", "pritunl")
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	cmd.Run()
-
 	cmd = exec.Command(
-		filepath.Join(rootDir, "sc.exe"),
+		"sc.exe",
 		"create", "pritunl",
 		"start=auto",
-		`displayname="Pritunl Client Helper Service"`,
+		"displayname=Pritunl Client Helper Service",
 		fmt.Sprintf(`binpath="%s"`,
 			filepath.Join(rootDir, "pritunl-service.exe")),
 	)
@@ -57,8 +45,19 @@ func main() {
 	cmd.Stderr = os.Stderr
 	cmd.Run()
 
-	cmd = exec.Command(filepath.Join(rootDir, "sc.exe"),
-		"start", "pritunl")
+	cmd = exec.Command(
+		"sc.exe",
+		"config", "pritunl",
+		"start=auto",
+		"displayname=Pritunl Client Helper Service",
+		fmt.Sprintf(`binpath="%s"`,
+			filepath.Join(rootDir, "pritunl-service.exe")),
+	)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Run()
+
+	cmd = exec.Command("sc.exe", "start", "pritunl")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Run()
