@@ -10,7 +10,7 @@ export APP_VER="$(cat client/package.json | grep version | cut -d '"' -f 4)"
 
 # Service
 cd service
-go get -u
+go get
 go build -v
 cd ..
 mkdir -p build/resources
@@ -19,7 +19,7 @@ codesign --force --timestamp --options=runtime -s "Developer ID Application: Pri
 
 # CLI
 cd cli
-go get -u
+go get
 go build -v
 cd ..
 mkdir -p build/resources
@@ -35,7 +35,6 @@ codesign --force --timestamp --options=runtime -s "Developer ID Application: Pri
 mkdir -p build/macos/Applications
 cd client
 npm install
-npm update
 ./node_modules/.bin/electron-rebuild
 ./node_modules/.bin/electron-packager ./ Pritunl \
   --platform=darwin \

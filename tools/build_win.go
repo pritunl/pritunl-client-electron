@@ -66,7 +66,7 @@ func main() {
 		panic(err)
 	}
 
-	cmd = exec.Command("go", "get", "-u")
+	cmd = exec.Command("go", "get")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err = cmd.Run()
@@ -104,7 +104,7 @@ func main() {
 		panic(err)
 	}
 
-	cmd = exec.Command("go", "get", "-u")
+	cmd = exec.Command("go", "get")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err = cmd.Run()
@@ -126,14 +126,6 @@ func main() {
 	}
 
 	cmd = exec.Command("npm", "install")
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	err = cmd.Run()
-	if err != nil {
-		panic(err)
-	}
-
-	cmd = exec.Command("npm", "update")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err = cmd.Run()
@@ -251,29 +243,7 @@ func main() {
 		panic(err)
 	}
 
-	err = os.Chdir(filepath.Join("..", "..", "service_win"))
-	if err != nil {
-		panic(err)
-	}
-
-	cmd = exec.Command(signtool,
-		"sign",
-		"/a",
-		"/n", "Pritunl",
-		"/tr", "http://timestamp.digicert.com",
-		"/td", "sha256",
-		"/fd", "sha256",
-		"/d", "Pritunl",
-		"nssm.exe",
-	)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	err = cmd.Run()
-	if err != nil {
-		panic(err)
-	}
-
-	err = os.Chdir(filepath.Join("..", "resources_win"))
+	err = os.Chdir(filepath.Join("..", "..", "resources_win"))
 	if err != nil {
 		panic(err)
 	}
