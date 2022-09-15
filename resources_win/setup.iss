@@ -36,8 +36,6 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Source: "..\build\win\pritunl-win32-x64\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\tuntap_win\*"; DestDir: "{app}\tuntap"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\openvpn_win\*"; DestDir: "{app}\openvpn"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\resources_win\post_install\post_install.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\resources_win\pre_uninstall\pre_uninstall.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\service\service.exe"; DestDir: "{app}"; DestName: "pritunl-service.exe"; Flags: ignoreversion
 Source: "..\cli\cli.exe"; DestDir: "{app}"; DestName: "pritunl-client.exe"; Flags: ignoreversion
 
@@ -46,7 +44,15 @@ function InitializeSetup(): Boolean;
 var ResultCode: Integer;
 begin
     Exec('taskkill.exe', '/F /IM pritunl.exe', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
-    Exec('net.exe', 'stop pritunl', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+    Exec('sc.exe', 'stop pritunl', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+    Result := True;
+end;
+function InitializeUninstall(): Boolean;
+var ResultCode: Integer;
+begin
+    Exec('taskkill.exe', '/F /IM pritunl.exe', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+    Exec('sc.exe', 'stop pritunl', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+    Sleep(3000);
     Result := True;
 end;
 
@@ -60,11 +66,12 @@ Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: 
 Type: filesandordirs; Name: "{app}"
 
 [Run]
-Filename: "{app}\post_install.exe"; Flags: runhidden; StatusMsg: "Configuring Pritunl..."
+Filename: "{app}\pritunl-service.exe"; Parameters: "-install"; Flags: runhidden; StatusMsg: "Configuring Pritunl..."
 
 [UninstallRun]
-Filename: "{app}\pre_uninstall.exe"; Flags: runhidden
+Filename: "{app}\pritunl-service.exe"; Parameters: "-uninstall"; Flags: runhidden
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{app}"
 Type: filesandordirs; Name: "C:\ProgramData\{#MyAppName}"
+Type: filesandordirs; Name: "{userappdata}\pritunl"
