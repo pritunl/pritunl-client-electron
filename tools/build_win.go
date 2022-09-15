@@ -10,63 +10,46 @@ const signtool = "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.18362.0\\
 
 func main() {
 	err := os.Remove(filepath.Join("openvpn_win",
-		"OpenVPN-2.5.3-I601-amd64.msi"))
+		"OpenVPN-2.5.6-I601-amd64.msi"))
 	if err != nil && !os.IsNotExist(err) {
 		panic(err)
 	}
 
 	err = os.Remove(filepath.Join("openvpn_win",
-		"OpenVPN-2.5.3-I601-amd64.msi.asc"))
+		"OpenVPN-2.5.6-I601-amd64.msi.asc"))
 	if err != nil && !os.IsNotExist(err) {
 		panic(err)
 	}
 
-	err = os.Remove(filepath.Join("build", "win", "Pritunl.exe"))
+	err = os.Remove(filepath.Join("tuntap_win",
+		"tapinstall.exe"))
 	if err != nil && !os.IsNotExist(err) {
 		panic(err)
 	}
 
-	err = os.RemoveAll(filepath.Join("build", "win"))
+	err = os.Remove(filepath.Join("tuntap_win",
+		"tuntap.go"))
 	if err != nil && !os.IsNotExist(err) {
 		panic(err)
 	}
 
-	err = os.Chdir("tuntap_win")
+	err = os.Remove(filepath.Join("tuntap_win",
+		"tuntap.exe"))
+	if err != nil && !os.IsNotExist(err) {
+		panic(err)
+	}
+
+	err = os.RemoveAll("build")
+	if err != nil && !os.IsNotExist(err) {
+		panic(err)
+	}
+
+	err = os.Chdir("service")
 	if err != nil {
 		panic(err)
 	}
 
-	cmd := exec.Command("go", "build", "-v", "-o", "tuntap.exe")
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	err = cmd.Run()
-	if err != nil {
-		panic(err)
-	}
-
-	cmd = exec.Command(signtool,
-		"sign",
-		"/a",
-		"/n", "Pritunl",
-		"/tr", "http://timestamp.digicert.com",
-		"/td", "sha256",
-		"/fd", "sha256",
-		"/d", "Pritunl",
-		"tuntap.exe",
-	)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	err = cmd.Run()
-	if err != nil {
-		panic(err)
-	}
-
-	err = os.Chdir(filepath.Join("..", "service"))
-	if err != nil {
-		panic(err)
-	}
-
-	cmd = exec.Command("go", "get")
+	cmd := exec.Command("go", "get")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err = cmd.Run()
@@ -183,67 +166,7 @@ func main() {
 	}
 
 	err = os.Chdir(filepath.Join("..", "..", "..",
-		"resources_win", "post_install"))
-	if err != nil {
-		panic(err)
-	}
-
-	cmd = exec.Command("go", "build", "-v")
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	err = cmd.Run()
-	if err != nil {
-		panic(err)
-	}
-
-	cmd = exec.Command(signtool,
-		"sign",
-		"/a",
-		"/n", "Pritunl",
-		"/tr", "http://timestamp.digicert.com",
-		"/td", "sha256",
-		"/fd", "sha256",
-		"/d", "Pritunl",
-		"post_install.exe",
-	)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	err = cmd.Run()
-	if err != nil {
-		panic(err)
-	}
-
-	err = os.Chdir(filepath.Join("..", "pre_uninstall"))
-	if err != nil {
-		panic(err)
-	}
-
-	cmd = exec.Command("go", "build", "-v")
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	err = cmd.Run()
-	if err != nil {
-		panic(err)
-	}
-
-	cmd = exec.Command(signtool,
-		"sign",
-		"/a",
-		"/n", "Pritunl",
-		"/tr", "http://timestamp.digicert.com",
-		"/td", "sha256",
-		"/fd", "sha256",
-		"/d", "Pritunl",
-		"pre_uninstall.exe",
-	)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	err = cmd.Run()
-	if err != nil {
-		panic(err)
-	}
-
-	err = os.Chdir(filepath.Join("..", "..", "resources_win"))
+		"resources_win"))
 	if err != nil {
 		panic(err)
 	}
