@@ -51,6 +51,14 @@
   border-right: 1px solid rgb(255 255 255 / 15%) !important;
 }
 
+.bp3-card-header {
+  background-color: rgba(0, 0, 0, 0.06)
+}
+
+.bp3-dark .bp3-card-header {
+  background-color: rgba(0, 0, 0, 0.13)
+}
+
 body {
   background-color: #f5f8fa;
 }
