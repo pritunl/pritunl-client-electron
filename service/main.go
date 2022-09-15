@@ -23,6 +23,7 @@ import (
 	"github.com/pritunl/pritunl-client-electron/service/handlers"
 	"github.com/pritunl/pritunl-client-electron/service/logger"
 	"github.com/pritunl/pritunl-client-electron/service/profile"
+	"github.com/pritunl/pritunl-client-electron/service/setup"
 	"github.com/pritunl/pritunl-client-electron/service/tuntap"
 	"github.com/pritunl/pritunl-client-electron/service/update"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
@@ -32,8 +33,21 @@ import (
 )
 
 func main() {
+	install := flag.Bool("install", false, "run post install")
+	uninstall := flag.Bool("uninstall", false, "run pre uninstall")
 	devPtr := flag.Bool("dev", false, "development mode")
 	flag.Parse()
+
+	if *install {
+		setup.Install()
+		return
+	}
+
+	if *uninstall {
+		setup.Uninstall()
+		return
+	}
+
 	if *devPtr {
 		constants.Development = true
 	}
