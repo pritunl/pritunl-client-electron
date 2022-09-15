@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"io"
 	"os"
-	"os/exec"
 	"runtime/debug"
 	"strings"
 	"time"
@@ -32,7 +31,7 @@ func Exec(name string, arg ...string) (err error) {
 }
 
 func ExecInput(dir, input, name string, arg ...string) (err error) {
-	cmd := exec.Command(name, arg...)
+	cmd := command.Command(name, arg...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
@@ -155,7 +154,7 @@ func ExecOutput(name string, arg ...string) (output string, err error) {
 func ExecOutputLogged(ignores []string, name string, arg ...string) (
 	output string, err error) {
 
-	cmd := exec.Command(name, arg...)
+	cmd := command.Command(name, arg...)
 
 	stdout := &bytes.Buffer{}
 	stderr := &bytes.Buffer{}
@@ -198,7 +197,7 @@ func ExecOutputLogged(ignores []string, name string, arg ...string) (
 func ExecCombinedOutput(name string, arg ...string) (
 	output string, err error) {
 
-	cmd := exec.Command(name, arg...)
+	cmd := command.Command(name, arg...)
 
 	outputByt, err := cmd.CombinedOutput()
 	if outputByt != nil {
@@ -217,7 +216,7 @@ func ExecCombinedOutput(name string, arg ...string) (
 func ExecCombinedOutputLogged(ignores []string, name string, arg ...string) (
 	output string, err error) {
 
-	cmd := exec.Command(name, arg...)
+	cmd := command.Command(name, arg...)
 
 	outputByt, err := cmd.CombinedOutput()
 	if outputByt != nil {
