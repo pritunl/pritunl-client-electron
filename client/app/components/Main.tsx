@@ -101,6 +101,98 @@ export default class Main extends React.Component<{}, State> {
 		})
 	}
 
+	onRefresh = (): void => {
+		let pathname = "";
+
+		this.setState({
+			...this.state,
+			disabled: true,
+		});
+
+		if (pathname === '/profiles') {
+			ProfileActions.sync().then((): void => {
+				this.setState({
+					...this.state,
+					disabled: false,
+				});
+			}).catch((): void => {
+				this.setState({
+					...this.state,
+					disabled: false,
+				});
+			});
+		} else if (pathname === '/logs') {
+			ProfileActions.sync().then((): void => {
+				this.setState({
+					...this.state,
+					disabled: false,
+				});
+			}).catch((): void => {
+				this.setState({
+					...this.state,
+					disabled: false,
+				});
+			});
+		} else {
+			ProfileActions.sync().then((): void => {
+				this.setState({
+					...this.state,
+					disabled: false,
+				});
+			}).catch((): void => {
+				this.setState({
+					...this.state,
+					disabled: false,
+				});
+			});
+		}
+	}
+
+	onTrayIcon = async (): Promise<void> => {
+		Config.disable_tray_icon = !Config.disable_tray_icon
+		await Config.save({
+			disable_tray_icon: Config.disable_tray_icon,
+		})
+
+		if (Config.disable_tray_icon) {
+			Alert.success("Tray icon disabled, restart client " +
+				"for configuration to take effect")
+		} else {
+			Alert.success("Tray icon enabled, restart client " +
+				"for configuration to take effect")
+		}
+	}
+
+	onWindowFrame = async (): Promise<void> => {
+		Config.frameless = !Config.frameless
+		await Config.save({
+			frameless: Config.frameless,
+		})
+
+		if (Config.frameless) {
+			Alert.success("Window frame disabled, restart client " +
+				"for configuration to take effect")
+		} else {
+			Alert.success("Window frame enabled, restart client " +
+				"for configuration to take effect")
+		}
+	}
+
+	onClassicIface = async (): Promise<void> => {
+		Config.classic_interface = !Config.classic_interface
+		await Config.save({
+			classic_interface: Config.classic_interface,
+		})
+
+		if (Config.classic_interface) {
+			Alert.success("Switched to classic interface, restart client " +
+				"for configuration to take effect")
+		} else {
+			Alert.success("Switched to new interface, restart client " +
+				"for configuration to take effect")
+		}
+	}
+
 	onAlert = (toasts: number): void => {
 		if (!toasts) {
 			document.getElementById("toaster2").style.display = "none"
@@ -189,6 +281,12 @@ export default class Main extends React.Component<{}, State> {
 			<Blueprint.MenuItem
 				text={themeLabel}
 				icon={themeIcon}
+				onKeyDown={(evt): void => {
+					if (evt.key === "Enter") {
+						Theme.toggle()
+						Theme.save()
+					}
+				}}
 				onClick={(): void => {
 					Theme.toggle()
 					Theme.save()
@@ -199,111 +297,55 @@ export default class Main extends React.Component<{}, State> {
 				icon="refresh"
 				hidden={true}
 				disabled={this.state.disabled}
-				onClick={(): void => {
-					let pathname = "";
-
-					this.setState({
-						...this.state,
-						disabled: true,
-					});
-
-					if (pathname === '/profiles') {
-						ProfileActions.sync().then((): void => {
-							this.setState({
-								...this.state,
-								disabled: false,
-							});
-						}).catch((): void => {
-							this.setState({
-								...this.state,
-								disabled: false,
-							});
-						});
-					} else if (pathname === '/logs') {
-						ProfileActions.sync().then((): void => {
-							this.setState({
-								...this.state,
-								disabled: false,
-							});
-						}).catch((): void => {
-							this.setState({
-								...this.state,
-								disabled: false,
-							});
-						});
-					} else {
-						ProfileActions.sync().then((): void => {
-							this.setState({
-								...this.state,
-								disabled: false,
-							});
-						}).catch((): void => {
-							this.setState({
-								...this.state,
-								disabled: false,
-							});
-						});
+				onKeyDown={(evt): void => {
+					if (evt.key === "Enter") {
+						this.onRefresh()
 					}
 				}}
+				onClick={this.onRefresh}
 			/>
 			<Blueprint.MenuItem
 				text={trayLabel}
 				icon="dashboard"
-				onClick={async (): Promise<void> => {
-					Config.disable_tray_icon = !Config.disable_tray_icon
-					await Config.save({
-						disable_tray_icon: Config.disable_tray_icon,
-					})
-
-					if (Config.disable_tray_icon) {
-						Alert.success("Tray icon disabled, restart client " +
-							"for configuration to take effect")
-					} else {
-						Alert.success("Tray icon enabled, restart client " +
-							"for configuration to take effect")
+				onKeyDown={(evt): void => {
+					if (evt.key === "Enter") {
+						this.onTrayIcon()
 					}
 				}}
+				onClick={this.onTrayIcon}
 			/>
 			<Blueprint.MenuItem
 				text={frameLabel}
 				icon="application"
 				hidden={Constants.platform === "win32"}
-				onClick={async (): Promise<void> => {
-					Config.frameless = !Config.frameless
-					await Config.save({
-						frameless: Config.frameless,
-					})
-
-					if (Config.frameless) {
-						Alert.success("Window frame disabled, restart client " +
-							"for configuration to take effect")
-					} else {
-						Alert.success("Window frame enabled, restart client " +
-							"for configuration to take effect")
+				onKeyDown={(evt): void => {
+					if (evt.key === "Enter") {
+						this.onWindowFrame()
 					}
 				}}
+				onClick={this.onWindowFrame}
 			/>
 			<Blueprint.MenuItem
 				text={ifaceLabel}
 				icon="comparison"
-				onClick={async (): Promise<void> => {
-					Config.classic_interface = !Config.classic_interface
-					await Config.save({
-						classic_interface: Config.classic_interface,
-					})
-
-					if (Config.classic_interface) {
-						Alert.success("Switched to classic interface, restart client " +
-							"for configuration to take effect")
-					} else {
-						Alert.success("Switched to new interface, restart client " +
-							"for configuration to take effect")
+				onKeyDown={(evt): void => {
+					if (evt.key === "Enter") {
+						this.onClassicIface()
 					}
 				}}
+				onClick={this.onClassicIface}
 			/>
 			<Blueprint.MenuItem
 				text="View Logs"
 				icon="history"
+				onKeyDown={(evt): void => {
+					if (evt.key === "Enter") {
+						this.setState({
+							...this.state,
+							path: "/logs",
+						})
+					}
+				}}
 				onClick={(): void => {
 					this.setState({
 						...this.state,
@@ -314,6 +356,11 @@ export default class Main extends React.Component<{}, State> {
 			<Blueprint.MenuItem
 				text="Reload App"
 				icon="refresh"
+				onKeyDown={(evt): void => {
+					if (evt.key === "Enter") {
+						Electron.ipcRenderer.send("control", "reload")
+					}
+				}}
 				onClick={(): void => {
 					Electron.ipcRenderer.send("control", "reload")
 				}}
