@@ -92,21 +92,26 @@ export default class ProfileSettings extends React.Component<Props, State> {
 	onSave = (): void => {
 		let prfl = this.state.profile
 
+		this.setState({
+			...this.state,
+			disabled: true,
+		})
+
 		if (prfl) {
 			if (this.state.setAutoStart !== null) {
 				prfl.disabled = !this.state.setAutoStart
 			}
 
 			ProfileActions.commit(this.state.profile).then(() => {
-				this.setState({
-					...this.state,
-					changed: false,
-					profile: null,
-				})
-
 				if (this.state.setSystem !== null) {
 					this.onSaveSystem()
 				} else {
+					this.setState({
+						...this.state,
+						changed: false,
+						disabled: false,
+						profile: null,
+					})
 					this.closeDialog()
 				}
 			})
@@ -114,6 +119,12 @@ export default class ProfileSettings extends React.Component<Props, State> {
 			if (this.state.setSystem !== null) {
 				this.onSaveSystem()
 			} else {
+				this.setState({
+					...this.state,
+					changed: false,
+					disabled: false,
+					profile: null,
+				})
 				this.closeDialog()
 			}
 		}
@@ -126,10 +137,22 @@ export default class ProfileSettings extends React.Component<Props, State> {
 		if (this.state.setSystem && !prfl.system) {
 			prfl.disabled = !this.state.setAutoStart
 			prfl.convertSystem().then((): void => {
+				this.setState({
+					...this.state,
+					changed: false,
+					disabled: false,
+					profile: null,
+				})
 				this.closeDialog()
 			})
 		} else if (!this.state.setSystem && !!prfl.system) {
 			prfl.convertUser().then((): void => {
+				this.setState({
+					...this.state,
+					changed: false,
+					disabled: false,
+					profile: null,
+				})
 				this.closeDialog()
 			})
 		}
