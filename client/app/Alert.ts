@@ -1,4 +1,5 @@
 /// <reference path="./References.d.ts"/>
+import * as React from "react";
 import * as Blueprint from "@blueprintjs/core";
 
 const maxToasts = 3
@@ -42,7 +43,7 @@ function clean2(): void {
 	}
 }
 
-export function success(message: string, timeout?: number): string {
+export function success(message: React.ReactNode, timeout?: number): string {
 	if (timeout === undefined) {
 		timeout = 5000;
 	} else {
@@ -58,7 +59,7 @@ export function success(message: string, timeout?: number): string {
 	});
 }
 
-export function info(message: string, timeout?: number): string {
+export function info(message: React.ReactNode, timeout?: number): string {
 	if (timeout === undefined) {
 		timeout = 5000;
 	} else {
@@ -74,7 +75,7 @@ export function info(message: string, timeout?: number): string {
 	});
 }
 
-export function warning(message: string, timeout?: number): string {
+export function warning(message: React.ReactNode, timeout?: number): string {
 	if (timeout === undefined) {
 		timeout = 5000;
 	} else {
@@ -90,7 +91,7 @@ export function warning(message: string, timeout?: number): string {
 	});
 }
 
-export function error(message: string, timeout?: number): string {
+export function error(message: React.ReactNode, timeout?: number): string {
 	if (timeout === undefined) {
 		timeout = 10000;
 	} else {
@@ -106,7 +107,7 @@ export function error(message: string, timeout?: number): string {
 	});
 }
 
-export function error2(message: string, timeout?: number): string {
+export function error2(message: React.ReactNode, timeout?: number): string {
 	if (timeout === undefined) {
 		timeout = 10000;
 	} else {
