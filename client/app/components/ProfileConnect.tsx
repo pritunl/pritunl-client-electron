@@ -1,7 +1,6 @@
 /// <reference path="../References.d.ts"/>
 import * as React from "react"
 import * as ProfileTypes from "../types/ProfileTypes"
-import * as ProfileActions from "../actions/ProfileActions"
 import * as ServiceActions from "../actions/ServiceActions"
 import * as Blueprint from "@blueprintjs/core"
 import * as Constants from "../Constants"
@@ -363,10 +362,10 @@ export default class ProfileConnect extends React.Component<Props, State> {
 					this.onConnect("ovpn")
 				}}
 			>
-				Connect OpenVPN
+				OpenVPN
 			</button>
 			<button
-				className="bp3-button bp3-intent-success bp3-icon-link"
+				className="bp3-button bp3-intent-primary bp3-icon-link"
 				style={css.button}
 				type="button"
 				hidden={!hasWg || connected}
@@ -375,7 +374,7 @@ export default class ProfileConnect extends React.Component<Props, State> {
 					this.onConnect("wg")
 				}}
 			>
-				Connect WireGuard
+				WireGuard
 			</button>
 			<Blueprint.Dialog
 				title="Profile Connect"
