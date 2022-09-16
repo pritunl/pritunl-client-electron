@@ -900,26 +900,17 @@ func (p *Profile) parseLine(line string) {
 			evt.Init()
 
 			if p.SystemProfile != nil {
-				if p.SystemProfile.AuthErrorCount >= 10 {
-					logrus.WithFields(logrus.Fields{
-						"profile_id": p.SystemProfile.Id,
-					}).Error("profile: Stopping system " +
-						"profile due to authentication errors")
+				logrus.WithFields(logrus.Fields{
+					"profile_id": p.SystemProfile.Id,
+				}).Error("profile: Stopping system " +
+					"profile due to authentication errors")
 
-					p.SystemProfile.State = false
-					sprofile.Deactivate(p.SystemProfile.Id)
-					sprofile.SetAuthErrorCount(
-						p.SystemProfile.Id,
-						0,
-					)
-				} else {
-					sprofile.SetAuthErrorCount(
-						p.SystemProfile.Id,
-						p.SystemProfile.AuthErrorCount+1,
-					)
-
-					time.Sleep(10 * time.Second)
-				}
+				p.SystemProfile.State = false
+				sprofile.Deactivate(p.SystemProfile.Id)
+				sprofile.SetAuthErrorCount(
+					p.SystemProfile.Id,
+					0,
+				)
 			} else {
 				time.Sleep(3 * time.Second)
 			}
@@ -3407,24 +3398,17 @@ func (p *Profile) startWg(timeout bool) (err error) {
 		evt.Init()
 
 		if p.SystemProfile != nil {
-			if p.SystemProfile.AuthErrorCount >= 2 {
-				logrus.WithFields(logrus.Fields{
-					"profile_id": p.SystemProfile.Id,
-				}).Error("profile: Stopping system " +
-					"profile due to authentication errors")
+			logrus.WithFields(logrus.Fields{
+				"profile_id": p.SystemProfile.Id,
+			}).Error("profile: Stopping system " +
+				"profile due to authentication errors")
 
-				p.SystemProfile.State = false
-				sprofile.Deactivate(p.SystemProfile.Id)
-				sprofile.SetAuthErrorCount(
-					p.SystemProfile.Id,
-					0,
-				)
-			} else {
-				sprofile.SetAuthErrorCount(
-					p.SystemProfile.Id,
-					p.SystemProfile.AuthErrorCount+1,
-				)
-			}
+			p.SystemProfile.State = false
+			sprofile.Deactivate(p.SystemProfile.Id)
+			sprofile.SetAuthErrorCount(
+				p.SystemProfile.Id,
+				0,
+			)
 		}
 
 		time.Sleep(3 * time.Second)
