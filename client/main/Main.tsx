@@ -1,6 +1,7 @@
 import process from "process"
 import path from "path"
 import fs from "fs"
+import childprocess from "child_process"
 import electron from "electron"
 import * as Service from "./Service"
 import Config from "./Config"
@@ -183,6 +184,21 @@ class Main {
 					this.window.reload()
 				} else if (msg === "minimize") {
 					this.window.minimize()
+				} else if (msg === "download-update") {
+					if (process.platform === "linux") {
+						childprocess.exec(
+							"xdg-open https://client.pritunl.com/#install",
+							(err) => {
+								if (err) {
+									electron.shell.openExternal(
+										"https://client.pritunl.com/#install")
+								}
+							},
+						)
+					} else {
+						electron.shell.openExternal(
+							"https://client.pritunl.com/#install")
+					}
 				}
 			},
 		)
