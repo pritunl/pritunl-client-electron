@@ -145,8 +145,17 @@ function loadProfile(prflId: string,
 					return
 				}
 
-				let prfl: ProfileTypes.Profile = JSON.parse(data)
-				prfl.id = prflId
+				let prfl: ProfileTypes.Profile
+				try {
+					prfl = JSON.parse(data)
+					prfl.id = prflId
+				} catch (err) {
+					err = new Errors.ParseError(err,
+						"Profiles: Failed to parse profile configuration",
+						{profile_path: prflPath})
+					reject(err)
+					return
+				}
 
 				fs.readFile(
 					ovpnPath, "utf-8",
