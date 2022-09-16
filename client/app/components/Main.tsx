@@ -69,6 +69,9 @@ const css = {
 	menuLabel: {
 		fontWeight: "bold",
 	} as React.CSSProperties,
+	updateButton: {
+		marginTop: "7px",
+	} as React.CSSProperties,
 };
 
 export default class Main extends React.Component<{}, State> {
@@ -112,8 +115,20 @@ export default class Main extends React.Component<{}, State> {
 	render(): JSX.Element {
 		if (Constants.state.upgrade && !upgradeShown) {
 			upgradeShown = true
-			Alert.info("Update available, download the latest " +
-				"release from the Pritunl homepage", 0)
+
+			let updateElm: JSX.Element = <div>
+				<div>Update available, download the latest release below</div>
+				<button
+					className="bp3-button bp3-intent-primary bp3-icon-download"
+					type="button"
+					style={css.updateButton}
+					onClick={(): void => {
+						Electron.ipcRenderer.send("control", "download-update")
+					}}
+				>Download Update</button>
+			</div>
+
+			Alert.info(updateElm, 0)
 		}
 
 		let themeLabel = ""
