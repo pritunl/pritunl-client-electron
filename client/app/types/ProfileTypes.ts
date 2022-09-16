@@ -169,9 +169,11 @@ export function New(self: Profile): Profile {
 		let uptime = curTime - this.timestamp
 		let units: number
 		let unitStr: string
-		let uptimeItems: string[] =[]
+		let uptimeItems: string[] = []
+		let hasDays = false
 
 		if (uptime > 86400) {
+			hasDays = true
 			units = Math.floor(uptime / 86400)
 			uptime -= units * 86400
 			unitStr = units + " day"
@@ -201,7 +203,7 @@ export function New(self: Profile): Profile {
 			uptimeItems.push(unitStr)
 		}
 
-		if (uptime) {
+		if (uptime && !hasDays) {
 			unitStr = uptime + " sec"
 			if (uptime > 1) {
 				unitStr += "s"
