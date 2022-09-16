@@ -200,11 +200,6 @@ func GetBashPath() string {
 			return path
 		}
 
-		path, _ = exec.LookPath("/opt/homebrew/bin/wg-quick")
-		if path != "" {
-			return path
-		}
-
 		break
 	case "linux":
 		break
