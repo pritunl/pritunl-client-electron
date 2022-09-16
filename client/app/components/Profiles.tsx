@@ -13,6 +13,8 @@ const css = {
 };
 
 export default class Profiles extends React.Component<{}, State> {
+	interval: NodeJS.Timer
+
 	constructor(props: any, context: any) {
 		super(props, context);
 		this.state = {
@@ -23,10 +25,16 @@ export default class Profiles extends React.Component<{}, State> {
 	componentDidMount(): void {
 		ProfilesStore.addChangeListener(this.onChange);
 		ProfileActions.sync();
+
+		this.interval = setInterval(() => {
+			ProfileActions.sync(true)
+		}, 1000);
 	}
 
 	componentWillUnmount(): void {
 		ProfilesStore.removeChangeListener(this.onChange);
+
+		clearInterval(this.interval)
 	}
 
 	onChange = (): void => {
