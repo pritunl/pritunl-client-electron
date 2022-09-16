@@ -9,6 +9,7 @@ import * as Blueprint from "@blueprintjs/core"
 import PageInfo from "./PageInfo"
 import PageInput from "./PageInput"
 import PageSwitch from "./PageSwitch"
+import * as MiscUtils from "../utils/MiscUtils";
 
 interface Props {
 	profile: ProfileTypes.ProfileRo
@@ -187,6 +188,17 @@ export default class ProfileSettings extends React.Component<Props, State> {
 			autostart = this.state.setAutoStart
 		}
 
+		let syncHosts = profile.formatedHosts();
+
+		let lastSync = ""
+		if (profile.sync_time === -1) {
+			lastSync = "Failed to sync"
+		} else if (profile.sync_time) {
+			lastSync = MiscUtils.formatDateLess(profile.sync_time)
+		} else {
+			lastSync = "Never"
+		}
+
 		return <div style={css.box}>
 			<button
 				className="bp3-button bp3-icon-cog"
@@ -247,6 +259,22 @@ export default class ProfileSettings extends React.Component<Props, State> {
 						onToggle={(): void => {
 							this.set("disabled", !!autostart)
 						}}
+					/>
+					<PageInfo
+						fields={[
+							{
+								label: 'ID',
+								value: profile.id || '-',
+							},
+							{
+								label: 'Configuration Sync Hosts',
+								value: syncHosts,
+							},
+							{
+								label: 'Last Configuration Sync',
+								value: lastSync,
+							},
+						]}
 					/>
 				</div>
 				<div className="bp3-dialog-footer">
