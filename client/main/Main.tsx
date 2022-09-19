@@ -149,7 +149,7 @@ class Main {
 
 		electron.ipcMain.on(
 			"control",
-			(evt: electron.IpcMainEvent, msg: string) => {
+			(evt: electron.IpcMainEvent, msg: string, data: string) => {
 				if (msg === "service-auth-error") {
 					electron.dialog.showMessageBox(null, {
 						type: "error",
@@ -179,20 +179,9 @@ class Main {
 				} else if (msg === "minimize") {
 					this.window.minimize()
 				} else if (msg === "download-update") {
-					if (process.platform === "linux") {
-						childprocess.exec(
-							"xdg-open https://client.pritunl.com/#install",
-							(err) => {
-								if (err) {
-									electron.shell.openExternal(
-										"https://client.pritunl.com/#install")
-								}
-							},
-						)
-					} else {
-						electron.shell.openExternal(
-							"https://client.pritunl.com/#install")
-					}
+					Utils.openLink("https://client.pritunl.com/#install")
+				} else if (msg === "open-link") {
+					Utils.openLink(data)
 				}
 			},
 		)
