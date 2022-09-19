@@ -445,6 +445,11 @@ export default class ProfileConnect extends React.Component<Props, State> {
 						type="password"
 						placeholder="Enter password"
 						value={this.state.password}
+						onKeyUp={(key: string): void => {
+							if (key === "Enter") {
+								this.closeDialogConfirm()
+							}
+						}}
 						onChange={(val: string): void => {
 							this.setState({
 								...this.state,
@@ -462,6 +467,11 @@ export default class ProfileConnect extends React.Component<Props, State> {
 						type="password"
 						placeholder="Enter pin"
 						value={this.state.pin}
+						onKeyUp={(key: string): void => {
+							if (key === "Enter") {
+								this.closeDialogConfirm()
+							}
+						}}
 						onChange={(val: string): void => {
 							this.setState({
 								...this.state,
@@ -479,6 +489,11 @@ export default class ProfileConnect extends React.Component<Props, State> {
 						type="text"
 						placeholder="Enter passcode"
 						value={this.state.duo}
+						onKeyUp={(key: string): void => {
+							if (key === "Enter") {
+								this.closeDialogConfirm()
+							}
+						}}
 						onChange={(val: string): void => {
 							this.setState({
 								...this.state,
@@ -496,6 +511,11 @@ export default class ProfileConnect extends React.Component<Props, State> {
 						type="text"
 						placeholder="Enter passcode"
 						value={this.state.onelogin}
+						onKeyUp={(key: string): void => {
+							if (key === "Enter") {
+								this.closeDialogConfirm()
+							}
+						}}
 						onChange={(val: string): void => {
 							this.setState({
 								...this.state,
@@ -513,6 +533,11 @@ export default class ProfileConnect extends React.Component<Props, State> {
 						type="text"
 						placeholder="Enter passcode"
 						value={this.state.okta}
+						onKeyUp={(key: string): void => {
+							if (key === "Enter") {
+								this.closeDialogConfirm()
+							}
+						}}
 						onChange={(val: string): void => {
 							this.setState({
 								...this.state,
@@ -530,6 +555,11 @@ export default class ProfileConnect extends React.Component<Props, State> {
 						type="text"
 						placeholder="Enter passcode"
 						value={this.state.otp}
+						onKeyUp={(key: string): void => {
+							if (key === "Enter") {
+								this.closeDialogConfirm()
+							}
+						}}
 						onChange={(val: string): void => {
 							this.setState({
 								...this.state,
@@ -547,6 +577,11 @@ export default class ProfileConnect extends React.Component<Props, State> {
 						type="text"
 						placeholder="Activate YubiKey"
 						value={this.state.yubikey}
+						onKeyUp={(key: string): void => {
+							if (key === "Enter") {
+								this.closeDialogConfirm()
+							}
+						}}
 						onChange={(val: string): void => {
 							this.setState({
 								...this.state,
