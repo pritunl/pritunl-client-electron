@@ -358,7 +358,7 @@ export default class ProfileConnect extends React.Component<Props, State> {
 		let buttonClass = ""
 		let buttonLabel = ""
 		if (connected) {
-			buttonClass = "bp3-intent-danger bp3-icon-link"
+			buttonClass = "bp3-intent-danger bp3-icon-delete"
 			buttonLabel = "Disconnect"
 		} else {
 			buttonClass = "bp3-intent-success bp3-icon-link"
