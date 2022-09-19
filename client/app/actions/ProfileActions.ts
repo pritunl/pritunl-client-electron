@@ -327,7 +327,64 @@ export function commit(prfl: ProfileTypes.Profile): Promise<void> {
 }
 
 EventDispatcher.register((action: ProfileTypes.ProfileDispatch) => {
-	if (action.type === "update") {
-		sync(true);
+	switch (action.type) {
+		case "update":
+			sync(true)
+			break
+		case "auth_error":
+			if (action.data) {
+				let prfl = ProfilesStore.profile(action.data.id)
+				if (prfl) {
+					Alert.error("Failed to authenticate to " +
+						prfl.formattedName())
+					return
+				}
+			}
+			Alert.error("Failed to authenticate")
+			break
+		case "inactive":
+			if (action.data) {
+				let prfl = ProfilesStore.profile(action.data.id)
+				if (prfl) {
+					Alert.error("Disconnected due to inactivity on " +
+						prfl.formattedName())
+					return
+				}
+			}
+			Alert.error("Disconnected due to inactivity")
+			break
+		case "timeout_error":
+			if (action.data) {
+				let prfl = ProfilesStore.profile(action.data.id)
+				if (prfl) {
+					Alert.error("Connection timed out on " +
+						prfl.formattedName())
+					return
+				}
+			}
+			Alert.error("Connection timed out")
+			break
+		case "connection_error":
+			if (action.data) {
+				let prfl = ProfilesStore.profile(action.data.id)
+				if (prfl) {
+					Alert.error("Failed to connect to " +
+						prfl.formattedName())
+					return
+				}
+			}
+			Alert.error("Failed to connect")
+			break
+		case "handshake_timeout":
+			if (action.data) {
+				let prfl = ProfilesStore.profile(action.data.id)
+				if (prfl) {
+					Alert.error("Handshake timeout on " +
+						prfl.formattedName())
+					return
+				}
+			}
+			Alert.error("Handshake timeout")
+			break
 	}
 });
