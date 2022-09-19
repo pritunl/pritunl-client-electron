@@ -3,6 +3,7 @@ import path from "path"
 import fs from "fs"
 import childprocess from "child_process"
 import electron from "electron"
+import * as Utils from "./Utils";
 import * as Service from "./Service"
 import Config from "./Config"
 
@@ -11,6 +12,7 @@ let awaken: boolean
 let ready: boolean
 let readyError: string
 let main: Main
+let windowSize: number[];
 
 if (electron.app.dock) {
 	electron.app.dock.hide()
@@ -72,33 +74,16 @@ class Main {
 	}
 
 	createWindow(): void {
-		let width: number
-		let height: number
-		let minWidth: number
-		let minHeight: number
-		let maxWidth: number
-		let maxHeight: number
 		let frameless = false
 		let titleBarStyle: string
 		let framelessClient = false
-
+		let width = 424
+		let height = 528
+		let minWidth = 405
+		let minHeight = 440
+		let maxWidth = 670
+		let maxHeight = 800
 		let classicIface = Config.classic_interface
-
-		if (process.platform === "darwin" && classicIface) {
-			width = 340
-			height = 423
-			minWidth = 304
-			minHeight = 352
-			maxWidth = 540
-			maxHeight = 642
-		} else {
-			width = 420
-			height = 528
-			minWidth = 405
-			minHeight = 440
-			maxWidth = 670
-			maxHeight = 800
-		}
 
 		if ((process.platform === "win32" && !classicIface) ||
 			(Config.frameless && !classicIface)) {
@@ -128,6 +113,15 @@ class Main {
 		let zoomFactor = 1
 		if (process.platform === "darwin" && classicIface) {
 			zoomFactor = 0.8
+		}
+
+		if (zoomFactor !== 1) {
+			width = Math.round(width * zoomFactor)
+			height = Math.round(height * zoomFactor)
+			minWidth = Math.round(minWidth * zoomFactor)
+			minHeight = Math.round(minHeight * zoomFactor)
+			maxWidth = Math.round(maxWidth * zoomFactor)
+			maxHeight = Math.round(maxHeight * zoomFactor)
 		}
 
 		this.window = new electron.BrowserWindow({
@@ -203,7 +197,6 @@ class Main {
 			},
 		)
 
-		let windowSize: number[];
 		this.window.on("close", (): void => {
 			try {
 				windowSize = this.window.getSize()
@@ -211,17 +204,6 @@ class Main {
 		})
 
 		this.window.on("closed", async (): Promise<void> => {
-			if (windowSize && windowSize.length == 2) {
-				Config.window_width = windowSize[0]
-				Config.window_height = windowSize[1]
-				await Config.save({
-					window_width: Config.window_width,
-					window_height: Config.window_height,
-				})
-			}
-			if (Config.disable_tray_icon || !tray) {
-				electron.app.quit()
-			}
 			electron.ipcMain.removeAllListeners("control")
 			main = null
 		})
@@ -468,7 +450,16 @@ function getTrayIcon(state: boolean): string {
 
 electron.app.on("window-all-closed", (): void => {
 	try {
-		Config.load().then(() => {
+		Config.load().then(async (): Promise<void> => {
+			if (windowSize && windowSize.length == 2) {
+				Config.window_width = windowSize[0]
+				Config.window_height = windowSize[1]
+				await Config.save({
+					window_width: Config.window_width,
+					window_height: Config.window_height,
+				})
+			}
+
 			if (Config.disable_tray_icon || !tray) {
 				electron.app.quit()
 			} else {
