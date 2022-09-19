@@ -13,6 +13,7 @@ interface Props {
 
 interface State {
 	disabled: boolean
+	autoFocus: string
 	username: string
 	hasUsername: boolean
 	password: string
@@ -71,6 +72,7 @@ export default class ProfileConnect extends React.Component<Props, State> {
 		super(props, context)
 		this.state = {
 			disabled: false,
+			autoFocus: "",
 			username: "",
 			hasUsername: false,
 			password: "",
@@ -138,6 +140,7 @@ export default class ProfileConnect extends React.Component<Props, State> {
 			}
 		}
 
+		let autoFocus = ""
 		let hasUsername = false
 		let hasPassword = false
 		let hasPin = false
@@ -151,27 +154,48 @@ export default class ProfileConnect extends React.Component<Props, State> {
 			hasUsername = true
 		}
 		if (authTypes.indexOf("password") !== -1) {
+			if (!autoFocus) {
+				autoFocus = "password"
+			}
 			hasPassword = true
 		}
 		if (authTypes.indexOf("pin") !== -1) {
+			if (!autoFocus) {
+				autoFocus = "pin"
+			}
 			hasPin = true
 		}
 		if (authTypes.indexOf("otp") !== -1) {
+			if (!autoFocus) {
+				autoFocus = "otp"
+			}
 			hasOtp = true
 		}
 		if (authTypes.indexOf("duo") !== -1) {
+			if (!autoFocus) {
+				autoFocus = "duo"
+			}
 			hasDuo = true
 			hasOtp = false
 		}
 		if (authTypes.indexOf("onelogin") !== -1) {
+			if (!autoFocus) {
+				autoFocus = "onelogin"
+			}
 			hasOnelogin = true
 			hasOtp = false
 		}
 		if (authTypes.indexOf("okta") !== -1) {
+			if (!autoFocus) {
+				autoFocus = "okta"
+			}
 			hasOkta = true
 			hasOtp = false
 		}
 		if (authTypes.indexOf("yubikey") !== -1) {
+			if (!autoFocus) {
+				autoFocus = "yubikey"
+			}
 			hasYubikey = true
 		}
 
@@ -180,6 +204,7 @@ export default class ProfileConnect extends React.Component<Props, State> {
 				...this.state,
 				disabled: false,
 				dialog: true,
+				autoFocus: autoFocus,
 				hasUsername: hasUsername,
 				hasPassword: hasPassword,
 				hasPin: hasPin,
@@ -272,6 +297,7 @@ export default class ProfileConnect extends React.Component<Props, State> {
 			...this.state,
 			disabled: false,
 			dialog: false,
+			autoFocus: "",
 			username: "",
 			hasUsername: false,
 			password: "",
@@ -413,6 +439,7 @@ export default class ProfileConnect extends React.Component<Props, State> {
 					<PageInput
 						disabled={this.state.disabled}
 						hidden={!this.state.hasPassword}
+						autoFocus={this.state.autoFocus === "password"}
 						label="Password"
 						help="Enter profile password."
 						type="password"
@@ -429,6 +456,7 @@ export default class ProfileConnect extends React.Component<Props, State> {
 					<PageInput
 						disabled={this.state.disabled}
 						hidden={!this.state.hasPin}
+						autoFocus={this.state.autoFocus === "pin"}
 						label="Pin"
 						help="Enter profile pin."
 						type="password"
@@ -445,6 +473,7 @@ export default class ProfileConnect extends React.Component<Props, State> {
 					<PageInput
 						disabled={this.state.disabled}
 						hidden={!this.state.hasDuo}
+						autoFocus={this.state.autoFocus === "duo"}
 						label="Duo Passcode"
 						help="Enter profile Duo passcode from Duo authenticator."
 						type="text"
@@ -461,6 +490,7 @@ export default class ProfileConnect extends React.Component<Props, State> {
 					<PageInput
 						disabled={this.state.disabled}
 						hidden={!this.state.hasOnelogin}
+						autoFocus={this.state.autoFocus === "onelogin"}
 						label="OneLogin Passcode"
 						help="Enter profile OneLogin passcode from OneLogin authenticator app."
 						type="text"
@@ -477,6 +507,7 @@ export default class ProfileConnect extends React.Component<Props, State> {
 					<PageInput
 						disabled={this.state.disabled}
 						hidden={!this.state.hasOkta}
+						autoFocus={this.state.autoFocus === "okta"}
 						label="Okta Passcode"
 						help="Enter profile Okta passcode from Okta authenticator app."
 						type="text"
@@ -493,6 +524,7 @@ export default class ProfileConnect extends React.Component<Props, State> {
 					<PageInput
 						disabled={this.state.disabled}
 						hidden={!this.state.hasOtp}
+						autoFocus={this.state.autoFocus === "otp"}
 						label="Authenticator Passcode"
 						help="Enter profile passcode from authenticator app."
 						type="text"
@@ -509,6 +541,7 @@ export default class ProfileConnect extends React.Component<Props, State> {
 					<PageInput
 						disabled={this.state.disabled}
 						hidden={!this.state.hasYubikey}
+						autoFocus={this.state.autoFocus === "yubikey"}
 						label="YubiKey"
 						help="Select field and push button on YubiKey device to fill passcode."
 						type="text"
