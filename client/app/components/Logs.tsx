@@ -35,7 +35,6 @@ const css = {
 	card: {
 		position: "relative",
 		margin: '8px',
-		paddingRight: 0,
 	} as React.CSSProperties,
 	layout: {
 		height: '100%',
@@ -63,7 +62,7 @@ const css = {
 		flexShrink: 0,
 	} as React.CSSProperties,
 	editor: {
-		margin: '10px 20px 0 0',
+		margin: '10px 0 0 0',
 	} as React.CSSProperties,
 };
 
