@@ -6,12 +6,14 @@ interface Props {
 	hidden?: boolean;
 	disabled?: boolean;
 	readOnly?: boolean;
+	autoFocus?: boolean;
 	autoSelect?: boolean;
 	label: string;
 	help: string;
 	type: string;
 	placeholder: string;
 	value: string | number;
+	onKeyUp?: (key: string) => void;
 	onChange?: (val: string) => void;
 }
 
@@ -50,11 +52,17 @@ export default class PageInput extends React.Component<Props, {}> {
 				type={this.props.type}
 				disabled={this.props.disabled}
 				readOnly={this.props.readOnly}
+				autoFocus={this.props.autoFocus}
 				autoCapitalize="off"
 				spellCheck={false}
 				placeholder={this.props.placeholder}
 				value={value}
 				onClick={this.props.autoSelect ? this.autoSelect : null}
+				onKeyUp={(evt): void => {
+					if (this.props.onKeyUp) {
+						this.props.onKeyUp(evt.key);
+					}
+				}}
 				onChange={(evt): void => {
 					if (this.props.onChange) {
 						this.props.onChange(evt.target.value);
