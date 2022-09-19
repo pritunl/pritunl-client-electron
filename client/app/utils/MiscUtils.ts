@@ -408,6 +408,18 @@ export function exec(path: string,
 	})
 }
 
+export function fileExists(path: string): Promise<boolean> {
+	return new Promise<boolean>((resolve): void => {
+		fs.stat(path, (err: Error, stat) => {
+			if (!err) {
+				resolve(true)
+			}	else {
+				resolve(false)
+			}
+		})
+	})
+}
+
 export function fileSize(path: string): Promise<number> {
 	return new Promise<number>((resolve): void => {
 		fs.stat(path, (err: Error, stat) => {
