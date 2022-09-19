@@ -215,11 +215,20 @@ export function New(self: Profile): Profile {
 	}
 
 	self.formatedHosts = function(): string[] {
+		let count = 0
 		let hosts: string[] = []
 
 		for (let hostAddr of (this.sync_hosts || [])) {
-			let url = new URL(hostAddr)
-			hosts.push(url.hostname + (url.port ? (":" + url.port) : ""))
+			count += 1
+			if (count > 8) {
+				hosts.push('...')
+				break
+			}
+
+			try {
+				let url = new URL(hostAddr)
+				hosts.push(url.hostname + (url.port ? (":" + url.port) : ""))
+			} catch {}
 		}
 
 		return hosts
