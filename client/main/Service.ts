@@ -134,6 +134,7 @@ export function wakeup(): Promise<boolean> {
 
 let authAttempts = 0
 let connAttempts = 0
+let dialogShown = false
 
 export function connect(dev: boolean): Promise<void> {
 	return new Promise<void>(async (resolve, reject) => {
@@ -146,21 +147,25 @@ export function connect(dev: boolean): Promise<void> {
 
 		if (!token) {
 			if (authAttempts > 10) {
-				electron.dialog.showMessageBox(null, {
-					type: "error",
-					buttons: ["Retry", "Exit"],
-					title: "Pritunl - Service Error (6729",
-					message: "Unable to authenticate communication with " +
-						"background service, try restarting computer",
-				}).then(function(evt) {
-					if (evt.response == 0) {
-						authAttempts = 0
-						connAttempts = 0
-						connect(dev)
-					} else {
-						electron.app.quit()
-					}
-				})
+				if (!dialogShown) {
+					dialogShown = true
+					electron.dialog.showMessageBox(null, {
+						type: "error",
+						buttons: ["Retry", "Exit"],
+						title: "Pritunl - Service Error (6729",
+						message: "Unable to authenticate communication with " +
+							"background service, try restarting computer",
+					}).then(function(evt) {
+						if (evt.response == 0) {
+							authAttempts = 0
+							connAttempts = 0
+							dialogShown = false
+							connect(dev)
+						} else {
+							electron.app.quit()
+						}
+					})
+				}
 			} else {
 				authAttempts += 1
 				setTimeout(() => {
@@ -194,21 +199,25 @@ export function connect(dev: boolean): Promise<void> {
 				reconnected = true
 
 				if (connAttempts > 10) {
-					electron.dialog.showMessageBox(null, {
-						type: "error",
-						buttons: ["Retry", "Exit"],
-						title: "Pritunl - Service Error (8362)",
-						message: "Unable to establish communication with " +
-							"background service, try restarting computer",
-					}).then(function(evt) {
-						if (evt.response == 0) {
-							authAttempts = 0
-							connAttempts = 0
-							connect(dev)
-						} else {
-							electron.app.quit()
-						}
-					})
+					if (!dialogShown) {
+						dialogShown = true
+						electron.dialog.showMessageBox(null, {
+							type: "error",
+							buttons: ["Retry", "Exit"],
+							title: "Pritunl - Service Error (8362)",
+							message: "Unable to establish communication with " +
+								"background service, try restarting computer",
+						}).then(function (evt) {
+							if (evt.response == 0) {
+								authAttempts = 0
+								connAttempts = 0
+								dialogShown = false
+								connect(dev)
+							} else {
+								electron.app.quit()
+							}
+						})
+					}
 				} else {
 					connAttempts += 1
 				}
