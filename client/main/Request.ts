@@ -3,7 +3,7 @@ import https from "https"
 import * as Logger from "./Logger"
 import * as Errors from "./Errors"
 
-export var DefaultTimeout = 5
+export var DefaultTimeout = 20
 
 export class Response {
 	response: http.IncomingMessage
