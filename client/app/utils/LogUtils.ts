@@ -39,9 +39,13 @@ export async function clearServiceLog(): Promise<void> {
 
 export async function readClientLog(): Promise<string> {
 	let logData = ""
+	let logPath = Paths.log()
 
 	try {
-		logData = await MiscUtils.fileRead(Paths.log())
+		let exists = await MiscUtils.fileExists(logPath)
+		if (exists) {
+			logData = await MiscUtils.fileRead(logPath)
+		}
 	} catch(err) {
 		Logger.errorAlert2(err, 10)
 	}
