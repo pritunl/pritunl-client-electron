@@ -1,6 +1,10 @@
 Pritunl Client Changelog
 ========================
 
+<%= version %>
+
+Improve interface layout
+
 Version 1.3.3290.45 2022-09-15
 ------------------------------
 
