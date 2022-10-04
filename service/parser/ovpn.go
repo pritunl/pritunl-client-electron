@@ -38,6 +38,7 @@ type Ovpn struct {
 	RcvBuf            int
 	RemoteCertTls     string
 	Compress          string
+	CompLzo           string
 	BlockOutsideDns   bool
 	AuthUserPass      bool
 	KeyDirection      int
@@ -121,8 +122,9 @@ func (o *Ovpn) Export() string {
 	}
 	if o.Compress != "" {
 		output += fmt.Sprintf("compress %s\n", o.Compress)
-	} else {
-		output += fmt.Sprintf("comp-lzo no\n")
+	}
+	if o.CompLzo != "" {
+		output += fmt.Sprintf("comp-lzo %s\n", o.Compress)
 	}
 	if o.AuthUserPass {
 		output += "auth-user-pass\n"
@@ -594,11 +596,11 @@ func Import(data, fixedRemote, fixedRemote6 string) (o *Ovpn) {
 			}
 
 			switch strings.ToLower(lines[1]) {
-			case "on", "yes":
-				o.Compress = "lzo"
+			case "yes":
+				o.CompLzo = "yes"
 				break
-			case "off", "no":
-				o.Compress = ""
+			case "no":
+				o.CompLzo = "no"
 				break
 			default:
 				logrus.WithFields(logrus.Fields{
