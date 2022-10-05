@@ -38,6 +38,7 @@ export interface Profile {
 	pre_connect_msg?: string
 	disable_reconnect?: boolean
 	dynamic_firewall?: boolean
+	sso_auth?: boolean
 	password_mode?: string
 	token?: boolean
 	token_ttl?: number
@@ -95,6 +96,7 @@ export interface ProfileDispatch {
 	type: string
 	data?: {
 		id?: string
+		url?: string
 		profile?: Profile
 		profiles?: Profiles
 		profilesSystem?: Profiles
@@ -118,6 +120,7 @@ export interface ProfileData {
 	username?: string
 	password?: string
 	dynamic_firewall?: boolean
+	sso_auth?: boolean
 	server_public_key?: string
 	server_box_public_key?: string
 	token_ttl?: number
@@ -147,6 +150,8 @@ export function New(self: Profile): Profile {
 				return "Connected"
 			case "connecting":
 				return "Connecting"
+			case "authenticating":
+				return "Authenticating"
 			case "reconnecting":
 				return "Reconnecting"
 			case "disconnecting":
@@ -320,6 +325,7 @@ export function New(self: Profile): Profile {
 			user: this.user,
 			pre_connect_msg: this.pre_connect_msg,
 			dynamic_firewall: this.dynamic_firewall,
+			sso_auth: this.sso_auth,
 			password_mode: this.password_mode,
 			token: this.token,
 			token_ttl: this.token_ttl,
@@ -346,6 +352,7 @@ export function New(self: Profile): Profile {
 		this.user = data.user
 		this.pre_connect_msg = data.pre_connect_msg
 		this.dynamic_firewall = data.dynamic_firewall
+		this.sso_auth = data.sso_auth
 		this.password_mode = data.password_mode
 		this.token = data.token
 		this.token_ttl = data.token_ttl
@@ -373,6 +380,7 @@ export function New(self: Profile): Profile {
 			user: this.user,
 			pre_connect_msg: this.pre_connect_msg,
 			dynamic_firewall: this.dynamic_firewall,
+			sso_auth: this.sso_auth,
 			password_mode: this.password_mode,
 			token: this.token,
 			token_ttl: this.token_ttl,
@@ -400,6 +408,7 @@ export function New(self: Profile): Profile {
 		this.user = data.user || this.user
 		this.pre_connect_msg = data.pre_connect_msg
 		this.dynamic_firewall = data.dynamic_firewall
+		this.sso_auth = data.sso_auth
 		this.password_mode = data.password_mode
 		this.token = data.token
 		this.token_ttl = data.token_ttl
