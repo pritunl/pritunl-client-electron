@@ -262,6 +262,7 @@ func UpdateSystemProfile(prfl *Profile, sPrfl *sprofile.Sprofile) {
 	prfl.Username = "pritunl"
 	prfl.Password = sPrfl.Password
 	prfl.DynamicFirewall = sPrfl.DynamicFirewall
+	prfl.SsoAuth = sPrfl.SsoAuth
 	prfl.ServerPublicKey = serverPublicKey
 	prfl.ServerBoxPublicKey = sPrfl.ServerBoxPublicKey
 	prfl.TokenTtl = sPrfl.TokenTtl
