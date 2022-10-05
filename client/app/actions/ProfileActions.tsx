@@ -1,4 +1,7 @@
 /// <reference path="../References.d.ts"/>
+import Electron from "electron"
+import os from "os"
+import * as React from "react"
 import Dispatcher from '../dispatcher/Dispatcher';
 import EventDispatcher from '../dispatcher/EventDispatcher';
 import * as Alert from '../Alert';
@@ -13,7 +16,12 @@ import path from "path";
 import * as Errors from "../Errors";
 import * as Logger from "../Logger";
 import * as Request from "../Request"
-import os from "os";
+
+const css = {
+	updateButton: {
+		marginTop: "7px",
+	} as React.CSSProperties,
+}
 
 let syncId: string;
 
@@ -385,6 +393,38 @@ EventDispatcher.register((action: ProfileTypes.ProfileDispatch) => {
 				}
 			}
 			Alert.error("Handshake timeout")
+			break
+		case "sso_auth":
+			let ssoAuthMsg = "Connection requires single sign-on authentication. " +
+				"Complete authentication in web browser. Copy the link below if " +
+				"the web browser did not open."
+
+			if (action.data) {
+				let prfl = ProfilesStore.profile(action.data.id)
+				if (prfl) {
+					ssoAuthMsg = "Connection to \"" +
+						prfl.formattedName() + "\" requires single sign-on " +
+						"authentication. Complete authentication in web browser. " +
+						"Copy the link below if the web browser did not open."
+				}
+			}
+
+			let ssoAuthElm: JSX.Element = <div>
+				<div>{ssoAuthMsg}</div>
+				<button
+					className="bp3-button bp3-intent-primary bp3-icon-link"
+					type="button"
+					style={css.updateButton}
+					onClick={(evt): void => {
+						Electron.clipboard.writeText(action.data.url)
+						evt.currentTarget.className = "bp3-button bp3-intent-success " +
+							"bp3-icon-link"
+						evt.currentTarget.innerText = "Link Copied"
+					}}
+				>Copy Single Sign-On Link</button>
+			</div>
+
+			Alert.info(ssoAuthElm, 8)
 			break
 	}
 });
