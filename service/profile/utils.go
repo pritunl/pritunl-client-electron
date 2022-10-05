@@ -48,6 +48,11 @@ func GetWgPath() string {
 			return path
 		}
 
+		path, _ = exec.LookPath("wg")
+		if path != "" {
+			return path
+		}
+
 		break
 	case "linux":
 		path, _ := exec.LookPath("wg")
@@ -89,6 +94,11 @@ func GetWgQuickPath() string {
 		}
 
 		path, _ = exec.LookPath("/opt/homebrew/bin/wg-quick")
+		if path != "" {
+			return path
+		}
+
+		path, _ = exec.LookPath("wg-quick")
 		if path != "" {
 			return path
 		}
