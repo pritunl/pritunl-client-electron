@@ -9,6 +9,7 @@ import (
 
 	"github.com/dropbox/godropbox/errors"
 	"github.com/pritunl/pritunl-client-electron/service/platform"
+	"github.com/pritunl/pritunl-client-electron/service/sprofile"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
 )
 
@@ -48,6 +49,17 @@ func Init() (err error) {
 		profilesPth := filepath.Join(utils.GetWinDrive(), "ProgramData",
 			"Pritunl", "Profiles")
 		err = platform.MkdirSecure(profilesPth)
+		if err != nil {
+			err = &WriteError{
+				errors.Wrap(
+					err, "utils: Failed to create profiles directory"),
+			}
+			return
+		}
+	} else {
+		prflsPath := sprofile.GetPath()
+
+		err = platform.MkdirSecure(prflsPath)
 		if err != nil {
 			err = &WriteError{
 				errors.Wrap(
