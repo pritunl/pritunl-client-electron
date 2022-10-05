@@ -41,6 +41,7 @@ function Profile(systemPrfl, pth) {
   this.user = null;
   this.preConnectMsg = null;
   this.dynamicFirewall = null;
+  this.ssoAuth = null;
   this.passwordMode = null;
   this.token = null;
   this.tokenTtl = null;
@@ -218,6 +219,7 @@ Profile.prototype.loadSystem = function(data) {
   this.user = data.user || null;
   this.preConnectMsg = data.pre_connect_msg || null;
   this.dynamicFirewall = data.dynamic_firewall || null;
+  this.ssoAuth = data.sso_auth || null;
   this.passwordMode = data.password_mode || null;
   this.token = data.token || false;
   this.tokenTtl = data.token_ttl || null;
@@ -248,6 +250,7 @@ Profile.prototype.exportSystem = function(callback) {
       user: this.user,
       pre_connect_msg: this.preConnectMsg,
       dynamic_firewall: this.dynamicFirewall,
+      sso_auth: this.ssoAuth,
       password_mode: this.passwordMode,
       token: this.token,
       token_ttl: this.tokenTtl,
@@ -306,6 +309,7 @@ Profile.prototype.refresh = function(prfl) {
   this.user = prfl.user || this.user;
   this.preConnectMsg = prfl.preConnectMsg || this.preConnectMsg;
   this.dynamicFirewall = prfl.dynamicFirewall;
+  this.ssoAuth = prfl.ssoAuth;
   this.passwordMode = prfl.passwordMode;
   this.token = prfl.token;
   this.tokenTtl = prfl.tokenTtl;
@@ -333,6 +337,7 @@ Profile.prototype.import = function(data) {
   this.user = data.user || null;
   this.preConnectMsg = data.pre_connect_msg || null;
   this.dynamicFirewall = data.dynamic_firewall || null;
+  this.ssoAuth = data.sso_auth || null;
   this.passwordMode = data.password_mode || null;
   this.token = data.token || false;
   this.tokenTtl = data.token_ttl || null;
@@ -356,6 +361,7 @@ Profile.prototype.upsert = function(data) {
   this.user = data.user || this.user;
   this.preConnectMsg = data.pre_connect_msg;
   this.dynamicFirewall = data.dynamic_firewall;
+  this.ssoAuth = data.sso_auth;
   this.passwordMode = data.password_mode;
   this.token = data.token;
   this.tokenTtl = data.token_ttl;
@@ -379,6 +385,7 @@ Profile.prototype.exportConf = function() {
     user: this.user,
     pre_connect_msg: this.preConnectMsg,
     dynamic_firewall: this.dynamicFirewall,
+    sso_auth: this.ssoAuth,
     password_mode: this.passwordMode,
     token: this.token,
     token_ttl: this.tokenTtl,
@@ -400,6 +407,8 @@ Profile.prototype.export = function() {
     status = this.getUptime();
   } else if (this.status === 'connecting') {
     status = 'Connecting';
+  } else if (this.status === 'authenticating') {
+    status = 'Authenticating';
   } else if (this.status === 'reconnecting') {
     status = 'Reconnecting';
   } else if (this.status === 'disconnecting') {
@@ -424,6 +433,7 @@ Profile.prototype.export = function() {
     user: this.user || '',
     preConnectMsg: this.preConnectMsg || '',
     dynamicFirewall: this.dynamicFirewall  ? 'On' : 'Off',
+    ssoAuth: this.ssoAuth  ? 'On' : 'Off',
     autostart: this.systemPrfl ? 'On' : 'Off',
     syncHosts: this.syncHosts || [],
     syncHash: this.syncHash || '',
