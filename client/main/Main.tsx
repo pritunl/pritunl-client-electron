@@ -180,8 +180,6 @@ class Main {
 					this.window.minimize()
 				} else if (msg === "download-update") {
 					Utils.openLink("https://client.pritunl.com/#install")
-				} else if (msg === "open-link") {
-					Utils.openLink(data)
 				}
 			},
 		)
@@ -398,6 +396,8 @@ function init() {
 
 					let main = new Main()
 					main.run()
+				} else if (event.type === "sso_auth") {
+					Utils.openLink(event.data.url)
 				}
 			})
 		})
