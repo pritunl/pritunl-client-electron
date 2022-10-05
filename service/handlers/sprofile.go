@@ -23,6 +23,7 @@ type sprofileData struct {
 	User               string   `json:"user"`
 	PreConnectMsg      string   `json:"pre_connect_msg"`
 	DynamicFirewall    bool     `json:"dynamic_firewall"`
+	SsoAuth            bool     `json:"sso_auth"`
 	PasswordMode       string   `json:"password_mode"`
 	Token              bool     `json:"token"`
 	TokenTtl           int      `json:"token_ttl"`
@@ -87,6 +88,7 @@ func sprofilePut(c *gin.Context) {
 		User:               data.User,
 		PreConnectMsg:      data.PreConnectMsg,
 		DynamicFirewall:    data.DynamicFirewall,
+		SsoAuth:            data.SsoAuth,
 		PasswordMode:       data.PasswordMode,
 		Token:              data.Token,
 		TokenTtl:           data.TokenTtl,
