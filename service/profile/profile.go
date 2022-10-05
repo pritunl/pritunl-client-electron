@@ -179,12 +179,15 @@ type OutputData struct {
 }
 
 type Profile struct {
-	state          bool        `json:"-"`
-	stopping       bool        `json:"-"`
-	connected      bool        `json:"-"`
-	stop           bool        `json:"-"`
-	waiters        []chan bool `json:"-"`
-	managementLock sync.Mutex  `json:"-"`
+	state           bool        `json:"-"`
+	stopping        bool        `json:"-"`
+	connected       bool        `json:"-"`
+	stop            bool        `json:"-"`
+	waiters         []chan bool `json:"-"`
+	managementLock  sync.Mutex  `json:"-"`
+	startWait       chan error  `json:"-"`
+	startWaitLock   sync.Mutex  `json:"-"`
+	startWaitClosed bool        `json:"-"`
 
 	wgQuickLock        sync.Mutex         `json:"-"`
 	startTime          time.Time          `json:"-"`
@@ -790,6 +793,19 @@ func (p *Profile) update() {
 	}
 }
 
+func (p *Profile) StartWait() (err error) {
+	return <-p.startWait
+}
+
+func (p *Profile) setStartWait(err error) {
+	p.startWaitLock.Lock()
+	if !p.startWaitClosed {
+		p.startWaitClosed = true
+		p.startWait <- err
+	}
+	p.startWaitLock.Unlock()
+}
+
 func (p *Profile) pushOutput(output string) {
 	// TODO classic client
 	if p.SystemProfile == nil {
@@ -1112,9 +1128,14 @@ func (p *Profile) Init() {
 	p.bashPath = GetBashPath()
 	p.wgPath = GetWgPath()
 	p.wgQuickPath = GetWgQuickPath()
+	p.startWait = make(chan error, 3)
 }
 
 func (p *Profile) Start(timeout bool, delay bool) (err error) {
+	defer func() {
+		p.setStartWait(err)
+	}()
+
 	if shutdown {
 		return
 	}
