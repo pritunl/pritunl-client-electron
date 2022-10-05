@@ -55,6 +55,7 @@ type Sprofile struct {
 	User               string   `json:"user"`
 	PreConnectMsg      string   `json:"pre_connect_msg"`
 	DynamicFirewall    bool     `json:"dynamic_firewall"`
+	SsoAuth            bool     `json:"sso_auth"`
 	PasswordMode       string   `json:"password_mode"`
 	Token              bool     `json:"token"`
 	TokenTtl           int      `json:"token_ttl"`
@@ -86,6 +87,7 @@ type SprofileClient struct {
 	User               string   `json:"user"`
 	PreConnectMsg      string   `json:"pre_connect_msg"`
 	DynamicFirewall    bool     `json:"dynamic_firewall"`
+	SsoAuth            bool     `json:"sso_auth"`
 	PasswordMode       string   `json:"password_mode"`
 	Token              bool     `json:"token"`
 	TokenTtl           int      `json:"token_ttl"`
@@ -120,6 +122,7 @@ func (s *Sprofile) Client() (sprflc *SprofileClient) {
 		User:               s.User,
 		PreConnectMsg:      s.PreConnectMsg,
 		DynamicFirewall:    s.DynamicFirewall,
+		SsoAuth:            s.SsoAuth,
 		PasswordMode:       s.PasswordMode,
 		Token:              s.Token,
 		TokenTtl:           s.TokenTtl,
@@ -168,6 +171,7 @@ func (s *Sprofile) Copy() (sprfl *Sprofile) {
 		User:               s.User,
 		PreConnectMsg:      s.PreConnectMsg,
 		DynamicFirewall:    s.DynamicFirewall,
+		SsoAuth:            s.SsoAuth,
 		PasswordMode:       s.PasswordMode,
 		Token:              s.Token,
 		TokenTtl:           s.TokenTtl,
@@ -333,6 +337,7 @@ func (s *Sprofile) syncUpdate(data string) (updated bool, err error) {
 		s.User = confData.User
 		s.PreConnectMsg = confData.PreConnectMsg
 		s.DynamicFirewall = confData.DynamicFirewall
+		s.SsoAuth = confData.SsoAuth
 		s.PasswordMode = confData.PasswordMode
 		s.Token = confData.Token
 		s.TokenTtl = confData.TokenTtl
