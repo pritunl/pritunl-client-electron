@@ -88,6 +88,11 @@ var (
 	stateLock  = sync.Mutex{}
 )
 
+type SsoEventData struct {
+	Id  string `json:"id"`
+	Url string `json:"url"`
+}
+
 type WgKeyReq struct {
 	Data      string `json:"data"`
 	Nonce     string `json:"nonce"`
@@ -108,6 +113,7 @@ type WgKeyBox struct {
 	WgPublicKey    string   `json:"wg_public_key"`
 	PublicAddress  string   `json:"public_address"`
 	PublicAddress6 string   `json:"public_address6"`
+	SsoToken       string   `json:"sso_token"`
 }
 
 type OvpnKeyBox struct {
@@ -122,9 +128,13 @@ type OvpnKeyBox struct {
 	Timestamp      int64    `json:"timestamp"`
 	PublicAddress  string   `json:"public_address"`
 	PublicAddress6 string   `json:"public_address6"`
+	SsoToken       string   `json:"sso_token"`
 }
 
 type KeyResp struct {
+	Mode      string `json:"mode"`
+	SsoToken  string `json:"sso_token"`
+	SsoUrl    string `json:"sso_url"`
 	Data      string `json:"data"`
 	Nonce     string `json:"nonce"`
 	Signature string `json:"signature"`
@@ -223,6 +233,7 @@ type Profile struct {
 	Username           string             `json:"-"`
 	Password           string             `json:"-"`
 	DynamicFirewall    bool               `json:"-"`
+	SsoAuth            bool               `json:"-"`
 	ServerPublicKey    string             `json:"-"`
 	ServerBoxPublicKey string             `json:"-"`
 	TokenTtl           int                `json:"-"`
@@ -1111,6 +1122,7 @@ func (p *Profile) Copy() (prfl *Profile) {
 		Username:           p.Username,
 		Password:           p.Password,
 		DynamicFirewall:    p.DynamicFirewall,
+		SsoAuth:            p.SsoAuth,
 		ServerPublicKey:    p.ServerPublicKey,
 		ServerBoxPublicKey: p.ServerBoxPublicKey,
 		Reconnect:          p.Reconnect,
@@ -1161,6 +1173,7 @@ func (p *Profile) Start(timeout bool, delay bool) (err error) {
 		"profile_id":       p.Id,
 		"mode":             p.Mode,
 		"dynamic_firewall": p.DynamicFirewall,
+		"sso_auth":         p.SsoAuth,
 	}).Info("profile: Connecting")
 
 	if runtime.GOOS == "darwin" && n == 0 {
@@ -1217,7 +1230,7 @@ func (p *Profile) Start(timeout bool, delay bool) (err error) {
 func (p *Profile) startOvpn(timeout bool) (err error) {
 	var data *OvpnData
 
-	if p.DynamicFirewall {
+	if p.DynamicFirewall || p.SsoAuth {
 		data, err = p.openOvpn()
 		if err != nil {
 			return
@@ -1745,7 +1758,7 @@ func (p *Profile) openOvpn() (data *OvpnData, err error) {
 	for _, i := range mathrand.Perm(len(remotes)) {
 		remote := remotes[i]
 
-		data, err = p.reqOvpn(remote)
+		data, err = p.reqOvpn(remote, "", time.Time{})
 		if err == nil {
 			break
 		}
@@ -1777,7 +1790,9 @@ func (p *Profile) openOvpn() (data *OvpnData, err error) {
 	return
 }
 
-func (p *Profile) reqOvpn(remote string) (ovpnData *OvpnData, err error) {
+func (p *Profile) reqOvpn(remote, ssoToken string, ssoStart time.Time) (
+	ovpnData *OvpnData, err error) {
+
 	if p.ServerBoxPublicKey == "" {
 		err = &errortypes.ReadError{
 			errors.Wrap(err, "profile: Server box public key not set"),
@@ -1868,6 +1883,7 @@ func (p *Profile) reqOvpn(remote string) (ovpnData *OvpnData, err error) {
 		Timestamp:      time.Now().Unix(),
 		PublicAddress:  addr4,
 		PublicAddress6: addr6,
+		SsoToken:       ssoToken,
 	}
 
 	ovpnBoxData, err := json.Marshal(ovpnBox)
@@ -1962,10 +1978,18 @@ func (p *Profile) reqOvpn(remote string) (ovpnData *OvpnData, err error) {
 		return
 	}
 
-	reqPath := fmt.Sprintf(
-		"/key/ovpn/%s/%s/%s",
-		p.OrgId, p.UserId, p.ServerId,
-	)
+	reqPath := ""
+	if ssoToken == "" {
+		reqPath = fmt.Sprintf(
+			"/key/ovpn/%s/%s/%s",
+			p.OrgId, p.UserId, p.ServerId,
+		)
+	} else {
+		reqPath = fmt.Sprintf(
+			"/key/ovpn_wait/%s/%s/%s",
+			p.OrgId, p.UserId, p.ServerId,
+		)
+	}
 
 	if strings.Count(remote, ":") > 1 {
 		remote = "[" + remote + "]"
@@ -2036,6 +2060,27 @@ func (p *Profile) reqOvpn(remote string) (ovpnData *OvpnData, err error) {
 	defer res.Body.Close()
 	p.openReqCancel = nil
 
+	if res.StatusCode == 428 && ssoToken != "" {
+		if time.Since(ssoStart) > 60*time.Second {
+			evt := event.Event{
+				Type: "timeout_error",
+				Data: p,
+			}
+			evt.Init()
+
+			err = &errortypes.RequestError{
+				errors.Wrap(err, "profile: Single sign-on timeout"),
+			}
+			return
+		}
+
+		ovpnData, err = p.reqOvpn(remote, ssoToken, ssoStart)
+		if err != nil {
+			return
+		}
+		return
+	}
+
 	if res.StatusCode != 200 {
 		// TODO Show Server offline error for 429
 		err = &errortypes.RequestError{
@@ -2052,6 +2097,31 @@ func (p *Profile) reqOvpn(remote string) (ovpnData *OvpnData, err error) {
 			errors.Wrap(err, "profile: Failed to parse response body"),
 		}
 		return
+	}
+
+	if ovpnResp.SsoUrl != "" && ovpnResp.SsoToken != "" && ssoToken == "" {
+		evt := event.Event{
+			Type: "sso_auth",
+			Data: &SsoEventData{
+				Id:  p.Id,
+				Url: ovpnResp.SsoUrl,
+			},
+		}
+		evt.Init()
+
+		p.Status = "authenticating"
+		p.update()
+
+		p.setStartWait(nil)
+
+		ovpnData, err = p.reqOvpn(remote, ovpnResp.SsoToken, time.Now())
+		if err != nil {
+			return
+		}
+		return
+	} else if ssoToken != "" {
+		p.Status = "connecting"
+		p.update()
 	}
 
 	respHashFunc := hmac.New(sha512.New, []byte(p.SyncSecret))
@@ -2108,7 +2178,9 @@ func (p *Profile) reqOvpn(remote string) (ovpnData *OvpnData, err error) {
 	return
 }
 
-func (p *Profile) reqWg(remote string) (wgData *WgData, err error) {
+func (p *Profile) reqWg(remote, ssoToken string, ssoStart time.Time) (
+	wgData *WgData, err error) {
+
 	if p.ServerBoxPublicKey == "" {
 		err = &errortypes.ReadError{
 			errors.Wrap(err, "profile: Server box public key not set"),
@@ -2200,6 +2272,7 @@ func (p *Profile) reqWg(remote string) (wgData *WgData, err error) {
 		PublicAddress:  addr4,
 		PublicAddress6: addr6,
 		WgPublicKey:    p.PublicKeyWg,
+		SsoToken:       ssoToken,
 	}
 
 	wgBoxData, err := json.Marshal(wgBox)
@@ -2294,10 +2367,18 @@ func (p *Profile) reqWg(remote string) (wgData *WgData, err error) {
 		return
 	}
 
-	reqPath := fmt.Sprintf(
-		"/key/wg/%s/%s/%s",
-		p.OrgId, p.UserId, p.ServerId,
-	)
+	reqPath := ""
+	if ssoToken == "" {
+		reqPath = fmt.Sprintf(
+			"/key/wg/%s/%s/%s",
+			p.OrgId, p.UserId, p.ServerId,
+		)
+	} else {
+		reqPath = fmt.Sprintf(
+			"/key/wg_wait/%s/%s/%s",
+			p.OrgId, p.UserId, p.ServerId,
+		)
+	}
 
 	if strings.Count(remote, ":") > 1 {
 		remote = "[" + remote + "]"
@@ -2368,6 +2449,27 @@ func (p *Profile) reqWg(remote string) (wgData *WgData, err error) {
 	defer res.Body.Close()
 	p.openReqCancel = nil
 
+	if res.StatusCode == 428 && ssoToken != "" {
+		if time.Since(ssoStart) > 60*time.Second {
+			evt := event.Event{
+				Type: "timeout_error",
+				Data: p,
+			}
+			evt.Init()
+
+			err = &errortypes.RequestError{
+				errors.Wrap(err, "profile: Single sign-on timeout"),
+			}
+			return
+		}
+
+		wgData, err = p.reqWg(remote, ssoToken, ssoStart)
+		if err != nil {
+			return
+		}
+		return
+	}
+
 	if res.StatusCode != 200 {
 		err = &errortypes.RequestError{
 			errors.Wrapf(err, "profile: Bad status %d code from server",
@@ -2383,6 +2485,31 @@ func (p *Profile) reqWg(remote string) (wgData *WgData, err error) {
 			errors.Wrap(err, "profile: Failed to parse response body"),
 		}
 		return
+	}
+
+	if wgResp.SsoUrl != "" && wgResp.SsoToken != "" && ssoToken == "" {
+		evt := event.Event{
+			Type: "sso_auth",
+			Data: &SsoEventData{
+				Id:  p.Id,
+				Url: wgResp.SsoUrl,
+			},
+		}
+		evt.Init()
+
+		p.Status = "authenticating"
+		p.update()
+
+		p.setStartWait(nil)
+
+		wgData, err = p.reqWg(remote, wgResp.SsoToken, time.Now())
+		if err != nil {
+			return
+		}
+		return
+	} else if ssoToken != "" {
+		p.Status = "connecting"
+		p.update()
 	}
 
 	respHashFunc := hmac.New(sha512.New, []byte(p.SyncSecret))
@@ -3363,7 +3490,7 @@ func (p *Profile) startWg(timeout bool) (err error) {
 	for _, i := range mathrand.Perm(len(remotes)) {
 		remote := remotes[i]
 
-		data, err = p.reqWg(remote)
+		data, err = p.reqWg(remote, "", time.Time{})
 		if err == nil {
 			break
 		}
