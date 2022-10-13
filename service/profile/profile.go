@@ -1755,11 +1755,12 @@ func (p *Profile) openOvpn() (data *OvpnData, err error) {
 		}
 	}
 
+	final := false
 	for _, i := range mathrand.Perm(len(remotes)) {
 		remote := remotes[i]
 
-		data, err = p.reqOvpn(remote, "", time.Time{})
-		if err == nil {
+		data, final, err = p.reqOvpn(remote, "", time.Time{})
+		if err == nil || final {
 			break
 		}
 
@@ -1791,7 +1792,7 @@ func (p *Profile) openOvpn() (data *OvpnData, err error) {
 }
 
 func (p *Profile) reqOvpn(remote, ssoToken string, ssoStart time.Time) (
-	ovpnData *OvpnData, err error) {
+	ovpnData *OvpnData, final bool, err error) {
 
 	if p.ServerBoxPublicKey == "" {
 		err = &errortypes.ReadError{
@@ -2074,15 +2075,29 @@ func (p *Profile) reqOvpn(remote, ssoToken string, ssoStart time.Time) (
 			return
 		}
 
-		ovpnData, err = p.reqOvpn(remote, ssoToken, ssoStart)
+		ovpnData, _, err = p.reqOvpn(remote, ssoToken, ssoStart)
 		if err != nil {
 			return
+		}
+
+		final = false
+		return
+	}
+
+	if res.StatusCode == 429 {
+		evt := event.Event{
+			Type: "offline_error",
+			Data: p,
+		}
+		evt.Init()
+
+		err = &errortypes.RequestError{
+			errors.Wrap(err, "profile: Server is offline"),
 		}
 		return
 	}
 
 	if res.StatusCode != 200 {
-		// TODO Show Server offline error for 429
 		err = &errortypes.RequestError{
 			errors.Wrapf(err, "profile: Bad status %d code from server",
 				res.StatusCode),
@@ -2114,10 +2129,12 @@ func (p *Profile) reqOvpn(remote, ssoToken string, ssoStart time.Time) (
 
 		p.setStartWait(nil)
 
-		ovpnData, err = p.reqOvpn(remote, ovpnResp.SsoToken, time.Now())
+		ovpnData, _, err = p.reqOvpn(remote, ovpnResp.SsoToken, time.Now())
 		if err != nil {
 			return
 		}
+
+		final = true
 		return
 	} else if ssoToken != "" {
 		p.Status = "connecting"
@@ -2179,7 +2196,7 @@ func (p *Profile) reqOvpn(remote, ssoToken string, ssoStart time.Time) (
 }
 
 func (p *Profile) reqWg(remote, ssoToken string, ssoStart time.Time) (
-	wgData *WgData, err error) {
+	wgData *WgData, final bool, err error) {
 
 	if p.ServerBoxPublicKey == "" {
 		err = &errortypes.ReadError{
@@ -2463,9 +2480,24 @@ func (p *Profile) reqWg(remote, ssoToken string, ssoStart time.Time) (
 			return
 		}
 
-		wgData, err = p.reqWg(remote, ssoToken, ssoStart)
+		wgData, _, err = p.reqWg(remote, ssoToken, ssoStart)
 		if err != nil {
 			return
+		}
+
+		final = true
+		return
+	}
+
+	if res.StatusCode == 429 {
+		evt := event.Event{
+			Type: "offline_error",
+			Data: p,
+		}
+		evt.Init()
+
+		err = &errortypes.RequestError{
+			errors.Wrap(err, "profile: Server is offline"),
 		}
 		return
 	}
@@ -2502,10 +2534,12 @@ func (p *Profile) reqWg(remote, ssoToken string, ssoStart time.Time) (
 
 		p.setStartWait(nil)
 
-		wgData, err = p.reqWg(remote, wgResp.SsoToken, time.Now())
+		wgData, _, err = p.reqWg(remote, wgResp.SsoToken, time.Now())
 		if err != nil {
 			return
 		}
+
+		final = true
 		return
 	} else if ssoToken != "" {
 		p.Status = "connecting"
@@ -3486,12 +3520,13 @@ func (p *Profile) startWg(timeout bool) (err error) {
 		}
 	}
 
+	final := false
 	var data *WgData
 	for _, i := range mathrand.Perm(len(remotes)) {
 		remote := remotes[i]
 
-		data, err = p.reqWg(remote, "", time.Time{})
-		if err == nil {
+		data, final, err = p.reqWg(remote, "", time.Time{})
+		if err == nil || final {
 			break
 		}
 
