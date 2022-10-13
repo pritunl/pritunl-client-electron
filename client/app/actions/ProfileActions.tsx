@@ -372,6 +372,17 @@ EventDispatcher.register((action: ProfileTypes.ProfileDispatch) => {
 			}
 			Alert.error("Connection timed out")
 			break
+		case "offline_error":
+			if (action.data) {
+				let prfl = ProfilesStore.profile(action.data.id)
+				if (prfl) {
+					Alert.error("Server is offline on " +
+						prfl.formattedName())
+					return
+				}
+			}
+			Alert.error("Connection timed out")
+			break
 		case "connection_error":
 			if (action.data) {
 				let prfl = ProfilesStore.profile(action.data.id)
