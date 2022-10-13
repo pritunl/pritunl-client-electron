@@ -1826,6 +1826,7 @@ func (p *Profile) reqOvpn(remote, ssoToken string, ssoStart time.Time) (
 	p.token = tokn
 
 	authToken := ""
+	hasAuthToken := false
 	if tokn != nil {
 		err = tokn.Update()
 		if err != nil {
@@ -1833,6 +1834,7 @@ func (p *Profile) reqOvpn(remote, ssoToken string, ssoStart time.Time) (
 		}
 
 		authToken = tokn.Token
+		hasAuthToken = tokn.Valid
 	} else {
 		authToken, err = utils.RandStrComplex(16)
 		if err != nil {
@@ -1990,14 +1992,14 @@ func (p *Profile) reqOvpn(remote, ssoToken string, ssoStart time.Time) (
 	}
 
 	reqPath := ""
-	if ssoToken == "" {
+	if ssoToken != "" || (p.SsoAuth && hasAuthToken) {
 		reqPath = fmt.Sprintf(
-			"/key/ovpn/%s/%s/%s",
+			"/key/ovpn_wait/%s/%s/%s",
 			p.OrgId, p.UserId, p.ServerId,
 		)
 	} else {
 		reqPath = fmt.Sprintf(
-			"/key/ovpn_wait/%s/%s/%s",
+			"/key/ovpn/%s/%s/%s",
 			p.OrgId, p.UserId, p.ServerId,
 		)
 	}
@@ -2230,6 +2232,7 @@ func (p *Profile) reqWg(remote, ssoToken string, ssoStart time.Time) (
 	p.token = tokn
 
 	authToken := ""
+	hasAuthToken := false
 	if tokn != nil {
 		err = tokn.Update()
 		if err != nil {
@@ -2237,6 +2240,7 @@ func (p *Profile) reqWg(remote, ssoToken string, ssoStart time.Time) (
 		}
 
 		authToken = tokn.Token
+		hasAuthToken = tokn.Valid
 	} else {
 		authToken, err = utils.RandStrComplex(16)
 		if err != nil {
@@ -2395,14 +2399,14 @@ func (p *Profile) reqWg(remote, ssoToken string, ssoStart time.Time) (
 	}
 
 	reqPath := ""
-	if ssoToken == "" {
+	if ssoToken != "" || (p.SsoAuth && hasAuthToken) {
 		reqPath = fmt.Sprintf(
-			"/key/wg/%s/%s/%s",
+			"/key/wg_wait/%s/%s/%s",
 			p.OrgId, p.UserId, p.ServerId,
 		)
 	} else {
 		reqPath = fmt.Sprintf(
-			"/key/wg_wait/%s/%s/%s",
+			"/key/wg/%s/%s/%s",
 			p.OrgId, p.UserId, p.ServerId,
 		)
 	}
