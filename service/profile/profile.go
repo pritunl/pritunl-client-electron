@@ -920,6 +920,11 @@ func (p *Profile) parseLine(line string) {
 		if utils.SinceAbs(p.lastAuthErr) > 10*time.Second {
 			p.lastAuthErr = time.Now()
 
+			tokn = p.token
+			if tokn != nil {
+				_ = tokn.Reset()
+			}
+
 			evt := event.Event{
 				Type: "auth_error",
 				Data: p,
@@ -1237,6 +1242,11 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 		}
 
 		if data != nil && !data.Allow {
+			tokn := p.token
+			if tokn != nil {
+				_ = tokn.Reset()
+			}
+
 			logrus.WithFields(logrus.Fields{
 				"reason": data.Reason,
 			}).Error("profile: Failed to authenticate ovpn")
@@ -3570,6 +3580,11 @@ func (p *Profile) startWg(timeout bool) (err error) {
 	}
 
 	if !data.Allow {
+		tokn := p.token
+		if tokn != nil {
+			_ = tokn.Reset()
+		}
+
 		logrus.WithFields(logrus.Fields{
 			"reason": data.Reason,
 		}).Error("profile: Failed to authenticate wg")
@@ -3640,6 +3655,11 @@ func (p *Profile) startWg(timeout bool) (err error) {
 
 		p.stopSafe()
 		return
+	}
+
+	tokn := p.token
+	if tokn != nil {
+		tokn.Valid = true
 	}
 
 	go p.watchWg()
