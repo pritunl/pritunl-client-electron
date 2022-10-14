@@ -435,7 +435,7 @@ EventDispatcher.register((action: ProfileTypes.ProfileDispatch) => {
 				>Copy Single Sign-On Link</button>
 			</div>
 
-			Alert.info(ssoAuthElm, 8)
+			Alert.info(ssoAuthElm, 5)
 			break
 	}
 });
