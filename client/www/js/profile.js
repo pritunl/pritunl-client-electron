@@ -41,6 +41,7 @@ function Profile(systemPrfl, pth) {
   this.user = null;
   this.preConnectMsg = null;
   this.dynamicFirewall = null;
+  this.disableGateway = null;
   this.ssoAuth = null;
   this.passwordMode = null;
   this.token = null;
@@ -219,6 +220,7 @@ Profile.prototype.loadSystem = function(data) {
   this.user = data.user || null;
   this.preConnectMsg = data.pre_connect_msg || null;
   this.dynamicFirewall = data.dynamic_firewall || null;
+  this.disableGateway = data.disable_gateway || null;
   this.ssoAuth = data.sso_auth || null;
   this.passwordMode = data.password_mode || null;
   this.token = data.token || false;
@@ -250,6 +252,7 @@ Profile.prototype.exportSystem = function(callback) {
       user: this.user,
       pre_connect_msg: this.preConnectMsg,
       dynamic_firewall: this.dynamicFirewall,
+      disable_gateway: this.disableGateway,
       sso_auth: this.ssoAuth,
       password_mode: this.passwordMode,
       token: this.token,
@@ -309,6 +312,7 @@ Profile.prototype.refresh = function(prfl) {
   this.user = prfl.user || this.user;
   this.preConnectMsg = prfl.preConnectMsg || this.preConnectMsg;
   this.dynamicFirewall = prfl.dynamicFirewall;
+  this.disableGateway = prfl.disableGateway;
   this.ssoAuth = prfl.ssoAuth;
   this.passwordMode = prfl.passwordMode;
   this.token = prfl.token;
@@ -337,6 +341,7 @@ Profile.prototype.import = function(data) {
   this.user = data.user || null;
   this.preConnectMsg = data.pre_connect_msg || null;
   this.dynamicFirewall = data.dynamic_firewall || null;
+  this.disableGateway = data.disable_gateway || null;
   this.ssoAuth = data.sso_auth || null;
   this.passwordMode = data.password_mode || null;
   this.token = data.token || false;
@@ -361,6 +366,7 @@ Profile.prototype.upsert = function(data) {
   this.user = data.user || this.user;
   this.preConnectMsg = data.pre_connect_msg;
   this.dynamicFirewall = data.dynamic_firewall;
+  this.disableGateway = data.disable_gateway;
   this.ssoAuth = data.sso_auth;
   this.passwordMode = data.password_mode;
   this.token = data.token;
@@ -385,6 +391,7 @@ Profile.prototype.exportConf = function() {
     user: this.user,
     pre_connect_msg: this.preConnectMsg,
     dynamic_firewall: this.dynamicFirewall,
+    disable_gateway: this.disableGateway,
     sso_auth: this.ssoAuth,
     password_mode: this.passwordMode,
     token: this.token,
@@ -433,6 +440,7 @@ Profile.prototype.export = function() {
     user: this.user || '',
     preConnectMsg: this.preConnectMsg || '',
     dynamicFirewall: this.dynamicFirewall  ? 'On' : 'Off',
+    disableGateway: this.disableGateway  ? 'On' : 'Off',
     ssoAuth: this.ssoAuth  ? 'On' : 'Off',
     autostart: this.systemPrfl ? 'On' : 'Off',
     syncHosts: this.syncHosts || [],
