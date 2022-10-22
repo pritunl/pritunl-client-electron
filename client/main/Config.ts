@@ -64,24 +64,7 @@ class ConfigData {
 						}
 					}
 
-					if (configData["disable_tray_icon"] !== undefined) {
-						this.disable_tray_icon = configData["disable_tray_icon"]
-					}
-					if (configData["classic_interface"] !== undefined) {
-						this.classic_interface = configData["classic_interface"]
-					}
-					if (configData["theme"] !== undefined) {
-						this.theme = configData["theme"]
-					}
-					if (configData["window_width"] !== undefined) {
-						this.window_width = configData["window_width"]
-					}
-					if (configData["window_height"] !== undefined) {
-						this.window_height = configData["window_height"]
-					}
-					if (configData["frameless"] !== undefined) {
-						this.frameless = configData["frameless"]
-					}
+					this._load(configData)
 
 					resolve()
 				},
