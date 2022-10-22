@@ -38,6 +38,7 @@ export interface Profile {
 	pre_connect_msg?: string
 	disable_reconnect?: boolean
 	dynamic_firewall?: boolean
+	disable_gateway?: boolean
 	sso_auth?: boolean
 	password_mode?: string
 	token?: boolean
@@ -120,6 +121,7 @@ export interface ProfileData {
 	username?: string
 	password?: string
 	dynamic_firewall?: boolean
+	disable_gateway?: boolean
 	sso_auth?: boolean
 	server_public_key?: string
 	server_box_public_key?: string
@@ -325,6 +327,7 @@ export function New(self: Profile): Profile {
 			user: this.user,
 			pre_connect_msg: this.pre_connect_msg,
 			dynamic_firewall: this.dynamic_firewall,
+			disable_gateway: this.disable_gateway,
 			sso_auth: this.sso_auth,
 			password_mode: this.password_mode,
 			token: this.token,
@@ -352,6 +355,7 @@ export function New(self: Profile): Profile {
 		this.user = data.user
 		this.pre_connect_msg = data.pre_connect_msg
 		this.dynamic_firewall = data.dynamic_firewall
+		this.disable_gateway = data.disable_gateway
 		this.sso_auth = data.sso_auth
 		this.password_mode = data.password_mode
 		this.token = data.token
@@ -380,6 +384,7 @@ export function New(self: Profile): Profile {
 			user: this.user,
 			pre_connect_msg: this.pre_connect_msg,
 			dynamic_firewall: this.dynamic_firewall,
+			disable_gateway: this.disable_gateway,
 			sso_auth: this.sso_auth,
 			password_mode: this.password_mode,
 			token: this.token,
@@ -408,6 +413,7 @@ export function New(self: Profile): Profile {
 		this.user = data.user || this.user
 		this.pre_connect_msg = data.pre_connect_msg
 		this.dynamic_firewall = data.dynamic_firewall
+		this.disable_gateway = data.disable_gateway
 		this.sso_auth = data.sso_auth
 		this.password_mode = data.password_mode
 		this.token = data.token
