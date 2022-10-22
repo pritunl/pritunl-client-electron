@@ -261,6 +261,14 @@ export default class ProfileSettings extends React.Component<Props, State> {
 							this.set("disabled", !!autostart)
 						}}
 					/>
+					<PageSwitch
+						label="Disable Default Gateway"
+						help="Disable routing internet traffic through the VPN connection."
+						checked={!!profile.disable_gateway}
+						onToggle={(): void => {
+							this.set("disable_gateway", !profile.disable_gateway)
+						}}
+					/>
 					<PageInfo
 						fields={[
 							{
