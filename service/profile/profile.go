@@ -233,6 +233,7 @@ type Profile struct {
 	Username           string             `json:"-"`
 	Password           string             `json:"-"`
 	DynamicFirewall    bool               `json:"-"`
+	DisableGateway     bool               `json:"-"`
 	SsoAuth            bool               `json:"-"`
 	ServerPublicKey    string             `json:"-"`
 	ServerBoxPublicKey string             `json:"-"`
@@ -272,7 +273,7 @@ func (p *Profile) write(fixedRemote, fixedRemote6 string) (
 
 	pth = filepath.Join(rootDir, p.Id)
 
-	prsr := parser.Import(p.Data, fixedRemote, fixedRemote6)
+	prsr := parser.Import(p.Data, fixedRemote, fixedRemote6, p.DisableGateway)
 	data := prsr.Export()
 
 	if runtime.GOOS == "windows" {
@@ -1127,6 +1128,7 @@ func (p *Profile) Copy() (prfl *Profile) {
 		Username:           p.Username,
 		Password:           p.Password,
 		DynamicFirewall:    p.DynamicFirewall,
+		DisableGateway:     p.DisableGateway,
 		SsoAuth:            p.SsoAuth,
 		ServerPublicKey:    p.ServerPublicKey,
 		ServerBoxPublicKey: p.ServerBoxPublicKey,
@@ -1178,6 +1180,7 @@ func (p *Profile) Start(timeout bool, delay bool) (err error) {
 		"profile_id":       p.Id,
 		"mode":             p.Mode,
 		"dynamic_firewall": p.DynamicFirewall,
+		"disable_gateway":  p.DisableGateway,
 		"sso_auth":         p.SsoAuth,
 	}).Info("profile: Connecting")
 
@@ -3637,6 +3640,26 @@ func (p *Profile) startWg(timeout bool) (err error) {
 		return
 	}
 	p.Iface = iface
+
+	if p.DisableGateway {
+		routes := []*Route{}
+		for _, route := range data.Configuration.Routes {
+			if route.Network == "0.0.0.0/0" {
+				continue
+			}
+			routes = append(routes, route)
+		}
+		data.Configuration.Routes = routes
+
+		routes6 := []*Route{}
+		for _, route := range data.Configuration.Routes6 {
+			if route.Network == "::/0" {
+				continue
+			}
+			routes6 = append(routes6, route)
+		}
+		data.Configuration.Routes6 = routes6
+	}
 
 	wgConfPth, err := p.writeWgConf(data.Configuration)
 	if err != nil {
