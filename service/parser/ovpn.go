@@ -46,6 +46,8 @@ type Ovpn struct {
 	TlsAuth           string
 	Cert              string
 	Key               string
+
+	DisableGateway bool
 }
 
 func (o *Ovpn) Export() string {
@@ -133,6 +135,10 @@ func (o *Ovpn) Export() string {
 		output += fmt.Sprintf("key-direction %d\n", o.KeyDirection)
 	}
 
+	if o.DisableGateway {
+		output += "pull-filter ignore \"redirect-gateway\"\n"
+	}
+
 	if o.CaCert != "" {
 		output += fmt.Sprintf("<ca>\n%s</ca>\n", o.CaCert)
 	}
@@ -149,9 +155,12 @@ func (o *Ovpn) Export() string {
 	return output
 }
 
-func Import(data, fixedRemote, fixedRemote6 string) (o *Ovpn) {
+func Import(data, fixedRemote, fixedRemote6 string, disableGateway bool) (
+	o *Ovpn) {
+
 	o = &Ovpn{
-		Remotes: []Remote{},
+		Remotes:        []Remote{},
+		DisableGateway: disableGateway,
 	}
 
 	inCa := false
