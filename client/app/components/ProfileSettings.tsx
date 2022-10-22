@@ -170,7 +170,10 @@ export default class ProfileSettings extends React.Component<Props, State> {
 		this.setState({
 			...this.state,
 			dialog: false,
+			changed: false,
 			profile: null,
+			setAutoStart: null,
+			setSystem: null,
 		})
 	}
 
@@ -238,14 +241,12 @@ export default class ProfileSettings extends React.Component<Props, State> {
 							if (!system && this.state.setAutoStart === null) {
 								this.setState({
 									...this.state,
-									changed: true,
 									setSystem: !system,
 									setAutoStart: true,
 								})
 							} else {
 								this.setState({
 									...this.state,
-									changed: true,
 									setSystem: !system,
 								})
 							}
