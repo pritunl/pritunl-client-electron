@@ -24,7 +24,6 @@ interface State {
 	message: string;
 	disabled: boolean;
 	changed: boolean;
-	settings: boolean;
 	value: string;
 }
 
@@ -94,7 +93,6 @@ export default class Profile extends React.Component<Props, State> {
 			message: '',
 			disabled: false,
 			changed: false,
-			settings: false,
 			value: 'test',
 		};
 	}
@@ -230,16 +228,6 @@ export default class Profile extends React.Component<Props, State> {
 				hidden={!longIp}
 				fields={fieldsLong}
 			/>
-			<div>
-				<PageSwitch
-					label="Autostart"
-					help="Automatically start profile with system service. Autostart profiles will run for all users."
-					hidden={!this.state.settings}
-					checked={!!profile.system}
-					onToggle={(): void => {
-					}}
-				/>
-			</div>
 			<div style={css.message} hidden={!this.state.message}>
 				{this.state.message}
 			</div>
