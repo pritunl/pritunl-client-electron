@@ -3,6 +3,7 @@ Pritunl Client Changelog
 
 <%= version %>
 
+Add connection single sign-on
 Add disable gateway option
 
 Version 1.3.3300.95 2022-09-25
