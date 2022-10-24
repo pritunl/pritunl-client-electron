@@ -662,6 +662,13 @@ var init = function() {
           prfl.formatedName());
         logger.error(err);
         break;
+      case 'offline_error':
+        prfl = service.get(evt.data.id);
+        err = new errors.AuthError(
+          'profile_view: Server offline on %s',
+          prfl.formatedName());
+        logger.error(err);
+        break;
       case 'connection_error':
         prfl = service.get(evt.data.id);
         err = new errors.AuthError(
