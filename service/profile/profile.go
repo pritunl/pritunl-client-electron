@@ -877,17 +877,20 @@ func (p *Profile) parseLine(line string) {
 
 			utils.ClearDNSCache()
 		}()
-	} else if strings.Contains(line, "Inactivity timeout (--inactive)") ||
-		strings.Contains(line, "Inactivity timeout") ||
-		strings.Contains(line, "Connection reset") {
-
+	} else if strings.Contains(line, "Inactivity timeout (--inactive)") {
 		evt := event.Event{
 			Type: "inactive",
 			Data: p,
 		}
 		evt.Init()
+	} else if strings.Contains(line, "Inactivity timeout") ||
+		strings.Contains(line, "Connection reset") {
 
-		p.StopBackgroundDelay(5 * time.Second)
+		evt := event.Event{
+			Type: "timeout_error",
+			Data: p,
+		}
+		evt.Init()
 	} else if strings.Contains(
 		line, "Can't assign requested address (code=49)") {
 
@@ -1184,6 +1187,7 @@ func (p *Profile) Start(timeout bool, delay bool) (err error) {
 		"dynamic_firewall": p.DynamicFirewall,
 		"disable_gateway":  p.DisableGateway,
 		"sso_auth":         p.SsoAuth,
+		"reconnect":        p.Reconnect,
 	}).Info("profile: Connecting")
 
 	if runtime.GOOS == "darwin" && n == 0 {
@@ -1602,9 +1606,11 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 			logrus.WithFields(logrus.Fields{
 				"profile_id": p.Id,
 			}).Info("profile: Profile exit, reconnecting")
-		}
 
-		p.StopBackground()
+			p.Restart()
+		} else {
+			p.StopBackground()
+		}
 	}()
 
 	go func() {
