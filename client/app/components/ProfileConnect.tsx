@@ -259,6 +259,7 @@ export default class ProfileConnect extends React.Component<Props, State> {
 			server_box_public_key: prfl.server_box_public_key,
 			token_ttl: prfl.token_ttl,
 			timeout: true,
+			reconnect: !prfl.disable_reconnect,
 			data: data,
 		}
 
