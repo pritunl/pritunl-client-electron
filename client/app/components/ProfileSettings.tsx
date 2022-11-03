@@ -238,15 +238,31 @@ export default class ProfileSettings extends React.Component<Props, State> {
 						help="Automatically start profile with system service. Autostart profiles will run for all users."
 						checked={system}
 						onToggle={(): void => {
+							let profile: any
+
+							if (this.state.changed) {
+								profile = {
+									...this.state.profile,
+								}
+							} else {
+								profile = {
+									...this.props.profile,
+								}
+							}
+
 							if (!system && this.state.setAutoStart === null) {
 								this.setState({
 									...this.state,
+									changed: true,
+									profile: profile,
 									setSystem: !system,
 									setAutoStart: true,
 								})
 							} else {
 								this.setState({
 									...this.state,
+									changed: true,
+									profile: profile,
 									setSystem: !system,
 								})
 							}
