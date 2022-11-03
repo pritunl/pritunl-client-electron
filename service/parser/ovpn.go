@@ -152,6 +152,8 @@ func (o *Ovpn) Export() string {
 		output += fmt.Sprintf("<key>\n%s</key>\n", o.Key)
 	}
 
+	output += "pull-filter ignore \"ping-restart\"\n"
+
 	return output
 }
 
