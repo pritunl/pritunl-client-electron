@@ -189,15 +189,16 @@ type OutputData struct {
 }
 
 type Profile struct {
-	state           bool        `json:"-"`
-	stopping        bool        `json:"-"`
-	connected       bool        `json:"-"`
-	stop            bool        `json:"-"`
-	waiters         []chan bool `json:"-"`
-	managementLock  sync.Mutex  `json:"-"`
-	startWait       chan error  `json:"-"`
-	startWaitLock   sync.Mutex  `json:"-"`
-	startWaitClosed bool        `json:"-"`
+	state           bool         `json:"-"`
+	stopping        bool         `json:"-"`
+	connected       bool         `json:"-"`
+	stop            bool         `json:"-"`
+	waiters         []chan bool  `json:"-"`
+	managementLock  sync.Mutex   `json:"-"`
+	startWait       chan error   `json:"-"`
+	startWaitLock   sync.Mutex   `json:"-"`
+	startWaitClosed bool         `json:"-"`
+	parsedPrfl      *parser.Ovpn `json:"-"`
 
 	wgQuickLock        sync.Mutex         `json:"-"`
 	startTime          time.Time          `json:"-"`
@@ -273,8 +274,9 @@ func (p *Profile) write(fixedRemote, fixedRemote6 string) (
 
 	pth = filepath.Join(rootDir, p.Id)
 
-	prsr := parser.Import(p.Data, fixedRemote, fixedRemote6, p.DisableGateway)
-	data := prsr.Export()
+	p.parsedPrfl = parser.Import(
+		p.Data, fixedRemote, fixedRemote6, p.DisableGateway)
+	data := p.parsedPrfl.Export()
 
 	if runtime.GOOS == "windows" {
 		p.managementPort = ManagementPortAcquire()
@@ -1302,8 +1304,11 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 	p.remPaths = append(p.remPaths, confPath)
 
 	var authPath string
+	tokn := token.Get(p.Id, p.ServerPublicKey, p.ServerBoxPublicKey)
+
 	if (p.Username != "" && p.Password != "") ||
-		p.ServerBoxPublicKey != "" || p.ServerPublicKey != "" {
+		p.parsedPrfl.AuthUserPass ||
+		tokn != nil || fwToken != "" {
 
 		authPath, err = p.writeAuth(fwToken)
 		if err != nil {
