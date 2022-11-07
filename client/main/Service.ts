@@ -5,6 +5,7 @@ import process from "process"
 import * as Request from "./Request"
 import * as Logger from "./Logger"
 import electron from "electron";
+import * as MiscUtils from "../app/utils/MiscUtils";
 
 export interface Event {
 	id: string
@@ -135,8 +136,12 @@ export function wakeup(): Promise<boolean> {
 let authAttempts = 0
 let connAttempts = 0
 let dialogShown = false
+let curSocket = ""
 
 export function connect(dev: boolean): Promise<void> {
+	let socketId = MiscUtils.uuid()
+	curSocket = socketId
+
 	return new Promise<void>(async (resolve, reject) => {
 		let token: string
 		try {
@@ -230,6 +235,10 @@ export function connect(dev: boolean): Promise<void> {
 		})
 
 		socket.on("open", (): void => {
+			if (socketId !== curSocket) {
+				return
+			}
+
 			connAttempts = 0
 			if (showConnect) {
 				showConnect = false
@@ -238,23 +247,39 @@ export function connect(dev: boolean): Promise<void> {
 		})
 
 		socket.on("error", (err: Error) => {
+			if (socketId !== curSocket) {
+				return
+			}
+
 			console.error("Events: Socket error " + err)
 			showConnect = true
 			reconnect()
 		})
 
 		socket.on("onerror", (err) => {
+			if (socketId !== curSocket) {
+				return
+			}
+
 			console.error("Events: Socket error " + err)
 			showConnect = true
 			reconnect()
 		})
 
 		socket.on("close", () => {
+			if (socketId !== curSocket) {
+				return
+			}
+
 			showConnect = true
 			reconnect()
 		})
 
 		socket.on("message", (dataBuf: Buffer): void => {
+			if (socketId !== curSocket) {
+				return
+			}
+
 			let data = JSON.parse(dataBuf.toString())
 			for (let callback of callbacks) {
 				callback(data as Event)
