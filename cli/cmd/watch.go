@@ -10,9 +10,6 @@ var WatchCmd = &cobra.Command{
 	Short: "Watch profiles",
 	Run: func(cmd *cobra.Command, args []string) {
 		err := watch.Init()
-		if err != nil {
-			panic(err)
-			return
-		}
+		cobra.CheckErr(err)
 	},
 }

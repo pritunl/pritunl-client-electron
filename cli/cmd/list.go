@@ -13,10 +13,7 @@ var ListCmd = &cobra.Command{
 	Short: "List profiles",
 	Run: func(cmd *cobra.Command, args []string) {
 		sprfls, err := sprofile.GetAll()
-		if err != nil {
-			panic(err)
-			return
-		}
+		cobra.CheckErr(err)
 
 		table := tablewriter.NewWriter(os.Stdout)
 		table.SetHeader([]string{
