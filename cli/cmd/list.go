@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"github.com/olekukonko/tablewriter"
+	"github.com/pritunl/pritunl-client-electron/cli/service"
 	"github.com/pritunl/pritunl-client-electron/cli/sprofile"
 	"github.com/spf13/cobra"
 )
@@ -18,7 +19,14 @@ var ListCmd = &cobra.Command{
 			return
 		}
 
-		table := tablewriter.NewWriter(os.Stdout)
+		var table service.Printable
+		if doPlainOutput {
+			table = service.NewPlainWriter(os.Stdout)
+		} else {
+			table = tablewriter.NewWriter(os.Stdout)
+			table.SetBorder(true)
+		}
+
 		table.SetHeader([]string{
 			"ID",
 			"Name",
@@ -28,7 +36,6 @@ var ListCmd = &cobra.Command{
 			"Server Address",
 			"Client Address",
 		})
-		table.SetBorder(true)
 
 		for _, sprfl := range sprfls {
 			if sprfl.Profile != nil {

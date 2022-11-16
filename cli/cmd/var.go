@@ -4,6 +4,7 @@ var (
 	mode           string
 	password       string
 	passwordPrompt bool
+	doPlainOutput  bool
 )
 
 func init() {
@@ -27,5 +28,12 @@ func init() {
 		"r",
 		false,
 		"Prompt for VPN password",
+	)
+	ListCmd.Flags().BoolVarP(
+		&doPlainOutput,
+		"plain",
+		"1",
+		false,
+		"No fancy table formatting",
 	)
 }
