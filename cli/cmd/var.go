@@ -4,6 +4,8 @@ var (
 	mode           string
 	password       string
 	passwordPrompt bool
+	jsonFormat     bool
+	jsonFormated   bool
 )
 
 func init() {
@@ -27,5 +29,21 @@ func init() {
 		"r",
 		false,
 		"Prompt for VPN password",
+	)
+
+	ListCmd.Flags().BoolVarP(
+		&jsonFormat,
+		"json",
+		"j",
+		false,
+		"Format output in JSON",
+	)
+
+	ListCmd.Flags().BoolVarP(
+		&jsonFormated,
+		"json-formatted",
+		"f",
+		false,
+		"Format output in indented JSON",
 	)
 }
