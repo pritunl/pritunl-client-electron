@@ -32,12 +32,16 @@ type Profile struct {
 	MacAddrs     []string `json:"mac_addrs"`
 }
 
+func (p *Profile) Uptime() int64 {
+	return time.Now().Unix() - p.Timestamp
+}
+
 func (p *Profile) FormatedTime() string {
 	if p.Timestamp == 0 {
 		return "Connecting"
 	}
 
-	uptime := time.Now().Unix() - p.Timestamp
+	uptime := p.Uptime()
 	unitItems := []string{}
 
 	if uptime > 86400 {
