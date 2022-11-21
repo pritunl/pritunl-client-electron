@@ -65,11 +65,9 @@ func GetAuthPath() (pth string) {
 	switch runtime.GOOS {
 	case "windows":
 		pth = filepath.Join(GetWinDrive(), "ProgramData", "Pritunl", "auth")
-		break
 	case "linux", "darwin":
 		pth = filepath.Join(string(filepath.Separator),
 			"var", "run", "pritunl.auth")
-		break
 	default:
 		panic("profile: Not implemented")
 	}
