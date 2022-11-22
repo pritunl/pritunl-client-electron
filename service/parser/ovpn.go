@@ -128,6 +128,9 @@ func (o *Ovpn) Export() string {
 	if o.CompLzo != "" {
 		output += fmt.Sprintf("comp-lzo %s\n", o.Compress)
 	}
+	if o.BlockOutsideDns {
+		output += "block-outside-dns\n"
+	}
 	if o.AuthUserPass {
 		output += "auth-user-pass\n"
 	}
@@ -620,6 +623,9 @@ func Import(data, fixedRemote, fixedRemote6 string, disableGateway bool) (
 				continue
 			}
 
+			break
+		case "block-outside-dns":
+			o.BlockOutsideDns = true
 			break
 		case "compress":
 			if len(lines) != 2 {
