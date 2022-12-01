@@ -35,9 +35,9 @@
     "request": "2.88.2"
   },
   "devDependencies": {
-    "electron": "20.1.1",
-    "electron-packager": "16.0.0",
-    "electron-rebuild": "3.2.7",
+    "electron": "22.0.0",
+    "electron-packager": "17.1.1",
+    "electron-rebuild": "3.2.9",
     "rcedit": "3.0.1",
     "rimraf": "3.0.2",
     "source-map-loader": "3.0.1",
