@@ -923,7 +923,7 @@ func (p *Profile) parseLine(line string) {
 			tokn.Init()
 		}
 
-		if utils.SinceAbs(p.lastAuthErr) > 10*time.Second {
+		if utils.SinceAbs(p.lastAuthErr) > 5*time.Second {
 			p.lastAuthErr = time.Now()
 
 			tokn = p.token
