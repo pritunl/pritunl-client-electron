@@ -18,7 +18,7 @@
     "ace-builds": "1.4.14",
     "bufferutil": "4.0.6",
     "flux": "4.0.3",
-    "node-abi": "3.24.0",
+    "node-abi": "3.30.0",
     "react": "17.0.2",
     "react-ace": "9.5.0",
     "react-day-picker": "7.4.10",
