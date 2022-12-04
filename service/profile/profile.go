@@ -2088,7 +2088,7 @@ func (p *Profile) reqOvpn(remote, ssoToken string, ssoStart time.Time) (
 	p.openReqCancel = nil
 
 	if res.StatusCode == 428 && ssoToken != "" {
-		if time.Since(ssoStart) > 60*time.Second {
+		if time.Since(ssoStart) > 120*time.Second {
 			evt := event.Event{
 				Type: "timeout_error",
 				Data: p,
