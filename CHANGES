@@ -1,6 +1,10 @@
 Pritunl Client Changelog
 ========================
 
+<%= version %>
+
+Fix DNS issues
+
 Version 1.3.3343.50 2022-11-07
 ------------------------------
 
