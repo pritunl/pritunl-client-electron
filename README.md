@@ -26,3 +26,14 @@ bash <(curl -s https://raw.githubusercontent.com/pritunl/pritunl-client-electron
 ```bash
 bash <(curl -s https://raw.githubusercontent.com/pritunl/pritunl-client-electron/master/tools/uninstall_macos.sh)
 ```
+
+# Installing Specific Version
+
+Download the source file form https://github.com/pritunl/pritunl-client-electron/releases
+eg: If I want Pritunl for Pritunl Client v1.3.3343.50 version
+then, 
+```wget https://github.com/pritunl/pritunl-client-electron/archive/refs/tags/1.3.3343.50.tar.gz
+tar -xvzf 1.3.3343.50.tar.gz
+brew install git go node
+bash install_macos.sh
+```
