@@ -129,6 +129,7 @@ func (o *Ovpn) Export() string {
 		output += fmt.Sprintf("comp-lzo %s\n", o.Compress)
 	}
 	if o.BlockOutsideDns {
+		output += "ignore-unknown-option block-outside-dns\n"
 		output += "block-outside-dns\n"
 	}
 	if o.AuthUserPass {
