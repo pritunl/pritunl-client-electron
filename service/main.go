@@ -36,6 +36,8 @@ func main() {
 	install := flag.Bool("install", false, "run post install")
 	uninstall := flag.Bool("uninstall", false, "run pre uninstall")
 	devPtr := flag.Bool("dev", false, "development mode")
+	disableWatchPtr := flag.Bool("disableWatch", false, "disable DNS watcher")
+
 	flag.Parse()
 
 	if *install {
@@ -125,7 +127,9 @@ func main() {
 	router := gin.New()
 	handlers.Register(router)
 
-	watch.StartWatch()
+	if !*disableWatchPtr {
+		watch.StartWatch()
+	}
 
 	server := &http.Server{
 		Addr:           "127.0.0.1:9770",
