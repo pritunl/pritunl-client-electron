@@ -12,6 +12,8 @@ import path from "path"
 import util from "util"
 import crypto from "crypto"
 import fs from "fs"
+import os from "os";
+import childProcess from "child_process";
 
 export const SYNC = "profile.sync"
 export const SYNC_STATE = "profile.sync_state"
@@ -55,6 +57,7 @@ export interface Profile {
 	server_addr?: string
 	client_addr?: string
 	ovpn_data?: string
+	key_data?: string
 
 	formattedName(): string
 	formattedStatus(): string
@@ -63,7 +66,7 @@ export interface Profile {
 	authTypes(): string[]
 	confPath(): string
 	dataPath(): string
-	extractKey(data: string): Promise<string>
+	encryptKey(data: string): Promise<string>
 	exportConf(): string
 	importConf(data: Profile): void
 	exportSystem(): string
@@ -264,14 +267,10 @@ export function New(self: Profile): Profile {
 		return path.join(Constants.dataPath, "profiles", this.id + ".ovpn")
 	}
 
-	self.extractKey = async function(data: string): Promise<string> {
+	self.encryptKey = async function(data: string): Promise<string> {
 		let sIndex: number
 		let eIndex: number
 		let keyData = ""
-
-		if (Constants.platform !== "darwin") {
-			return data
-		}
 
 		sIndex = data.indexOf("<tls-auth>")
 		eIndex = data.indexOf("</tls-auth>\n")
@@ -290,26 +289,41 @@ export function New(self: Profile): Profile {
 		}
 
 		if (!keyData) {
-			return data
+			if (Constants.platform === "darwin") {
+				let resp = await MiscUtils.exec(
+					"/usr/bin/security",
+					"find-generic-password",
+					"-w",
+					"-s", "pritunl",
+					"-a", this.id,
+				)
+
+				if (resp.error) {
+					return data
+				}
+
+				keyData = new Buffer(
+					resp.stdout.replace("\n", ""),
+					"base64",
+				).toString()
+			}
+
+			if (!keyData) {
+				return data
+			}
 		}
 
-		let keyData64 = new Buffer(keyData).toString("base64");
+		this.key_data = await MiscUtils.encryptString(keyData)
+		await this.writeConf()
 
-		await MiscUtils.exec(
-			"/usr/bin/security",
-			"delete-generic-password",
-			"-s", "pritunl",
-			"-a", this.id,
-		)
-
-		await MiscUtils.exec(
-			"/usr/bin/security",
-			"add-generic-password",
-			"-U",
-			"-s", "pritunl",
-			"-a", this.id,
-			"-w", keyData64.toString(),
-		)
+		if (Constants.platform === "darwin") {
+			await MiscUtils.exec(
+				"/usr/bin/security",
+				"delete-generic-password",
+				"-s", "pritunl",
+				"-a", this.id,
+			)
+		}
 
 		return data
 	}
@@ -341,6 +355,7 @@ export function New(self: Profile): Profile {
 			sync_token: this.sync_token,
 			server_public_key: this.server_public_key,
 			server_box_public_key: this.server_box_public_key,
+			key_data: this.key_data,
 		})
 	}
 
@@ -368,6 +383,7 @@ export function New(self: Profile): Profile {
 		this.sync_token = data.sync_token
 		this.server_public_key = data.server_public_key
 		this.server_box_public_key = data.server_box_public_key
+		this.key_data = data.key_data
 	}
 
 	self.exportSystem = function(): any {
@@ -542,7 +558,10 @@ export function New(self: Profile): Profile {
 			return ""
 		}
 
-		if (Constants.platform === "darwin") {
+		if (this.key_data) {
+			let decKeyData = await MiscUtils.decryptString(this.key_data)
+			data += decKeyData
+		} else if (Constants.platform === "darwin") {
 			let resp = await MiscUtils.exec(
 				"/usr/bin/security",
 				"find-generic-password",
@@ -593,7 +612,7 @@ export function New(self: Profile): Profile {
 		return new Promise<void>((resolve): void => {
 			let profilePath = this.dataPath()
 
-			this.extractKey(data).then((newData: string): void => {
+			this.encryptKey(data).then((newData: string): void => {
 				fs.writeFile(
 					profilePath, newData,
 					(err: NodeJS.ErrnoException): void => {
