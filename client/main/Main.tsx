@@ -6,6 +6,7 @@ import electron from "electron"
 import * as Utils from "./Utils";
 import * as Service from "./Service"
 import Config from "./Config"
+import * as Errors from "../app/Errors";
 
 let tray: electron.Tray
 let awaken: boolean
@@ -181,6 +182,24 @@ class Main {
 				} else if (msg === "download-update") {
 					Utils.openLink("https://client.pritunl.com/#install")
 				}
+			},
+		)
+
+		electron.ipcMain.handle(
+			"processing",
+			(evt: electron.IpcMainEvent, msg: string, data: string) => {
+				if (msg === "encrypt") {
+					let encData = electron.safeStorage.encryptString(
+						data).toString("base64")
+					return [null, encData]
+				} else if (msg === "decrypt") {
+					let encData = new Buffer(data, "base64")
+					let decData = electron.safeStorage.decryptString(
+						encData)
+					return [null, decData]
+				}
+				let err = new Errors.ParseError(null, "Main: Unknown handler type");
+				return [err, null]
 			},
 		)
 
