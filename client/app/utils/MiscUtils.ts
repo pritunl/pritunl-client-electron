@@ -3,6 +3,7 @@ import * as Errors from "../Errors"
 import fs from "fs";
 import tar from "tar";
 import childProcess from "child_process";
+import electron from "electron";
 
 export function uuid(): string {
 	return (+new Date() + Math.floor(Math.random() * 999999)).toString(36);
@@ -483,6 +484,66 @@ export function fileWrite(path: string, data: string): Promise<void> {
 				resolve()
 			},
 		)
+	})
+}
+
+export function encryptString(decData: string): Promise<string> {
+	return new Promise<string>((resolve, reject): void => {
+		try {
+			let evt = electron.ipcRenderer.invoke("processing", "encrypt", decData)
+
+			evt.then((resp: [Error, string]) => {
+				if (!resp) {
+					let err = new Errors.ParseError(
+						null, "Utils: Failed to encrypt string e1");
+					reject(err)
+				} else if (resp[0]) {
+					let err = new Errors.ParseError(
+						resp[0], "Utils: Failed to encrypt string e2");
+					reject(err)
+				} else {
+					resolve(resp[1])
+				}
+			}).catch((err) => {
+				err = new Errors.ParseError(
+					err, "Utils: Failed to encrypt string e3");
+				reject(err)
+			})
+		} catch (err) {
+			err = new Errors.ParseError(
+				err, "Utils: Failed to encrypt string e4");
+			reject(err)
+		}
+	})
+}
+
+export function decryptString(encData: string): Promise<string> {
+	return new Promise<string>((resolve, reject): void => {
+		try {
+			let evt = electron.ipcRenderer.invoke("processing", "decrypt", encData)
+
+			evt.then((resp: [Error, string]) => {
+				if (!resp) {
+					let err = new Errors.ParseError(
+						null, "Utils: Failed to decrypt string e1");
+					reject(err)
+				} else if (resp[0]) {
+					let err = new Errors.ParseError(
+						resp[0], "Utils: Failed to decrypt string e2");
+					reject(err)
+				} else {
+					resolve(resp[1])
+				}
+			}).catch((err) => {
+				err = new Errors.ParseError(
+					err, "Utils: Failed to decrypt string e3");
+				reject(err)
+			})
+		} catch (err) {
+			err = new Errors.ParseError(
+				err, "Utils: Failed to decrypt string e4");
+			reject(err)
+		}
 	})
 }
 
