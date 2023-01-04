@@ -5,6 +5,7 @@ import * as ServiceActions from "../actions/ServiceActions"
 import * as Blueprint from "@blueprintjs/core"
 import * as Constants from "../Constants"
 import PageInput from "./PageInput";
+import * as Logger from "../Logger";
 
 interface Props {
 	profile: ProfileTypes.ProfileRo
@@ -234,6 +235,11 @@ export default class ProfileConnect extends React.Component<Props, State> {
 				disabled: false,
 			})
 			return
+		}
+
+		if (!prfl.system && !prfl.key_data) {
+			Logger.info("Profiles: Encrypting profile '" + prfl.id + "'")
+			await prfl.writeData(data)
 		}
 
 		let serverPubKey = ""
