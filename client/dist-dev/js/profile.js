@@ -28,6 +28,7 @@ function Profile(systemPrfl, pth) {
   }
 
   this.data = null;
+  this.keyData = null;
   this.name = null;
   this.state = null;
   this.uvName = null;
@@ -353,6 +354,7 @@ Profile.prototype.import = function(data) {
   this.syncToken = data.sync_token || null;
   this.serverPublicKey = data.server_public_key || null;
   this.serverBoxPublicKey = data.server_box_public_key || null;
+  this.keyData = data.key_data || this.keyData;
 };
 
 Profile.prototype.upsert = function(data) {
@@ -402,7 +404,8 @@ Profile.prototype.exportConf = function() {
     sync_secret: this.syncSecret,
     sync_token: this.syncToken,
     server_public_key: this.serverPublicKey,
-    server_box_public_key: this.serverBoxPublicKey
+    server_box_public_key: this.serverBoxPublicKey,
+    key_data: this.keyData
   };
 };
 
@@ -591,26 +594,24 @@ Profile.prototype.saveData = function(callback) {
       service.sprofilePut(data);
     }.bind(this));
   } else {
-    if (os.platform() === 'darwin') {
-      this.extractKey(this.data);
-    }
-
-    fs.writeFile(
-      this.ovpnPath,
-      this.data,
-      {mode: 0o600},
-      function(err) {
-        if (err) {
-          err = new errors.WriteError(
-            'config: Failed to save profile data (%s)', err);
-          logger.error(err);
-        }
-        this.parseData();
-        if (callback) {
-          callback(err);
-        }
-      }.bind(this)
-    );
+    this.encryptKey(function() {
+      fs.writeFile(
+        this.ovpnPath,
+        this.data,
+        {mode: 0o600},
+        function(err) {
+          if (err) {
+            err = new errors.WriteError(
+              'config: Failed to save profile data (%s)', err);
+            logger.error(err);
+          }
+          this.parseData();
+          if (callback) {
+            callback(err);
+          }
+        }.bind(this)
+      );
+    }.bind(this));
   }
 };
 
@@ -765,7 +766,7 @@ Profile.prototype.delete = function() {
   }.bind(this));
 };
 
-Profile.prototype.extractKey = function() {
+Profile.prototype.encryptKey = function(callback) {
   var sIndex;
   var eIndex;
   var keyData = '';
@@ -787,49 +788,89 @@ Profile.prototype.extractKey = function() {
   }
 
   if (!keyData) {
-    return;
-  }
-
-  keyData = new Buffer(keyData).toString('base64');
-
-  if (os.platform() === 'darwin') {
-    // -U not working
-    childProcess.exec(
-      '/usr/bin/security delete-generic-password -s pritunl -a ' +
-      this.id, function () {
+    if (Constants.platform === "darwin") {
       childProcess.exec(
-        '/usr/bin/security add-generic-password -U -s pritunl -a ' +
-        this.id + ' -w ' + keyData + ' login-keychain',
-        function (err, stdout, stderr) {
+        '/usr/bin/security find-generic-password -w -s pritunl -a ' +
+        this.id, function(err, stdout, stderr) {
           if (err) {
             err = new errors.ProcessError(
-              'profile: Failed to add key to keychain (%s)', stderr);
+              'profile: Failed to get key from keychain (%s)', stderr);
             logger.error(err);
+            callback();
+            return;
           }
+
+          stdout = new Buffer(stdout.replace('\n', ''), 'base64').toString();
+
+          utils.encryptString(stdout, function(err, encData) {
+            if (encData) {
+              this.keyData = encData;
+              this.saveConf(function() {
+                if (os.platform() === 'darwin') {
+                  childProcess.exec(
+                    '/usr/bin/security delete-generic-password ' +
+                    '-s pritunl -a ' + this.id, function() {}.bind(this));
+                }
+
+                callback();
+              })
+            } else {
+              callback();
+            }
+          }.bind(this));
         }.bind(this));
-    }.bind(this));
+      return
+    } else {
+      callback();
+    }
+    return
   }
+
+  utils.encryptString(keyData, function(err, encData) {
+    if (encData) {
+      if (encData) {
+        this.keyData = encData;
+        this.saveConf(function() {
+          callback()
+        });
+      } else {
+        callback();
+      }
+    }
+  }.bind(this));
 };
 
 Profile.prototype.getFullData = function(callback) {
-  if (this.systemPrfl || os.platform() !== 'darwin') {
+  if (this.systemPrfl) {
     callback(this.data);
-    return;
-  }
-
-  childProcess.exec(
-    '/usr/bin/security find-generic-password -w -s pritunl -a ' +
-    this.id, function(err, stdout, stderr) {
+  } else if (this.keyData) {
+    utils.decryptString(this.keyData, function(err, decData) {
       if (err) {
-        err = new errors.ProcessError(
-          'profile: Failed to get key from keychain (%s)', stderr);
+        err = new errors.ParseError(
+          'profile: Failed to decrypt key (%s)', err);
         logger.error(err);
         return;
       }
 
-      stdout = new Buffer(stdout.replace('\n', ''), 'base64').toString();
-      callback(this.data + stdout);
+      callback(this.data + decData);
     }.bind(this));
+  } else if (os.platform() === 'darwin') {
+    childProcess.exec(
+      '/usr/bin/security find-generic-password -w -s pritunl -a ' +
+      this.id, function(err, stdout, stderr) {
+        if (err) {
+          err = new errors.ProcessError(
+            'profile: Failed to get key from keychain (%s)', stderr);
+          logger.error(err);
+          return;
+        }
+
+        stdout = new Buffer(stdout.replace('\n', ''), 'base64').toString();
+        callback(this.data + stdout);
+      }.bind(this));
+  } else {
+    callback(this.data);
+  }
 };
 
 Profile.prototype.getAuthType = function() {
@@ -1093,6 +1134,29 @@ Profile.prototype.auth = function(mode, timeout, callback, connCallback) {
 
 Profile.prototype._auth = function(authType, mode, timeout,
     callback, connCallback) {
+
+  if (!this.systemPrfl && !this.keyData) {
+    logger.info("Profiles: Encrypting profile '" + this.id + "'");
+
+    this.saveData(function() {
+      if (!authType) {
+        if (callback) {
+          callback(null, null);
+        }
+        service.start(this, mode, timeout, this.serverPublicKey,
+          this.serverBoxPublicKey, null, null, connCallback);
+      } else if (!callback) {
+      } else {
+        callback(authType, function(user, pass) {
+          service.start(this, mode, timeout, this.serverPublicKey,
+            this.serverBoxPublicKey, user || 'pritunl', pass, connCallback);
+        }.bind(this));
+      }
+    }.bind(this));
+
+    return
+  }
+
   if (!authType) {
     if (callback) {
       callback(null, null);

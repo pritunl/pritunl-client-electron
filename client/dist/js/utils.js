@@ -1,5 +1,6 @@
 var request = require('request');
 var crypto = require('crypto');
+var ipcRenderer = require('electron').ipcRenderer;
 
 var uuid = function() {
   var id = '';
@@ -105,10 +106,43 @@ WaitGroup.prototype.wait = function(callback) {
   }
 };
 
+var encryptString = function(decData, callback) {
+  ipcRenderer.invoke("processing", "encrypt", decData).then(function(resp) {
+    var err;
+    if (!resp) {
+      err = new errors.ParseError(
+        'utils: Failed to encrypt string');
+      logger.error(err);
+      callback(err, null)
+    } else if (resp[0]) {
+      err = new errors.ParseError(
+        'utils: Failed to encrypt string (%s)', resp[0]);
+      logger.error(err);
+      callback(err, null)
+    } else {
+      callback(null, resp[1])
+    }
+  })
+};
+
+var decryptString = function(encData, callback) {
+  ipcRenderer.invoke("processing", "decrypt", encData).then(function(resp) {
+    if (!resp) {
+      callback("Failed to decrypt string", null)
+    } else if (resp[0]) {
+      callback(resp[0], null)
+    } else {
+      callback(null, resp[1])
+    }
+  })
+};
+
 module.exports = {
   uuid: uuid,
   time: time,
   getUserDataPath: getUserDataPath,
   authRequest: authRequest,
-  WaitGroup: WaitGroup
+  WaitGroup: WaitGroup,
+  encryptString: encryptString,
+  decryptString: decryptString
 };
