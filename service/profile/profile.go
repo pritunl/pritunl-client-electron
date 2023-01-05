@@ -1568,6 +1568,8 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 		}
 	}()
 
+	startTime := time.Now()
+
 	err = cmd.Start()
 	if err != nil {
 		err = &ExecError{
@@ -1600,6 +1602,10 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 					"error": err,
 				}).Error("profile: Failed to restore DNS")
 			}
+		}
+
+		if time.Since(startTime) < 8*time.Second {
+			time.Sleep(8*time.Second - time.Since(startTime))
 		}
 
 		if !p.stop {
