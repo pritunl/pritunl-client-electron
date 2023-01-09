@@ -51,6 +51,8 @@ func ProfilePushLog(prflId string, output string) (err error) {
 	}
 
 	if stat.Size() >= 200000 {
+		file.Close()
+
 		os.Remove(logPth2)
 		err = os.Rename(logPth1, logPth2)
 		if err != nil {
@@ -60,7 +62,6 @@ func ProfilePushLog(prflId string, output string) (err error) {
 			return
 		}
 
-		file.Close()
 		file, err = os.OpenFile(logPth1,
 			os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
 		if err != nil {
