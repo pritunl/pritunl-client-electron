@@ -4,6 +4,7 @@ Pritunl Client Changelog
 <%= version %>
 
 Add disable reconnection option
+Use safe storage for profile keys
 
 Version 1.3.3373.6 2022-12-07
 -----------------------------
