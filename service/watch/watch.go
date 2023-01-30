@@ -9,6 +9,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/pritunl/pritunl-client-electron/service/config"
 	"github.com/pritunl/pritunl-client-electron/service/profile"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
 	"github.com/sirupsen/logrus"
@@ -219,6 +220,14 @@ func dnsWatch() {
 }
 
 func StartWatch() {
-	go wakeWatch()
-	go dnsWatch()
+	if config.Config.DisableWakeWatch {
+		logrus.Info("watch: Wake watch disabled")
+	} else {
+		go wakeWatch()
+	}
+	if config.Config.DisableDnsWatch {
+		logrus.Info("watch: DNS watch disabled")
+	} else {
+		go dnsWatch()
+	}
 }
