@@ -22,6 +22,7 @@ type ConfigData struct {
 	loaded           bool   `json:"-"`
 	DisableDnsWatch  bool   `json:"disable_dns_watch"`
 	DisableWakeWatch bool   `json:"disable_wake_watch"`
+	DisableNetClean  bool   `json:"disable_net_clean"`
 }
 
 func (c *ConfigData) Save() (err error) {
