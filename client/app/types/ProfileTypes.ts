@@ -898,20 +898,12 @@ export function New(self: Profile): Profile {
 			return this.password_mode || null;
 		}
 
-		let n = data.indexOf("auth-user-pass")
-
-		if (n !== -1) {
-			let authStr = this.data.substring(n, this.data.indexOf("\n", n))
-			authStr = authStr.split(" ")
-			if (authStr.length > 1 && authStr[1]) {
-				return null
-			}
-
+		if (data.indexOf("auth-user-pass") !== -1) {
 			if (this.user) {
 				return "otp"
-			} else {
-				return "username_password"
 			}
+
+			return "username_password"
 		} else {
 			return null
 		}
