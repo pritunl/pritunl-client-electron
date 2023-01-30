@@ -60,6 +60,67 @@ process.on("unhandledRejection", function (error) {
 	})
 })
 
+electron.ipcMain.handle(
+	"processing",
+	(evt: electron.IpcMainEvent, msg: string, data: string) => {
+		if (msg === "encrypt") {
+			let encData = electron.safeStorage.encryptString(
+				data).toString("base64")
+			return [null, encData]
+		} else if (msg === "decrypt") {
+			let encData = new Buffer(data, "base64")
+			let decData = electron.safeStorage.decryptString(
+				encData)
+			return [null, decData]
+		}
+		let err = new Errors.ParseError(null, "Main: Unknown handler type");
+		return [err, null]
+	},
+)
+
+electron.ipcMain.on(
+	"control",
+	(evt: electron.IpcMainEvent, msg: string, data: string) => {
+		if (msg === "service-auth-error") {
+			electron.dialog.showMessageBox(null, {
+				type: "error",
+				buttons: ["Exit"],
+				title: "Pritunl - Service Error (4827)",
+				message: "Failed to load service key. Restart " +
+					"computer and verify background service is running",
+			}).then(function() {
+				electron.app.quit()
+			})
+		} else if (msg === "service-conn-error") {
+			electron.dialog.showMessageBox(null, {
+				type: "error",
+				buttons: ["Exit"],
+				title: "Pritunl - Service Error (2754)",
+				message: "Unable to establish communication with " +
+					"background service, try restarting computer",
+			}).then(function() {
+				electron.app.quit()
+			})
+		} else if (msg === "dev-tools") {
+			if (main && main.window) {
+				main.window.webContents.openDevTools({
+					"mode": "undocked",
+				})
+			}
+		} else if (msg === "reload") {
+			if (main && main.window) {
+				main.window.reload()
+			}
+		} else if (msg === "minimize") {
+			if (main && main.window) {
+				main.window.minimize()
+			}
+		} else if (msg === "download-update") {
+			Utils.openLink("https://client.pritunl.com/#install")
+		}
+	},
+)
+
 Service.wakeup().then((awake: boolean) => {
 	awaken = awake
 	if (ready) {
@@ -148,61 +209,6 @@ class Main {
 			}
 		})
 
-		electron.ipcMain.on(
-			"control",
-			(evt: electron.IpcMainEvent, msg: string, data: string) => {
-				if (msg === "service-auth-error") {
-					electron.dialog.showMessageBox(null, {
-						type: "error",
-						buttons: ["Exit"],
-						title: "Pritunl - Service Error (4827)",
-						message: "Failed to load service key. Restart " +
-							"computer and verify background service is running",
-					}).then(function() {
-						electron.app.quit()
-					})
-				} else if (msg === "service-conn-error") {
-					electron.dialog.showMessageBox(null, {
-						type: "error",
-						buttons: ["Exit"],
-						title: "Pritunl - Service Error (2754)",
-						message: "Unable to establish communication with " +
-							"background service, try restarting computer",
-					}).then(function() {
-						electron.app.quit()
-					})
-				} else if (msg === "dev-tools") {
-					this.window.webContents.openDevTools({
-						"mode": "undocked",
-					})
-				} else if (msg === "reload") {
-					this.window.reload()
-				} else if (msg === "minimize") {
-					this.window.minimize()
-				} else if (msg === "download-update") {
-					Utils.openLink("https://client.pritunl.com/#install")
-				}
-			},
-		)
-
-		electron.ipcMain.handle(
-			"processing",
-			(evt: electron.IpcMainEvent, msg: string, data: string) => {
-				if (msg === "encrypt") {
-					let encData = electron.safeStorage.encryptString(
-						data).toString("base64")
-					return [null, encData]
-				} else if (msg === "decrypt") {
-					let encData = new Buffer(data, "base64")
-					let decData = electron.safeStorage.decryptString(
-						encData)
-					return [null, decData]
-				}
-				let err = new Errors.ParseError(null, "Main: Unknown handler type");
-				return [err, null]
-			},
-		)
-
 		this.window.on("close", (): void => {
 			try {
 				windowSize = this.window.getSize()
@@ -210,7 +216,6 @@ class Main {
 		})
 
 		this.window.on("closed", async (): Promise<void> => {
-			electron.ipcMain.removeAllListeners("control")
 			main = null
 		})
 
