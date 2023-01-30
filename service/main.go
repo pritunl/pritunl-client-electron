@@ -117,12 +117,16 @@ func main() {
 	}
 
 	if runtime.GOOS == "windows" {
-		err = tuntap.Clean()
-		if err != nil {
-			logrus.WithFields(logrus.Fields{
-				"error": err,
-			}).Error("main: Failed to clear interfaces")
-			err = nil
+		if config.Config.DisableNetClean {
+			logrus.Info("main: Network clean disabled")
+		} else {
+			err = tuntap.Clean()
+			if err != nil {
+				logrus.WithFields(logrus.Fields{
+					"error": err,
+				}).Error("main: Failed to clear interfaces")
+				err = nil
+			}
 		}
 	}
 
