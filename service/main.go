@@ -18,6 +18,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/pritunl/pritunl-client-electron/service/auth"
 	"github.com/pritunl/pritunl-client-electron/service/autoclean"
+	"github.com/pritunl/pritunl-client-electron/service/config"
 	"github.com/pritunl/pritunl-client-electron/service/constants"
 	"github.com/pritunl/pritunl-client-electron/service/errortypes"
 	"github.com/pritunl/pritunl-client-electron/service/handlers"
@@ -52,7 +53,12 @@ func main() {
 		constants.Development = true
 	}
 
-	err := utils.PidInit()
+	err := config.Load()
+	if err != nil {
+		panic(err)
+	}
+
+	err = utils.PidInit()
 	if err != nil {
 		panic(err)
 	}
