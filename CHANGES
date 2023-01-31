@@ -1,6 +1,10 @@
 Pritunl Client Changelog
 ========================
 
+<%= version %>
+
+Fix startup issue
+
 Version 1.3.3420.31 2023-01-23
 ------------------------------
 
