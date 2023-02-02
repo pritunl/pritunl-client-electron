@@ -73,7 +73,6 @@ electron.ipcMain.handle(
 				encData)
 			return [null, decData]
 		} else if (msg === "encryptable") {
-			return [null, false]
 			return [null, electron.safeStorage.isEncryptionAvailable()]
 		}
 		let err = new Errors.ParseError(null, "Main: Unknown handler type");
