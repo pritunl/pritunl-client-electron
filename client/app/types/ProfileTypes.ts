@@ -269,6 +269,11 @@ export function New(self: Profile): Profile {
 	}
 
 	self.encryptKey = async function(data: string): Promise<string> {
+		let encryptionAvailable = await MiscUtils.encryptAvailable()
+		if (!encryptionAvailable) {
+			return data
+		}
+
 		let sIndex: number
 		let eIndex: number
 		let keyData = ""
