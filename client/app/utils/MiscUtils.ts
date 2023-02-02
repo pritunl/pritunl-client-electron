@@ -487,6 +487,36 @@ export function fileWrite(path: string, data: string): Promise<void> {
 	})
 }
 
+export function encryptAvailable(): Promise<boolean> {
+	return new Promise<boolean>((resolve, reject): void => {
+		try {
+			let evt = electron.ipcRenderer.invoke("processing", "encryptable")
+
+			evt.then((resp: [Error, boolean]) => {
+				if (!resp) {
+					let err = new Errors.ParseError(
+						null, "Utils: Failed to check encryption support e1");
+					reject(err)
+				} else if (resp[0]) {
+					let err = new Errors.ParseError(
+						resp[0], "Utils: Failed to check encryption support e2");
+					reject(err)
+				} else {
+					resolve(resp[1])
+				}
+			}).catch((err) => {
+				err = new Errors.ParseError(
+					err, "Utils: Failed to check encryption support e3");
+				reject(err)
+			})
+		} catch (err) {
+			err = new Errors.ParseError(
+				err, "Utils: Failed to check encryption support e4");
+			reject(err)
+		}
+	})
+}
+
 export function encryptString(decData: string): Promise<string> {
 	return new Promise<string>((resolve, reject): void => {
 		try {
