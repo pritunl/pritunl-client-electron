@@ -201,14 +201,36 @@ export class Request {
 				}
 
 				req.on("timeout", () => {
-					let err = new Errors.RequestError(null, "Request: Timeout error")
+					let err = new Errors.RequestError(
+						null,
+						"Request: Timeout error",
+						{
+							ssl: this.ssl,
+							hostname: this.hostname,
+							port: this.port,
+							method: this.method,
+							path: this.path,
+							ttl: this.ttl,
+						},
+					)
 					req.destroy(err)
 					Logger.error(err)
 					reject(err)
 				})
 
 				req.on("error", (err) => {
-					err = new Errors.RequestError(err, "Request: Client error")
+					err = new Errors.RequestError(
+						err,
+						"Request: Client error",
+						{
+							ssl: this.ssl,
+							hostname: this.hostname,
+							port: this.port,
+							method: this.method,
+							path: this.path,
+							ttl: this.ttl,
+						},
+					)
 					Logger.error(err)
 					reject(err)
 				})
@@ -219,7 +241,18 @@ export class Request {
 
 				req.end()
 			} catch (err) {
-				err = new Errors.RequestError(err, "Request: Exception")
+				err = new Errors.RequestError(
+					err,
+					"Request: Exception",
+					{
+						ssl: this.ssl,
+						hostname: this.hostname,
+						port: this.port,
+						method: this.method,
+						path: this.path,
+						ttl: this.ttl,
+					},
+				)
 				Logger.error(err)
 				reject(err)
 			}
