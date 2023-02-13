@@ -39,7 +39,7 @@ func Update(profile, pubKey, pubBoxKey string, ttl int) (
 
 	tokn.Ttl = ttl
 
-	err = tokn.Update()
+	_, err = tokn.Update()
 	if err != nil {
 		return
 	}
