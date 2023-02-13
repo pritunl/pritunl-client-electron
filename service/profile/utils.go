@@ -363,7 +363,7 @@ func RestartProfiles(resetNet bool) (err error) {
 
 	for _, prfl := range prfls2 {
 		if prfl.Reconnect {
-			err = prfl.Start(false, true)
+			err = prfl.Start(false, true, true)
 			if err != nil {
 				return
 			}
@@ -395,7 +395,7 @@ func SyncSystemProfiles() (err error) {
 				waiter.Add(1)
 
 				go func() {
-					err = prfl.Start(false, false)
+					err = prfl.Start(false, false, false)
 					if err != nil {
 						logrus.WithFields(logrus.Fields{
 							"profile_id": prfl.Id,
@@ -416,7 +416,7 @@ func SyncSystemProfiles() (err error) {
 					curPrfl.Stop()
 
 					prfl := ImportSystemProfile(sPrfl)
-					err = prfl.Start(false, false)
+					err = prfl.Start(false, false, false)
 					if err != nil {
 						logrus.WithFields(logrus.Fields{
 							"profile_id": curPrfl.Id,

@@ -199,6 +199,7 @@ type Profile struct {
 	startWaitLock   sync.Mutex   `json:"-"`
 	startWaitClosed bool         `json:"-"`
 	parsedPrfl      *parser.Ovpn `json:"-"`
+	automatic       bool         `json:"-"`
 
 	wgQuickLock        sync.Mutex         `json:"-"`
 	startTime          time.Time          `json:"-"`
@@ -525,8 +526,18 @@ func (p *Profile) writeAuth(fwToken string) (pth string, err error) {
 
 		authToken := ""
 		if tokn != nil {
-			err = tokn.Update()
-			if err != nil {
+			expired, e := tokn.Update()
+			if e != nil {
+				err = e
+				return
+			}
+
+			if expired && p.automatic {
+				logrus.WithFields(logrus.Fields{
+					"profile_id": p.Id,
+				}).Info("profile: Token expired, reconnect cancelled")
+
+				p.stopSafe()
 				return
 			}
 
@@ -585,8 +596,18 @@ func (p *Profile) writeAuth(fwToken string) (pth string, err error) {
 
 		authToken := ""
 		if tokn != nil {
-			err = tokn.Update()
-			if err != nil {
+			expired, e := tokn.Update()
+			if e != nil {
+				err = e
+				return
+			}
+
+			if expired && p.automatic {
+				logrus.WithFields(logrus.Fields{
+					"profile_id": p.Id,
+				}).Info("profile: Token expired, reconnect cancelled")
+
+				p.stopSafe()
 				return
 			}
 
@@ -1155,7 +1176,7 @@ func (p *Profile) Init() {
 	p.startWait = make(chan error, 3)
 }
 
-func (p *Profile) Start(timeout bool, delay bool) (err error) {
+func (p *Profile) Start(timeout, delay, automatic bool) (err error) {
 	defer func() {
 		p.setStartWait(err)
 	}()
@@ -1167,6 +1188,7 @@ func (p *Profile) Start(timeout bool, delay bool) (err error) {
 	start := time.Now()
 	p.startTime = start
 	p.remPaths = []string{}
+	p.automatic = automatic
 
 	p.Status = "connecting"
 	stateLock.Lock()
@@ -1823,6 +1845,11 @@ func (p *Profile) openOvpn() (data *OvpnData, err error) {
 		return
 	}
 
+	if p.stop {
+		p.stopSafe()
+		return
+	}
+
 	return
 }
 
@@ -1853,8 +1880,18 @@ func (p *Profile) reqOvpn(remote, ssoToken string, ssoStart time.Time) (
 	authToken := ""
 	hasAuthToken := false
 	if tokn != nil {
-		err = tokn.Update()
-		if err != nil {
+		expired, e := tokn.Update()
+		if e != nil {
+			err = e
+			return
+		}
+
+		if expired && p.automatic {
+			logrus.WithFields(logrus.Fields{
+				"profile_id": p.Id,
+			}).Info("profile: Token expired, reconnect cancelled")
+
+			p.stopSafe()
 			return
 		}
 
@@ -2142,6 +2179,11 @@ func (p *Profile) reqOvpn(remote, ssoToken string, ssoStart time.Time) (
 		return
 	}
 
+	if p.stop {
+		p.stopSafe()
+		return
+	}
+
 	ovpnResp := &KeyResp{}
 	err = json.NewDecoder(res.Body).Decode(&ovpnResp)
 	if err != nil {
@@ -2176,6 +2218,11 @@ func (p *Profile) reqOvpn(remote, ssoToken string, ssoStart time.Time) (
 	} else if ssoToken != "" {
 		p.Status = "connecting"
 		p.update()
+	}
+
+	if p.stop {
+		p.stopSafe()
+		return
 	}
 
 	respHashFunc := hmac.New(sha512.New, []byte(p.SyncSecret))
@@ -2259,8 +2306,18 @@ func (p *Profile) reqWg(remote, ssoToken string, ssoStart time.Time) (
 	authToken := ""
 	hasAuthToken := false
 	if tokn != nil {
-		err = tokn.Update()
-		if err != nil {
+		expired, e := tokn.Update()
+		if e != nil {
+			err = e
+			return
+		}
+
+		if expired && p.automatic {
+			logrus.WithFields(logrus.Fields{
+				"profile_id": p.Id,
+			}).Info("profile: Token expired, reconnect cancelled")
+
+			p.stopSafe()
 			return
 		}
 
@@ -2549,6 +2606,11 @@ func (p *Profile) reqWg(remote, ssoToken string, ssoStart time.Time) (
 		return
 	}
 
+	if p.stop {
+		p.stopSafe()
+		return
+	}
+
 	wgResp := &KeyResp{}
 	err = json.NewDecoder(res.Body).Decode(wgResp)
 	if err != nil {
@@ -2583,6 +2645,11 @@ func (p *Profile) reqWg(remote, ssoToken string, ssoStart time.Time) (
 	} else if ssoToken != "" {
 		p.Status = "connecting"
 		p.update()
+	}
+
+	if p.stop {
+		p.stopSafe()
+		return
 	}
 
 	respHashFunc := hmac.New(sha512.New, []byte(p.SyncSecret))
@@ -3953,7 +4020,7 @@ func (p *Profile) Restart() {
 	p.waiters = []chan bool{}
 	stateLock.Unlock()
 
-	err = prflCopy.Start(false, false)
+	err = prflCopy.Start(false, false, true)
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
 			"error": err,
