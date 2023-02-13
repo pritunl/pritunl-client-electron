@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"sort"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -40,8 +41,11 @@ func Configure() (err error) {
 
 	metric := config.Config.InterfaceMetric
 
+	metricStr := ""
 	if metric == 0 {
-		return
+		metricStr = "automatic"
+	} else {
+		metricStr = strconv.Itoa(metric)
 	}
 
 	size := Size()
@@ -56,17 +60,17 @@ func Configure() (err error) {
 	for i := 0; i < size; i++ {
 		_, _ = utils.ExecInputOutputCombindLogged(
 			fmt.Sprintf(
-				"interface ipv4 set interface \"Pritunl %d\" metric=%d",
+				"interface ipv4 set interface \"Pritunl %d\" metric=%s",
 				i+1,
-				metric,
+				metricStr,
 			),
 			pth,
 		)
 		_, _ = utils.ExecInputOutputCombindLogged(
 			fmt.Sprintf(
-				"interface ipv6 set interface \"Pritunl %d\" metric=%d",
+				"interface ipv6 set interface \"Pritunl %d\" metric=%s",
 				i+1,
-				metric,
+				metricStr,
 			),
 			pth,
 		)
