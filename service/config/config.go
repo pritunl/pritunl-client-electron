@@ -23,6 +23,7 @@ type ConfigData struct {
 	DisableDnsWatch  bool   `json:"disable_dns_watch"`
 	DisableWakeWatch bool   `json:"disable_wake_watch"`
 	DisableNetClean  bool   `json:"disable_net_clean"`
+	InterfaceMetric  int    `json:"interface_metric"`
 }
 
 func (c *ConfigData) Save() (err error) {
