@@ -7,6 +7,10 @@ import (
 	"github.com/pritunl/pritunl-client-electron/service/errortypes"
 )
 
+func SystemDirectory() (pth string, err error) {
+	return
+}
+
 func MkdirSecure(pth string) (err error) {
 	if _, err = os.Stat(pth); !os.IsNotExist(err) {
 		err = os.Chown(pth, os.Getuid(), os.Getuid())

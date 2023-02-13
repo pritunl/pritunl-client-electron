@@ -9,6 +9,18 @@ import (
 	"golang.org/x/sys/windows"
 )
 
+func SystemDirectory() (pth string, err error) {
+	pth, err = windows.GetSystemDirectory()
+	if err != nil {
+		err = &errortypes.ReadError{
+			errors.Wrap(err, "platform: Failed to get system directory"),
+		}
+		return
+	}
+
+	return
+}
+
 func MkdirSecure(pth string) (err error) {
 	err = os.MkdirAll(pth, 0755)
 	if err != nil {
