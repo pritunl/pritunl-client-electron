@@ -1285,6 +1285,11 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 		if err != nil {
 			return
 		}
+
+		err = tuntap.Configure()
+		if err != nil {
+			return
+		}
 	}
 
 	fixedRemote := ""
