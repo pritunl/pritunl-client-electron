@@ -19,6 +19,7 @@ type Token struct {
 
 func (t *Token) Init() (err error) {
 	logrus.WithFields(logrus.Fields{
+		"ttl":     t.Profile,
 		"profile": t.Profile,
 	}).Info("token: Token init")
 
@@ -53,8 +54,10 @@ func (t *Token) Reset() (err error) {
 	return
 }
 
-func (t *Token) Update() (err error) {
+func (t *Token) Update() (expired bool, err error) {
 	if utils.SinceAbs(t.Timestamp) > time.Duration(t.Ttl)*time.Second {
+		expired = true
+
 		err = t.Init()
 		if err != nil {
 			return
