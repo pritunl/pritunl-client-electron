@@ -59,6 +59,8 @@ func Register(engine *gin.Engine) {
 	engine.Use(Errors)
 
 	engine.GET("/events", eventsGet)
+	engine.GET("/config", configGet)
+	engine.PUT("/config", configPut)
 	engine.GET("/profile", profileGet)
 	engine.POST("/profile", profilePost)
 	engine.DELETE("/profile", profileDel)
