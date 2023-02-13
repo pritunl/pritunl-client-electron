@@ -5,10 +5,12 @@ import * as Theme from '../Theme';
 import Config from '../Config';
 import * as Constants from '../Constants';
 import * as ProfileActions from '../actions/ProfileActions';
+import * as ConfigActions from '../actions/ConfigActions';
 import ProfileImport from "./ProfileImport";
 import LoadingBar from './LoadingBar';
 import Profiles from './Profiles';
 import Logs from './Logs';
+import ConfigView from './Config';
 import * as Blueprint from "@blueprintjs/core";
 import * as Alert from "../Alert";
 
@@ -265,6 +267,9 @@ export default class Main extends React.Component<{}, State> {
 			case "/logs":
 				page = <Logs/>
 				break
+			case "/config":
+				page = <ConfigView/>
+				break
 		}
 
 		let version = Constants.state.version
@@ -363,6 +368,24 @@ export default class Main extends React.Component<{}, State> {
 				}}
 				onClick={(): void => {
 					Electron.ipcRenderer.send("control", "reload")
+				}}
+			/>
+			<Blueprint.MenuItem
+				text="Advanced Settings"
+				icon="cog"
+				onKeyDown={(evt): void => {
+					if (evt.key === "Enter") {
+						this.setState({
+							...this.state,
+							path: "/config",
+						})
+					}
+				}}
+				onClick={(): void => {
+					this.setState({
+						...this.state,
+						path: "/config",
+					})
 				}}
 			/>
 			<Blueprint.MenuItem
