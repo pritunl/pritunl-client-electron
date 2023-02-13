@@ -96,7 +96,7 @@ func profilePost(c *gin.Context) {
 	prfl.Init()
 
 	go func() {
-		_ = prfl.Start(data.Timeout, false)
+		_ = prfl.Start(data.Timeout, false, false)
 	}()
 
 	err = prfl.StartWait()
