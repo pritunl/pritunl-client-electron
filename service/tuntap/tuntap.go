@@ -2,12 +2,16 @@ package tuntap
 
 import (
 	"fmt"
+	"path"
 	"path/filepath"
+	"runtime"
 	"sort"
 	"strings"
 	"sync"
 	"time"
 
+	"github.com/pritunl/pritunl-client-electron/service/config"
+	"github.com/pritunl/pritunl-client-electron/service/platform"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
 )
 
@@ -27,6 +31,48 @@ func getToolpath() string {
 	}
 
 	return filepath.Join(utils.GetRootDir(), "tuntap", "tapctl.exe")
+}
+
+func Configure() (err error) {
+	if runtime.GOOS != "windows" {
+		return
+	}
+
+	metric := config.Config.InterfaceMetric
+
+	if metric == 0 {
+		return
+	}
+
+	size := Size()
+
+	systemDir, err := platform.SystemDirectory()
+	if err != nil {
+		return
+	}
+
+	pth := path.Join(systemDir, "netsh.exe")
+
+	for i := 0; i < size; i++ {
+		_, _ = utils.ExecInputOutputCombindLogged(
+			fmt.Sprintf(
+				"interface ipv4 set interface \"Pritunl %d\" metric=%d",
+				i+1,
+				metric,
+			),
+			pth,
+		)
+		_, _ = utils.ExecInputOutputCombindLogged(
+			fmt.Sprintf(
+				"interface ipv6 set interface \"Pritunl %d\" metric=%d",
+				i+1,
+				metric,
+			),
+			pth,
+		)
+	}
+
+	return
 }
 
 func Get() (adpaters []string, err error) {
