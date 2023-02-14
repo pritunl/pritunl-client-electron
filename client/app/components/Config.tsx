@@ -114,7 +114,7 @@ export default class Config extends React.Component<{}, State> {
 				<PageSwitch
 					disabled={this.state.disabled}
 					label="Disable device wake watch"
-					help="Disable automatic reconnection when device is resumed from sleep."
+					help="Disable wake watch used for faster reconnections when device is resumed from sleep."
 					checked={!!this.state.config.disable_wake_watch}
 					onToggle={(): void => {
 						this.set("disable_wake_watch",
