@@ -46,7 +46,8 @@ export class Response {
 		try {
 			return JSON.parse(this.data || null)
 		} catch(err) {
-			err = new Errors.ReadError(err, "Request: JSON parse failed")
+			err = new Errors.ReadError(err, "Request: JSON parse failed",
+				{data: this.data})
 			throw err
 		}
 	}
