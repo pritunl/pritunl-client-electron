@@ -1720,6 +1720,8 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 func (p *Profile) openOvpn() (data *OvpnData, err error) {
 	remotesSet := set.NewSet()
 	remotes := []string{}
+	syncRemotesSet := set.NewSet()
+	syncRemotes := []string{}
 
 	ifaces, err := net.Interfaces()
 	if err != nil {
@@ -1806,15 +1808,15 @@ func (p *Profile) openOvpn() (data *OvpnData, err error) {
 
 		remote := syncUrl.Host
 
-		if !remotesSet.Contains(remote) {
-			remotesSet.Add(remote)
-			remotes = append(remotes, remote)
+		if !syncRemotesSet.Contains(remote) {
+			syncRemotesSet.Add(remote)
+			syncRemotes = append(syncRemotes, remote)
 		}
 	}
 
 	final := false
-	for _, i := range mathrand.Perm(len(remotes)) {
-		remote := remotes[i]
+	for _, i := range mathrand.Perm(len(syncRemotes)) {
+		remote := syncRemotes[i]
 
 		data, final, err = p.reqOvpn(remote, "", time.Time{})
 		if err == nil || final {
@@ -1830,6 +1832,27 @@ func (p *Profile) openOvpn() (data *OvpnData, err error) {
 			return
 		}
 	}
+
+	if err != nil {
+		for _, i := range mathrand.Perm(len(remotes)) {
+			remote := remotes[i]
+
+			data, final, err = p.reqOvpn(remote, "", time.Time{})
+			if err == nil || final {
+				break
+			}
+
+			logrus.WithFields(logrus.Fields{
+				"error": err,
+			}).Warn("profile: Request ovpn connection error")
+
+			if p.stop {
+				p.stopSafe()
+				return
+			}
+		}
+	}
+
 	if err != nil {
 		err = nil
 
