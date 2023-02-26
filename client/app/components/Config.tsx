@@ -102,7 +102,7 @@ export default class Config extends React.Component<{}, State> {
 				<PageSwitch
 					disabled={this.state.disabled}
 					label="Disable DNS watch"
-					help="Disable automatic correction of DNS changes if configuration is lost from network change."
+					help="Disable automatic correction of DNS changes if configuration is lost from system network change."
 					checked={!!this.state.config.disable_dns_watch}
 					onToggle={(): void => {
 						this.set("disable_dns_watch",
