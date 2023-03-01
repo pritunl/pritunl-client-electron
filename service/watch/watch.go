@@ -121,20 +121,38 @@ func dnsWatch() {
 	}
 
 	reset := false
-	dnsState := false
+	check := true
+	errorCount := 0
+	lastRefresh := time.Now()
 
 	for {
 		time.Sleep(2 * time.Second)
 
 		if !profile.GetStatus() {
-			if dnsState {
+			if check {
 				err := utils.RestoreScutilDns()
 				if err != nil {
-					logrus.WithFields(logrus.Fields{
-						"error": err,
-					}).Warn("watch: Failed to restore DNS")
+					errorCount += 1
+
+					if errorCount >= 2 {
+						logrus.WithFields(logrus.Fields{
+							"error": err,
+						}).Error("watch: Failed to restore DNS, " +
+							"resetting network")
+
+						utils.ResetNetworking()
+						check = false
+						errorCount = 0
+
+						time.Sleep(5 * time.Second)
+					} else {
+						logrus.WithFields(logrus.Fields{
+							"error": err,
+						}).Warn("watch: Failed to restore DNS")
+					}
 				} else {
-					dnsState = false
+					check = false
+					errorCount = 0
 				}
 			}
 
@@ -143,14 +161,16 @@ func dnsWatch() {
 			continue
 		}
 
+		time.Sleep(1 * time.Second)
+
+		check = true
+		errorCount = 0
 		vpn, _ := utils.GetScutilKey("State", "/Network/Pritunl/DNS")
 		global, _ := utils.GetScutilKey("State", "/Network/Global/DNS")
 
 		if strings.Contains(global, "No such key") {
 			continue
 		}
-
-		dnsState = true
 
 		if strings.Contains(vpn, "No such key") {
 			connIds, err := utils.GetScutilConnIds()
@@ -183,6 +203,19 @@ func dnsWatch() {
 		vpnDomains, vpnAddresses := parseDns(vpn)
 		globalDomains, globalAddresses := parseDns(global)
 
+		if utils.SinceAbs(lastRefresh) > 30*time.Second {
+			lastRefresh = time.Now()
+
+			err := utils.CopyScutilDns("/Network/Pritunl/DNS", true)
+			if err != nil {
+				logrus.WithFields(logrus.Fields{
+					"error": err,
+				}).Error("watch: Failed to refresh DNS settings")
+			}
+
+			continue
+		}
+
 		if !reflect.DeepEqual(vpnAddresses, globalAddresses) {
 			if reset {
 				restartLock.Lock()
@@ -200,7 +233,7 @@ func dnsWatch() {
 						"error": err,
 					}).Error("watch: Failed to backup DNS settings")
 				} else {
-					err = utils.CopyScutilDns("/Network/Pritunl/DNS")
+					err = utils.CopyScutilDns("/Network/Pritunl/DNS", false)
 					if err != nil {
 						logrus.WithFields(logrus.Fields{
 							"error": err,
