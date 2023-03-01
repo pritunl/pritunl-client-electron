@@ -6,6 +6,7 @@ const (
 	upScriptDarwin     = `#!/bin/bash -e
 
 CONN_ID="$(echo ${config} | /sbin/md5)"
+DNS_SERVERS=""
 
 for optionname in ${!foreign_option_*} ; do
   option="${!optionname}"
@@ -14,8 +15,8 @@ for optionname in ${!foreign_option_*} ; do
   if [ "$part1" == "dhcp-option" ] ; then
     part2=$(echo "$option" | cut -d " " -f 2)
     part3=$(echo "$option" | cut -d " " -f 3)
-    if [ "$part2" == "DNS" ] ; then
-      DNS_SERVERS="$DNS_SERVERS $part3"
+    if [ -z "$DNS_SERVERS" ] && [ "$part2" == "DNS" ] ; then
+      DNS_SERVERS="$part3"
     fi
     if [[ "$part2" == "DOMAIN" || "$part2" == "DOMAIN-SEARCH" ]] ; then
       DNS_SEARCH="$DNS_SEARCH $part3"
