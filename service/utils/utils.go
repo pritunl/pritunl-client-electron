@@ -287,7 +287,7 @@ func RestoreScutilDns() (err error) {
 	return
 }
 
-func CopyScutilDns(src string) (err error) {
+func CopyScutilDns(src string, fast bool) (err error) {
 	serviceId, err := GetScutilService()
 	if err != nil {
 		return
@@ -309,7 +309,11 @@ func CopyScutilDns(src string) (err error) {
 		return
 	}
 
-	ClearDNSCache()
+	if fast {
+		ClearDNSCacheFast()
+	} else {
+		ClearDNSCache()
+	}
 
 	return
 }
@@ -612,6 +616,24 @@ func ClearDNSCache() {
 				command.Command("systemd-resolve", "--flush-caches").Run()
 			}
 		}()
+		break
+	default:
+		panic("profile: Not implemented")
+	}
+}
+
+func ClearDNSCacheFast() {
+	switch runtime.GOOS {
+	case "windows":
+		command.Command("ipconfig", "/flushdns").Run()
+		break
+	case "darwin":
+		command.Command("dscacheutil", "-flushcache").Run()
+		command.Command("killall", "-HUP", "mDNSResponder").Run()
+		break
+	case "linux":
+		command.Command("systemd-resolve", "--flush-caches").Run()
+		command.Command("resolvectl", "--flush-caches").Run()
 		break
 	default:
 		panic("profile: Not implemented")
