@@ -1368,7 +1368,8 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 	if runtime.GOOS == "windows" {
 		p.tap = tuntap.Acquire()
 
-		if p.tap != "" {
+		if p.tap == "null" {
+		} else if p.tap != "" {
 			args = append(args, "--dev-node", p.tap)
 		} else {
 			logrus.WithFields(logrus.Fields{
