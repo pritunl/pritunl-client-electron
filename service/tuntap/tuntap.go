@@ -17,9 +17,10 @@ import (
 )
 
 var (
-	curSize  = 0
-	taps     = []string{}
-	tapsLock = sync.Mutex{}
+	curSize      = 0
+	curTotalSize = 0
+	taps         = []string{}
+	tapsLock     = sync.Mutex{}
 )
 
 func getToolpath() string {
@@ -79,7 +80,7 @@ func Configure() (err error) {
 	return
 }
 
-func Get() (adpaters []string, err error) {
+func Get() (adpaters []string, count int, err error) {
 	toolpath := getToolpath()
 
 	output, err := utils.ExecCombinedOutputLogged(
@@ -93,12 +94,14 @@ func Get() (adpaters []string, err error) {
 
 	adpaters = []string{}
 	for _, line := range strings.Split(output, "\n") {
-		if !strings.Contains(strings.ToLower(line), "pritunl") {
+		lines := strings.Fields(line)
+		if len(lines) < 2 {
 			continue
 		}
 
-		lines := strings.Fields(line)
-		if len(lines) < 2 {
+		count += 1
+
+		if !strings.Contains(strings.ToLower(line), "pritunl") {
 			continue
 		}
 
@@ -111,7 +114,7 @@ func Get() (adpaters []string, err error) {
 func Clean() (err error) {
 	toolpath := getToolpath()
 
-	adapters, err := Get()
+	adapters, totalCount, err := Get()
 	if err != nil {
 		return
 	}
@@ -125,9 +128,11 @@ func Clean() (err error) {
 			"delete",
 			adapter,
 		)
+		totalCount -= 1
 	}
 
 	curSize = 0
+	curTotalSize = totalCount
 
 	return
 }
@@ -174,12 +179,29 @@ func Resize(size int) (err error) {
 				"--name", tapName,
 			)
 			if err != nil {
-				_ = Clean()
-				return
+				err = nil
+
+				if size-curTotalSize > 0 {
+					_, err = utils.ExecCombinedOutputLogged(
+						nil,
+						toolpath,
+						"create",
+					)
+					if err != nil {
+						_ = Clean()
+						return
+					}
+
+					curTotalSize += 1
+				}
+
+				time.Sleep(200 * time.Millisecond)
+				continue
 			}
 		}
 
 		curSize += 1
+		curTotalSize += 1
 		taps = append(taps, tapName)
 
 		time.Sleep(200 * time.Millisecond)
@@ -198,14 +220,22 @@ func Acquire() (tap string) {
 	tapsLock.Lock()
 	defer tapsLock.Unlock()
 
-	tap, taps = taps[0], taps[1:]
+	if len(taps) == 0 {
+		tap = "null"
+		return
+	}
 
+	tap, taps = taps[0], taps[1:]
 	return
 }
 
 func Release(tap string) {
 	tapsLock.Lock()
 	defer tapsLock.Unlock()
+
+	if tap == "null" {
+		return
+	}
 
 	taps = append(taps, tap)
 	sort.Strings(taps)
