@@ -577,6 +577,7 @@ func ClearDNSCache() {
 		}()
 		break
 	case "darwin":
+		command.Command("dscacheutil", "-flushcache").Run()
 		command.Command("killall", "-HUP", "mDNSResponder").Run()
 		go func() {
 			defer func() {
@@ -592,6 +593,7 @@ func ClearDNSCache() {
 
 			for i := 0; i < 3; i++ {
 				time.Sleep(1 * time.Second)
+				command.Command("dscacheutil", "-flushcache").Run()
 				command.Command("killall", "-HUP", "mDNSResponder").Run()
 			}
 		}()
