@@ -154,17 +154,15 @@ func main() {
 	}
 
 	go func() {
-		defer func() {
-			recover()
-		}()
-
 		if runtime.GOOS != "linux" && runtime.GOOS != "darwin" {
 			err = server.ListenAndServe()
 			if err != nil {
+				err = &errortypes.WriteError{
+					errors.Wrap(err, "main: Server listen error"),
+				}
 				logrus.WithFields(logrus.Fields{
 					"error": err,
 				}).Error("main: Server error")
-				panic(err)
 			}
 		} else {
 			_ = os.Remove("/var/run/pritunl.sock")
@@ -177,7 +175,6 @@ func main() {
 				logrus.WithFields(logrus.Fields{
 					"error": err,
 				}).Error("main: Server error")
-				panic(err)
 			}
 
 			err = os.Chmod("/var/run/pritunl.sock", 0777)
@@ -188,10 +185,17 @@ func main() {
 				logrus.WithFields(logrus.Fields{
 					"error": err,
 				}).Error("main: Server error")
-				panic(err)
 			}
 
-			server.Serve(listener)
+			err = server.Serve(listener)
+			if err != nil {
+				err = &errortypes.WriteError{
+					errors.Wrap(err, "main: Server listen error"),
+				}
+				logrus.WithFields(logrus.Fields{
+					"error": err,
+				}).Error("main: Server error")
+			}
 		}
 	}()
 
