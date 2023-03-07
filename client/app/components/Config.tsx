@@ -2,12 +2,14 @@
 import * as React from "react"
 import * as ConfigActions from "../actions/ConfigActions"
 import * as ConfigTypes from "../types/ConfigTypes"
+import Config from "../Config"
 import ConfigStore from "../stores/ConfigStore"
 import PageSwitch from "./PageSwitch"
 import PageNumInput from "./PageNumInput"
 
 interface State {
 	config: ConfigTypes.Config
+	safeStorage: boolean
 	changed: boolean
 	disabled: boolean
 }
@@ -28,11 +30,12 @@ const css = {
 	} as React.CSSProperties,
 }
 
-export default class Config extends React.Component<{}, State> {
+export default class ConfigView extends React.Component<{}, State> {
 	constructor(props: any, context: any) {
 		super(props, context);
 		this.state = {
 			config: ConfigStore.config,
+			safeStorage: null,
 			changed: false,
 			disabled: false,
 		};
@@ -84,16 +87,29 @@ export default class Config extends React.Component<{}, State> {
 			disabled: true,
 		})
 
-		ConfigActions.commit(this.state.config).then(() => {
-			this.setState({
-				...this.state,
-				changed: false,
-				disabled: false,
+		if (this.state.safeStorage !== null) {
+			Config.save({
+				safe_storage: this.state.safeStorage,
 			})
-		})
+		}
+
+		if (this.state.config) {
+			ConfigActions.commit(this.state.config).then(() => {
+				this.setState({
+					...this.state,
+					changed: false,
+					disabled: false,
+				})
+			})
+		}
 	}
 
 	render(): JSX.Element {
+		let safeStorage = this.state.safeStorage
+		if (safeStorage === null) {
+			safeStorage = Config.safe_storage
+		}
+
 		return <div className="bp3-card layout vertical flex" style={css.card}>
 			<div className="layout horizontal">
 				<h3 style={css.header}>Advanced Settings</h3>
@@ -131,6 +147,21 @@ export default class Config extends React.Component<{}, State> {
 					onToggle={(): void => {
 						this.set("disable_net_clean",
 							!this.state.config.disable_net_clean)
+					}}
+				/>
+			</div>
+			<div className="layout horizontal">
+				<PageSwitch
+					disabled={this.state.disabled}
+					label="Enable safe storage"
+					help="Enable encryption of profile keys with safe storage. May cause client to become unresponsive or connections to fail."
+					checked={!!safeStorage}
+					onToggle={(): void => {
+						this.setState({
+							...this.state,
+							changed: true,
+							safeStorage: !safeStorage,
+						})
 					}}
 				/>
 			</div>
