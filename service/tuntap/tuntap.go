@@ -163,6 +163,8 @@ func Resize(size int) (err error) {
 			"--name", tapName,
 		)
 		if err != nil {
+			err = nil
+
 			_, _ = utils.ExecCombinedOutputLogged(
 				[]string{
 					"No devices",

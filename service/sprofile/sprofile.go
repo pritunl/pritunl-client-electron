@@ -459,10 +459,7 @@ func (s *Sprofile) syncProfile(host string) (updated bool, err error) {
 	}
 
 	if res.StatusCode != 200 {
-		err = &errortypes.RequestError{
-			errors.Wrapf(err, "profile: Bad status %d code from server",
-				res.StatusCode),
-		}
+		err = utils.LogRequestError(res, "")
 		return
 	}
 

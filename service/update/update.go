@@ -10,6 +10,7 @@ import (
 	"github.com/dropbox/godropbox/errors"
 	"github.com/pritunl/pritunl-client-electron/service/constants"
 	"github.com/pritunl/pritunl-client-electron/service/errortypes"
+	"github.com/pritunl/pritunl-client-electron/service/utils"
 )
 
 var (
@@ -64,10 +65,7 @@ func Check() (err error) {
 	defer res.Body.Close()
 
 	if res.StatusCode != 200 {
-		err = &errortypes.RequestError{
-			errors.Wrapf(err, "update: Bad status %d code from update server",
-				res.StatusCode),
-		}
+		err = utils.LogRequestError(res, "")
 		return
 	}
 

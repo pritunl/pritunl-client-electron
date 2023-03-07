@@ -2196,10 +2196,7 @@ func (p *Profile) reqOvpn(remote, ssoToken string, ssoStart time.Time) (
 	}
 
 	if res.StatusCode != 200 {
-		err = &errortypes.RequestError{
-			errors.Wrapf(err, "profile: Bad status %d code from server",
-				res.StatusCode),
-		}
+		err = utils.LogRequestError(res, "")
 		return
 	}
 
@@ -2623,10 +2620,7 @@ func (p *Profile) reqWg(remote, ssoToken string, ssoStart time.Time) (
 	}
 
 	if res.StatusCode != 200 {
-		err = &errortypes.RequestError{
-			errors.Wrapf(err, "profile: Bad status %d code from server",
-				res.StatusCode),
-		}
+		err = utils.LogRequestError(res, "")
 		return
 	}
 
@@ -2958,10 +2952,7 @@ func (p *Profile) pingWg() (wgData *WgPingData, retry bool, err error) {
 			retry = true
 		}
 
-		err = &errortypes.RequestError{
-			errors.Wrapf(err, "profile: Bad status %d code from server",
-				res.StatusCode),
-		}
+		err = utils.LogRequestError(res, "")
 		return
 	}
 

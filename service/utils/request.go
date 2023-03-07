@@ -15,6 +15,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/render"
 	"github.com/pritunl/pritunl-client-electron/service/errortypes"
+	"github.com/sirupsen/logrus"
 )
 
 var (
@@ -186,13 +187,13 @@ func GetPublicAddress4() (addr4 string, err error) {
 
 	req, err := http.NewRequestWithContext(
 		context.Background(),
-		"POST",
+		"GET",
 		u.String(),
 		nil,
 	)
 	if err != nil {
 		err = &errortypes.RequestError{
-			errors.Wrap(err, "utils: Request put error"),
+			errors.Wrap(err, "utils: Request get error"),
 		}
 		return
 	}
@@ -211,10 +212,7 @@ func GetPublicAddress4() (addr4 string, err error) {
 	}()
 
 	if res.StatusCode != 200 {
-		err = &errortypes.RequestError{
-			errors.Wrapf(err, "utils: Bad status %d code from app4 server",
-				res.StatusCode),
-		}
+		err = LogRequestError(res, "")
 		return
 	}
 
@@ -241,13 +239,13 @@ func GetPublicAddress6() (addr6 string, err error) {
 
 	req, err := http.NewRequestWithContext(
 		context.Background(),
-		"POST",
+		"GET",
 		u.String(),
 		nil,
 	)
 	if err != nil {
 		err = &errortypes.RequestError{
-			errors.Wrap(err, "utils: Request put error"),
+			errors.Wrap(err, "utils: Request get error"),
 		}
 		return
 	}
@@ -266,10 +264,7 @@ func GetPublicAddress6() (addr6 string, err error) {
 	}()
 
 	if res.StatusCode != 200 {
-		err = &errortypes.RequestError{
-			errors.Wrapf(err, "utils: Bad status %d code from app6 server",
-				res.StatusCode),
-		}
+		err = LogRequestError(res, "")
 		return
 	}
 
@@ -283,6 +278,32 @@ func GetPublicAddress6() (addr6 string, err error) {
 	}
 
 	addr6 = data.Ip
+
+	return
+}
+
+func LogRequestError(res *http.Response, message string) (err error) {
+	resBody := ""
+
+	data, err := io.ReadAll(res.Body)
+	if err == nil {
+		resBody = string(data)
+	}
+
+	if message == "" {
+		message = "request: Bad status from server"
+	}
+
+	logrus.WithFields(logrus.Fields{
+		"host":        res.Request.Host,
+		"status_code": res.StatusCode,
+		"body":        resBody,
+	}).Error(message)
+
+	err = &errortypes.RequestError{
+		errors.Wrapf(err, "request: Bad status %d code from server",
+			res.StatusCode),
+	}
 
 	return
 }
