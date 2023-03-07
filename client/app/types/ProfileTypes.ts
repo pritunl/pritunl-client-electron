@@ -8,6 +8,7 @@ import * as ProfileActions from "../actions/ProfileActions"
 import * as ServiceActions from "../actions/ServiceActions"
 import * as Errors from "../Errors"
 import * as Logger from "../Logger"
+import Config from "../Config"
 import path from "path"
 import util from "util"
 import crypto from "crypto"
@@ -68,6 +69,7 @@ export interface Profile {
 	confPath(): string
 	dataPath(): string
 	encryptKey(data: string): Promise<string>
+	extractKey(data: string): Promise<string>
 	exportConf(): string
 	importConf(data: Profile): void
 	exportSystem(): string
@@ -323,12 +325,60 @@ export function New(self: Profile): Profile {
 		await this.writeConf()
 
 		if (Constants.platform === "darwin") {
-			await MiscUtils.exec(
+			MiscUtils.exec(
 				"/usr/bin/security",
 				"delete-generic-password",
 				"-s", "pritunl",
 				"-a", this.id,
 			)
+		}
+
+		return data
+	}
+
+	self.extractKey = async function(data: string): Promise<string> {
+		let sIndex: number
+		let eIndex: number
+		let keyData = ""
+
+		sIndex = data.indexOf("<tls-auth>")
+		eIndex = data.indexOf("</tls-auth>\n")
+		if (sIndex > 0 && eIndex > 0) {
+			keyData += data.substring(sIndex, eIndex + 12)
+		}
+
+		sIndex = data.indexOf("<key>")
+		eIndex = data.indexOf("</key>\n")
+		if (sIndex > 0 &&  eIndex > 0) {
+			keyData += data.substring(sIndex, eIndex + 7)
+		}
+
+		if (!keyData) {
+			if (this.key_data) {
+				return data
+			}
+
+			if (Constants.platform === "darwin") {
+				let resp = await MiscUtils.exec(
+					"/usr/bin/security",
+					"find-generic-password",
+					"-w",
+					"-s", "pritunl",
+					"-a", this.id,
+				)
+
+				if (resp.error) {
+					let err = new Errors.ReadError(resp.error,
+						"Profiles: Failed to get key from keychain")
+					Logger.errorAlert(err)
+					return data
+				}
+
+				data += new Buffer(
+					resp.stdout.replace("\n", ""),
+					"base64",
+				).toString()
+			}
 		}
 
 		return data
@@ -571,25 +621,7 @@ export function New(self: Profile): Profile {
 			let decKeyData = await MiscUtils.decryptString(this.key_data)
 			data += decKeyData
 		} else if (Constants.platform === "darwin") {
-			let resp = await MiscUtils.exec(
-				"/usr/bin/security",
-				"find-generic-password",
-				"-w",
-				"-s", "pritunl",
-				"-a", this.id,
-			)
-
-			if (resp.error) {
-				let err = new Errors.ReadError(resp.error,
-					"Profiles: Failed to get key from keychain")
-				Logger.errorAlert(err)
-				return ""
-			}
-
-			data += new Buffer(
-				resp.stdout.replace("\n", ""),
-				"base64",
-			).toString()
+			data = await this.extractKey(data)
 		}
 
 		return data
@@ -621,24 +653,45 @@ export function New(self: Profile): Profile {
 		return new Promise<void>((resolve): void => {
 			let profilePath = this.dataPath()
 
-			this.encryptKey(data).then((newData: string): void => {
-				fs.writeFile(
-					profilePath, newData,
-					(err: NodeJS.ErrnoException): void => {
-						if (err) {
-							err = new Errors.WriteError(
-								err, "Profiles: Profile write error",
-								{profile_path: profilePath})
-							Logger.errorAlert(err, 10)
+			if (!Config.safe_storage) {
+				this.extractKey(data).then((newData: string): void => {
+					fs.writeFile(
+						profilePath, newData,
+						(err: NodeJS.ErrnoException): void => {
+							if (err) {
+								err = new Errors.WriteError(
+									err, "Profiles: Profile write error",
+									{profile_path: profilePath})
+								Logger.errorAlert(err, 10)
+
+								resolve()
+								return
+							}
 
 							resolve()
-							return
-						}
+						},
+					)
+				})
+			} else {
+				this.encryptKey(data).then((newData: string): void => {
+					fs.writeFile(
+						profilePath, newData,
+						(err: NodeJS.ErrnoException): void => {
+							if (err) {
+								err = new Errors.WriteError(
+									err, "Profiles: Profile write error",
+									{profile_path: profilePath})
+								Logger.errorAlert(err, 10)
 
-						resolve()
-					},
-				)
-			})
+								resolve()
+								return
+							}
+
+							resolve()
+						},
+					)
+				})
+			}
 		})
 	}
 
