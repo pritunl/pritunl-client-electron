@@ -103,7 +103,7 @@ export default class ProfileSettings extends React.Component<Props, State> {
 				prfl.disabled = !this.state.setAutoStart
 			}
 
-			ProfileActions.commit(this.state.profile).then(() => {
+			ProfileActions.commit(prfl).then(() => {
 				if (this.state.setSystem !== null) {
 					this.onSaveSystem()
 				} else {
