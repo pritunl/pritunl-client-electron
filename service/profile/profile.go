@@ -236,6 +236,7 @@ type Profile struct {
 	Password           string             `json:"-"`
 	DynamicFirewall    bool               `json:"-"`
 	DisableGateway     bool               `json:"-"`
+	ForceDns           bool               `json:"-"`
 	SsoAuth            bool               `json:"-"`
 	ServerPublicKey    string             `json:"-"`
 	ServerBoxPublicKey string             `json:"-"`
@@ -1155,6 +1156,7 @@ func (p *Profile) Copy() (prfl *Profile) {
 		Password:           p.Password,
 		DynamicFirewall:    p.DynamicFirewall,
 		DisableGateway:     p.DisableGateway,
+		ForceDns:           p.ForceDns,
 		SsoAuth:            p.SsoAuth,
 		ServerPublicKey:    p.ServerPublicKey,
 		ServerBoxPublicKey: p.ServerBoxPublicKey,
@@ -1208,6 +1210,7 @@ func (p *Profile) Start(timeout, delay, automatic bool) (err error) {
 		"mode":             p.Mode,
 		"dynamic_firewall": p.DynamicFirewall,
 		"disable_gateway":  p.DisableGateway,
+		"force_dns":        p.ForceDns,
 		"sso_auth":         p.SsoAuth,
 		"reconnect":        p.Reconnect,
 	}).Info("profile: Connecting")
