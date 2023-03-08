@@ -203,7 +203,7 @@ func dnsWatch() {
 		vpnDomains, vpnAddresses := parseDns(vpn)
 		globalDomains, globalAddresses := parseDns(global)
 
-		if utils.SinceAbs(lastRefresh) > 30*time.Second {
+		if utils.SinceAbs(lastRefresh) >= 60*time.Second {
 			lastRefresh = time.Now()
 
 			err := utils.CopyScutilDns("/Network/Pritunl/DNS", true)
