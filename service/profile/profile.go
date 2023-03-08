@@ -324,7 +324,11 @@ func (p *Profile) writeUp() (pth string, err error) {
 	script := ""
 	switch runtime.GOOS {
 	case "darwin":
-		script = upScriptDarwin
+		if p.ForceDns {
+			script = upDnsScriptDarwin
+		} else {
+			script = upScriptDarwin
+		}
 		break
 	case "linux":
 		resolved := true
