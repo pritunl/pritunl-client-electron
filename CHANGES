@@ -1,7 +1,8 @@
 Pritunl Client Changelog
 ========================
 
-<%= version %>
+Version 1.3.3464.45 2023-03-08
+------------------------------
 
 Fix connection issues
 
