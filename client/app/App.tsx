@@ -155,11 +155,12 @@ Config.load().then((): void => {
 	}
 
 	Constants.load();
-	Auth.load();
-	Event.init();
+	Auth.load().then((): void => {
+		Event.init();
 
-	ReactDOM.render(
-		<div><Main/></div>,
-		document.getElementById("app"),
-	);
+		ReactDOM.render(
+			<div><Main/></div>,
+			document.getElementById("app"),
+		);
+	});
 });
