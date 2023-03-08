@@ -24,6 +24,7 @@ type sprofileData struct {
 	PreConnectMsg      string   `json:"pre_connect_msg"`
 	DynamicFirewall    bool     `json:"dynamic_firewall"`
 	DisableGateway     bool     `json:"disable_gateway"`
+	ForceDns           bool     `json:"force_dns"`
 	SsoAuth            bool     `json:"sso_auth"`
 	PasswordMode       string   `json:"password_mode"`
 	Token              bool     `json:"token"`
@@ -90,6 +91,7 @@ func sprofilePut(c *gin.Context) {
 		PreConnectMsg:      data.PreConnectMsg,
 		DynamicFirewall:    data.DynamicFirewall,
 		DisableGateway:     data.DisableGateway,
+		ForceDns:           data.ForceDns,
 		SsoAuth:            data.SsoAuth,
 		PasswordMode:       data.PasswordMode,
 		Token:              data.Token,
