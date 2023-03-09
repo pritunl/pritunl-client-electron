@@ -5,7 +5,7 @@ const TerserPlugin = require('terser-webpack-plugin');
 module.exports = {
   mode: 'development',
   target: 'electron-renderer',
-  devtool: 'eval-source-map',
+  devtool: 'source-map',
   entry: {
     app: {
       import: './app/App.js',
