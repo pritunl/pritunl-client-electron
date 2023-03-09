@@ -10,6 +10,7 @@ import PageInfo from "./PageInfo"
 import PageInput from "./PageInput"
 import PageSwitch from "./PageSwitch"
 import * as MiscUtils from "../utils/MiscUtils";
+import * as Constants from "../Constants";
 
 interface Props {
 	profile: ProfileTypes.ProfileRo
@@ -293,6 +294,15 @@ export default class ProfileSettings extends React.Component<Props, State> {
 						checked={!!profile.disable_gateway}
 						onToggle={(): void => {
 							this.set("disable_gateway", !profile.disable_gateway)
+						}}
+					/>
+					<PageSwitch
+						label="Force DNS configuration"
+						help="Configure only one DNS server to correct issues with macOS DNS server priority."
+						hidden={Constants.platform !== "darwin"}
+						checked={!!profile.force_dns}
+						onToggle={(): void => {
+							this.set("force_dns", !profile.force_dns)
 						}}
 					/>
 					<PageInfo
