@@ -13396,6 +13396,7 @@ function init() {
                     main.run();
                 }
                 else if (event.type === "sso_auth") {
+                    openLink(event.data.url);
                 }
             });
         });
