@@ -556,6 +556,56 @@ func ResetNetworking() {
 	}
 }
 
+func ClearDns() {
+	if runtime.GOOS != "darwin" {
+		return
+	}
+
+	logrus.Info("utils: Clearing DNS")
+
+	output, err := ExecCombinedOutputLogged(
+		nil,
+		"/usr/sbin/networksetup",
+		"-listallnetworkservices",
+	)
+	if err != nil {
+		return
+	}
+
+	for _, netService := range strings.Split(output, "\n") {
+		if netService == "" || strings.Contains(netService, "asterisk") {
+			continue
+		}
+
+		_, _ = ExecCombinedOutputLogged(
+			nil,
+			"/usr/sbin/networksetup",
+			"-setdnsservers",
+			netService,
+			"Empty",
+		)
+	}
+
+	command.Command("dscacheutil", "-flushcache").Run()
+	command.Command("killall", "-HUP", "mDNSResponder").Run()
+}
+
+func ResetDns() {
+	if runtime.GOOS != "darwin" {
+		return
+	}
+
+	logrus.Info("utils: Reseting DNS")
+
+	networkResetLock.Lock()
+	defer networkResetLock.Unlock()
+
+	_ = CopyScutilDns("/Network/Pritunl/DNS", false)
+
+	command.Command("dscacheutil", "-flushcache").Run()
+	command.Command("killall", "-HUP", "mDNSResponder").Run()
+}
+
 func ClearDNSCache() {
 	switch runtime.GOOS {
 	case "windows":
