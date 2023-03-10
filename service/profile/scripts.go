@@ -112,7 +112,8 @@ quit
 EOF
 fi
 
-killall -HUP mDNSResponder | true
+/usr/bin/dscacheutil -flushcache || true
+/usr/bin/killall -HUP mDNSResponder || true
 
 exit 0
 `
@@ -226,7 +227,13 @@ quit
 EOF
 fi
 
-killall -HUP mDNSResponder | true
+/usr/sbin/networksetup -listallnetworkservices | grep -v "*" | while read service; do
+  echo "SET $DNS_SERVERS ON $service";
+  /usr/sbin/networksetup -setdnsservers "$service" ${DNS_SERVERS} || true;
+done
+
+/usr/bin/dscacheutil -flushcache || true
+/usr/bin/killall -HUP mDNSResponder || true
 
 exit 0
 `
@@ -240,6 +247,27 @@ remove State:/Network/Pritunl/Connection/${CONN_ID}
 remove State:/Network/Pritunl/DNS
 quit
 EOF
+
+exit 0
+`
+	downDnsScriptDarwin = `#!/bin/bash -e
+
+CONN_ID="$(echo ${config} | /sbin/md5)"
+
+/usr/sbin/scutil <<-EOF > /dev/null
+open
+remove State:/Network/Pritunl/Connection/${CONN_ID}
+remove State:/Network/Pritunl/DNS
+quit
+EOF
+
+/usr/sbin/networksetup -listallnetworkservices | grep -v "*" | while read service; do
+  echo "UNSET ON $service";
+  /usr/sbin/networksetup -setdnsservers "$service" Empty || true;
+done
+
+/usr/bin/dscacheutil -flushcache || true
+/usr/bin/killall -HUP mDNSResponder || true
 
 exit 0
 `
