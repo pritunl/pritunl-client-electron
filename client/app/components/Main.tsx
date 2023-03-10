@@ -135,6 +135,18 @@ export default class Main extends React.Component<{}, State> {
 					disabled: false,
 				});
 			});
+		} else if (pathname === '/config') {
+			ConfigActions.sync().then((): void => {
+				this.setState({
+					...this.state,
+					disabled: false,
+				});
+			}).catch((): void => {
+				this.setState({
+					...this.state,
+					disabled: false,
+				});
+			});
 		} else {
 			ProfileActions.sync().then((): void => {
 				this.setState({
