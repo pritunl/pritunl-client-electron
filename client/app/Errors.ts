@@ -57,3 +57,21 @@ export class ExecError extends BaseError {
 		super("ExecError", wrapErr, message, args)
 	}
 }
+
+export class UnknownError extends BaseError {
+	constructor(wrapErr: Error, message: string, args?: {[key: string]: any}) {
+		super("UnknownError", wrapErr, message, args)
+	}
+}
+
+export class UnhandledError extends BaseError {
+	constructor(wrapErr: Error, message: string, origMessage: string,
+		origStack: string) {
+
+		super("UnhandledError", wrapErr, message, {
+			message: origMessage,
+			stack: origStack,
+		})
+		this.stack = origStack
+	}
+}
