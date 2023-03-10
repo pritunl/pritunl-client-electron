@@ -5,6 +5,7 @@ import * as Errors from "../Errors";
 import * as Logger from "../Logger";
 import * as Request from "../Request"
 import Loader from "../Loader"
+import * as Alert from "../Alert";
 
 export function connect(prfl: ProfileTypes.ProfileData,
 	noLoading?: boolean): Promise<void> {
@@ -142,4 +143,90 @@ export async function tokenDelete(prfl: ProfileTypes.Profile,
 	if (loader) {
 		loader.done()
 	}
+}
+
+export function resetDns(noLoading?: boolean): Promise<void> {
+	let loader: Loader
+	if (!noLoading) {
+		loader = new Loader().loading()
+	}
+
+	return new Promise<void>((resolve): void => {
+		RequestUtils
+			.post("/network/reset_dns")
+			.set("Accept", "application/json")
+			.end()
+			.then((resp: Request.Response) => {
+				if (loader) {
+					loader.done()
+				}
+
+				if (resp.status !== 200) {
+					let err = new Errors.RequestError(null,
+						"System: DNS reset failed", {
+							status: resp.status.toString()
+						})
+					Logger.errorAlert(err)
+					return
+				}
+
+				Alert.success("System: DNS reset successful")
+
+				resolve()
+			}, (err) => {
+				if (loader) {
+					loader.done()
+				}
+
+				err = new Errors.RequestError(err,
+					"System: DNS reset failed")
+				Logger.errorAlert(err)
+
+				resolve()
+				return
+			})
+	})
+}
+
+export function resetAll(noLoading?: boolean): Promise<void> {
+	let loader: Loader
+	if (!noLoading) {
+		loader = new Loader().loading()
+	}
+
+	return new Promise<void>((resolve): void => {
+		RequestUtils
+			.post("/network/reset_all")
+			.set("Accept", "application/json")
+			.end()
+			.then((resp: Request.Response) => {
+				if (loader) {
+					loader.done()
+				}
+
+				if (resp.status !== 200) {
+					let err = new Errors.RequestError(null,
+						"System: Network reset failed", {
+							status: resp.status.toString()
+						})
+					Logger.errorAlert(err)
+					return
+				}
+
+				Alert.success("System: Network reset successful")
+
+				resolve()
+			}, (err) => {
+				if (loader) {
+					loader.done()
+				}
+
+				err = new Errors.RequestError(err,
+					"System: Network reset failed")
+				Logger.errorAlert(err)
+
+				resolve()
+				return
+			})
+	})
 }
