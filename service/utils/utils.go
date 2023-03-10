@@ -297,9 +297,11 @@ func CopyScutilDns(src string, fast bool) (err error) {
 	cmd.Stdin = strings.NewReader(
 		fmt.Sprintf("open\n"+
 			"get State:%s\n"+
+			"remove State:/Network/Service/%s/DNS\n"+
+			"remove Setup:/Network/Service/%s/DNS\n"+
 			"set State:/Network/Service/%s/DNS\n"+
 			"set Setup:/Network/Service/%s/DNS\n"+
-			"quit\n", src, serviceId, serviceId))
+			"quit\n", src, serviceId, serviceId, serviceId, serviceId))
 
 	err = cmd.Run()
 	if err != nil {
