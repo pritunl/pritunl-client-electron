@@ -58,8 +58,9 @@ const (
 )
 
 var (
-	shutdown = false
-	Profiles = struct {
+	shutdown  = false
+	DnsForced = false
+	Profiles  = struct {
 		sync.RWMutex
 		m map[string]*Profile
 	}{
@@ -325,6 +326,7 @@ func (p *Profile) writeUp() (pth string, err error) {
 	switch runtime.GOOS {
 	case "darwin":
 		if p.ForceDns {
+			DnsForced = true
 			script = upDnsScriptDarwin
 		} else {
 			script = upScriptDarwin
@@ -380,7 +382,11 @@ func (p *Profile) writeDown() (pth string, err error) {
 	script := ""
 	switch runtime.GOOS {
 	case "darwin":
-		script = downScriptDarwin
+		if p.ForceDns {
+			script = downDnsScriptDarwin
+		} else {
+			script = downScriptDarwin
+		}
 		break
 	case "linux":
 		resolved := true
