@@ -5,6 +5,7 @@ import * as Theme from '../Theme';
 import Config from '../Config';
 import * as Constants from '../Constants';
 import * as ProfileActions from '../actions/ProfileActions';
+import * as ServiceActions from '../actions/ServiceActions';
 import * as ConfigActions from '../actions/ConfigActions';
 import ProfileImport from "./ProfileImport";
 import LoadingBar from './LoadingBar';
@@ -398,6 +399,32 @@ export default class Main extends React.Component<{}, State> {
 						...this.state,
 						path: "/config",
 					})
+				}}
+			/>
+			<Blueprint.MenuItem
+				text="Reset DNS"
+				intent="warning"
+				icon="search"
+				onKeyDown={(evt): void => {
+					if (evt.key === "Enter") {
+						ServiceActions.resetDns(false)
+					}
+				}}
+				onClick={(): void => {
+					ServiceActions.resetDns(false)
+				}}
+			/>
+			<Blueprint.MenuItem
+				text="Reset Networking"
+				intent="warning"
+				icon="globe-network"
+				onKeyDown={(evt): void => {
+					if (evt.key === "Enter") {
+						ServiceActions.resetAll(false)
+					}
+				}}
+				onClick={(): void => {
+					ServiceActions.resetAll(false)
 				}}
 			/>
 			<Blueprint.MenuItem
