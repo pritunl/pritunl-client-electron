@@ -130,6 +130,10 @@ func dnsWatch() {
 
 		if !profile.GetStatus() {
 			if check {
+				if profile.DnsForced {
+					utils.ClearDns()
+				}
+
 				err := utils.RestoreScutilDns()
 				if err != nil {
 					errorCount += 1
