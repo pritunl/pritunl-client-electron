@@ -61,6 +61,8 @@ func Register(engine *gin.Engine) {
 	engine.GET("/events", eventsGet)
 	engine.GET("/config", configGet)
 	engine.PUT("/config", configPut)
+	engine.POST("/network/reset_dns", networkDnsReset)
+	engine.POST("/network/reset_all", networkAllReset)
 	engine.GET("/profile", profileGet)
 	engine.POST("/profile", profilePost)
 	engine.DELETE("/profile", profileDel)
