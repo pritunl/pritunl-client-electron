@@ -18,12 +18,13 @@ var (
 )
 
 type ConfigData struct {
-	path             string `json:"-"`
-	loaded           bool   `json:"-"`
-	DisableDnsWatch  bool   `json:"disable_dns_watch"`
-	DisableWakeWatch bool   `json:"disable_wake_watch"`
-	DisableNetClean  bool   `json:"disable_net_clean"`
-	InterfaceMetric  int    `json:"interface_metric"`
+	path              string `json:"-"`
+	loaded            bool   `json:"-"`
+	DisableDnsWatch   bool   `json:"disable_dns_watch"`
+	DisableDnsRefresh bool   `json:"disable_dns_refresh"`
+	DisableWakeWatch  bool   `json:"disable_wake_watch"`
+	DisableNetClean   bool   `json:"disable_net_clean"`
+	InterfaceMetric   int    `json:"interface_metric"`
 }
 
 func (c *ConfigData) Save() (err error) {
