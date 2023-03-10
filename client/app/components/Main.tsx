@@ -429,6 +429,7 @@ export default class Main extends React.Component<{}, State> {
 			/>
 			<Blueprint.MenuItem
 				text="Developer Tools"
+				intent="warning"
 				icon="code"
 				onClick={(): void => {
 					Electron.ipcRenderer.send("control", "dev-tools")
