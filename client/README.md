@@ -17,8 +17,11 @@ tslint -c tslint.json app/**/*.ts*
 ### development
 
 ```
+sudo ./service
 tsc --watch
 webpack-cli --config webpack.dev.config --progress --color --watch
+webpack-cli --config webpack-main.dev.config --progress --color --watch
+./node_modules/.bin/electron . --dev-tools
 ```
 
 #### production
