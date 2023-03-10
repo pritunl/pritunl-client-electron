@@ -16,8 +16,9 @@ import (
 )
 
 var (
-	lastRestart = time.Now()
-	restartLock = sync.Mutex{}
+	lastRestart    = time.Now()
+	lastDnsRefresh = time.Now()
+	restartLock    = sync.Mutex{}
 )
 
 func parseDns(data string) (searchDomains, searchAddresses []string) {
@@ -123,7 +124,6 @@ func dnsWatch() {
 	reset := false
 	check := true
 	errorCount := 0
-	lastRefresh := time.Now()
 
 	for {
 		time.Sleep(2 * time.Second)
@@ -175,6 +175,7 @@ func dnsWatch() {
 		if strings.Contains(vpn, "No such key") {
 			connIds, err := utils.GetScutilConnIds()
 			if err != nil {
+				utils.ClearDNSCacheFast()
 				logrus.WithFields(logrus.Fields{
 					"error": err,
 				}).Error("watch: Failed to get DNS connection IDs")
@@ -191,6 +192,7 @@ func dnsWatch() {
 				"/Network/Pritunl/DNS",
 			)
 			if err != nil {
+				utils.ClearDNSCacheFast()
 				logrus.WithFields(logrus.Fields{
 					"error": err,
 				}).Error("watch: Failed to copy DNS settings")
@@ -203,14 +205,15 @@ func dnsWatch() {
 		vpnDomains, vpnAddresses := parseDns(vpn)
 		globalDomains, globalAddresses := parseDns(global)
 
-		if utils.SinceAbs(lastRefresh) >= 60*time.Second {
-			lastRefresh = time.Now()
+		if utils.SinceAbs(lastDnsRefresh) >= 30*time.Second {
+			lastDnsRefresh = time.Now()
 
 			err := utils.CopyScutilDns("/Network/Pritunl/DNS", true)
 			if err != nil {
 				logrus.WithFields(logrus.Fields{
 					"error": err,
 				}).Error("watch: Failed to refresh DNS settings")
+				utils.ClearDNSCacheFast()
 			}
 
 			continue
@@ -252,6 +255,41 @@ func dnsWatch() {
 	}
 }
 
+func dnsRefresh() {
+	defer func() {
+		panc := recover()
+		if panc != nil {
+			logrus.WithFields(logrus.Fields{
+				"stack": string(debug.Stack()),
+				"panic": panc,
+			}).Error("watch: Panic")
+			panic(panc)
+		}
+	}()
+
+	if runtime.GOOS != "darwin" {
+		return
+	}
+
+	for {
+		time.Sleep(5 * time.Second)
+
+		if !profile.GetStatus() {
+			time.Sleep(5 * time.Second)
+			continue
+		}
+
+		if utils.SinceAbs(lastDnsRefresh) >= 45*time.Second {
+			lastDnsRefresh = time.Now()
+
+			utils.ClearDNSCacheFast()
+
+			continue
+		}
+
+	}
+}
+
 func StartWatch() {
 	if config.Config.DisableWakeWatch {
 		logrus.Info("watch: Wake watch disabled")
@@ -262,5 +300,10 @@ func StartWatch() {
 		logrus.Info("watch: DNS watch disabled")
 	} else {
 		go dnsWatch()
+	}
+	if config.Config.DisableDnsRefresh {
+		logrus.Info("watch: DNS refresh disabled")
+	} else {
+		go dnsRefresh()
 	}
 }
