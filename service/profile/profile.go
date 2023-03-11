@@ -4046,13 +4046,8 @@ func (p *Profile) Restart() {
 	if prfl == p {
 		delete(Profiles.m, p.Id)
 	}
-	if runtime.GOOS == "darwin" && len(Profiles.m) == 0 {
-		err := utils.ClearScutilKeys()
-		if err != nil {
-			logrus.WithFields(logrus.Fields{
-				"error": err,
-			}).Error("profile: Failed to clear scutil keys")
-		}
+	if runtime.GOOS == "darwin" && len(Profiles.m) == 0 && DnsForced {
+		utils.ClearDns()
 	}
 	Profiles.Unlock()
 
@@ -4172,13 +4167,8 @@ func (p *Profile) Stop() {
 	if prfl == p {
 		delete(Profiles.m, p.Id)
 	}
-	if runtime.GOOS == "darwin" && len(Profiles.m) == 0 {
-		err := utils.ClearScutilKeys()
-		if err != nil {
-			logrus.WithFields(logrus.Fields{
-				"error": err,
-			}).Error("profile: Failed to clear scutil keys")
-		}
+	if runtime.GOOS == "darwin" && len(Profiles.m) == 0 && DnsForced {
+		utils.ClearDns()
 	}
 	Profiles.Unlock()
 

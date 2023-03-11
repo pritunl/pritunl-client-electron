@@ -8,6 +8,7 @@ import (
 
 func networkDnsReset(c *gin.Context) {
 	utils.ResetDns()
+	utils.ClearDNSCache()
 
 	c.JSON(200, nil)
 }
@@ -16,6 +17,7 @@ func networkAllReset(c *gin.Context) {
 	utils.ResetDns()
 	utils.ClearDns()
 	utils.ResetNetworking()
+	utils.ClearDNSCache()
 
 	_ = profile.RestartProfiles(false)
 
