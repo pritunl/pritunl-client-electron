@@ -295,6 +295,10 @@ func GetScutilService() (serviceId string, err error) {
 }
 
 func RestoreScutilDns() (err error) {
+	if runtime.GOOS != "darwin" {
+		return
+	}
+
 	logrus.Info("utils: Restore DNS")
 
 	connIds, err := GetScutilConnIds()
@@ -373,6 +377,10 @@ func RestoreScutilDns() (err error) {
 }
 
 func RefreshScutilDns() (err error) {
+	if runtime.GOOS != "darwin" {
+		return
+	}
+
 	serviceId, err := GetScutilService()
 	if err != nil {
 		return
@@ -401,6 +409,10 @@ func RefreshScutilDns() (err error) {
 }
 
 func BackupScutilDns() (err error) {
+	if runtime.GOOS != "darwin" {
+		return
+	}
+
 	serviceId, err := GetScutilService()
 	if err != nil {
 		return
@@ -681,9 +693,6 @@ func ResetDns() {
 	defer networkResetLock.Unlock()
 
 	_ = RefreshScutilDns()
-
-	command.Command("dscacheutil", "-flushcache").Run()
-	command.Command("killall", "-HUP", "mDNSResponder").Run()
 }
 
 func ClearDNSCache() {
