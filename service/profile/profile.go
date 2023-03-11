@@ -382,11 +382,7 @@ func (p *Profile) writeDown() (pth string, err error) {
 	script := ""
 	switch runtime.GOOS {
 	case "darwin":
-		if p.ForceDns {
-			script = downDnsScriptDarwin
-		} else {
-			script = downScriptDarwin
-		}
+		script = downScriptDarwin
 		break
 	case "linux":
 		resolved := true
