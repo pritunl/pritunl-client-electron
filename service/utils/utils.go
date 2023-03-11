@@ -31,6 +31,7 @@ import (
 var (
 	lockedInterfaces set.Set
 	networkResetLock sync.Mutex
+	macDnsLock       = sync.Mutex{}
 )
 
 func init() {
@@ -141,6 +142,9 @@ func ReleaseTap(intf *Interface) {
 }
 
 func GetScutilKey(typ, key string) (val string, err error) {
+	macDnsLock.Lock()
+	defer macDnsLock.Unlock()
+
 	cmd := command.Command("/usr/sbin/scutil")
 	cmd.Stdin = strings.NewReader(
 		fmt.Sprintf("open\nshow %s:%s\nquit\n", typ, key))
@@ -159,6 +163,9 @@ func GetScutilKey(typ, key string) (val string, err error) {
 }
 
 func RemoveScutilKey(typ, key string) (err error) {
+	macDnsLock.Lock()
+	defer macDnsLock.Unlock()
+
 	cmd := command.Command("/usr/sbin/scutil")
 	cmd.Stdin = strings.NewReader(
 		fmt.Sprintf("open\nremove %s:%s\nquit\n", typ, key))
@@ -175,12 +182,71 @@ func RemoveScutilKey(typ, key string) (err error) {
 }
 
 func CopyScutilKey(typ, src, dst string) (err error) {
+	macDnsLock.Lock()
+	defer macDnsLock.Unlock()
+
 	cmd := command.Command("/usr/sbin/scutil")
 	cmd.Stdin = strings.NewReader(
 		fmt.Sprintf("open\n"+
 			"get %s:%s\n"+
 			"set %s:%s\n"+
 			"quit\n", typ, src, typ, dst))
+
+	err = cmd.Run()
+	if err != nil {
+		err = &CommandError{
+			errors.Wrap(err, "utils: Failed to exec scutil"),
+		}
+		return
+	}
+
+	return
+}
+
+type ScutilKey struct {
+	Type string
+	Key  string
+}
+
+func CopyScutilMultiKey(typ, src string, dsts ...*ScutilKey) (err error) {
+	macDnsLock.Lock()
+	defer macDnsLock.Unlock()
+
+	stdin := fmt.Sprintf("open\nget %s:%s\n", typ, src)
+	for _, dst := range dsts {
+		stdin += fmt.Sprintf("set %s:%s\n", dst.Type, dst.Key)
+	}
+	stdin += "quit\n"
+
+	cmd := command.Command("/usr/sbin/scutil")
+	cmd.Stdin = strings.NewReader(stdin)
+
+	err = cmd.Run()
+	if err != nil {
+		err = &CommandError{
+			errors.Wrap(err, "utils: Failed to exec scutil"),
+		}
+		return
+	}
+
+	return
+}
+
+func CopyClearScutilMultiKey(typ, src string, dsts ...*ScutilKey) (
+	err error) {
+
+	macDnsLock.Lock()
+	defer macDnsLock.Unlock()
+
+	stdin := fmt.Sprintf("open\nget %s:%s\n", typ, src)
+	for _, dst := range dsts {
+		stdin += fmt.Sprintf("remove %s:%s\n", dst.Type, dst.Key)
+		stdin += fmt.Sprintf("set %s:%s\n", dst.Type, dst.Key)
+	}
+	stdin += "quit\n"
+
+	cmd := command.Command("/usr/sbin/scutil")
+	cmd.Stdin = strings.NewReader(stdin)
 
 	err = cmd.Run()
 	if err != nil {
@@ -229,57 +295,76 @@ func GetScutilService() (serviceId string, err error) {
 }
 
 func RestoreScutilDns() (err error) {
+	logrus.Info("utils: Restore DNS")
+
+	connIds, err := GetScutilConnIds()
+	if err != nil {
+		return
+	}
+	connected := len(connIds) != 0
+
 	serviceId, err := GetScutilService()
 	if err != nil {
 		return
 	}
 
-	restoreKey := fmt.Sprintf("/Network/Pritunl/Restore/%s", serviceId)
+	restoreKey := ""
+	if connected {
+		restoreKey = fmt.Sprintf(
+			"/Network/Pritunl/Connection/%s", connIds[0])
+	} else {
+		restoreKey = fmt.Sprintf(
+			"/Network/Pritunl/Restore/%s", serviceId)
+	}
+
 	serviceKey := fmt.Sprintf("/Network/Service/%s/DNS", serviceId)
 
-	data, err := GetScutilKey("State", restoreKey)
-	if err != nil {
-		return
-	}
-
-	if strings.Contains(data, "No such key") {
-		return
-	}
-
-	data, err = GetScutilKey("State", serviceKey)
-	if err != nil {
-		return
-	}
-
-	if strings.Contains(data, "Pritunl : true") {
-		err = CopyScutilKey("State", restoreKey, serviceKey)
-		if err != nil {
+	if !connected {
+		data, e := GetScutilKey("State", serviceKey)
+		if e != nil {
+			err = e
 			return
 		}
-	}
 
-	data, err = GetScutilKey("Setup", serviceKey)
-	if err != nil {
-		return
-	}
+		if !strings.Contains(data, "Pritunl : true") {
+			logrus.WithFields(logrus.Fields{
+				"restore_key": restoreKey,
+				"service_key": serviceKey,
+			}).Info("utils: DNS not active")
+			return
+		}
 
-	if strings.Contains(data, "Pritunl : true") {
-		data, err = GetScutilKey("Setup", restoreKey)
+		data, err = GetScutilKey("State", restoreKey)
 		if err != nil {
 			return
 		}
 
 		if strings.Contains(data, "No such key") {
-			err = RemoveScutilKey("Setup", serviceKey)
-			if err != nil {
-				return
+			logrus.WithFields(logrus.Fields{
+				"restore_key": restoreKey,
+				"service_key": serviceKey,
+			}).Error("utils: Failed to find restore key")
+
+			err = &errortypes.NotFoundError{
+				errors.New("utils: Restore key not found"),
 			}
-		} else {
-			err = CopyScutilKey("Setup", restoreKey, serviceKey)
-			if err != nil {
-				return
-			}
+			return
 		}
+	}
+
+	err = CopyClearScutilMultiKey(
+		"State", restoreKey,
+		&ScutilKey{
+			Type: "State",
+			Key:  serviceKey,
+		},
+		&ScutilKey{
+			Type: "Setup",
+			Key:  serviceKey,
+		},
+	)
+	if err != nil {
+		return
 	}
 
 	ClearDNSCache()
@@ -287,35 +372,30 @@ func RestoreScutilDns() (err error) {
 	return
 }
 
-func CopyScutilDns(src string, fast bool) (err error) {
+func RefreshScutilDns() (err error) {
 	serviceId, err := GetScutilService()
 	if err != nil {
 		return
 	}
 
-	cmd := command.Command("/usr/sbin/scutil")
-	cmd.Stdin = strings.NewReader(
-		fmt.Sprintf("open\n"+
-			"get State:%s\n"+
-			"remove State:/Network/Service/%s/DNS\n"+
-			"remove Setup:/Network/Service/%s/DNS\n"+
-			"set State:/Network/Service/%s/DNS\n"+
-			"set Setup:/Network/Service/%s/DNS\n"+
-			"quit\n", src, serviceId, serviceId, serviceId, serviceId))
+	serviceKey := fmt.Sprintf("/Network/Service/%s/DNS", serviceId)
 
-	err = cmd.Run()
+	err = CopyClearScutilMultiKey(
+		"State", serviceKey,
+		&ScutilKey{
+			Type: "State",
+			Key:  serviceKey,
+		},
+		&ScutilKey{
+			Type: "Setup",
+			Key:  serviceKey,
+		},
+	)
 	if err != nil {
-		err = &CommandError{
-			errors.Wrap(err, "utils: Failed to exec scutil"),
-		}
 		return
 	}
 
-	if fast {
-		ClearDNSCacheFast()
-	} else {
-		ClearDNSCache()
-	}
+	ClearDNSCacheFast()
 
 	return
 }
@@ -600,13 +680,16 @@ func ResetDns() {
 	networkResetLock.Lock()
 	defer networkResetLock.Unlock()
 
-	_ = CopyScutilDns("/Network/Pritunl/DNS", false)
+	_ = RefreshScutilDns()
 
 	command.Command("dscacheutil", "-flushcache").Run()
 	command.Command("killall", "-HUP", "mDNSResponder").Run()
 }
 
 func ClearDNSCache() {
+	macDnsLock.Lock()
+	defer macDnsLock.Unlock()
+
 	switch runtime.GOOS {
 	case "windows":
 		command.Command("ipconfig", "/flushdns").Run()
@@ -677,6 +760,9 @@ func ClearDNSCache() {
 }
 
 func ClearDNSCacheFast() {
+	macDnsLock.Lock()
+	defer macDnsLock.Unlock()
+
 	switch runtime.GOOS {
 	case "windows":
 		command.Command("ipconfig", "/flushdns").Run()
