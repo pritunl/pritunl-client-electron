@@ -21,6 +21,12 @@ var (
 	restartLock    = sync.Mutex{}
 )
 
+type ConnState struct {
+	Id        string
+	Domains   []string
+	Addresses []string
+}
+
 func parseDns(data string) (searchDomains, searchAddresses []string) {
 	dataSpl := strings.Split(data, "\n")
 	key := ""
@@ -121,7 +127,6 @@ func dnsWatch() {
 		return
 	}
 
-	reset := false
 	check := true
 	errorCount := 0
 
@@ -165,54 +170,87 @@ func dnsWatch() {
 			continue
 		}
 
-		time.Sleep(1 * time.Second)
+		time.Sleep(2 * time.Second)
 
 		check = true
 		errorCount = 0
-		vpn, _ := utils.GetScutilKey("State", "/Network/Pritunl/DNS")
 		global, _ := utils.GetScutilKey("State", "/Network/Global/DNS")
 
 		if strings.Contains(global, "No such key") {
 			continue
 		}
 
-		if strings.Contains(vpn, "No such key") {
-			connIds, err := utils.GetScutilConnIds()
-			if err != nil {
-				utils.ClearDNSCacheFast()
-				logrus.WithFields(logrus.Fields{
-					"error": err,
-				}).Error("watch: Failed to get DNS connection IDs")
-				continue
-			}
-
-			if len(connIds) == 0 {
-				continue
-			}
-
-			err = utils.CopyScutilKey(
-				"State",
-				fmt.Sprintf("/Network/Pritunl/Connection/%s", connIds[0]),
-				"/Network/Pritunl/DNS",
-			)
-			if err != nil {
-				utils.ClearDNSCacheFast()
-				logrus.WithFields(logrus.Fields{
-					"error": err,
-				}).Error("watch: Failed to copy DNS settings")
-				continue
-			}
-
+		connIds, err := utils.GetScutilConnIds()
+		if err != nil {
+			utils.ClearDNSCacheFast()
+			logrus.WithFields(logrus.Fields{
+				"error": err,
+			}).Error("watch: Failed to get DNS connection IDs")
 			continue
 		}
 
-		vpnDomains, vpnAddresses := parseDns(vpn)
+		connStates := []*ConnState{}
+		for _, connId := range connIds {
+			connKey := fmt.Sprintf("/Network/Pritunl/Connection/%s", connId)
+
+			connState, err := utils.GetScutilKey("State", connKey)
+			if err != nil {
+				logrus.WithFields(logrus.Fields{
+					"connection_key": connKey,
+					"error":          err,
+				}).Error("watch: Failed to read connection DNS key")
+
+			}
+
+			connDomains, connAddresses := parseDns(connState)
+
+			connStates = append(connStates, &ConnState{
+				Id:        connId,
+				Domains:   connDomains,
+				Addresses: connAddresses,
+			})
+		}
+
 		globalDomains, globalAddresses := parseDns(global)
 
-		if utils.SinceAbs(lastDnsRefresh) >= 30*time.Second {
+		matchConnId := ""
+		for _, connState := range connStates {
+			connAddresses := connState.Addresses
+
+			if reflect.DeepEqual(connAddresses, globalAddresses) {
+				matchConnId = connState.Id
+				break
+			}
+		}
+
+		if matchConnId == "" {
+			logrus.WithFields(logrus.Fields{
+				"global_domains":   globalDomains,
+				"global_addresses": globalAddresses,
+			}).Warn("watch: Lost DNS settings updating...")
+
+			restartLock.Lock()
+
+			err = utils.BackupScutilDns()
+			if err != nil {
+				logrus.WithFields(logrus.Fields{
+					"error": err,
+				}).Error("watch: Failed to backup DNS settings")
+			}
+
+			err = utils.RestoreScutilDns()
+			if err != nil {
+				logrus.WithFields(logrus.Fields{
+					"error": err,
+				}).Error("watch: Failed to restore DNS settings")
+			}
+
+			restartLock.Unlock()
+		} else if utils.SinceAbs(lastDnsRefresh) >= 30*time.Second && !config.Config.DisableDnsRefresh {
+
 			lastDnsRefresh = time.Now()
 
-			err := utils.CopyScutilDns("/Network/Pritunl/DNS", true)
+			err = utils.RefreshScutilDns()
 			if err != nil {
 				logrus.WithFields(logrus.Fields{
 					"error": err,
@@ -222,75 +260,6 @@ func dnsWatch() {
 
 			continue
 		}
-
-		if !reflect.DeepEqual(vpnAddresses, globalAddresses) {
-			if reset {
-				restartLock.Lock()
-
-				logrus.WithFields(logrus.Fields{
-					"vpn_domains":      vpnDomains,
-					"vpn_addresses":    vpnAddresses,
-					"global_domains":   globalDomains,
-					"global_addresses": globalAddresses,
-				}).Warn("watch: Lost DNS settings updating...")
-
-				err := utils.BackupScutilDns()
-				if err != nil {
-					logrus.WithFields(logrus.Fields{
-						"error": err,
-					}).Error("watch: Failed to backup DNS settings")
-				} else {
-					err = utils.CopyScutilDns("/Network/Pritunl/DNS", false)
-					if err != nil {
-						logrus.WithFields(logrus.Fields{
-							"error": err,
-						}).Error("watch: Failed to update DNS settings")
-					}
-				}
-
-				restartLock.Unlock()
-				reset = false
-			} else {
-				reset = true
-			}
-		} else {
-			reset = false
-		}
-	}
-}
-
-func dnsRefresh() {
-	defer func() {
-		panc := recover()
-		if panc != nil {
-			logrus.WithFields(logrus.Fields{
-				"stack": string(debug.Stack()),
-				"panic": panc,
-			}).Error("watch: Panic")
-			panic(panc)
-		}
-	}()
-
-	if runtime.GOOS != "darwin" {
-		return
-	}
-
-	for {
-		time.Sleep(5 * time.Second)
-
-		if !profile.GetStatus() {
-			time.Sleep(5 * time.Second)
-			continue
-		}
-
-		if utils.SinceAbs(lastDnsRefresh) >= 45*time.Second {
-			lastDnsRefresh = time.Now()
-
-			utils.ClearDNSCacheFast()
-
-			continue
-		}
-
 	}
 }
 
@@ -304,10 +273,5 @@ func StartWatch() {
 		logrus.Info("watch: DNS watch disabled")
 	} else {
 		go dnsWatch()
-	}
-	if config.Config.DisableDnsRefresh {
-		logrus.Info("watch: DNS refresh disabled")
-	} else {
-		go dnsRefresh()
 	}
 }
