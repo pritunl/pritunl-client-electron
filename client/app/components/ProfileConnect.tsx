@@ -237,8 +237,8 @@ export default class ProfileConnect extends React.Component<Props, State> {
 			return
 		}
 
-		if (!prfl.system && !prfl.key_data) {
-			Logger.info("Profiles: Encrypting profile '" + prfl.id + "'")
+		if (!prfl.system) {
+			Logger.info("Profiles: Updating profile '" + prfl.id + "'")
 			await prfl.writeData(data)
 		}
 
