@@ -1,6 +1,10 @@
 Pritunl Client Changelog
 ========================
 
+<%= version %>
+
+Add network reset function to menu
+
 Version 1.3.3465.84 2023-03-09
 ------------------------------
 
