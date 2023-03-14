@@ -55,6 +55,7 @@ type Sprofile struct {
 	User               string   `json:"user"`
 	PreConnectMsg      string   `json:"pre_connect_msg"`
 	DynamicFirewall    bool     `json:"dynamic_firewall"`
+	DeviceAuth         bool     `json:"device_auth"`
 	DisableGateway     bool     `json:"disable_gateway"`
 	ForceDns           bool     `json:"force_dns"`
 	SsoAuth            bool     `json:"sso_auth"`
@@ -69,6 +70,7 @@ type Sprofile struct {
 	SyncToken          string   `json:"sync_token"`
 	ServerPublicKey    []string `json:"server_public_key"`
 	ServerBoxPublicKey string   `json:"server_box_public_key"`
+	RegistrationKey    string   `json:"registration_key"`
 	OvpnData           string   `json:"ovpn_data"`
 	Path               string   `json:"-"`
 	Password           string   `json:"password"`
@@ -89,6 +91,7 @@ type SprofileClient struct {
 	User               string   `json:"user"`
 	PreConnectMsg      string   `json:"pre_connect_msg"`
 	DynamicFirewall    bool     `json:"dynamic_firewall"`
+	DeviceAuth         bool     `json:"device_auth"`
 	DisableGateway     bool     `json:"disable_Gateway"`
 	ForceDns           bool     `json:"force_dns"`
 	SsoAuth            bool     `json:"sso_auth"`
@@ -103,6 +106,7 @@ type SprofileClient struct {
 	SyncToken          string   `json:"sync_token"`
 	ServerPublicKey    []string `json:"server_public_key"`
 	ServerBoxPublicKey string   `json:"server_box_public_key"`
+	RegistrationKey    string   `json:"registration_key"`
 	OvpnData           string   `json:"ovpn_data"`
 }
 
@@ -126,6 +130,7 @@ func (s *Sprofile) Client() (sprflc *SprofileClient) {
 		User:               s.User,
 		PreConnectMsg:      s.PreConnectMsg,
 		DynamicFirewall:    s.DynamicFirewall,
+		DeviceAuth:         s.DeviceAuth,
 		DisableGateway:     s.DisableGateway,
 		ForceDns:           s.ForceDns,
 		SsoAuth:            s.SsoAuth,
@@ -140,6 +145,7 @@ func (s *Sprofile) Client() (sprflc *SprofileClient) {
 		SyncToken:          s.SyncToken,
 		ServerPublicKey:    s.ServerPublicKey,
 		ServerBoxPublicKey: s.ServerBoxPublicKey,
+		RegistrationKey:    s.RegistrationKey,
 		OvpnData:           s.OvpnData,
 	}
 
@@ -177,6 +183,7 @@ func (s *Sprofile) Copy() (sprfl *Sprofile) {
 		User:               s.User,
 		PreConnectMsg:      s.PreConnectMsg,
 		DynamicFirewall:    s.DynamicFirewall,
+		DeviceAuth:         s.DeviceAuth,
 		DisableGateway:     s.DisableGateway,
 		ForceDns:           s.ForceDns,
 		SsoAuth:            s.SsoAuth,
@@ -191,6 +198,7 @@ func (s *Sprofile) Copy() (sprfl *Sprofile) {
 		SyncToken:          s.SyncToken,
 		ServerPublicKey:    serverPublicKey,
 		ServerBoxPublicKey: s.ServerBoxPublicKey,
+		RegistrationKey:    s.RegistrationKey,
 		OvpnData:           s.OvpnData,
 		Path:               s.Path,
 		Password:           s.Password,
@@ -345,6 +353,7 @@ func (s *Sprofile) syncUpdate(data string) (updated bool, err error) {
 		s.User = confData.User
 		s.PreConnectMsg = confData.PreConnectMsg
 		s.DynamicFirewall = confData.DynamicFirewall
+		s.DeviceAuth = confData.DeviceAuth
 		s.DisableGateway = confData.DisableGateway
 		s.ForceDns = confData.ForceDns
 		s.SsoAuth = confData.SsoAuth
