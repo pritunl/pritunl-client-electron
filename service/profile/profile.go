@@ -37,6 +37,7 @@ import (
 	"github.com/dropbox/godropbox/container/set"
 	"github.com/dropbox/godropbox/errors"
 	"github.com/pritunl/pritunl-client-electron/service/command"
+	"github.com/pritunl/pritunl-client-electron/service/config"
 	"github.com/pritunl/pritunl-client-electron/service/errortypes"
 	"github.com/pritunl/pritunl-client-electron/service/event"
 	"github.com/pritunl/pritunl-client-electron/service/log"
@@ -45,6 +46,7 @@ import (
 	"github.com/pritunl/pritunl-client-electron/service/platform"
 	"github.com/pritunl/pritunl-client-electron/service/sprofile"
 	"github.com/pritunl/pritunl-client-electron/service/token"
+	"github.com/pritunl/pritunl-client-electron/service/tpm"
 	"github.com/pritunl/pritunl-client-electron/service/tuntap"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
 	"github.com/sirupsen/logrus"
@@ -95,15 +97,17 @@ type SsoEventData struct {
 }
 
 type WgKeyReq struct {
-	Data      string `json:"data"`
-	Nonce     string `json:"nonce"`
-	PublicKey string `json:"public_key"`
-	Signature string `json:"signature"`
+	Data            string `json:"data"`
+	Nonce           string `json:"nonce"`
+	PublicKey       string `json:"public_key"`
+	Signature       string `json:"signature"`
+	DeviceSignature string `json:"device_signature"`
 }
 
 type WgKeyBox struct {
 	DeviceId       string   `json:"device_id"`
 	DeviceName     string   `json:"device_name"`
+	DeviceKey      string   `json:"device_key"`
 	Platform       string   `json:"platform"`
 	MacAddr        string   `json:"mac_addr"`
 	MacAddrs       []string `json:"mac_addrs"`
@@ -120,6 +124,7 @@ type WgKeyBox struct {
 type OvpnKeyBox struct {
 	DeviceId       string   `json:"device_id"`
 	DeviceName     string   `json:"device_name"`
+	DeviceKey      string   `json:"device_key"`
 	Platform       string   `json:"platform"`
 	MacAddr        string   `json:"mac_addr"`
 	MacAddrs       []string `json:"mac_addrs"`
@@ -168,6 +173,7 @@ type WgConf struct {
 type WgData struct {
 	Allow         bool    `json:"allow"`
 	Reason        string  `json:"reason"`
+	RegKey        string  `json:"reg_key"`
 	Configuration *WgConf `json:"configuration"`
 }
 
@@ -175,6 +181,7 @@ type OvpnData struct {
 	Allow   bool   `json:"allow"`
 	Reason  string `json:"reason"`
 	Token   string `json:"token"`
+	RegKey  string `json:"reg_key"`
 	Remote  string `json:"remote"`
 	Remote6 string `json:"remote6"`
 }
@@ -236,6 +243,7 @@ type Profile struct {
 	Username           string             `json:"-"`
 	Password           string             `json:"-"`
 	DynamicFirewall    bool               `json:"-"`
+	DeviceAuth         bool               `json:"-"`
 	DisableGateway     bool               `json:"-"`
 	ForceDns           bool               `json:"-"`
 	SsoAuth            bool               `json:"-"`
@@ -257,6 +265,7 @@ type Profile struct {
 	MacAddrs           []string           `json:"mac_addrs"`
 	WebPort            int                `json:"web_port"`
 	WebNoSsl           bool               `json:"web_no_ssl"`
+	RegistrationKey    string             `json:"registration_key"`
 	SystemProfile      *sprofile.Sprofile `json:"-"`
 }
 
@@ -1161,6 +1170,7 @@ func (p *Profile) Copy() (prfl *Profile) {
 		Username:           p.Username,
 		Password:           p.Password,
 		DynamicFirewall:    p.DynamicFirewall,
+		DeviceAuth:         p.DeviceAuth,
 		DisableGateway:     p.DisableGateway,
 		ForceDns:           p.ForceDns,
 		SsoAuth:            p.SsoAuth,
@@ -1215,6 +1225,7 @@ func (p *Profile) Start(timeout, delay, automatic bool) (err error) {
 		"profile_id":       p.Id,
 		"mode":             p.Mode,
 		"dynamic_firewall": p.DynamicFirewall,
+		"device_auth":      p.DeviceAuth,
 		"disable_gateway":  p.DisableGateway,
 		"force_dns":        p.ForceDns,
 		"sso_auth":         p.SsoAuth,
@@ -1275,7 +1286,7 @@ func (p *Profile) Start(timeout, delay, automatic bool) (err error) {
 func (p *Profile) startOvpn(timeout bool) (err error) {
 	var data *OvpnData
 
-	if p.DynamicFirewall || p.SsoAuth {
+	if p.DynamicFirewall || p.SsoAuth || p.DeviceAuth {
 		data, err = p.openOvpn()
 		if err != nil {
 			return
@@ -1287,18 +1298,56 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 				_ = tokn.Reset()
 			}
 
-			logrus.WithFields(logrus.Fields{
-				"reason": data.Reason,
-			}).Error("profile: Failed to authenticate ovpn")
+			if data.RegKey != "" {
+				logrus.WithFields(logrus.Fields{
+					"reason": data.Reason,
+				}).Error("profile: Device registration required")
 
-			evt := event.Event{
-				Type: "auth_error",
-				Data: p,
+				p.RegistrationKey = data.RegKey
+
+				if p.SystemProfile != nil {
+					p.SystemProfile.RegistrationKey = p.RegistrationKey
+					err = p.SystemProfile.Commit()
+					if err != nil {
+						return
+					}
+				}
+
+				evt := event.Event{
+					Type: "registration_required",
+					Data: p,
+				}
+				evt.Init()
+			} else {
+				logrus.WithFields(logrus.Fields{
+					"reason": data.Reason,
+				}).Error("profile: Failed to authenticate ovpn")
+
+				evt := event.Event{
+					Type: "auth_error",
+					Data: p,
+				}
+				evt.Init()
 			}
-			evt.Init()
 
 			p.stopSafe()
 			return
+		} else if data != nil && data.Allow {
+			if p.SystemProfile != nil &&
+				p.SystemProfile.RegistrationKey != "" {
+
+				p.SystemProfile.RegistrationKey = ""
+				err = p.SystemProfile.Commit()
+				if err != nil {
+					return
+				}
+			} else {
+				evt := event.Event{
+					Type: "registration_pass",
+					Data: p,
+				}
+				evt.Init()
+			}
 		}
 	}
 
@@ -1961,7 +2010,7 @@ func (p *Profile) reqOvpn(remote, ssoToken string, ssoStart time.Time) (
 	addr4 := ""
 	addr6 := ""
 
-	if p.DynamicFirewall {
+	if p.DynamicFirewall || p.DeviceAuth {
 		addr4, err = utils.GetPublicAddress4()
 		if err != nil {
 			logrus.WithFields(logrus.Fields{
@@ -1992,6 +2041,20 @@ func (p *Profile) reqOvpn(remote, ssoToken string, ssoStart time.Time) (
 		PublicAddress:  addr4,
 		PublicAddress6: addr6,
 		SsoToken:       ssoToken,
+	}
+
+	tp := tpm.Tpm{}
+	if p.DeviceAuth {
+		err = tp.Open(config.Config.EnclavePrivateKey)
+		if err != nil {
+			return
+		}
+		defer tp.Close()
+
+		ovpnBox.DeviceKey, err = tp.PublicKey()
+		if err != nil {
+			return
+		}
 	}
 
 	ovpnBoxData, err := json.Marshal(ovpnBox)
@@ -2081,6 +2144,23 @@ func (p *Profile) reqOvpn(remote, ssoToken string, ssoStart time.Time) (
 
 	ovpnReq.Signature = base64.StdEncoding.EncodeToString(rsaSig)
 
+	if p.DeviceAuth {
+		privKey64 := ""
+		privKey64, ovpnReq.DeviceSignature, err = tp.Sign(reqHash[:])
+		if err != nil {
+			return
+		}
+
+		if privKey64 != "" {
+			config.Config.EnclavePrivateKey = privKey64
+
+			err = config.Save()
+			if err != nil {
+				return
+			}
+		}
+	}
+
 	ovpnReqData, err := json.Marshal(ovpnReq)
 	if err != nil {
 		return
@@ -2135,7 +2215,7 @@ func (p *Profile) reqOvpn(remote, ssoToken string, ssoStart time.Time) (
 		return
 	}
 
-	authStr := strings.Join([]string{
+	authData := []string{
 		p.SyncToken,
 		timestamp,
 		authNonce,
@@ -2145,7 +2225,13 @@ func (p *Profile) reqOvpn(remote, ssoToken string, ssoStart time.Time) (
 		ovpnReq.Nonce,
 		ovpnReq.PublicKey,
 		ovpnReq.Signature,
-	}, "&")
+	}
+
+	if ovpnReq.DeviceSignature != "" {
+		authData = append(authData, ovpnReq.DeviceSignature)
+	}
+
+	authStr := strings.Join(authData, "&")
 
 	hashFunc := hmac.New(sha512.New, []byte(p.SyncSecret))
 	hashFunc.Write([]byte(authStr))
@@ -2384,7 +2470,7 @@ func (p *Profile) reqWg(remote, ssoToken string, ssoStart time.Time) (
 	addr4 := ""
 	addr6 := ""
 
-	if p.DynamicFirewall {
+	if p.DynamicFirewall || p.DeviceAuth {
 		addr4, err = utils.GetPublicAddress4()
 		if err != nil {
 			logrus.WithFields(logrus.Fields{
@@ -2416,6 +2502,20 @@ func (p *Profile) reqWg(remote, ssoToken string, ssoStart time.Time) (
 		PublicAddress6: addr6,
 		WgPublicKey:    p.PublicKeyWg,
 		SsoToken:       ssoToken,
+	}
+
+	tp := tpm.Tpm{}
+	if p.DeviceAuth {
+		err = tp.Open(config.Config.EnclavePrivateKey)
+		if err != nil {
+			return
+		}
+		defer tp.Close()
+
+		wgBox.DeviceKey, err = tp.PublicKey()
+		if err != nil {
+			return
+		}
 	}
 
 	wgBoxData, err := json.Marshal(wgBox)
@@ -2505,6 +2605,23 @@ func (p *Profile) reqWg(remote, ssoToken string, ssoStart time.Time) (
 
 	wgReq.Signature = base64.StdEncoding.EncodeToString(rsaSig)
 
+	if p.DeviceAuth {
+		privKey64 := ""
+		privKey64, wgReq.DeviceSignature, err = tp.Sign(reqHash[:])
+		if err != nil {
+			return
+		}
+
+		if privKey64 != "" {
+			config.Config.EnclavePrivateKey = privKey64
+
+			err = config.Save()
+			if err != nil {
+				return
+			}
+		}
+	}
+
 	wgReqData, err := json.Marshal(wgReq)
 	if err != nil {
 		return
@@ -2559,7 +2676,7 @@ func (p *Profile) reqWg(remote, ssoToken string, ssoStart time.Time) (
 		return
 	}
 
-	authStr := strings.Join([]string{
+	authData := []string{
 		p.SyncToken,
 		timestamp,
 		authNonce,
@@ -2569,7 +2686,13 @@ func (p *Profile) reqWg(remote, ssoToken string, ssoStart time.Time) (
 		wgReq.Nonce,
 		wgReq.PublicKey,
 		wgReq.Signature,
-	}, "&")
+	}
+
+	if wgReq.DeviceSignature != "" {
+		authData = append(authData, wgReq.DeviceSignature)
+	}
+
+	authStr := strings.Join(authData, "&")
 
 	hashFunc := hmac.New(sha512.New, []byte(p.SyncSecret))
 	hashFunc.Write([]byte(authStr))
@@ -3725,34 +3848,72 @@ func (p *Profile) startWg(timeout bool) (err error) {
 			_ = tokn.Reset()
 		}
 
-		logrus.WithFields(logrus.Fields{
-			"reason": data.Reason,
-		}).Error("profile: Failed to authenticate wg")
-
-		evt := event.Event{
-			Type: "auth_error",
-			Data: p,
-		}
-		evt.Init()
-
-		if p.SystemProfile != nil {
+		if data.RegKey != "" {
 			logrus.WithFields(logrus.Fields{
-				"profile_id": p.SystemProfile.Id,
-			}).Error("profile: Stopping system " +
-				"profile due to authentication errors")
+				"reason": data.Reason,
+			}).Error("profile: Device registration required")
 
-			p.SystemProfile.State = false
-			sprofile.Deactivate(p.SystemProfile.Id)
-			sprofile.SetAuthErrorCount(
-				p.SystemProfile.Id,
-				0,
-			)
+			p.RegistrationKey = data.RegKey
+
+			if p.SystemProfile != nil {
+				p.SystemProfile.RegistrationKey = p.RegistrationKey
+				err = p.SystemProfile.Commit()
+				if err != nil {
+					return
+				}
+			}
+
+			evt := event.Event{
+				Type: "registration_required",
+				Data: p,
+			}
+			evt.Init()
+		} else {
+			logrus.WithFields(logrus.Fields{
+				"reason": data.Reason,
+			}).Error("profile: Failed to authenticate ovpn")
+
+			evt := event.Event{
+				Type: "auth_error",
+				Data: p,
+			}
+			evt.Init()
+
+			if p.SystemProfile != nil {
+				logrus.WithFields(logrus.Fields{
+					"profile_id": p.SystemProfile.Id,
+				}).Error("profile: Stopping system " +
+					"profile due to authentication errors")
+
+				p.SystemProfile.State = false
+				sprofile.Deactivate(p.SystemProfile.Id)
+				sprofile.SetAuthErrorCount(
+					p.SystemProfile.Id,
+					0,
+				)
+			}
+
+			time.Sleep(3 * time.Second)
 		}
-
-		time.Sleep(3 * time.Second)
 
 		p.stopSafe()
 		return
+	} else if data != nil && data.Allow {
+		if p.SystemProfile != nil &&
+			p.SystemProfile.RegistrationKey != "" {
+
+			p.SystemProfile.RegistrationKey = ""
+			err = p.SystemProfile.Commit()
+			if err != nil {
+				return
+			}
+		} else {
+			evt := event.Event{
+				Type: "registration_pass",
+				Data: p,
+			}
+			evt.Init()
+		}
 	}
 
 	if data.Configuration == nil {
