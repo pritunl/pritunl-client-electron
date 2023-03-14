@@ -6,7 +6,6 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"io"
-	"os"
 	"os/exec"
 	"path/filepath"
 
