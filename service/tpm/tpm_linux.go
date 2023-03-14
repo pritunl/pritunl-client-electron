@@ -9,6 +9,8 @@ import (
 	"github.com/google/go-tpm-tools/client"
 	"github.com/google/go-tpm/tpm2"
 	"github.com/pritunl/pritunl-client-electron/service/errortypes"
+	"github.com/pritunl/pritunl-client-electron/service/utils"
+	"github.com/sirupsen/logrus"
 )
 
 type Sig struct {
@@ -22,7 +24,12 @@ type Tpm struct {
 }
 
 func (t *Tpm) Open(privKey64 string) (err error) {
-	tpmDev, err := tpm2.OpenTPM("/dev/tpmrm0")
+	tpmPth, err := getTpmPath()
+	if err != nil {
+		return
+	}
+
+	tpmDev, err := tpm2.OpenTPM(tpmPth)
 	if err != nil {
 		err = &errortypes.ReadError{
 			errors.Wrap(err, "tpm: Failed to open tpm"),
@@ -88,6 +95,48 @@ func (t *Tpm) Sign(data []byte) (privKey64, sig64 string, err error) {
 	}
 
 	sig64 = base64.RawStdEncoding.EncodeToString(sig)
+
+	return
+}
+
+func getTpmPath() (pth string, err error) {
+	pth = "/dev/tpmrm0"
+	exists, err := utils.Exists(pth)
+	if err != nil || exists {
+		return
+	}
+
+	pth = "/dev/tpm0"
+	exists, err = utils.Exists(pth)
+	if err != nil || exists {
+		return
+	}
+
+	pth = "/dev/tpmrm1"
+	exists, err = utils.Exists(pth)
+	if err != nil || exists {
+		return
+	}
+
+	pth = "/dev/tpm1"
+	exists, err = utils.Exists(pth)
+	if err != nil || exists {
+		return
+	}
+
+	pth = "/dev/tpm"
+	exists, err = utils.Exists(pth)
+	if err != nil || exists {
+		return
+	}
+
+	logrus.WithFields(logrus.Fields{
+		"path": "/dev/tpm0",
+	}).Error("tpm: Cannot find TPM for device authentication")
+
+	err = &errortypes.ReadError{
+		errors.New("tpm: Failed to find TPM"),
+	}
 
 	return
 }
