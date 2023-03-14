@@ -25,6 +25,7 @@ type ConfigData struct {
 	DisableWakeWatch  bool   `json:"disable_wake_watch"`
 	DisableNetClean   bool   `json:"disable_net_clean"`
 	InterfaceMetric   int    `json:"interface_metric"`
+	EnclavePrivateKey string `json:"enclave_private_key"`
 }
 
 func (c *ConfigData) Save() (err error) {
