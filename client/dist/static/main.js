@@ -13280,14 +13280,7 @@ function initTray() {
     tray.setContextMenu(trayMenu);
     sync().then((status) => {
         if (tray) {
-            if (status && !trayCurIcon) {
-                tray.setImage(getTrayIcon(true));
-                trayCurIcon = true;
-            }
-            else if (!status && trayCurIcon) {
-                tray.setImage(getTrayIcon(false));
-                trayCurIcon = false;
-            }
+            tray.setImage(getTrayIcon(status));
         }
     });
 }
@@ -13379,15 +13372,13 @@ function init() {
             }
             subscribe((event) => {
                 if (event.type === "connected") {
-                    if (tray && !trayCurIcon) {
+                    if (tray) {
                         tray.setImage(getTrayIcon(true));
-                        trayCurIcon = true;
                     }
                 }
                 else if (event.type === "disconnected") {
-                    if (tray && trayCurIcon) {
+                    if (tray) {
                         tray.setImage(getTrayIcon(false));
-                        trayCurIcon = false;
                     }
                 }
                 else if (event.type === "wakeup") {
