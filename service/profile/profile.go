@@ -2484,9 +2484,9 @@ func (p *Profile) reqWg(remote, ssoToken string, ssoStart time.Time) (
 
 		addr6, err = utils.GetPublicAddress6()
 		if err != nil {
-			logrus.WithFields(logrus.Fields{
-				"error": err,
-			}).Info("profile: Failed to get public IPv6 address")
+			//logrus.WithFields(logrus.Fields{
+			//	"error": err,
+			//}).Info("profile: Failed to get public IPv6 address")
 			err = nil
 		}
 	}
