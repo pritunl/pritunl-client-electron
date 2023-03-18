@@ -23,6 +23,7 @@ type sprofileData struct {
 	User               string   `json:"user"`
 	PreConnectMsg      string   `json:"pre_connect_msg"`
 	DynamicFirewall    bool     `json:"dynamic_firewall"`
+	DeviceAuth         bool     `json:"device_auth"`
 	DisableGateway     bool     `json:"disable_gateway"`
 	ForceDns           bool     `json:"force_dns"`
 	SsoAuth            bool     `json:"sso_auth"`
@@ -37,6 +38,7 @@ type sprofileData struct {
 	SyncToken          string   `json:"sync_token"`
 	ServerPublicKey    []string `json:"server_public_key"`
 	ServerBoxPublicKey string   `json:"server_box_public_key"`
+	RegistrationKey    string   `json:"registration_key"`
 	OvpnData           string   `json:"ovpn_data"`
 }
 
@@ -90,6 +92,7 @@ func sprofilePut(c *gin.Context) {
 		User:               data.User,
 		PreConnectMsg:      data.PreConnectMsg,
 		DynamicFirewall:    data.DynamicFirewall,
+		DeviceAuth:         data.DeviceAuth,
 		DisableGateway:     data.DisableGateway,
 		ForceDns:           data.ForceDns,
 		SsoAuth:            data.SsoAuth,
@@ -104,6 +107,7 @@ func sprofilePut(c *gin.Context) {
 		SyncToken:          data.SyncToken,
 		ServerPublicKey:    data.ServerPublicKey,
 		ServerBoxPublicKey: data.ServerBoxPublicKey,
+		RegistrationKey:    data.RegistrationKey,
 		OvpnData:           data.OvpnData,
 	}
 
