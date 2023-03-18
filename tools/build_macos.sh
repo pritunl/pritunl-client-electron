@@ -17,6 +17,13 @@ mkdir -p build/resources
 cp service/service build/resources/pritunl-service
 codesign --force --timestamp --options=runtime -s "Developer ID Application: Pritunl, Inc. (U22BLATN63)" build/resources/pritunl-service
 
+# Device Auth
+cd service_macos
+swiftc device_auth.swift -o ""
+cp "Pritunl Device Authentication" "../build/resources/Pritunl Device Authentication"
+codesign --force --timestamp --options=runtime -s "Developer ID Application: Pritunl, Inc. (U22BLATN63)" "Pritunl Device Authentication"
+cd ..
+
 # CLI
 cd cli
 go get
@@ -47,6 +54,7 @@ npm install
   --extra-resource="../build/resources/pritunl-client" \
   --extra-resource="../build/resources/pritunl-openvpn" \
   --extra-resource="../build/resources/pritunl-openvpn10" \
+  --extra-resource="../build/resources/Pritunl Device Authentication" \
   --osx-sign.hardenedRuntime \
   --osx-sign.hardened-runtime \
   --no-osx-sign.gatekeeper-assess \
