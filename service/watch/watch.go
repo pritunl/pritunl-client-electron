@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/pritunl/pritunl-client-electron/service/config"
+	"github.com/pritunl/pritunl-client-electron/service/event"
 	"github.com/pritunl/pritunl-client-electron/service/profile"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
 	"github.com/sirupsen/logrus"
@@ -85,12 +86,31 @@ func wakeWatch() {
 	}()
 
 	curTime := time.Now()
+	update := false
 
 	for {
 		if !profile.GetActive() {
+			if update {
+				status := profile.GetStatus()
+
+				if status {
+					evt := event.Event{
+						Type: "connected",
+					}
+					evt.Init()
+				} else {
+					evt := event.Event{
+						Type: "disconnected",
+					}
+					evt.Init()
+				}
+			}
+
 			time.Sleep(30 * time.Second)
 			curTime = time.Now()
 			continue
+		} else {
+			update = true
 		}
 
 		time.Sleep(1 * time.Second)
