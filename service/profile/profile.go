@@ -1306,6 +1306,9 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 				p.RegistrationKey = data.RegKey
 
 				if p.SystemProfile != nil {
+					sprofile.Deactivate(p.SystemProfile.Id)
+
+					p.SystemProfile.State = false
 					p.SystemProfile.RegistrationKey = p.RegistrationKey
 					err = p.SystemProfile.Commit()
 					if err != nil {
@@ -3856,6 +3859,9 @@ func (p *Profile) startWg(timeout bool) (err error) {
 			p.RegistrationKey = data.RegKey
 
 			if p.SystemProfile != nil {
+				sprofile.Deactivate(p.SystemProfile.Id)
+
+				p.SystemProfile.State = false
 				p.SystemProfile.RegistrationKey = p.RegistrationKey
 				err = p.SystemProfile.Commit()
 				if err != nil {
