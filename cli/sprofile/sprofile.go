@@ -27,6 +27,7 @@ type Sprofile struct {
 	User               string           `json:"user"`
 	PreConnectMsg      string           `json:"pre_connect_msg"`
 	DynamicFirewall    bool             `json:"dynamic_firewall"`
+	DeviceAuth         bool             `json:"device_auth"`
 	DisableGateway     bool             `json:"disable_gateway"`
 	ForceDns           bool             `json:"force_dns"`
 	SsoAuth            bool             `json:"sso_auth"`
@@ -40,6 +41,7 @@ type Sprofile struct {
 	SyncToken          string           `json:"sync_token"`
 	ServerPublicKey    []string         `json:"server_public_key"`
 	ServerBoxPublicKey string           `json:"server_box_public_key"`
+	RegistrationKey    string           `json:"registration_key"`
 	OvpnData           string           `json:"ovpn_data"`
 	Password           string           `json:"password"`
 	Profile            *profile.Profile `json:"-"`
