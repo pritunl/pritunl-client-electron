@@ -13,15 +13,16 @@ import (
 )
 
 type Profile struct {
-	Id            string
-	Name          string
-	State         string
-	RunState      string
-	Connected     bool
-	Uptime        int64
-	Status        string
-	ServerAddress string
-	ClientAddress string
+	Id              string `json:"id"`
+	Name            string `json:"name"`
+	State           string `json:"state"`
+	RunState        string `json:"run_state"`
+	RegistrationKey string `json:"registration_key"`
+	Connected       bool   `json:"connected"`
+	Uptime          int64  `json:"uptime"`
+	Status          string `json:"status"`
+	ServerAddress   string `json:"server_address"`
+	ClientAddress   string `json:"client_address"`
 }
 
 var ListCmd = &cobra.Command{
@@ -37,25 +38,27 @@ var ListCmd = &cobra.Command{
 			for _, sprfl := range sprfls {
 				if sprfl.Profile != nil {
 					prfls = append(prfls, &Profile{
-						Id:            sprfl.Id,
-						Name:          sprfl.FormatedName(),
-						State:         sprfl.FormatedState(),
-						RunState:      sprfl.FormatedRunState(),
-						Uptime:        sprfl.Profile.Uptime(),
-						Status:        sprfl.Profile.FormatedTime(),
-						ServerAddress: sprfl.Profile.ServerAddr,
-						ClientAddress: sprfl.Profile.ClientAddr,
+						Id:              sprfl.Id,
+						Name:            sprfl.FormatedName(),
+						State:           sprfl.FormatedState(),
+						RunState:        sprfl.FormatedRunState(),
+						RegistrationKey: sprfl.RegistrationKey,
+						Uptime:          sprfl.Profile.Uptime(),
+						Status:          sprfl.Profile.FormatedTime(),
+						ServerAddress:   sprfl.Profile.ServerAddr,
+						ClientAddress:   sprfl.Profile.ClientAddr,
 					})
 				} else {
 					prfls = append(prfls, &Profile{
-						Id:            sprfl.Id,
-						Name:          sprfl.FormatedName(),
-						State:         sprfl.FormatedState(),
-						RunState:      sprfl.FormatedRunState(),
-						Uptime:        0,
-						Status:        "Disconnected",
-						ServerAddress: "",
-						ClientAddress: "",
+						Id:              sprfl.Id,
+						Name:            sprfl.FormatedName(),
+						State:           sprfl.FormatedState(),
+						RunState:        sprfl.FormatedRunState(),
+						RegistrationKey: sprfl.RegistrationKey,
+						Uptime:          0,
+						Status:          "Disconnected",
+						ServerAddress:   "",
+						ClientAddress:   "",
 					})
 				}
 			}
@@ -81,8 +84,17 @@ var ListCmd = &cobra.Command{
 
 			fmt.Println(string(output))
 		} else {
+			hasRegKey := false
+			for _, sprfl := range sprfls {
+				if sprfl.RegistrationKey != "" {
+					hasRegKey = true
+					break
+				}
+			}
+
 			table := tablewriter.NewWriter(os.Stdout)
-			table.SetHeader([]string{
+
+			fields := []string{
 				"ID",
 				"Name",
 				"State",
@@ -90,12 +102,17 @@ var ListCmd = &cobra.Command{
 				"Online For",
 				"Server Address",
 				"Client Address",
-			})
+			}
+			if hasRegKey {
+				fields = append(fields, "Registration Key")
+			}
+
+			table.SetHeader(fields)
 			table.SetBorder(true)
 
 			for _, sprfl := range sprfls {
 				if sprfl.Profile != nil {
-					table.Append([]string{
+					fields := []string{
 						sprfl.Id,
 						sprfl.FormatedName(),
 						sprfl.FormatedRunState(),
@@ -103,9 +120,14 @@ var ListCmd = &cobra.Command{
 						sprfl.Profile.FormatedTime(),
 						sprfl.Profile.ServerAddr,
 						sprfl.Profile.ClientAddr,
-					})
+					}
+					if hasRegKey {
+						fields = append(fields, sprfl.RegistrationKey)
+					}
+
+					table.Append(fields)
 				} else {
-					table.Append([]string{
+					fields := []string{
 						sprfl.Id,
 						sprfl.FormatedName(),
 						sprfl.FormatedRunState(),
@@ -113,7 +135,12 @@ var ListCmd = &cobra.Command{
 						"Disconnected",
 						"-",
 						"-",
-					})
+					}
+					if hasRegKey {
+						fields = append(fields, sprfl.RegistrationKey)
+					}
+
+					table.Append(fields)
 				}
 			}
 
