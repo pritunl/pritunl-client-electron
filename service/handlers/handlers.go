@@ -80,6 +80,7 @@ func Register(engine *gin.Engine) {
 	engine.PUT("/token", tokenPut)
 	engine.DELETE("/token", tokenDelete)
 	engine.DELETE("/token/:profile_id", tokenDelete2)
+	engine.POST("/tpm/callback", tpmCallbackPost)
 	engine.GET("/ping", pingGet)
 	engine.POST("/stop", stopPost)
 	engine.POST("/restart", restartPost)
