@@ -185,7 +185,7 @@ func (t *Tpm) reader() {
 				errors.Wrap(err, "tpm: Failed to unmarshal output data"),
 			}
 			logrus.WithFields(logrus.Fields{
-				"output": line,
+				"output": string(line),
 				"error":  err,
 			}).Error("utils: Failed to unmarshal line")
 			return
