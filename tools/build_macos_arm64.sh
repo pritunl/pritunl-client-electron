@@ -19,6 +19,7 @@ codesign --force --timestamp --options=runtime -s "Developer ID Application: Pri
 
 # Device Auth
 cd service_macos
+rm -f "Pritunl Device Authentication"
 swiftc device_auth.swift -o "Pritunl Device Authentication"
 cp "Pritunl Device Authentication" "../build/resources/Pritunl Device Authentication"
 codesign --force --timestamp --options=runtime -s "Developer ID Application: Pritunl, Inc. (U22BLATN63)" "Pritunl Device Authentication"
