@@ -87,7 +87,7 @@ func main() {
 		"version": constants.Version,
 	}).Info("main: Service starting")
 
-	_ = update.Check()
+	go update.Check()
 
 	defer func() {
 		panc := recover()
