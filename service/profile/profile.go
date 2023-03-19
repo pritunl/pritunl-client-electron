@@ -2047,7 +2047,7 @@ func (p *Profile) reqOvpn(remote, ssoToken string, ssoStart time.Time) (
 	}
 
 	var tp tpm.TpmCaller
-	if true {
+	if runtime.GOOS == "darwin" && !config.Config.ForceLocalTpm {
 		tp = &tpm.Remote{}
 	} else {
 		tp = &tpm.Tpm{}
@@ -2514,7 +2514,7 @@ func (p *Profile) reqWg(remote, ssoToken string, ssoStart time.Time) (
 	}
 
 	var tp tpm.TpmCaller
-	if true {
+	if runtime.GOOS == "darwin" && !config.Config.ForceLocalTpm {
 		tp = &tpm.Remote{}
 	} else {
 		tp = &tpm.Tpm{}

@@ -24,6 +24,7 @@ type ConfigData struct {
 	DisableDnsRefresh bool   `json:"disable_dns_refresh"`
 	DisableWakeWatch  bool   `json:"disable_wake_watch"`
 	DisableNetClean   bool   `json:"disable_net_clean"`
+	ForceLocalTpm     bool   `json:"force_local_tpm"`
 	InterfaceMetric   int    `json:"interface_metric"`
 	EnclavePrivateKey string `json:"enclave_private_key"`
 }
