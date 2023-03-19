@@ -2046,7 +2046,13 @@ func (p *Profile) reqOvpn(remote, ssoToken string, ssoStart time.Time) (
 		SsoToken:       ssoToken,
 	}
 
-	tp := tpm.Tpm{}
+	var tp tpm.TpmCaller
+	if true {
+		tp = &tpm.Remote{}
+	} else {
+		tp = &tpm.Tpm{}
+	}
+
 	if p.DeviceAuth {
 		err = tp.Open(config.Config.EnclavePrivateKey)
 		if err != nil {
@@ -2507,7 +2513,13 @@ func (p *Profile) reqWg(remote, ssoToken string, ssoStart time.Time) (
 		SsoToken:       ssoToken,
 	}
 
-	tp := tpm.Tpm{}
+	var tp tpm.TpmCaller
+	if true {
+		tp = &tpm.Remote{}
+	} else {
+		tp = &tpm.Tpm{}
+	}
+
 	if p.DeviceAuth {
 		err = tp.Open(config.Config.EnclavePrivateKey)
 		if err != nil {
