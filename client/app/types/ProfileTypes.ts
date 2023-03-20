@@ -42,7 +42,9 @@ export interface Profile {
 	disable_reconnect?: boolean
 	disable_reconnect_local?: boolean
 	dynamic_firewall?: boolean
+	device_auth?: boolean
 	disable_gateway?: boolean
+	force_dns?: boolean
 	sso_auth?: boolean
 	password_mode?: string
 	token?: boolean
@@ -53,6 +55,7 @@ export interface Profile {
 	sync_token?: string
 	server_public_key?: string[]
 	server_box_public_key?: string
+	registration_key?: string
 	sync_time?: number
 	status?: string
 	timestamp?: number
@@ -104,6 +107,7 @@ export interface ProfileDispatch {
 	data?: {
 		id?: string
 		url?: string
+		registration_key?: string
 		profile?: Profile
 		profiles?: Profiles
 		profilesSystem?: Profiles
@@ -127,7 +131,9 @@ export interface ProfileData {
 	username?: string
 	password?: string
 	dynamic_firewall?: boolean
+	device_auth?: boolean
 	disable_gateway?: boolean
+	force_dns?: boolean
 	sso_auth?: boolean
 	server_public_key?: string
 	server_box_public_key?: string
@@ -397,8 +403,10 @@ export function New(self: Profile): Profile {
 			user: this.user,
 			pre_connect_msg: this.pre_connect_msg,
 			dynamic_firewall: this.dynamic_firewall,
+			device_auth: this.device_auth,
 			disable_reconnect_local: this.disable_reconnect_local,
 			disable_gateway: this.disable_gateway,
+			force_dns: this.force_dns,
 			sso_auth: this.sso_auth,
 			password_mode: this.password_mode,
 			token: this.token,
@@ -412,6 +420,7 @@ export function New(self: Profile): Profile {
 			sync_token: this.sync_token,
 			server_public_key: this.server_public_key,
 			server_box_public_key: this.server_box_public_key,
+			registration_key: this.registration_key,
 			key_data: this.key_data,
 		})
 	}
@@ -427,8 +436,10 @@ export function New(self: Profile): Profile {
 		this.user = data.user
 		this.pre_connect_msg = data.pre_connect_msg
 		this.dynamic_firewall = data.dynamic_firewall
+		this.device_auth = data.device_auth
 		this.disable_reconnect_local = data.disable_reconnect_local
 		this.disable_gateway = data.disable_gateway
+		this.force_dns = data.force_dns
 		this.sso_auth = data.sso_auth
 		this.password_mode = data.password_mode
 		this.token = data.token
@@ -458,7 +469,9 @@ export function New(self: Profile): Profile {
 			user: this.user,
 			pre_connect_msg: this.pre_connect_msg,
 			dynamic_firewall: this.dynamic_firewall,
+			device_auth: this.device_auth,
 			disable_gateway: this.disable_gateway,
+			force_dns: this.force_dns,
 			sso_auth: this.sso_auth,
 			password_mode: this.password_mode,
 			token: this.token,
@@ -472,6 +485,7 @@ export function New(self: Profile): Profile {
 			sync_token: this.sync_token,
 			server_public_key: this.server_public_key,
 			server_box_public_key: this.server_box_public_key,
+			registration_key: this.registration_key,
 			ovpn_data: this.ovpn_data,
 		}
 	}
@@ -487,6 +501,7 @@ export function New(self: Profile): Profile {
 		this.user = data.user || this.user
 		this.pre_connect_msg = data.pre_connect_msg
 		this.dynamic_firewall = data.dynamic_firewall
+		this.device_auth = data.device_auth
 		this.disable_reconnect_local = data.disable_reconnect_local
 		this.disable_gateway = data.disable_gateway
 		this.sso_auth = data.sso_auth
