@@ -397,13 +397,20 @@ func SyncSystemProfiles() (err error) {
 				waiter.Add(1)
 
 				go func() {
-					err = prfl.Start(false, false, false)
-					if err != nil {
+					ready := prfl.Ready()
+					if !ready {
 						logrus.WithFields(logrus.Fields{
 							"profile_id": prfl.Id,
-							"error":      err,
-						}).Error("profile: Failed to start system profile")
-						err = nil
+						}).Info("profile: Profile not ready, waiting")
+					} else {
+						err = prfl.Start(false, false, false)
+						if err != nil {
+							logrus.WithFields(logrus.Fields{
+								"profile_id": prfl.Id,
+								"error":      err,
+							}).Error("profile: Failed to start system profile")
+							err = nil
+						}
 					}
 
 					waiter.Done()
