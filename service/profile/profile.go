@@ -276,6 +276,15 @@ type AuthData struct {
 	Timestamp int64  `json:"timestamp"`
 }
 
+func (p *Profile) Ready() bool {
+	if p.DeviceAuth && runtime.GOOS == "darwin" &&
+		!config.Config.ForceLocalTpm {
+
+		return event.GetState()
+	}
+	return true
+}
+
 func (p *Profile) write(fixedRemote, fixedRemote6 string) (
 	pth string, err error) {
 
