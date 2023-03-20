@@ -49,7 +49,7 @@ func (t *Remote) Open(privKey64 string) (err error) {
 	}
 	evt.Init()
 
-	for i := 0; i < 300; i++ {
+	for i := 0; i < 10; i++ {
 		time.Sleep(100 * time.Millisecond)
 		if t.pubKey64 != "" || t.callerErr != "" {
 			break
@@ -102,7 +102,7 @@ func (t *Remote) Sign(data []byte) (privKey64, sig64 string, err error) {
 	}
 	evt.Init()
 
-	for i := 0; i < 300; i++ {
+	for i := 0; i < 10; i++ {
 		time.Sleep(100 * time.Millisecond)
 		if t.sig64 != "" || t.callerErr != "" {
 			break
