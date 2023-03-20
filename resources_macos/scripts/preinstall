@@ -10,7 +10,6 @@ kextunload -b net.sf.tuntaposx.tap || true
 kextunload -b net.sf.tuntaposx.tun || true
 rm -rf /Library/Extensions/tap.kext || true
 rm -rf /Library/Extensions/tun.kext || true
-rm -f /Library/LaunchAgents/com.pritunl.client.plist || true
 rm -f /Library/LaunchDaemons/net.sf.tuntaposx.tap.plist || true
 rm -f /Library/LaunchDaemons/net.sf.tuntaposx.tun.plist || true
 rm -rf /usr/local/bin/pritunl-openvpn || true
