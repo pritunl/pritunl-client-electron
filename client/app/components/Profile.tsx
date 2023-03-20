@@ -83,6 +83,20 @@ const css = {
 	body: {
 		paddingTop: "31px"
 	} as React.CSSProperties,
+	regBox: {
+		padding: "40px 20px 0 0",
+		marginBottom: "-15px",
+	} as React.CSSProperties,
+	reg: {
+		textAlign: "center",
+	} as React.CSSProperties,
+	regTitle: {
+		margin: "3px 0 0 0",
+	} as React.CSSProperties,
+	regKey: {
+		margin: "1px 0",
+		fontWeight: "bold",
+	} as React.CSSProperties,
 };
 
 export default class Profile extends React.Component<Props, State> {
@@ -211,6 +225,23 @@ export default class Profile extends React.Component<Props, State> {
 						disabled={this.state.disabled}
 						onConfirm={this.onDelete}
 					/>
+				</div>
+			</div>
+			<div
+				className="layout vertical"
+				style={css.regBox}
+				hidden={!profile.registration_key}
+			>
+				<div className="bp3-card layout vertical" style={css.reg}>
+					<h3
+						className="bp3-text-intent-danger"
+						style={css.regTitle}
+					>Device Registration Required</h3>
+					Contact Server Administrator with Code:
+					<h1
+						className="bp3-text-intent-primary"
+						style={css.regKey}
+					>{profile.registration_key}</h1>
 				</div>
 			</div>
 			<div className="layout horizontal" style={css.body}>
