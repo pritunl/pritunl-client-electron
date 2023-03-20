@@ -42,3 +42,7 @@ func (e *Event) Init() {
 		}()
 	}
 }
+
+func GetState() bool {
+	return utils.SinceAbs(LastPong) < time.Second*30
+}
