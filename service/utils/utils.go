@@ -240,7 +240,9 @@ func CopyClearScutilMultiKey(typ, src string, dsts ...*ScutilKey) (
 
 	stdin := fmt.Sprintf("open\nget %s:%s\n", typ, src)
 	for _, dst := range dsts {
-		stdin += fmt.Sprintf("remove %s:%s\n", dst.Type, dst.Key)
+		if dst.Type == "State" {
+			stdin += fmt.Sprintf("remove %s:%s\n", dst.Type, dst.Key)
+		}
 		stdin += fmt.Sprintf("set %s:%s\n", dst.Type, dst.Key)
 	}
 	stdin += "quit\n"
@@ -330,7 +332,15 @@ func RestoreScutilDns() (err error) {
 			return
 		}
 
-		if !strings.Contains(data, "Pritunl : true") {
+		data2, e := GetScutilKey("Setup", serviceKey)
+		if e != nil {
+			err = e
+			return
+		}
+
+		if !strings.Contains(data, "Pritunl : true") &&
+			!strings.Contains(data2, "Pritunl : true") {
+
 			logrus.WithFields(logrus.Fields{
 				"restore_key": restoreKey,
 				"service_key": serviceKey,
@@ -359,11 +369,11 @@ func RestoreScutilDns() (err error) {
 	err = CopyClearScutilMultiKey(
 		"State", restoreKey,
 		&ScutilKey{
-			Type: "State",
+			Type: "Setup",
 			Key:  serviceKey,
 		},
 		&ScutilKey{
-			Type: "Setup",
+			Type: "State",
 			Key:  serviceKey,
 		},
 	)
