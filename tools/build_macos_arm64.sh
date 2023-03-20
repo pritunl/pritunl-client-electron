@@ -78,6 +78,8 @@ touch build/macos/var/log/pritunl-client.log
 touch build/macos/var/log/pritunl-client.log.1
 
 # Service Daemon
+mkdir -p build/macos/Library/LaunchAgents
+cp service_macos/com.pritunl.client.plist build/macos/Library/LaunchAgents
 mkdir -p build/macos/Library/LaunchDaemons
 cp service_macos/com.pritunl.service.plist build/macos/Library/LaunchDaemons
 
