@@ -437,5 +437,35 @@ EventDispatcher.register((action: ProfileTypes.ProfileDispatch) => {
 
 			Alert.info(ssoAuthElm, 5)
 			break
+		case "registration_required":
+			if (action.data) {
+				let prfl = ProfilesStore.profile(action.data.id)
+				if (prfl) {
+					if (!prfl.system) {
+						prfl.registration_key = action.data.registration_key
+						prfl.writeConf()
+					}
+
+					Alert.error("Device registration required for " +
+						prfl.formattedName())
+
+					return
+				}
+			}
+			Alert.error("Failed to authenticate")
+			break
+		case "registration_pass":
+			if (action.data) {
+				let prfl = ProfilesStore.profile(action.data.id)
+				if (prfl) {
+					if (!prfl.system && prfl.registration_key) {
+						prfl.registration_key = ""
+						prfl.writeConf()
+					}
+
+					return
+				}
+			}
+			break
 	}
 });
