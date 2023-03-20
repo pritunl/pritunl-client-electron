@@ -11783,6 +11783,64 @@ var websocket_server = __webpack_require__(6087);
 
 /* harmony default export */ const wrapper = (websocket);
 
+;// CONCATENATED MODULE: ./main/Auth.js
+
+
+
+
+let token = '';
+let unix = false;
+const unixPath = "/var/run/pritunl.sock";
+const webHost = "http://127.0.0.1:9770";
+if ((external_process_default()).platform === "linux" || (external_process_default()).platform === "darwin") {
+    unix = true;
+}
+function getAuthPath() {
+    if (external_process_default().argv.indexOf("--dev") !== -1) {
+        return external_path_default().join(__dirname, "..", "..", "dev", "auth");
+    }
+    else {
+        if ((external_process_default()).platform === "win32") {
+            return external_path_default().join(winDrive, "ProgramData", "Pritunl", "auth");
+        }
+        else {
+            return external_path_default().join((external_path_default()).sep, "var", "run", "pritunl.auth");
+        }
+    }
+}
+function _load() {
+    external_fs_default().readFile(getAuthPath(), 'utf-8', (err, data) => {
+        if (err || !data) {
+            setTimeout(() => {
+                _load();
+            }, 100);
+            return;
+        }
+        token = data.trim();
+        setTimeout(() => {
+            _load();
+        }, 3000);
+    });
+}
+function load() {
+    return new Promise((resolve, reject) => {
+        external_fs_default().readFile(getAuthPath(), 'utf-8', (err, data) => {
+            if (err || !data) {
+                setTimeout(() => {
+                    _load();
+                }, 100);
+                resolve();
+                return;
+            }
+            token = data.trim();
+            resolve();
+            setTimeout(() => {
+                _load();
+            }, 3000);
+        });
+    });
+}
+
 // EXTERNAL MODULE: external "http"
 var external_http_ = __webpack_require__(3685);
 var external_http_default = /*#__PURE__*/__webpack_require__.n(external_http_);
@@ -11903,7 +11961,7 @@ class Response {
         return this.data;
     }
 }
-class Request {
+class Request_Request {
     constructor() {
         this.headers = new Map();
     }
@@ -12042,62 +12100,60 @@ class Request {
     }
 }
 
-;// CONCATENATED MODULE: ./main/Auth.js
+;// CONCATENATED MODULE: ./main/RequestUtils.js
 
 
-
-
-let token = '';
-let unix = false;
-const unixPath = "/var/run/pritunl.sock";
-const webHost = "http://127.0.0.1:9770";
-if ((external_process_default()).platform === "linux" || (external_process_default()).platform === "darwin") {
-    unix = true;
-}
-function getAuthPath() {
-    if (external_process_default().argv.indexOf("--dev") !== -1) {
-        return external_path_default().join(__dirname, "..", "..", "dev", "auth");
+function get(path) {
+    let req = new Request_Request();
+    if (unix) {
+        req.unix(unixPath);
     }
     else {
-        if ((external_process_default()).platform === "win32") {
-            return external_path_default().join(winDrive, "ProgramData", "Pritunl", "auth");
-        }
-        else {
-            return external_path_default().join((external_path_default()).sep, "var", "run", "pritunl.auth");
-        }
+        req.tcp(webHost);
     }
+    req.get(path)
+        .set("Auth-Token", token)
+        .set("User-Agent", "pritunl");
+    return req;
 }
-function _load() {
-    external_fs_default().readFile(getAuthPath(), 'utf-8', (err, data) => {
-        if (err || !data) {
-            setTimeout(() => {
-                _load();
-            }, 100);
-            return;
-        }
-        token = data.trim();
-        setTimeout(() => {
-            _load();
-        }, 3000);
-    });
+function put(path) {
+    let req = new Request.Request();
+    if (Auth.unix) {
+        req.unix(Auth.unixPath);
+    }
+    else {
+        req.tcp(Auth.webHost);
+    }
+    req.put(path)
+        .set("Auth-Token", Auth.token)
+        .set("User-Agent", "pritunl");
+    return req;
 }
-function load() {
-    return new Promise((resolve, reject) => {
-        external_fs_default().readFile(getAuthPath(), 'utf-8', (err, data) => {
-            if (err || !data) {
-                setTimeout(() => {
-                    _load();
-                }, 100);
-                resolve();
-                return;
-            }
-            token = data.trim();
-            resolve();
-            setTimeout(() => {
-                _load();
-            }, 3000);
-        });
-    });
+function post(path) {
+    let req = new Request_Request();
+    if (unix) {
+        req.unix(unixPath);
+    }
+    else {
+        req.tcp(webHost);
+    }
+    req.post(path)
+        .set("Auth-Token", token)
+        .set("User-Agent", "pritunl");
+    return req;
+}
+function del(path) {
+    let req = new Request.Request();
+    if (Auth.unix) {
+        req.unix(Auth.unixPath);
+    }
+    else {
+        req.tcp(Auth.webHost);
+    }
+    req.delete(path)
+        .set("Auth-Token", Auth.token)
+        .set("User-Agent", "pritunl");
+    return req;
 }
 
 ;// CONCATENATED MODULE: ./app/Errors.js
@@ -12731,14 +12787,7 @@ function sync() {
             resolve(false);
             return;
         }
-        let req = new Request();
-        if (Service_unix) {
-            req.unix(Service_unixPath);
-        }
-        else {
-            req.tcp(Service_webHost);
-        }
-        req.get("/status")
+        get("/status")
             .set("Auth-Token", token)
             .set("User-Agent", "pritunl")
             .end()
@@ -12771,14 +12820,7 @@ function wakeup() {
             resolve(false);
             return;
         }
-        let req = new Request();
-        if (Service_unix) {
-            req.unix(Service_unixPath);
-        }
-        else {
-            req.tcp(Service_webHost);
-        }
-        req.post("/wakeup")
+        post("/wakeup")
             .set("Auth-Token", token)
             .set("User-Agent", "pritunl")
             .end()
@@ -13062,21 +13104,20 @@ function Tpm_open(callerId, privKey64) {
     let proc = external_child_process_default().execFile(deviceAuthPath);
     let stderr = "";
     setTimeout(() => {
+        if (proc.exitCode === null) {
+            let err = new ProcessError(null, "Tpm: Secure enclave process timed out", {
+                caller_id: callerId,
+            });
+            error(err.message);
+        }
         proc.kill("SIGINT");
-    }, 60000);
+    }, 10000);
     proc.on("error", (err) => {
         err = new ProcessError(err, "Tpm: Secure enclave exec error", {
             caller_id: callerId,
         });
         error(err.message);
-        let req = new Request();
-        if (unix) {
-            req.unix(unixPath);
-        }
-        else {
-            req.tcp(webHost);
-        }
-        req.post("/tpm/callback")
+        post("/tpm/callback")
             .set("Auth-Token", token)
             .set("User-Agent", "pritunl")
             .send({
@@ -13109,14 +13150,7 @@ function Tpm_open(callerId, privKey64) {
                 output: stderr,
             });
             error(err.message);
-            let req = new Request();
-            if (unix) {
-                req.unix(unixPath);
-            }
-            else {
-                req.tcp(webHost);
-            }
-            req.post("/tpm/callback")
+            post("/tpm/callback")
                 .set("Auth-Token", token)
                 .set("User-Agent", "pritunl")
                 .send({
@@ -13141,16 +13175,28 @@ function Tpm_open(callerId, privKey64) {
             });
         }
     });
+    let outBuffer = "";
     proc.stdout.on("data", (data) => {
-        let dataObj = JSON.parse(data.replace(/\s/g, ""));
-        let req = new Request();
-        if (unix) {
-            req.unix(unixPath);
+        outBuffer += data;
+        if (!outBuffer.includes("\n")) {
+            return;
         }
-        else {
-            req.tcp(webHost);
+        let lines = outBuffer.split("\n");
+        let line = lines[0];
+        outBuffer = lines.slice(1).join("\n");
+        let dataObj;
+        try {
+            dataObj = JSON.parse(line.replace(/\s/g, ""));
         }
-        req.post("/tpm/callback")
+        catch (_a) {
+            let err = new RequestError(null, "Tpm: Failed to parse line", {
+                caller_id: callerId,
+                line: data,
+            });
+            error(err.message);
+            return;
+        }
+        post("/tpm/callback")
             .set("Auth-Token", token)
             .set("User-Agent", "pritunl")
             .send({
