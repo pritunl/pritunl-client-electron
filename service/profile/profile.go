@@ -1694,7 +1694,7 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 		running = false
 
 		if runtime.GOOS == "darwin" {
-			err = utils.RestoreScutilDns()
+			err = utils.RestoreScutilDns(false)
 			if err != nil {
 				logrus.WithFields(logrus.Fields{
 					"error": err,
@@ -4230,10 +4230,11 @@ func (p *Profile) Restart() {
 	if prfl == p {
 		delete(Profiles.m, p.Id)
 	}
+	Profiles.Unlock()
+
 	if runtime.GOOS == "darwin" && len(Profiles.m) == 0 && DnsForced {
 		utils.ClearDns()
 	}
-	Profiles.Unlock()
 
 	logrus.WithFields(logrus.Fields{
 		"profile_id": p.Id,
@@ -4351,10 +4352,11 @@ func (p *Profile) Stop() {
 	if prfl == p {
 		delete(Profiles.m, p.Id)
 	}
+	Profiles.Unlock()
+
 	if runtime.GOOS == "darwin" && len(Profiles.m) == 0 && DnsForced {
 		utils.ClearDns()
 	}
-	Profiles.Unlock()
 
 	logrus.WithFields(logrus.Fields{
 		"profile_id": p.Id,
