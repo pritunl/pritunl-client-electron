@@ -212,7 +212,7 @@ func main() {
 			panic(err)
 		}
 	} else {
-		sig := make(chan os.Signal, 2)
+		sig := make(chan os.Signal, 100)
 		signal.Notify(sig, os.Interrupt, syscall.SIGTERM)
 		<-sig
 	}
@@ -242,6 +242,11 @@ func main() {
 
 	for _, prfl := range prfls {
 		prfl.Wait()
+	}
+
+	if runtime.GOOS == "darwin" {
+		_ = utils.ClearScutilConnKeys()
+		_ = utils.RestoreScutilDns(true)
 	}
 
 	time.Sleep(750 * time.Millisecond)

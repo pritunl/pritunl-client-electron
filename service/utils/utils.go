@@ -240,7 +240,9 @@ func CopyClearScutilMultiKey(typ, src string, dsts ...*ScutilKey) (
 
 	stdin := fmt.Sprintf("open\nget %s:%s\n", typ, src)
 	for _, dst := range dsts {
-		stdin += fmt.Sprintf("remove %s:%s\n", dst.Type, dst.Key)
+		if dst.Type == "State" {
+			stdin += fmt.Sprintf("remove %s:%s\n", dst.Type, dst.Key)
+		}
 		stdin += fmt.Sprintf("set %s:%s\n", dst.Type, dst.Key)
 	}
 	stdin += "quit\n"
@@ -294,7 +296,7 @@ func GetScutilService() (serviceId string, err error) {
 	return
 }
 
-func RestoreScutilDns() (err error) {
+func RestoreScutilDns(force bool) (err error) {
 	if runtime.GOOS != "darwin" {
 		return
 	}
@@ -313,7 +315,7 @@ func RestoreScutilDns() (err error) {
 	connected := len(connIds) != 0
 
 	restoreKey := ""
-	if connected {
+	if connected && !force {
 		restoreKey = fmt.Sprintf(
 			"/Network/Pritunl/Connection/%s", connIds[0])
 	} else {
@@ -367,6 +369,10 @@ func RestoreScutilDns() (err error) {
 	err = CopyClearScutilMultiKey(
 		"State", restoreKey,
 		&ScutilKey{
+			Type: "State",
+			Key:  serviceKey,
+		},
+		&ScutilKey{
 			Type: "Setup",
 			Key:  serviceKey,
 		},
@@ -394,6 +400,10 @@ func RefreshScutilDns() (err error) {
 
 	err = CopyClearScutilMultiKey(
 		"State", serviceKey,
+		&ScutilKey{
+			Type: "State",
+			Key:  serviceKey,
+		},
 		&ScutilKey{
 			Type: "Setup",
 			Key:  serviceKey,
@@ -468,43 +478,27 @@ func GetScutilConnIds() (ids []string, err error) {
 	return
 }
 
-func ClearScutilKeys() (err error) {
-	remove := ""
+func ClearScutilConnKeys() (err error) {
+	macDnsLock.Lock()
+	defer macDnsLock.Unlock()
 
-	cmd := command.Command("/usr/sbin/scutil")
-	cmd.Stdin = strings.NewReader("open\nlist\nquit\n")
-
-	output, err := cmd.CombinedOutput()
+	connIds, err := GetScutilConnIds()
 	if err != nil {
-		err = &CommandError{
-			errors.Wrap(err, "utils: Failed to exec scutil"),
-		}
 		return
 	}
 
-	for _, line := range strings.Split(string(output), "\n") {
-		if !strings.Contains(line, "State:/Network/Pritunl") {
-			continue
-		}
+	remove := ""
 
-		if strings.Contains(line, "State:/Network/Pritunl/Restore") {
-			continue
-		}
-
-		spl := strings.Split(line, "State:")
-		if len(spl) != 2 {
-			continue
-		}
-
-		key := strings.TrimSpace(spl[1])
-		remove += fmt.Sprintf("remove State:%s\n", key)
+	for _, connId := range connIds {
+		remove += fmt.Sprintf(
+			"remove State:/Network/Pritunl/Connection/%s\n", connId)
 	}
 
 	if remove == "" {
 		return
 	}
 
-	cmd = command.Command("/usr/sbin/scutil")
+	cmd := command.Command("/usr/sbin/scutil")
 	cmd.Stdin = strings.NewReader("open\n" + remove + "quit\n")
 
 	err = cmd.Run()
@@ -636,6 +630,9 @@ func ClearDns() {
 		return
 	}
 
+	macDnsLock.Lock()
+	defer macDnsLock.Unlock()
+
 	logrus.Info("utils: Clearing DNS")
 
 	output, err := ExecCombinedOutputLogged(
@@ -679,6 +676,10 @@ func ResetDns() {
 }
 
 func ClearDNSCache() {
+	if runtime.GOOS != "darwin" {
+		return
+	}
+
 	macDnsLock.Lock()
 	defer macDnsLock.Unlock()
 
