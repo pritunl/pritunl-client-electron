@@ -59,7 +59,6 @@ d.init
 d.add ServerAddresses * ${DNS_SERVERS}
 d.add SearchDomains * ${DNS_SEARCH}
 d.add Pritunl true
-set State:/Network/Service/${SERVICE_ID}/DNS
 set Setup:/Network/Service/${SERVICE_ID}/DNS
 set State:/Network/Pritunl/Connection/${CONN_ID}
 quit
@@ -70,7 +69,6 @@ open
 d.init
 d.add ServerAddresses * ${DNS_SERVERS}
 d.add Pritunl true
-set State:/Network/Service/${SERVICE_ID}/DNS
 set Setup:/Network/Service/${SERVICE_ID}/DNS
 set State:/Network/Pritunl/Connection/${CONN_ID}
 quit
@@ -81,7 +79,6 @@ open
 d.init
 d.add SearchDomains * ${DNS_SEARCH}
 d.add Pritunl true
-set State:/Network/Service/${SERVICE_ID}/DNS
 set Setup:/Network/Service/${SERVICE_ID}/DNS
 set State:/Network/Pritunl/Connection/${CONN_ID}
 quit
@@ -149,7 +146,6 @@ d.init
 d.add ServerAddresses * ${DNS_SERVERS}
 d.add SearchDomains * ${DNS_SEARCH}
 d.add Pritunl true
-set State:/Network/Service/${SERVICE_ID}/DNS
 set Setup:/Network/Service/${SERVICE_ID}/DNS
 set State:/Network/Pritunl/Connection/${CONN_ID}
 quit
@@ -160,7 +156,6 @@ open
 d.init
 d.add ServerAddresses * ${DNS_SERVERS}
 d.add Pritunl true
-set State:/Network/Service/${SERVICE_ID}/DNS
 set Setup:/Network/Service/${SERVICE_ID}/DNS
 set State:/Network/Pritunl/Connection/${CONN_ID}
 quit
@@ -171,7 +166,6 @@ open
 d.init
 d.add SearchDomains * ${DNS_SEARCH}
 d.add Pritunl true
-set State:/Network/Service/${SERVICE_ID}/DNS
 set Setup:/Network/Service/${SERVICE_ID}/DNS
 set State:/Network/Pritunl/Connection/${CONN_ID}
 quit
