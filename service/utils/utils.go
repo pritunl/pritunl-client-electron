@@ -303,16 +303,16 @@ func RestoreScutilDns() (err error) {
 
 	logrus.Info("utils: Restore DNS")
 
+	serviceId, err := GetScutilService()
+	if err != nil {
+		return
+	}
+
 	connIds, err := GetScutilConnIds()
 	if err != nil {
 		return
 	}
 	connected := len(connIds) != 0
-
-	serviceId, err := GetScutilService()
-	if err != nil {
-		return
-	}
 
 	restoreKey := ""
 	if connected {
@@ -391,6 +391,8 @@ func RefreshScutilDns() (err error) {
 		return
 	}
 
+	logrus.Info("utils: Refresh DNS")
+
 	serviceId, err := GetScutilService()
 	if err != nil {
 		return
@@ -401,11 +403,11 @@ func RefreshScutilDns() (err error) {
 	err = CopyClearScutilMultiKey(
 		"State", serviceKey,
 		&ScutilKey{
-			Type: "State",
+			Type: "Setup",
 			Key:  serviceKey,
 		},
 		&ScutilKey{
-			Type: "Setup",
+			Type: "State",
 			Key:  serviceKey,
 		},
 	)
