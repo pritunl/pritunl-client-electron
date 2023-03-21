@@ -391,8 +391,6 @@ func RefreshScutilDns() (err error) {
 		return
 	}
 
-	logrus.Info("utils: Refresh DNS")
-
 	serviceId, err := GetScutilService()
 	if err != nil {
 		return
