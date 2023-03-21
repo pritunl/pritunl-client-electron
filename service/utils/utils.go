@@ -240,9 +240,7 @@ func CopyClearScutilMultiKey(typ, src string, dsts ...*ScutilKey) (
 
 	stdin := fmt.Sprintf("open\nget %s:%s\n", typ, src)
 	for _, dst := range dsts {
-		if dst.Type == "State" {
-			stdin += fmt.Sprintf("remove %s:%s\n", dst.Type, dst.Key)
-		}
+		stdin += fmt.Sprintf("remove %s:%s\n", dst.Type, dst.Key)
 		stdin += fmt.Sprintf("set %s:%s\n", dst.Type, dst.Key)
 	}
 	stdin += "quit\n"
@@ -372,10 +370,6 @@ func RestoreScutilDns() (err error) {
 			Type: "Setup",
 			Key:  serviceKey,
 		},
-		&ScutilKey{
-			Type: "State",
-			Key:  serviceKey,
-		},
 	)
 	if err != nil {
 		return
@@ -402,10 +396,6 @@ func RefreshScutilDns() (err error) {
 		"State", serviceKey,
 		&ScutilKey{
 			Type: "Setup",
-			Key:  serviceKey,
-		},
-		&ScutilKey{
-			Type: "State",
 			Key:  serviceKey,
 		},
 	)
@@ -445,23 +435,6 @@ func BackupScutilDns() (err error) {
 	err = CopyScutilKey("State", serviceKey, restoreKey)
 	if err != nil {
 		return
-	}
-
-	data, err = GetScutilKey("Setup", serviceKey)
-	if err != nil {
-		return
-	}
-
-	if strings.Contains(data, "No such key") {
-		err = RemoveScutilKey("Setup", restoreKey)
-		if err != nil {
-			return
-		}
-	} else if !strings.Contains(data, "Pritunl : true") {
-		err = CopyScutilKey("Setup", serviceKey, restoreKey)
-		if err != nil {
-			return
-		}
 	}
 
 	return
