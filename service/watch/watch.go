@@ -147,14 +147,14 @@ func dnsWatch() {
 		return
 	}
 
-	check := true
+	check := 1
 	errorCount := 0
 
 	for {
 		time.Sleep(2 * time.Second)
 
 		if !profile.GetStatus() {
-			if check {
+			if check > 0 {
 				if profile.DnsForced {
 					utils.ClearDns()
 				}
@@ -170,7 +170,7 @@ func dnsWatch() {
 							"resetting network")
 
 						utils.ResetNetworking()
-						check = false
+						check = 0
 						errorCount = 0
 
 						time.Sleep(5 * time.Second)
@@ -180,7 +180,7 @@ func dnsWatch() {
 						}).Warn("watch: Failed to restore DNS")
 					}
 				} else {
-					check = false
+					check -= 1
 					errorCount = 0
 				}
 			}
@@ -192,7 +192,7 @@ func dnsWatch() {
 
 		time.Sleep(2 * time.Second)
 
-		check = true
+		check = 2
 		errorCount = 0
 		global, _ := utils.GetScutilKey("State", "/Network/Global/DNS")
 
