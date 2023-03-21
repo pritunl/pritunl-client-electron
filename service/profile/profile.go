@@ -1223,7 +1223,20 @@ func (p *Profile) Start(timeout, delay, automatic bool) (err error) {
 	stateLock.Unlock()
 
 	Profiles.RLock()
-	n := len(Profiles.m)
+	if runtime.GOOS == "darwin" && len(Profiles.m) == 0 {
+		err = utils.ClearScutilConnKeys()
+		if err != nil {
+			logrus.WithFields(logrus.Fields{
+				"profile_id": p.Id,
+				"error":      err,
+			}).Error("profile: Failed to clear scutil connection keys")
+			err = nil
+		}
+		if DnsForced {
+			utils.ClearDns()
+		}
+	}
+
 	_, ok := Profiles.m[p.Id]
 	Profiles.RUnlock()
 	if ok {
@@ -1240,10 +1253,6 @@ func (p *Profile) Start(timeout, delay, automatic bool) (err error) {
 		"sso_auth":         p.SsoAuth,
 		"reconnect":        p.Reconnect,
 	}).Info("profile: Connecting")
-
-	if runtime.GOOS == "darwin" && n == 0 {
-		utils.ClearScutilKeys()
-	}
 
 	Profiles.Lock()
 	prfl := Profiles.m[p.Id]
