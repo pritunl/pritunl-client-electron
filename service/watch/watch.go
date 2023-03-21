@@ -159,7 +159,7 @@ func dnsWatch() {
 					utils.ClearDns()
 				}
 
-				err := utils.RestoreScutilDns()
+				err := utils.RestoreScutilDns(false)
 				if err != nil {
 					errorCount += 1
 
@@ -258,7 +258,7 @@ func dnsWatch() {
 				}).Error("watch: Failed to backup DNS settings")
 			}
 
-			err = utils.RestoreScutilDns()
+			err = utils.RestoreScutilDns(false)
 			if err != nil {
 				logrus.WithFields(logrus.Fields{
 					"error": err,
