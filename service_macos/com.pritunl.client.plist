@@ -11,7 +11,9 @@
 		<string>/Applications/Pritunl.app/Contents/MacOS/Pritunl</string>
 		<string>--no-main</string>
 	</array>
-  <key>RunAtLoad</key>
+	<key>RunAtLoad</key>
+	<true/>
+	<key>LaunchOnlyOnce</key>
 	<true/>
 </dict>
 </plist>

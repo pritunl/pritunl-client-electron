@@ -1,4 +1,3 @@
 #!/bin/sh
 launchctl enable system/com.pritunl.service || true
 launchctl load /Library/LaunchDaemons/com.pritunl.service.plist
-launchctl load /Library/LaunchAgents/com.pritunl.client.plist || true

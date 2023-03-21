@@ -12,5 +12,7 @@
 	<true/>
 	<key>Umask</key>
 	<integer>0</integer>
+	<key>ExitTimeOut</key>
+	<integer>10</integer>
 </dict>
 </plist>
