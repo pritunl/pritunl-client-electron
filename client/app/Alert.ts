@@ -123,6 +123,20 @@ export function error2(message: React.ReactNode, timeout?: number): string {
 	});
 }
 
+export function clearAlert(): void {
+	let toasts = toaster.getToasts()
+	for (let toast of toasts) {
+		toaster2.dismiss(toast.key)
+	}
+}
+
+export function clearAlert2(): void {
+	let toasts = toaster2.getToasts()
+	for (let toast of toasts) {
+		toaster2.dismiss(toast.key)
+	}
+}
+
 export function dismiss(key: string) {
 	toaster.dismiss(key);
 }
