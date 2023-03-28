@@ -1,7 +1,8 @@
 Pritunl Client Changelog
 ========================
 
-<%= version %>
+Version 1.3.3484.2 2023-03-28
+-----------------------------
 
 Improve logging output
 Improve device authentication
