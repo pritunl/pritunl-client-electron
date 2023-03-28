@@ -108,6 +108,7 @@ type WgKeyBox struct {
 	DeviceId       string   `json:"device_id"`
 	DeviceName     string   `json:"device_name"`
 	DeviceKey      string   `json:"device_key"`
+	DeviceHostname string   `json:"device_hostname"`
 	Platform       string   `json:"platform"`
 	MacAddr        string   `json:"mac_addr"`
 	MacAddrs       []string `json:"mac_addrs"`
@@ -125,6 +126,7 @@ type OvpnKeyBox struct {
 	DeviceId       string   `json:"device_id"`
 	DeviceName     string   `json:"device_name"`
 	DeviceKey      string   `json:"device_key"`
+	DeviceHostname string   `json:"device_hostname"`
 	Platform       string   `json:"platform"`
 	MacAddr        string   `json:"mac_addr"`
 	MacAddrs       []string `json:"mac_addrs"`
@@ -2072,6 +2074,14 @@ func (p *Profile) reqOvpn(remote, ssoToken string, ssoStart time.Time) (
 	}
 
 	if p.DeviceAuth {
+		hostname, e := utils.GetHostname()
+		if e != nil {
+			err = e
+			return
+		}
+
+		ovpnBox.DeviceHostname = hostname
+
 		err = tp.Open(config.Config.EnclavePrivateKey)
 		if err != nil {
 			return
@@ -2539,6 +2549,14 @@ func (p *Profile) reqWg(remote, ssoToken string, ssoStart time.Time) (
 	}
 
 	if p.DeviceAuth {
+		hostname, e := utils.GetHostname()
+		if e != nil {
+			err = e
+			return
+		}
+
+		wgBox.DeviceHostname = hostname
+
 		err = tp.Open(config.Config.EnclavePrivateKey)
 		if err != nil {
 			return
