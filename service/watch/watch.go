@@ -231,23 +231,20 @@ func dnsWatch() {
 			})
 		}
 
+		if len(connStates) == 0 {
+			continue
+		}
+
 		globalDomains, globalAddresses := parseDns(global)
 
 		matchConnId := ""
-		dnsActive := false
 		for _, connState := range connStates {
 			connAddresses := connState.Addresses
-
-			dnsActive = true
 
 			if reflect.DeepEqual(connAddresses, globalAddresses) {
 				matchConnId = connState.Id
 				break
 			}
-		}
-
-		if !dnsActive {
-			continue
 		}
 
 		if matchConnId == "" {
