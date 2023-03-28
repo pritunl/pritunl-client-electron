@@ -16,6 +16,7 @@ export const unixWsHost = 'ws+unix://' + path.join(
 	path.sep, 'var', 'run', 'pritunl.sock') + ':';
 export const webWsHost = 'ws://127.0.0.1:9770';
 export const platform = os.platform()
+export const hostname = os.hostname()
 
 export const args = new Map<string, string>();
 export let production = true;
