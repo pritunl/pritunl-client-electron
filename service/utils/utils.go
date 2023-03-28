@@ -1039,3 +1039,15 @@ func PidInit() (err error) {
 
 	return
 }
+
+func GetHostname() (hostname string, err error) {
+	hostname, err = os.Hostname()
+	if err != nil {
+		err = &errortypes.ReadError{
+			errors.Wrap(err, "utils: Failed to get hostname"),
+		}
+		return
+	}
+
+	return
+}
