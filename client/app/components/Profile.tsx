@@ -93,6 +93,11 @@ const css = {
 	regTitle: {
 		margin: "3px 0 0 0",
 	} as React.CSSProperties,
+	regName: {
+		margin: "1px 0 0 0",
+		fontSize: "14px",
+		fontWeight: "normal",
+	} as React.CSSProperties,
 	regKey: {
 		margin: "1px 0",
 		fontWeight: "bold",
@@ -238,6 +243,10 @@ export default class Profile extends React.Component<Props, State> {
 						style={css.regTitle}
 					>Device Registration Required</h3>
 					Contact Server Administrator with Code:
+					<h3
+						className="bp3-text-intent-primary"
+						style={css.regName}
+					>{Constants.hostname}</h3>
 					<h1
 						className="bp3-text-intent-primary"
 						style={css.regKey}
