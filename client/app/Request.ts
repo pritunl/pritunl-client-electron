@@ -90,6 +90,9 @@ export class Request {
 
 		if (hosts.length > 1) {
 			this.port = parseInt(hosts.pop(), 10)
+			if (this.ssl && this.port === 80) {
+				this.port = 443
+			}
 		} else {
 			if (this.ssl) {
 				this.port = 443
