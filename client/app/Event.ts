@@ -50,6 +50,7 @@ function connect(): void {
 		if (showConnect) {
 			showConnect = false;
 			Alert.success('Events: Service reconnected');
+			Alert.clearAlert2();
 		}
 	});
 
