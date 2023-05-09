@@ -32,6 +32,14 @@ function loadSystemProfiles(): Promise<ProfileTypes.Profiles> {
 			.set('Accept', 'application/json')
 			.end()
 			.then((resp: Request.Response) => {
+				if (resp.status !== 200) {
+					let err = new Errors.ReadError(
+						null, "Profiles: Failed to load service profiles",
+						{body: resp.data})
+					Logger.error(err)
+					resolve([])
+					return
+				}
 				resolve(resp.json() as ProfileTypes.Profiles)
 			}, (err) => {
 				err = new Errors.RequestError(err,
