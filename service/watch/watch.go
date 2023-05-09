@@ -237,20 +237,35 @@ func dnsWatch() {
 
 		globalDomains, globalAddresses := parseDns(global)
 
+		connAddresses := []string{}
+		connDomains := []string{}
 		matchConnId := ""
 		for _, connState := range connStates {
-			connAddresses := connState.Addresses
+			connAddresses = connState.Addresses
+			connDomains = connState.Domains
 
 			if reflect.DeepEqual(connAddresses, globalAddresses) {
 				matchConnId = connState.Id
+			}
+
+			if connDomains != nil && len(connDomains) > 0 {
+				matchConnId = ""
+
+				if reflect.DeepEqual(connDomains, globalDomains) {
+					matchConnId = connState.Id
+					break
+				}
+			} else if matchConnId != "" {
 				break
 			}
 		}
 
 		if matchConnId == "" {
 			logrus.WithFields(logrus.Fields{
-				"global_domains":   globalDomains,
-				"global_addresses": globalAddresses,
+				"connection_addresses": connAddresses,
+				"connection_domains":   connDomains,
+				"global_domains":       globalDomains,
+				"global_addresses":     globalAddresses,
 			}).Warn("watch: Lost DNS settings updating...")
 
 			restartLock.Lock()
@@ -270,7 +285,8 @@ func dnsWatch() {
 			}
 
 			restartLock.Unlock()
-		} else if utils.SinceAbs(lastDnsRefresh) >= 30*time.Second && !config.Config.DisableDnsRefresh {
+		} else if utils.SinceAbs(lastDnsRefresh) >= 30*time.Second &&
+			!config.Config.DisableDnsRefresh {
 
 			lastDnsRefresh = time.Now()
 
