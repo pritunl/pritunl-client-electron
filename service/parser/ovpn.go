@@ -48,6 +48,7 @@ type Ovpn struct {
 	Key               string
 
 	DisableGateway bool
+	DisableDns     bool
 }
 
 func (o *Ovpn) Export() string {
@@ -143,6 +144,10 @@ func (o *Ovpn) Export() string {
 		output += "pull-filter ignore \"redirect-gateway\"\n"
 	}
 
+	if o.DisableDns {
+		output += "pull-filter ignore \"dhcp-option\"\n"
+	}
+
 	if o.CaCert != "" {
 		output += fmt.Sprintf("<ca>\n%s</ca>\n", o.CaCert)
 	}
@@ -161,12 +166,13 @@ func (o *Ovpn) Export() string {
 	return output
 }
 
-func Import(data, fixedRemote, fixedRemote6 string, disableGateway bool) (
-	o *Ovpn) {
+func Import(data, fixedRemote, fixedRemote6 string,
+	disableGateway, disableDns bool) (o *Ovpn) {
 
 	o = &Ovpn{
 		Remotes:        []Remote{},
 		DisableGateway: disableGateway,
+		DisableDns:     disableDns,
 	}
 
 	inCa := false
