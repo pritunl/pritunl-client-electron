@@ -24,6 +24,7 @@ type profileData struct {
 	DynamicFirewall    bool     `json:"dynamic_firewall"`
 	DeviceAuth         bool     `json:"device_auth"`
 	DisableGateway     bool     `json:"disable_gateway"`
+	DisableDns         bool     `json:"disable_dns"`
 	ForceDns           bool     `json:"force_dns"`
 	SsoAuth            bool     `json:"sso_auth"`
 	ServerPublicKey    string   `json:"server_public_key"`
@@ -90,6 +91,7 @@ func profilePost(c *gin.Context) {
 		DynamicFirewall:    data.DynamicFirewall,
 		DeviceAuth:         data.DeviceAuth,
 		DisableGateway:     data.DisableGateway,
+		DisableDns:         data.DisableDns,
 		ForceDns:           data.ForceDns,
 		SsoAuth:            data.SsoAuth,
 		ServerPublicKey:    data.ServerPublicKey,
