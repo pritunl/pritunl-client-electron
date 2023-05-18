@@ -1917,11 +1917,12 @@ func (p *Profile) openOvpn() (data *OvpnData, err error) {
 		}
 	}
 
+	var evt *event.Event
 	final := false
 	for _, i := range mathrand.Perm(len(syncRemotes)) {
 		remote := syncRemotes[i]
 
-		data, final, err = p.reqOvpn(remote, "", time.Time{})
+		data, final, evt, err = p.reqOvpn(remote, "", time.Time{})
 		if err == nil || final {
 			break
 		}
@@ -1940,7 +1941,7 @@ func (p *Profile) openOvpn() (data *OvpnData, err error) {
 		for _, i := range mathrand.Perm(len(remotes)) {
 			remote := remotes[i]
 
-			data, final, err = p.reqOvpn(remote, "", time.Time{})
+			data, final, evt, err = p.reqOvpn(remote, "", time.Time{})
 			if err == nil || final {
 				break
 			}
@@ -1959,11 +1960,15 @@ func (p *Profile) openOvpn() (data *OvpnData, err error) {
 	if err != nil {
 		err = nil
 
-		evt := event.Event{
-			Type: "connection_error",
-			Data: p,
+		if evt != nil {
+			evt.Init()
+		} else {
+			evt = &event.Event{
+				Type: "connection_error",
+				Data: p,
+			}
+			evt.Init()
 		}
-		evt.Init()
 
 		time.Sleep(3 * time.Second)
 
@@ -1980,7 +1985,7 @@ func (p *Profile) openOvpn() (data *OvpnData, err error) {
 }
 
 func (p *Profile) reqOvpn(remote, ssoToken string, ssoStart time.Time) (
-	ovpnData *OvpnData, final bool, err error) {
+	ovpnData *OvpnData, final bool, evt *event.Event, err error) {
 
 	if p.ServerBoxPublicKey == "" {
 		err = &errortypes.ReadError{
@@ -2314,11 +2319,10 @@ func (p *Profile) reqOvpn(remote, ssoToken string, ssoStart time.Time) (
 
 	if res.StatusCode == 428 && ssoToken != "" {
 		if time.Since(ssoStart) > 120*time.Second {
-			evt := event.Event{
+			evt = &event.Event{
 				Type: "timeout_error",
 				Data: p,
 			}
-			evt.Init()
 
 			err = &errortypes.RequestError{
 				errors.Wrap(err, "profile: Single sign-on timeout"),
@@ -2326,7 +2330,7 @@ func (p *Profile) reqOvpn(remote, ssoToken string, ssoStart time.Time) (
 			return
 		}
 
-		ovpnData, _, err = p.reqOvpn(remote, ssoToken, ssoStart)
+		ovpnData, _, evt, err = p.reqOvpn(remote, ssoToken, ssoStart)
 		if err != nil {
 			return
 		}
@@ -2336,11 +2340,10 @@ func (p *Profile) reqOvpn(remote, ssoToken string, ssoStart time.Time) (
 	}
 
 	if res.StatusCode == 429 {
-		evt := event.Event{
+		evt = &event.Event{
 			Type: "offline_error",
 			Data: p,
 		}
-		evt.Init()
 
 		err = &errortypes.RequestError{
 			errors.Wrap(err, "profile: Server is offline"),
@@ -2368,21 +2371,21 @@ func (p *Profile) reqOvpn(remote, ssoToken string, ssoStart time.Time) (
 	}
 
 	if ovpnResp.SsoUrl != "" && ovpnResp.SsoToken != "" && ssoToken == "" {
-		evt := event.Event{
+		evt2 := event.Event{
 			Type: "sso_auth",
 			Data: &SsoEventData{
 				Id:  p.Id,
 				Url: ovpnResp.SsoUrl,
 			},
 		}
-		evt.Init()
+		evt2.Init()
 
 		p.Status = "authenticating"
 		p.update()
 
 		p.setStartWait(nil)
 
-		ovpnData, _, err = p.reqOvpn(remote, ovpnResp.SsoToken, time.Now())
+		ovpnData, _, evt, err = p.reqOvpn(remote, ovpnResp.SsoToken, time.Now())
 		if err != nil {
 			return
 		}
@@ -2454,7 +2457,7 @@ func (p *Profile) reqOvpn(remote, ssoToken string, ssoStart time.Time) (
 }
 
 func (p *Profile) reqWg(remote, ssoToken string, ssoStart time.Time) (
-	wgData *WgData, final bool, err error) {
+	wgData *WgData, final bool, evt *event.Event, err error) {
 
 	if p.ServerBoxPublicKey == "" {
 		err = &errortypes.ReadError{
@@ -2789,11 +2792,10 @@ func (p *Profile) reqWg(remote, ssoToken string, ssoStart time.Time) (
 
 	if res.StatusCode == 428 && ssoToken != "" {
 		if time.Since(ssoStart) > 60*time.Second {
-			evt := event.Event{
+			evt = &event.Event{
 				Type: "timeout_error",
 				Data: p,
 			}
-			evt.Init()
 
 			err = &errortypes.RequestError{
 				errors.Wrap(err, "profile: Single sign-on timeout"),
@@ -2801,7 +2803,7 @@ func (p *Profile) reqWg(remote, ssoToken string, ssoStart time.Time) (
 			return
 		}
 
-		wgData, _, err = p.reqWg(remote, ssoToken, ssoStart)
+		wgData, _, evt, err = p.reqWg(remote, ssoToken, ssoStart)
 		if err != nil {
 			return
 		}
@@ -2811,11 +2813,10 @@ func (p *Profile) reqWg(remote, ssoToken string, ssoStart time.Time) (
 	}
 
 	if res.StatusCode == 429 {
-		evt := event.Event{
+		evt = &event.Event{
 			Type: "offline_error",
 			Data: p,
 		}
-		evt.Init()
 
 		err = &errortypes.RequestError{
 			errors.Wrap(err, "profile: Server is offline"),
@@ -2843,21 +2844,21 @@ func (p *Profile) reqWg(remote, ssoToken string, ssoStart time.Time) (
 	}
 
 	if wgResp.SsoUrl != "" && wgResp.SsoToken != "" && ssoToken == "" {
-		evt := event.Event{
+		evt2 := &event.Event{
 			Type: "sso_auth",
 			Data: &SsoEventData{
 				Id:  p.Id,
 				Url: wgResp.SsoUrl,
 			},
 		}
-		evt.Init()
+		evt2.Init()
 
 		p.Status = "authenticating"
 		p.update()
 
 		p.setStartWait(nil)
 
-		wgData, _, err = p.reqWg(remote, wgResp.SsoToken, time.Now())
+		wgData, _, evt, err = p.reqWg(remote, wgResp.SsoToken, time.Now())
 		if err != nil {
 			return
 		}
@@ -3684,7 +3685,7 @@ func (p *Profile) watchWg() {
 			return
 		}
 
-		evt := event.Event{
+		evt := &event.Event{
 			Type: "handshake_timeout",
 			Data: p,
 		}
@@ -3847,13 +3848,14 @@ func (p *Profile) startWg(timeout bool) (err error) {
 		}
 	}
 
+	var evt *event.Event
 	final := false
 	var data *WgData
 
 	for _, i := range mathrand.Perm(len(syncRemotes)) {
 		remote := syncRemotes[i]
 
-		data, final, err = p.reqWg(remote, "", time.Time{})
+		data, final, evt, err = p.reqWg(remote, "", time.Time{})
 		if err == nil || final {
 			break
 		}
@@ -3868,7 +3870,7 @@ func (p *Profile) startWg(timeout bool) (err error) {
 		for _, i := range mathrand.Perm(len(remotes)) {
 			remote := remotes[i]
 
-			data, final, err = p.reqWg(remote, "", time.Time{})
+			data, final, evt, err = p.reqWg(remote, "", time.Time{})
 			if err == nil || final {
 				break
 			}
@@ -3881,11 +3883,15 @@ func (p *Profile) startWg(timeout bool) (err error) {
 	}
 
 	if err != nil {
-		evt := event.Event{
-			Type: "connection_error",
-			Data: p,
+		if evt != nil {
+			evt.Init()
+		} else {
+			evt = &event.Event{
+				Type: "connection_error",
+				Data: p,
+			}
+			evt.Init()
 		}
-		evt.Init()
 
 		logrus.WithFields(logrus.Fields{
 			"error": err,
@@ -3938,7 +3944,7 @@ func (p *Profile) startWg(timeout bool) (err error) {
 				}
 			}
 
-			evt := event.Event{
+			evt := &event.Event{
 				Type: "registration_required",
 				Data: p,
 			}
@@ -3948,7 +3954,7 @@ func (p *Profile) startWg(timeout bool) (err error) {
 				"reason": data.Reason,
 			}).Error("profile: Failed to authenticate ovpn")
 
-			evt := event.Event{
+			evt := &event.Event{
 				Type: "auth_error",
 				Data: p,
 			}
@@ -3983,7 +3989,7 @@ func (p *Profile) startWg(timeout bool) (err error) {
 				return
 			}
 		} else {
-			evt := event.Event{
+			evt := &event.Event{
 				Type: "registration_pass",
 				Data: p,
 			}
@@ -4039,7 +4045,7 @@ func (p *Profile) startWg(timeout bool) (err error) {
 
 	err = p.confWg(data.Configuration)
 	if err != nil {
-		evt := event.Event{
+		evt := &event.Event{
 			Type: "configuration_error",
 			Data: p,
 		}
