@@ -25,6 +25,7 @@ type sprofileData struct {
 	DynamicFirewall    bool     `json:"dynamic_firewall"`
 	DeviceAuth         bool     `json:"device_auth"`
 	DisableGateway     bool     `json:"disable_gateway"`
+	DisableDns         bool     `json:"disable_dns"`
 	ForceDns           bool     `json:"force_dns"`
 	SsoAuth            bool     `json:"sso_auth"`
 	PasswordMode       string   `json:"password_mode"`
@@ -94,6 +95,7 @@ func sprofilePut(c *gin.Context) {
 		DynamicFirewall:    data.DynamicFirewall,
 		DeviceAuth:         data.DeviceAuth,
 		DisableGateway:     data.DisableGateway,
+		DisableDns:         data.DisableDns,
 		ForceDns:           data.ForceDns,
 		SsoAuth:            data.SsoAuth,
 		PasswordMode:       data.PasswordMode,
