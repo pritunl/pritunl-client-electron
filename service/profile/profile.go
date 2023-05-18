@@ -247,6 +247,7 @@ type Profile struct {
 	DynamicFirewall    bool               `json:"-"`
 	DeviceAuth         bool               `json:"-"`
 	DisableGateway     bool               `json:"-"`
+	DisableDns         bool               `json:"-"`
 	ForceDns           bool               `json:"-"`
 	SsoAuth            bool               `json:"-"`
 	ServerPublicKey    string             `json:"-"`
@@ -298,7 +299,7 @@ func (p *Profile) write(fixedRemote, fixedRemote6 string) (
 	pth = filepath.Join(rootDir, p.Id)
 
 	p.parsedPrfl = parser.Import(
-		p.Data, fixedRemote, fixedRemote6, p.DisableGateway)
+		p.Data, fixedRemote, fixedRemote6, p.DisableGateway, p.DisableDns)
 	data := p.parsedPrfl.Export()
 
 	if runtime.GOOS == "windows" {
@@ -345,7 +346,9 @@ func (p *Profile) writeUp() (pth string, err error) {
 	script := ""
 	switch runtime.GOOS {
 	case "darwin":
-		if p.ForceDns {
+		if p.DisableDns {
+			script = blockScript
+		} else if p.ForceDns {
 			DnsForced = true
 			script = upDnsScriptDarwin
 		} else {
@@ -365,7 +368,9 @@ func (p *Profile) writeUp() (pth string, err error) {
 			}
 		}
 
-		if resolved {
+		if p.DisableDns {
+			script = blockScript
+		} else if resolved {
 			script = resolvedScript
 		} else {
 			script = resolvScript
@@ -402,7 +407,11 @@ func (p *Profile) writeDown() (pth string, err error) {
 	script := ""
 	switch runtime.GOOS {
 	case "darwin":
-		script = downScriptDarwin
+		if p.DisableDns {
+			script = blockScript
+		} else {
+			script = downScriptDarwin
+		}
 		break
 	case "linux":
 		resolved := true
@@ -417,7 +426,9 @@ func (p *Profile) writeDown() (pth string, err error) {
 			}
 		}
 
-		if resolved {
+		if p.DisableDns {
+			script = blockScript
+		} else if resolved {
 			script = resolvedScript
 		} else {
 			script = resolvScript
@@ -763,7 +774,7 @@ func (p *Profile) writeConfWgQuick(data *WgConf) (pth string, err error) {
 		Endpoint:   fmt.Sprintf("%s:%d", data.Hostname, data.Port),
 	}
 
-	if data.DnsServers != nil && len(data.DnsServers) > 0 {
+	if !p.DisableDns && data.DnsServers != nil && len(data.DnsServers) > 0 {
 		templData.HasDns = true
 		templData.DnsServers = strings.Join(data.DnsServers, ",")
 	}
@@ -926,7 +937,7 @@ func (p *Profile) parseLine(line string) {
 			utils.ClearDNSCache()
 		}()
 	} else if strings.Contains(line, "Inactivity timeout (--inactive)") {
-		evt := event.Event{
+		evt := &event.Event{
 			Type: "inactive",
 			Data: p,
 		}
@@ -934,7 +945,7 @@ func (p *Profile) parseLine(line string) {
 	} else if strings.Contains(line, "Inactivity timeout") ||
 		strings.Contains(line, "Connection reset") {
 
-		evt := event.Event{
+		evt := &event.Event{
 			Type: "timeout_error",
 			Data: p,
 		}
@@ -979,7 +990,7 @@ func (p *Profile) parseLine(line string) {
 				_ = tokn.Reset()
 			}
 
-			evt := event.Event{
+			evt := &event.Event{
 				Type: "auth_error",
 				Data: p,
 			}
@@ -1183,6 +1194,7 @@ func (p *Profile) Copy() (prfl *Profile) {
 		DynamicFirewall:    p.DynamicFirewall,
 		DeviceAuth:         p.DeviceAuth,
 		DisableGateway:     p.DisableGateway,
+		DisableDns:         p.DisableDns,
 		ForceDns:           p.ForceDns,
 		SsoAuth:            p.SsoAuth,
 		ServerPublicKey:    p.ServerPublicKey,
@@ -1251,6 +1263,7 @@ func (p *Profile) Start(timeout, delay, automatic bool) (err error) {
 		"dynamic_firewall": p.DynamicFirewall,
 		"device_auth":      p.DeviceAuth,
 		"disable_gateway":  p.DisableGateway,
+		"disable_dns":      p.DisableDns,
 		"force_dns":        p.ForceDns,
 		"sso_auth":         p.SsoAuth,
 		"reconnect":        p.Reconnect,
@@ -1336,7 +1349,7 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 					}
 				}
 
-				evt := event.Event{
+				evt := &event.Event{
 					Type: "registration_required",
 					Data: p,
 				}
@@ -1346,7 +1359,7 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 					"reason": data.Reason,
 				}).Error("profile: Failed to authenticate ovpn")
 
-				evt := event.Event{
+				evt := &event.Event{
 					Type: "auth_error",
 					Data: p,
 				}
@@ -1365,7 +1378,7 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 					return
 				}
 			} else {
-				evt := event.Event{
+				evt := &event.Event{
 					Type: "registration_pass",
 					Data: p,
 				}
@@ -1787,7 +1800,7 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 					done = true
 				}
 
-				evt := event.Event{
+				evt := &event.Event{
 					Type: "timeout_error",
 					Data: p,
 				}
