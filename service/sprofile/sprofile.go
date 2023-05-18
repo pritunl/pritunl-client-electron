@@ -519,6 +519,10 @@ func (s *Sprofile) syncProfile(host string) (updated bool, err error) {
 
 func (s *Sprofile) Sync() (updated bool, err error) {
 	for _, syncHost := range s.SyncHosts {
+		if syncHost == "" {
+			continue
+		}
+
 		updated, err = s.syncProfile(syncHost)
 		if err != nil {
 			continue
