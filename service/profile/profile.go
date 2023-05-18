@@ -752,11 +752,19 @@ func (p *Profile) writeConfWgQuick(data *WgConf) (pth string, err error) {
 	allowedIps := []string{}
 	if data.Routes != nil {
 		for _, route := range data.Routes {
+			if p.DisableGateway && route.Network == "0.0.0.0/0" {
+				continue
+			}
+
 			allowedIps = append(allowedIps, route.Network)
 		}
 	}
 	if data.Routes6 != nil {
 		for _, route := range data.Routes6 {
+			if p.DisableGateway && route.Network == "::/0" {
+				continue
+			}
+
 			allowedIps = append(allowedIps, route.Network)
 		}
 	}
