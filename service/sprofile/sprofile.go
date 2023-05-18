@@ -57,6 +57,7 @@ type Sprofile struct {
 	DynamicFirewall    bool     `json:"dynamic_firewall"`
 	DeviceAuth         bool     `json:"device_auth"`
 	DisableGateway     bool     `json:"disable_gateway"`
+	DisableDns         bool     `json:"disable_dns"`
 	ForceDns           bool     `json:"force_dns"`
 	SsoAuth            bool     `json:"sso_auth"`
 	PasswordMode       string   `json:"password_mode"`
@@ -93,6 +94,7 @@ type SprofileClient struct {
 	DynamicFirewall    bool     `json:"dynamic_firewall"`
 	DeviceAuth         bool     `json:"device_auth"`
 	DisableGateway     bool     `json:"disable_Gateway"`
+	DisableDns         bool     `json:"disable_dns"`
 	ForceDns           bool     `json:"force_dns"`
 	SsoAuth            bool     `json:"sso_auth"`
 	PasswordMode       string   `json:"password_mode"`
@@ -132,6 +134,7 @@ func (s *Sprofile) Client() (sprflc *SprofileClient) {
 		DynamicFirewall:    s.DynamicFirewall,
 		DeviceAuth:         s.DeviceAuth,
 		DisableGateway:     s.DisableGateway,
+		DisableDns:         s.DisableDns,
 		ForceDns:           s.ForceDns,
 		SsoAuth:            s.SsoAuth,
 		PasswordMode:       s.PasswordMode,
@@ -185,6 +188,7 @@ func (s *Sprofile) Copy() (sprfl *Sprofile) {
 		DynamicFirewall:    s.DynamicFirewall,
 		DeviceAuth:         s.DeviceAuth,
 		DisableGateway:     s.DisableGateway,
+		DisableDns:         s.DisableDns,
 		ForceDns:           s.ForceDns,
 		SsoAuth:            s.SsoAuth,
 		PasswordMode:       s.PasswordMode,
@@ -355,6 +359,7 @@ func (s *Sprofile) syncUpdate(data string) (updated bool, err error) {
 		s.DynamicFirewall = confData.DynamicFirewall
 		s.DeviceAuth = confData.DeviceAuth
 		s.DisableGateway = confData.DisableGateway
+		s.DisableDns = confData.DisableDns
 		s.ForceDns = confData.ForceDns
 		s.SsoAuth = confData.SsoAuth
 		s.PasswordMode = confData.PasswordMode
