@@ -436,7 +436,7 @@ app.on('ready', function() {
             },
             {
               label: 'Close',
-              accelerator: 'CmdOrCtrl+Q',
+              accelerator: process.platform === 'darwin' ? 'CmdOrCtrl+W' : 'CmdOrCtrl+Q',
               role: 'close'
             },
             {
@@ -449,6 +449,7 @@ app.on('ready', function() {
             },
             {
               label: 'Exit',
+              accelerator: process.platform === 'darwin' ? 'CmdOrCtrl+Q' : '',
               click: function() {
                 app.quit();
               }
