@@ -219,7 +219,7 @@ func dnsWatch() {
 					"connection_key": connKey,
 					"error":          err,
 				}).Error("watch: Failed to read connection DNS key")
-
+				continue
 			}
 
 			connDomains, connAddresses := parseDns(connState)
