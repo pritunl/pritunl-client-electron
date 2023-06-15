@@ -181,6 +181,66 @@ func RemoveScutilKey(typ, key string) (err error) {
 	return
 }
 
+func SetScutilDns(connId string, addresses, domains []string) (err error) {
+	logrus.Info("utils: Configure DNS")
+
+	serviceId, err := GetScutilService()
+	if err != nil {
+		return
+	}
+
+	macDnsLock.Lock()
+	defer macDnsLock.Unlock()
+
+	cmd := command.Command("/usr/sbin/scutil")
+	cmd.Stdin = strings.NewReader(
+		fmt.Sprintf("open\n"+
+			"d.init\n"+
+			"d.add ServerAddresses * %s\n"+
+			"d.add SearchDomains * %s\n"+
+			"d.add Pritunl true\n"+
+			"remove State:/Network/Service/%s/DNS\n"+
+			"set State:/Network/Service/%s/DNS\n"+
+			"set Setup:/Network/Service/%s/DNS\n"+
+			"set State:/Network/Pritunl/Connection/%s\n"+
+			"quit\n",
+			strings.Join(addresses, " "), strings.Join(domains, " "),
+			serviceId, serviceId, serviceId, connId))
+
+	err = cmd.Run()
+	if err != nil {
+		err = &CommandError{
+			errors.Wrap(err, "utils: Failed to exec scutil"),
+		}
+		return
+	}
+
+	return
+}
+
+func ClearScutilDns(connId string) (err error) {
+	logrus.Info("utils: Clearing DNS state")
+
+	macDnsLock.Lock()
+	defer macDnsLock.Unlock()
+
+	cmd := command.Command("/usr/sbin/scutil")
+	cmd.Stdin = strings.NewReader(
+		fmt.Sprintf("open\n"+
+			"remove State:/Network/Pritunl/Connection/%s\n"+
+			"quit\n", connId))
+
+	err = cmd.Run()
+	if err != nil {
+		err = &CommandError{
+			errors.Wrap(err, "utils: Failed to exec scutil"),
+		}
+		return
+	}
+
+	return
+}
+
 func CopyScutilKey(typ, src, dst string) (err error) {
 	macDnsLock.Lock()
 	defer macDnsLock.Unlock()
