@@ -3312,11 +3312,17 @@ func (p *Profile) confWgLinux(data *WgConf) (err error) {
 	allowedIps := []string{}
 	if data.Routes != nil {
 		for _, route := range data.Routes {
+			if route.NetGateway {
+				continue
+			}
 			allowedIps = append(allowedIps, route.Network)
 		}
 	}
 	if data.Routes6 != nil {
 		for _, route := range data.Routes6 {
+			if route.NetGateway {
+				continue
+			}
 			allowedIps = append(allowedIps, route.Network)
 		}
 	}
