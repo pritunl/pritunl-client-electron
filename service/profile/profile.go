@@ -789,8 +789,16 @@ func (p *Profile) writeConfWgQuick(data *WgConf) (pth, pth2 string,
 	}
 
 	if !p.DisableDns && data.DnsServers != nil && len(data.DnsServers) > 0 {
-		templData.HasDns = true
-		templData.DnsServers = strings.Join(data.DnsServers, ",")
+		if runtime.GOOS == "darwin" && config.Config.EnableWgDns {
+			err = utils.SetScutilDns(p.Id,
+				data.DnsServers, data.SearchDomains)
+			if err != nil {
+				return
+			}
+		} else {
+			templData.HasDns = true
+			templData.DnsServers = strings.Join(data.DnsServers, ",")
+		}
 	}
 
 	output := &bytes.Buffer{}
@@ -4430,6 +4438,19 @@ func (p *Profile) Stop() {
 			"error": err,
 		}).Error("profile: Stop error")
 		panic(err)
+	}
+
+	if p.Mode == Wg && runtime.GOOS == "darwin" &&
+		config.Config.EnableWgDns {
+
+		err = utils.ClearScutilDns(p.Id)
+		if err != nil {
+			logrus.WithFields(logrus.Fields{
+				"profile_id": p.Id,
+				"error":      err,
+			}).Error("profile: Failed to clear scutil DNS")
+			err = nil
+		}
 	}
 
 	if p.tap != "" {
