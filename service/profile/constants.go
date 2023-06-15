@@ -6,11 +6,13 @@ import (
 )
 
 const (
-	WgLinuxConfPath = "/etc/wireguard"
-	WgMacConfPath   = "/usr/local/etc/wireguard"
-	Ovpn            = "ovpn"
-	Wg              = "wg"
-	wgConfTempl     = `[Interface]
+	WgLinuxConfPath   = "/etc/wireguard"
+	WgMacConfPath     = "/usr/local/etc/wireguard"
+	WgMacConfPath2    = "/opt/homebrew/etc/wireguard"
+	WgMacBrewConfPath = "/opt/homebrew/etc"
+	Ovpn              = "ovpn"
+	Wg                = "wg"
+	wgConfTempl       = `[Interface]
 Address = {{.Address}}
 PrivateKey = {{.PrivateKey}}{{if .HasDns}}
 DNS = {{.DnsServers}}{{end}}
