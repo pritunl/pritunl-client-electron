@@ -748,7 +748,9 @@ func (p *Profile) writeConfWgLinux() (pth string, err error) {
 	return
 }
 
-func (p *Profile) writeConfWgQuick(data *WgConf) (pth string, err error) {
+func (p *Profile) writeConfWgQuick(data *WgConf) (pth, pth2 string,
+	err error) {
+
 	allowedIps := []string{}
 	if data.Routes != nil {
 		for _, route := range data.Routes {
@@ -797,20 +799,36 @@ func (p *Profile) writeConfWgQuick(data *WgConf) (pth string, err error) {
 	}
 
 	rootDir := ""
+	rootDir2 := ""
 	switch runtime.GOOS {
 	case "linux":
 		rootDir = WgLinuxConfPath
 
-		err = platform.MkdirSecure(WgLinuxConfPath)
+		err = platform.MkdirSecure(rootDir)
 		if err != nil {
 			return
 		}
 	case "darwin":
 		rootDir = WgMacConfPath
 
-		err = platform.MkdirSecure(WgMacConfPath)
+		err = platform.MkdirSecure(rootDir)
 		if err != nil {
 			return
+		}
+
+		exists, e := utils.ExistsDir(WgMacBrewConfPath)
+		if e != nil {
+			err = e
+			return
+		}
+
+		if exists {
+			rootDir2 = WgMacConfPath2
+
+			err = platform.MkdirSecure(rootDir2)
+			if err != nil {
+				return
+			}
 		}
 	default:
 		rootDir, err = utils.GetTempDir()
@@ -834,13 +852,30 @@ func (p *Profile) writeConfWgQuick(data *WgConf) (pth string, err error) {
 		return
 	}
 
+	if rootDir2 != "" {
+		pth2 = filepath.Join(rootDir2, p.Iface+".conf")
+
+		_ = os.Remove(pth2)
+		err = ioutil.WriteFile(
+			pth2,
+			[]byte(output.String()),
+			os.FileMode(0600),
+		)
+		if err != nil {
+			err = &WriteError{
+				errors.Wrap(err, "profile: Failed to write wg conf2"),
+			}
+			return
+		}
+	}
+
 	return
 }
 
-func (p *Profile) writeWgConf(data *WgConf) (pth string, err error) {
+func (p *Profile) writeWgConf(data *WgConf) (pth, pth2 string, err error) {
 	switch runtime.GOOS {
 	case "linux", "darwin", "windows":
-		pth, err = p.writeConfWgQuick(data)
+		pth, pth2, err = p.writeConfWgQuick(data)
 		break
 	default:
 		panic("profile: Not implemented")
@@ -4036,11 +4071,14 @@ func (p *Profile) startWg(timeout bool) (err error) {
 		data.Configuration.Routes6 = routes6
 	}
 
-	wgConfPth, err := p.writeWgConf(data.Configuration)
+	wgConfPth, wgConfPth2, err := p.writeWgConf(data.Configuration)
 	if err != nil {
 		return
 	}
 	p.remPaths = append(p.remPaths, wgConfPth)
+	if wgConfPth2 != "" {
+		p.remPaths = append(p.remPaths, wgConfPth2)
+	}
 	p.wgConfPth = wgConfPth
 
 	err = p.confWg(data.Configuration)
