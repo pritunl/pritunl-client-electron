@@ -1,12 +1,12 @@
 module github.com/pritunl/pritunl-client-electron/service
 
-go 1.17
+go 1.18
 
 require (
-	github.com/dropbox/godropbox v0.0.0-20220817175148-f0626942059b
+	github.com/dropbox/godropbox v0.0.0-20230623171840-436d2007a9fd
 	github.com/gin-gonic/gin v1.9.1
-	github.com/google/go-tpm v0.3.3
-	github.com/google/go-tpm-tools v0.3.12
+	github.com/google/go-tpm v0.9.0
+	github.com/google/go-tpm-tools v0.4.0
 	github.com/gorilla/websocket v1.5.0
 	github.com/hectane/go-acl v0.0.0-20230122075934-ca0b05cb1adb
 	github.com/judwhite/go-svc v1.2.1
@@ -16,7 +16,7 @@ require (
 )
 
 require (
-	github.com/bytedance/sonic v1.9.1 // indirect
+	github.com/bytedance/sonic v1.9.2 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20221115062448-fe3a3abad311 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.2 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
