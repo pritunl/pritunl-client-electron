@@ -8283,8 +8283,6 @@ try {
 
 const { EMPTY_BUFFER } = __webpack_require__(9336);
 
-const FastBuffer = Buffer[Symbol.species];
-
 /**
  * Merges an array of buffers into a new buffer.
  *
@@ -8306,9 +8304,7 @@ function concat(list, totalLength) {
     offset += buf.length;
   }
 
-  if (offset < totalLength) {
-    return new FastBuffer(target.buffer, target.byteOffset, offset);
-  }
+  if (offset < totalLength) return target.slice(0, offset);
 
   return target;
 }
@@ -8350,11 +8346,11 @@ function _unmask(buffer, mask) {
  * @public
  */
 function toArrayBuffer(buf) {
-  if (buf.length === buf.buffer.byteLength) {
+  if (buf.byteLength === buf.buffer.byteLength) {
     return buf.buffer;
   }
 
-  return buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.length);
+  return buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength);
 }
 
 /**
@@ -8373,9 +8369,9 @@ function toBuffer(data) {
   let buf;
 
   if (data instanceof ArrayBuffer) {
-    buf = new FastBuffer(data);
+    buf = Buffer.from(data);
   } else if (ArrayBuffer.isView(data)) {
-    buf = new FastBuffer(data.buffer, data.byteOffset, data.byteLength);
+    buf = Buffer.from(data.buffer, data.byteOffset, data.byteLength);
   } else {
     buf = Buffer.from(data);
     toBuffer.readOnly = false;
@@ -9020,7 +9016,6 @@ const bufferUtil = __webpack_require__(1737);
 const Limiter = __webpack_require__(7876);
 const { kStatusCode } = __webpack_require__(9336);
 
-const FastBuffer = Buffer[Symbol.species];
 const TRAILER = Buffer.from([0x00, 0x00, 0xff, 0xff]);
 const kPerMessageDeflate = Symbol('permessage-deflate');
 const kTotalLength = Symbol('total-length');
@@ -9452,9 +9447,7 @@ class PerMessageDeflate {
         this._deflate[kTotalLength]
       );
 
-      if (fin) {
-        data = new FastBuffer(data.buffer, data.byteOffset, data.length - 4);
-      }
+      if (fin) data = data.slice(0, data.length - 4);
 
       //
       // Ensure that the callback will not be called again in
@@ -9548,7 +9541,6 @@ const {
 const { concat, toArrayBuffer, unmask } = __webpack_require__(1737);
 const { isValidStatusCode, isValidUTF8 } = __webpack_require__(7908);
 
-const FastBuffer = Buffer[Symbol.species];
 const GET_INFO = 0;
 const GET_PAYLOAD_LENGTH_16 = 1;
 const GET_PAYLOAD_LENGTH_64 = 2;
@@ -9634,13 +9626,8 @@ class Receiver extends Writable {
 
     if (n < this._buffers[0].length) {
       const buf = this._buffers[0];
-      this._buffers[0] = new FastBuffer(
-        buf.buffer,
-        buf.byteOffset + n,
-        buf.length - n
-      );
-
-      return new FastBuffer(buf.buffer, buf.byteOffset, n);
+      this._buffers[0] = buf.slice(n);
+      return buf.slice(0, n);
     }
 
     const dst = Buffer.allocUnsafe(n);
@@ -9653,11 +9640,7 @@ class Receiver extends Writable {
         dst.set(this._buffers.shift(), offset);
       } else {
         dst.set(new Uint8Array(buf.buffer, buf.byteOffset, n), offset);
-        this._buffers[0] = new FastBuffer(
-          buf.buffer,
-          buf.byteOffset + n,
-          buf.length - n
-        );
+        this._buffers[0] = buf.slice(n);
       }
 
       n -= buf.length;
@@ -9805,10 +9788,7 @@ class Receiver extends Writable {
         );
       }
 
-      if (
-        this._payloadLength > 0x7d ||
-        (this._opcode === 0x08 && this._payloadLength === 1)
-      ) {
+      if (this._payloadLength > 0x7d) {
         this._loop = false;
         return error(
           RangeError,
@@ -10095,6 +10075,14 @@ class Receiver extends Writable {
       if (data.length === 0) {
         this.emit('conclude', 1005, EMPTY_BUFFER);
         this.end();
+      } else if (data.length === 1) {
+        return error(
+          RangeError,
+          'invalid payload length 1',
+          true,
+          1002,
+          'WS_ERR_INVALID_CONTROL_PAYLOAD_LENGTH'
+        );
       } else {
         const code = data.readUInt16BE(0);
 
@@ -10108,11 +10096,7 @@ class Receiver extends Writable {
           );
         }
 
-        const buf = new FastBuffer(
-          data.buffer,
-          data.byteOffset + 2,
-          data.length - 2
-        );
+        const buf = data.slice(2);
 
         if (!this._skipUTF8Validation && !isValidUTF8(buf)) {
           return error(
@@ -10894,8 +10878,6 @@ module.exports = { parse };
 "use strict";
 
 
-const { isUtf8 } = __webpack_require__(4300);
-
 //
 // Allowed token characters:
 //
@@ -11007,16 +10989,13 @@ module.exports = {
   tokenChars
 };
 
-if (isUtf8) {
-  module.exports.isValidUTF8 = function (buf) {
-    return buf.length < 24 ? _isValidUTF8(buf) : isUtf8(buf);
-  };
-} /* istanbul ignore else  */ else if (!{}.WS_NO_UTF_8_VALIDATE) {
+/* istanbul ignore else  */
+if (!{}.WS_NO_UTF_8_VALIDATE) {
   try {
     const isValidUTF8 = __webpack_require__(8403);
 
     module.exports.isValidUTF8 = function (buf) {
-      return buf.length < 32 ? _isValidUTF8(buf) : isValidUTF8(buf);
+      return buf.length < 150 ? _isValidUTF8(buf) : isValidUTF8(buf);
     };
   } catch (e) {
     // Continue regardless of the error.
@@ -11857,8 +11836,7 @@ class WebSocket extends EventEmitter {
     if (this.readyState === WebSocket.CLOSED) return;
     if (this.readyState === WebSocket.CONNECTING) {
       const msg = 'WebSocket was closed before the connection was established';
-      abortHandshake(this, this._req, msg);
-      return;
+      return abortHandshake(this, this._req, msg);
     }
 
     if (this.readyState === WebSocket.CLOSING) {
@@ -12053,8 +12031,7 @@ class WebSocket extends EventEmitter {
     if (this.readyState === WebSocket.CLOSED) return;
     if (this.readyState === WebSocket.CONNECTING) {
       const msg = 'WebSocket was closed before the connection was established';
-      abortHandshake(this, this._req, msg);
-      return;
+      return abortHandshake(this, this._req, msg);
     }
 
     if (this._socket) {
@@ -12564,11 +12541,7 @@ function initAsClient(websocket, address, protocols, options) {
     });
   });
 
-  if (opts.finishRequest) {
-    opts.finishRequest(req, websocket);
-  } else {
-    req.end();
-  }
+  req.end();
 }
 
 /**
@@ -12677,7 +12650,7 @@ function sendAfterClose(websocket, data, cb) {
       `WebSocket is not open: readyState ${websocket.readyState} ` +
         `(${readyStates[websocket.readyState]})`
     );
-    process.nextTick(cb, err);
+    cb(err);
   }
 }
 
