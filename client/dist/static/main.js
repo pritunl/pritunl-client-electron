@@ -238,7 +238,7 @@ chownr.sync = chownrSync
 
 "use strict";
 
-const MiniPass = __webpack_require__(7008)
+const MiniPass = __webpack_require__(3)
 const EE = (__webpack_require__(2361).EventEmitter)
 const fs = __webpack_require__(7147)
 
@@ -663,7 +663,7 @@ exports.WriteStreamSync = WriteStreamSync
 
 /***/ }),
 
-/***/ 7008:
+/***/ 3:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -674,7 +674,6 @@ const proc = typeof process === 'object' && process ? process : {
 }
 const EE = __webpack_require__(2361)
 const Stream = __webpack_require__(2781)
-const Yallist = __webpack_require__(1123)
 const SD = (__webpack_require__(1576).StringDecoder)
 
 const EOF = Symbol('EOF')
@@ -696,6 +695,12 @@ const BUFFERPUSH = Symbol('bufferPush')
 const BUFFERSHIFT = Symbol('bufferShift')
 const OBJECTMODE = Symbol('objectMode')
 const DESTROYED = Symbol('destroyed')
+const EMITDATA = Symbol('emitData')
+const EMITEND = Symbol('emitEnd')
+const EMITEND2 = Symbol('emitEnd2')
+const ASYNC = Symbol('async')
+
+const defer = fn => Promise.resolve().then(fn)
 
 // TODO remove when Node v8 support drops
 const doIter = global._MP_NO_ITERATOR_SYMBOLS_  !== '1'
@@ -720,14 +725,46 @@ const isArrayBuffer = b => b instanceof ArrayBuffer ||
 
 const isArrayBufferView = b => !Buffer.isBuffer(b) && ArrayBuffer.isView(b)
 
+class Pipe {
+  constructor (src, dest, opts) {
+    this.src = src
+    this.dest = dest
+    this.opts = opts
+    this.ondrain = () => src[RESUME]()
+    dest.on('drain', this.ondrain)
+  }
+  unpipe () {
+    this.dest.removeListener('drain', this.ondrain)
+  }
+  // istanbul ignore next - only here for the prototype
+  proxyErrors () {}
+  end () {
+    this.unpipe()
+    if (this.opts.end)
+      this.dest.end()
+  }
+}
+
+class PipeProxyErrors extends Pipe {
+  unpipe () {
+    this.src.removeListener('error', this.proxyErrors)
+    super.unpipe()
+  }
+  constructor (src, dest, opts) {
+    super(src, dest, opts)
+    this.proxyErrors = er => dest.emit('error', er)
+    src.on('error', this.proxyErrors)
+  }
+}
+
 module.exports = class Minipass extends Stream {
   constructor (options) {
     super()
     this[FLOWING] = false
     // whether we're explicitly paused
     this[PAUSED] = false
-    this.pipes = new Yallist()
-    this.buffer = new Yallist()
+    this.pipes = []
+    this.buffer = []
     this[OBJECTMODE] = options && options.objectMode || false
     if (this[OBJECTMODE])
       this[ENCODING] = null
@@ -735,6 +772,7 @@ module.exports = class Minipass extends Stream {
       this[ENCODING] = options && options.encoding || null
     if (this[ENCODING] === 'buffer')
       this[ENCODING] = null
+    this[ASYNC] = options && !!options.async || false
     this[DECODER] = this[ENCODING] ? new SD(this[ENCODING]) : null
     this[EOF] = false
     this[EMITTED_END] = false
@@ -774,6 +812,9 @@ module.exports = class Minipass extends Stream {
   get objectMode () { return this[OBJECTMODE] }
   set objectMode (om) { this[OBJECTMODE] = this[OBJECTMODE] || !!om }
 
+  get ['async'] () { return this[ASYNC] }
+  set ['async'] (a) { this[ASYNC] = this[ASYNC] || !!a }
+
   write (chunk, encoding, cb) {
     if (this[EOF])
       throw new Error('write after end')
@@ -792,6 +833,8 @@ module.exports = class Minipass extends Stream {
     if (!encoding)
       encoding = 'utf8'
 
+    const fn = this[ASYNC] ? defer : f => f()
+
     // convert array buffers and typed array views into buffers
     // at some point in the future, we may want to do the opposite!
     // leave strings and buffers as-is
@@ -806,19 +849,40 @@ module.exports = class Minipass extends Stream {
         this.objectMode = true
     }
 
-    // this ensures at this point that the chunk is a buffer or string
+    // handle object mode up front, since it's simpler
+    // this yields better performance, fewer checks later.
+    if (this[OBJECTMODE]) {
+      /* istanbul ignore if - maybe impossible? */
+      if (this.flowing && this[BUFFERLENGTH] !== 0)
+        this[FLUSH](true)
+
+      if (this.flowing)
+        this.emit('data', chunk)
+      else
+        this[BUFFERPUSH](chunk)
+
+      if (this[BUFFERLENGTH] !== 0)
+        this.emit('readable')
+
+      if (cb)
+        fn(cb)
+
+      return this.flowing
+    }
+
+    // at this point the chunk is a buffer or string
     // don't buffer it up or send it to the decoder
-    if (!this.objectMode && !chunk.length) {
+    if (!chunk.length) {
       if (this[BUFFERLENGTH] !== 0)
         this.emit('readable')
       if (cb)
-        cb()
+        fn(cb)
       return this.flowing
     }
 
     // fast-path writing strings of same encoding to a stream with
     // an empty buffer, skipping the buffer/decoder dance
-    if (typeof chunk === 'string' && !this[OBJECTMODE] &&
+    if (typeof chunk === 'string' &&
         // unless it is a string already ready for us to use
         !(encoding === this[ENCODING] && !this[DECODER].lastNeed)) {
       chunk = Buffer.from(chunk, encoding)
@@ -827,27 +891,20 @@ module.exports = class Minipass extends Stream {
     if (Buffer.isBuffer(chunk) && this[ENCODING])
       chunk = this[DECODER].write(chunk)
 
-    if (this.flowing) {
-      // if we somehow have something in the buffer, but we think we're
-      // flowing, then we need to flush all that out first, or we get
-      // chunks coming in out of order.  Can't emit 'drain' here though,
-      // because we're mid-write, so that'd be bad.
-      if (this[BUFFERLENGTH] !== 0)
-        this[FLUSH](true)
+    // Note: flushing CAN potentially switch us into not-flowing mode
+    if (this.flowing && this[BUFFERLENGTH] !== 0)
+      this[FLUSH](true)
 
-      // if we are still flowing after flushing the buffer we can emit the
-      // chunk otherwise we have to buffer it.
-      this.flowing
-        ? this.emit('data', chunk)
-        : this[BUFFERPUSH](chunk)
-    } else
+    if (this.flowing)
+      this.emit('data', chunk)
+    else
       this[BUFFERPUSH](chunk)
 
     if (this[BUFFERLENGTH] !== 0)
       this.emit('readable')
 
     if (cb)
-      cb()
+      fn(cb)
 
     return this.flowing
   }
@@ -856,35 +913,31 @@ module.exports = class Minipass extends Stream {
     if (this[DESTROYED])
       return null
 
-    try {
-      if (this[BUFFERLENGTH] === 0 || n === 0 || n > this[BUFFERLENGTH])
-        return null
-
-      if (this[OBJECTMODE])
-        n = null
-
-      if (this.buffer.length > 1 && !this[OBJECTMODE]) {
-        if (this.encoding)
-          this.buffer = new Yallist([
-            Array.from(this.buffer).join('')
-          ])
-        else
-          this.buffer = new Yallist([
-            Buffer.concat(Array.from(this.buffer), this[BUFFERLENGTH])
-          ])
-      }
-
-      return this[READ](n || null, this.buffer.head.value)
-    } finally {
+    if (this[BUFFERLENGTH] === 0 || n === 0 || n > this[BUFFERLENGTH]) {
       this[MAYBE_EMIT_END]()
+      return null
     }
+
+    if (this[OBJECTMODE])
+      n = null
+
+    if (this.buffer.length > 1 && !this[OBJECTMODE]) {
+      if (this.encoding)
+        this.buffer = [this.buffer.join('')]
+      else
+        this.buffer = [Buffer.concat(this.buffer, this[BUFFERLENGTH])]
+    }
+
+    const ret = this[READ](n || null, this.buffer[0])
+    this[MAYBE_EMIT_END]()
+    return ret
   }
 
   [READ] (n, chunk) {
     if (n === chunk.length || n === null)
       this[BUFFERSHIFT]()
     else {
-      this.buffer.head.value = chunk.slice(n)
+      this.buffer[0] = chunk.slice(n)
       chunk = chunk.slice(0, n)
       this[BUFFERLENGTH] -= n
     }
@@ -960,7 +1013,7 @@ module.exports = class Minipass extends Stream {
       this[BUFFERLENGTH] += 1
     else
       this[BUFFERLENGTH] += chunk.length
-    return this.buffer.push(chunk)
+    this.buffer.push(chunk)
   }
 
   [BUFFERSHIFT] () {
@@ -968,7 +1021,7 @@ module.exports = class Minipass extends Stream {
       if (this[OBJECTMODE])
         this[BUFFERLENGTH] -= 1
       else
-        this[BUFFERLENGTH] -= this.buffer.head.value.length
+        this[BUFFERLENGTH] -= this.buffer[0].length
     }
     return this.buffer.shift()
   }
@@ -994,16 +1047,30 @@ module.exports = class Minipass extends Stream {
       opts.end = false
     else
       opts.end = opts.end !== false
+    opts.proxyErrors = !!opts.proxyErrors
 
-    const p = { dest: dest, opts: opts, ondrain: _ => this[RESUME]() }
-    this.pipes.push(p)
-
-    dest.on('drain', p.ondrain)
-    this[RESUME]()
     // piping an ended stream ends immediately
-    if (ended && p.opts.end)
-      p.dest.end()
+    if (ended) {
+      if (opts.end)
+        dest.end()
+    } else {
+      this.pipes.push(!opts.proxyErrors ? new Pipe(this, dest, opts)
+        : new PipeProxyErrors(this, dest, opts))
+      if (this[ASYNC])
+        defer(() => this[RESUME]())
+      else
+        this[RESUME]()
+    }
+
     return dest
+  }
+
+  unpipe (dest) {
+    const p = this.pipes.find(p => p.dest === dest)
+    if (p) {
+      this.pipes.splice(this.pipes.indexOf(p), 1)
+      p.unpipe()
+    }
   }
 
   addListener (ev, fn) {
@@ -1011,18 +1078,21 @@ module.exports = class Minipass extends Stream {
   }
 
   on (ev, fn) {
-    try {
-      return super.on(ev, fn)
-    } finally {
-      if (ev === 'data' && !this.pipes.length && !this.flowing)
-        this[RESUME]()
-      else if (isEndish(ev) && this[EMITTED_END]) {
-        super.emit(ev)
-        this.removeAllListeners(ev)
-      } else if (ev === 'error' && this[EMITTED_ERROR]) {
+    const ret = super.on(ev, fn)
+    if (ev === 'data' && !this.pipes.length && !this.flowing)
+      this[RESUME]()
+    else if (ev === 'readable' && this[BUFFERLENGTH] !== 0)
+      super.emit('readable')
+    else if (isEndish(ev) && this[EMITTED_END]) {
+      super.emit(ev)
+      this.removeAllListeners(ev)
+    } else if (ev === 'error' && this[EMITTED_ERROR]) {
+      if (this[ASYNC])
+        defer(() => fn.call(this, this[EMITTED_ERROR]))
+      else
         fn.call(this, this[EMITTED_ERROR])
-      }
     }
+    return ret
   }
 
   get emittedEnd () {
@@ -1045,65 +1115,84 @@ module.exports = class Minipass extends Stream {
     }
   }
 
-  emit (ev, data) {
+  emit (ev, data, ...extra) {
     // error and close are only events allowed after calling destroy()
     if (ev !== 'error' && ev !== 'close' && ev !== DESTROYED && this[DESTROYED])
       return
     else if (ev === 'data') {
-      if (!data)
-        return
-
-      if (this.pipes.length)
-        this.pipes.forEach(p =>
-          p.dest.write(data) === false && this.pause())
+      return !data ? false
+        : this[ASYNC] ? defer(() => this[EMITDATA](data))
+        : this[EMITDATA](data)
     } else if (ev === 'end') {
-      // only actual end gets this treatment
-      if (this[EMITTED_END] === true)
-        return
-
-      this[EMITTED_END] = true
-      this.readable = false
-
-      if (this[DECODER]) {
-        data = this[DECODER].end()
-        if (data) {
-          this.pipes.forEach(p => p.dest.write(data))
-          super.emit('data', data)
-        }
-      }
-
-      this.pipes.forEach(p => {
-        p.dest.removeListener('drain', p.ondrain)
-        if (p.opts.end)
-          p.dest.end()
-      })
+      return this[EMITEND]()
     } else if (ev === 'close') {
       this[CLOSED] = true
       // don't emit close before 'end' and 'finish'
       if (!this[EMITTED_END] && !this[DESTROYED])
         return
+      const ret = super.emit('close')
+      this.removeAllListeners('close')
+      return ret
     } else if (ev === 'error') {
       this[EMITTED_ERROR] = data
+      const ret = super.emit('error', data)
+      this[MAYBE_EMIT_END]()
+      return ret
+    } else if (ev === 'resume') {
+      const ret = super.emit('resume')
+      this[MAYBE_EMIT_END]()
+      return ret
+    } else if (ev === 'finish' || ev === 'prefinish') {
+      const ret = super.emit(ev)
+      this.removeAllListeners(ev)
+      return ret
     }
 
-    // TODO: replace with a spread operator when Node v4 support drops
-    const args = new Array(arguments.length)
-    args[0] = ev
-    args[1] = data
-    if (arguments.length > 2) {
-      for (let i = 2; i < arguments.length; i++) {
-        args[i] = arguments[i]
+    // Some other unknown event
+    const ret = super.emit(ev, data, ...extra)
+    this[MAYBE_EMIT_END]()
+    return ret
+  }
+
+  [EMITDATA] (data) {
+    for (const p of this.pipes) {
+      if (p.dest.write(data) === false)
+        this.pause()
+    }
+    const ret = super.emit('data', data)
+    this[MAYBE_EMIT_END]()
+    return ret
+  }
+
+  [EMITEND] () {
+    if (this[EMITTED_END])
+      return
+
+    this[EMITTED_END] = true
+    this.readable = false
+    if (this[ASYNC])
+      defer(() => this[EMITEND2]())
+    else
+      this[EMITEND2]()
+  }
+
+  [EMITEND2] () {
+    if (this[DECODER]) {
+      const data = this[DECODER].end()
+      if (data) {
+        for (const p of this.pipes) {
+          p.dest.write(data)
+        }
+        super.emit('data', data)
       }
     }
 
-    try {
-      return super.emit.apply(this, args)
-    } finally {
-      if (!isEndish(ev))
-        this[MAYBE_EMIT_END]()
-      else
-        this.removeAllListeners(ev)
+    for (const p of this.pipes) {
+      p.end()
     }
+    const ret = super.emit('end')
+    this.removeAllListeners('end')
+    return ret
   }
 
   // const all = await stream.collect()
@@ -1205,7 +1294,7 @@ module.exports = class Minipass extends Stream {
     this[DESTROYED] = true
 
     // throw away all buffered data, it's never coming out
-    this.buffer = new Yallist()
+    this.buffer.length = 0
     this[BUFFERLENGTH] = 0
 
     if (typeof this.close === 'function' && !this[CLOSED])
@@ -1364,7 +1453,7 @@ const Buffer = (__webpack_require__(4300).Buffer)
 const realZlib = __webpack_require__(9796)
 
 const constants = exports.constants = __webpack_require__(1074)
-const Minipass = __webpack_require__(7008)
+const Minipass = __webpack_require__(1933)
 
 const OriginalBufferConcat = Buffer.concat
 
@@ -1709,6 +1798,663 @@ if (typeof realZlib.BrotliCompress === 'function') {
 
 /***/ }),
 
+/***/ 1933:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+const proc = typeof process === 'object' && process ? process : {
+  stdout: null,
+  stderr: null,
+}
+const EE = __webpack_require__(2361)
+const Stream = __webpack_require__(2781)
+const SD = (__webpack_require__(1576).StringDecoder)
+
+const EOF = Symbol('EOF')
+const MAYBE_EMIT_END = Symbol('maybeEmitEnd')
+const EMITTED_END = Symbol('emittedEnd')
+const EMITTING_END = Symbol('emittingEnd')
+const EMITTED_ERROR = Symbol('emittedError')
+const CLOSED = Symbol('closed')
+const READ = Symbol('read')
+const FLUSH = Symbol('flush')
+const FLUSHCHUNK = Symbol('flushChunk')
+const ENCODING = Symbol('encoding')
+const DECODER = Symbol('decoder')
+const FLOWING = Symbol('flowing')
+const PAUSED = Symbol('paused')
+const RESUME = Symbol('resume')
+const BUFFERLENGTH = Symbol('bufferLength')
+const BUFFERPUSH = Symbol('bufferPush')
+const BUFFERSHIFT = Symbol('bufferShift')
+const OBJECTMODE = Symbol('objectMode')
+const DESTROYED = Symbol('destroyed')
+const EMITDATA = Symbol('emitData')
+const EMITEND = Symbol('emitEnd')
+const EMITEND2 = Symbol('emitEnd2')
+const ASYNC = Symbol('async')
+
+const defer = fn => Promise.resolve().then(fn)
+
+// TODO remove when Node v8 support drops
+const doIter = global._MP_NO_ITERATOR_SYMBOLS_  !== '1'
+const ASYNCITERATOR = doIter && Symbol.asyncIterator
+  || Symbol('asyncIterator not implemented')
+const ITERATOR = doIter && Symbol.iterator
+  || Symbol('iterator not implemented')
+
+// events that mean 'the stream is over'
+// these are treated specially, and re-emitted
+// if they are listened for after emitting.
+const isEndish = ev =>
+  ev === 'end' ||
+  ev === 'finish' ||
+  ev === 'prefinish'
+
+const isArrayBuffer = b => b instanceof ArrayBuffer ||
+  typeof b === 'object' &&
+  b.constructor &&
+  b.constructor.name === 'ArrayBuffer' &&
+  b.byteLength >= 0
+
+const isArrayBufferView = b => !Buffer.isBuffer(b) && ArrayBuffer.isView(b)
+
+class Pipe {
+  constructor (src, dest, opts) {
+    this.src = src
+    this.dest = dest
+    this.opts = opts
+    this.ondrain = () => src[RESUME]()
+    dest.on('drain', this.ondrain)
+  }
+  unpipe () {
+    this.dest.removeListener('drain', this.ondrain)
+  }
+  // istanbul ignore next - only here for the prototype
+  proxyErrors () {}
+  end () {
+    this.unpipe()
+    if (this.opts.end)
+      this.dest.end()
+  }
+}
+
+class PipeProxyErrors extends Pipe {
+  unpipe () {
+    this.src.removeListener('error', this.proxyErrors)
+    super.unpipe()
+  }
+  constructor (src, dest, opts) {
+    super(src, dest, opts)
+    this.proxyErrors = er => dest.emit('error', er)
+    src.on('error', this.proxyErrors)
+  }
+}
+
+module.exports = class Minipass extends Stream {
+  constructor (options) {
+    super()
+    this[FLOWING] = false
+    // whether we're explicitly paused
+    this[PAUSED] = false
+    this.pipes = []
+    this.buffer = []
+    this[OBJECTMODE] = options && options.objectMode || false
+    if (this[OBJECTMODE])
+      this[ENCODING] = null
+    else
+      this[ENCODING] = options && options.encoding || null
+    if (this[ENCODING] === 'buffer')
+      this[ENCODING] = null
+    this[ASYNC] = options && !!options.async || false
+    this[DECODER] = this[ENCODING] ? new SD(this[ENCODING]) : null
+    this[EOF] = false
+    this[EMITTED_END] = false
+    this[EMITTING_END] = false
+    this[CLOSED] = false
+    this[EMITTED_ERROR] = null
+    this.writable = true
+    this.readable = true
+    this[BUFFERLENGTH] = 0
+    this[DESTROYED] = false
+  }
+
+  get bufferLength () { return this[BUFFERLENGTH] }
+
+  get encoding () { return this[ENCODING] }
+  set encoding (enc) {
+    if (this[OBJECTMODE])
+      throw new Error('cannot set encoding in objectMode')
+
+    if (this[ENCODING] && enc !== this[ENCODING] &&
+        (this[DECODER] && this[DECODER].lastNeed || this[BUFFERLENGTH]))
+      throw new Error('cannot change encoding')
+
+    if (this[ENCODING] !== enc) {
+      this[DECODER] = enc ? new SD(enc) : null
+      if (this.buffer.length)
+        this.buffer = this.buffer.map(chunk => this[DECODER].write(chunk))
+    }
+
+    this[ENCODING] = enc
+  }
+
+  setEncoding (enc) {
+    this.encoding = enc
+  }
+
+  get objectMode () { return this[OBJECTMODE] }
+  set objectMode (om) { this[OBJECTMODE] = this[OBJECTMODE] || !!om }
+
+  get ['async'] () { return this[ASYNC] }
+  set ['async'] (a) { this[ASYNC] = this[ASYNC] || !!a }
+
+  write (chunk, encoding, cb) {
+    if (this[EOF])
+      throw new Error('write after end')
+
+    if (this[DESTROYED]) {
+      this.emit('error', Object.assign(
+        new Error('Cannot call write after a stream was destroyed'),
+        { code: 'ERR_STREAM_DESTROYED' }
+      ))
+      return true
+    }
+
+    if (typeof encoding === 'function')
+      cb = encoding, encoding = 'utf8'
+
+    if (!encoding)
+      encoding = 'utf8'
+
+    const fn = this[ASYNC] ? defer : f => f()
+
+    // convert array buffers and typed array views into buffers
+    // at some point in the future, we may want to do the opposite!
+    // leave strings and buffers as-is
+    // anything else switches us into object mode
+    if (!this[OBJECTMODE] && !Buffer.isBuffer(chunk)) {
+      if (isArrayBufferView(chunk))
+        chunk = Buffer.from(chunk.buffer, chunk.byteOffset, chunk.byteLength)
+      else if (isArrayBuffer(chunk))
+        chunk = Buffer.from(chunk)
+      else if (typeof chunk !== 'string')
+        // use the setter so we throw if we have encoding set
+        this.objectMode = true
+    }
+
+    // handle object mode up front, since it's simpler
+    // this yields better performance, fewer checks later.
+    if (this[OBJECTMODE]) {
+      /* istanbul ignore if - maybe impossible? */
+      if (this.flowing && this[BUFFERLENGTH] !== 0)
+        this[FLUSH](true)
+
+      if (this.flowing)
+        this.emit('data', chunk)
+      else
+        this[BUFFERPUSH](chunk)
+
+      if (this[BUFFERLENGTH] !== 0)
+        this.emit('readable')
+
+      if (cb)
+        fn(cb)
+
+      return this.flowing
+    }
+
+    // at this point the chunk is a buffer or string
+    // don't buffer it up or send it to the decoder
+    if (!chunk.length) {
+      if (this[BUFFERLENGTH] !== 0)
+        this.emit('readable')
+      if (cb)
+        fn(cb)
+      return this.flowing
+    }
+
+    // fast-path writing strings of same encoding to a stream with
+    // an empty buffer, skipping the buffer/decoder dance
+    if (typeof chunk === 'string' &&
+        // unless it is a string already ready for us to use
+        !(encoding === this[ENCODING] && !this[DECODER].lastNeed)) {
+      chunk = Buffer.from(chunk, encoding)
+    }
+
+    if (Buffer.isBuffer(chunk) && this[ENCODING])
+      chunk = this[DECODER].write(chunk)
+
+    // Note: flushing CAN potentially switch us into not-flowing mode
+    if (this.flowing && this[BUFFERLENGTH] !== 0)
+      this[FLUSH](true)
+
+    if (this.flowing)
+      this.emit('data', chunk)
+    else
+      this[BUFFERPUSH](chunk)
+
+    if (this[BUFFERLENGTH] !== 0)
+      this.emit('readable')
+
+    if (cb)
+      fn(cb)
+
+    return this.flowing
+  }
+
+  read (n) {
+    if (this[DESTROYED])
+      return null
+
+    if (this[BUFFERLENGTH] === 0 || n === 0 || n > this[BUFFERLENGTH]) {
+      this[MAYBE_EMIT_END]()
+      return null
+    }
+
+    if (this[OBJECTMODE])
+      n = null
+
+    if (this.buffer.length > 1 && !this[OBJECTMODE]) {
+      if (this.encoding)
+        this.buffer = [this.buffer.join('')]
+      else
+        this.buffer = [Buffer.concat(this.buffer, this[BUFFERLENGTH])]
+    }
+
+    const ret = this[READ](n || null, this.buffer[0])
+    this[MAYBE_EMIT_END]()
+    return ret
+  }
+
+  [READ] (n, chunk) {
+    if (n === chunk.length || n === null)
+      this[BUFFERSHIFT]()
+    else {
+      this.buffer[0] = chunk.slice(n)
+      chunk = chunk.slice(0, n)
+      this[BUFFERLENGTH] -= n
+    }
+
+    this.emit('data', chunk)
+
+    if (!this.buffer.length && !this[EOF])
+      this.emit('drain')
+
+    return chunk
+  }
+
+  end (chunk, encoding, cb) {
+    if (typeof chunk === 'function')
+      cb = chunk, chunk = null
+    if (typeof encoding === 'function')
+      cb = encoding, encoding = 'utf8'
+    if (chunk)
+      this.write(chunk, encoding)
+    if (cb)
+      this.once('end', cb)
+    this[EOF] = true
+    this.writable = false
+
+    // if we haven't written anything, then go ahead and emit,
+    // even if we're not reading.
+    // we'll re-emit if a new 'end' listener is added anyway.
+    // This makes MP more suitable to write-only use cases.
+    if (this.flowing || !this[PAUSED])
+      this[MAYBE_EMIT_END]()
+    return this
+  }
+
+  // don't let the internal resume be overwritten
+  [RESUME] () {
+    if (this[DESTROYED])
+      return
+
+    this[PAUSED] = false
+    this[FLOWING] = true
+    this.emit('resume')
+    if (this.buffer.length)
+      this[FLUSH]()
+    else if (this[EOF])
+      this[MAYBE_EMIT_END]()
+    else
+      this.emit('drain')
+  }
+
+  resume () {
+    return this[RESUME]()
+  }
+
+  pause () {
+    this[FLOWING] = false
+    this[PAUSED] = true
+  }
+
+  get destroyed () {
+    return this[DESTROYED]
+  }
+
+  get flowing () {
+    return this[FLOWING]
+  }
+
+  get paused () {
+    return this[PAUSED]
+  }
+
+  [BUFFERPUSH] (chunk) {
+    if (this[OBJECTMODE])
+      this[BUFFERLENGTH] += 1
+    else
+      this[BUFFERLENGTH] += chunk.length
+    this.buffer.push(chunk)
+  }
+
+  [BUFFERSHIFT] () {
+    if (this.buffer.length) {
+      if (this[OBJECTMODE])
+        this[BUFFERLENGTH] -= 1
+      else
+        this[BUFFERLENGTH] -= this.buffer[0].length
+    }
+    return this.buffer.shift()
+  }
+
+  [FLUSH] (noDrain) {
+    do {} while (this[FLUSHCHUNK](this[BUFFERSHIFT]()))
+
+    if (!noDrain && !this.buffer.length && !this[EOF])
+      this.emit('drain')
+  }
+
+  [FLUSHCHUNK] (chunk) {
+    return chunk ? (this.emit('data', chunk), this.flowing) : false
+  }
+
+  pipe (dest, opts) {
+    if (this[DESTROYED])
+      return
+
+    const ended = this[EMITTED_END]
+    opts = opts || {}
+    if (dest === proc.stdout || dest === proc.stderr)
+      opts.end = false
+    else
+      opts.end = opts.end !== false
+    opts.proxyErrors = !!opts.proxyErrors
+
+    // piping an ended stream ends immediately
+    if (ended) {
+      if (opts.end)
+        dest.end()
+    } else {
+      this.pipes.push(!opts.proxyErrors ? new Pipe(this, dest, opts)
+        : new PipeProxyErrors(this, dest, opts))
+      if (this[ASYNC])
+        defer(() => this[RESUME]())
+      else
+        this[RESUME]()
+    }
+
+    return dest
+  }
+
+  unpipe (dest) {
+    const p = this.pipes.find(p => p.dest === dest)
+    if (p) {
+      this.pipes.splice(this.pipes.indexOf(p), 1)
+      p.unpipe()
+    }
+  }
+
+  addListener (ev, fn) {
+    return this.on(ev, fn)
+  }
+
+  on (ev, fn) {
+    const ret = super.on(ev, fn)
+    if (ev === 'data' && !this.pipes.length && !this.flowing)
+      this[RESUME]()
+    else if (ev === 'readable' && this[BUFFERLENGTH] !== 0)
+      super.emit('readable')
+    else if (isEndish(ev) && this[EMITTED_END]) {
+      super.emit(ev)
+      this.removeAllListeners(ev)
+    } else if (ev === 'error' && this[EMITTED_ERROR]) {
+      if (this[ASYNC])
+        defer(() => fn.call(this, this[EMITTED_ERROR]))
+      else
+        fn.call(this, this[EMITTED_ERROR])
+    }
+    return ret
+  }
+
+  get emittedEnd () {
+    return this[EMITTED_END]
+  }
+
+  [MAYBE_EMIT_END] () {
+    if (!this[EMITTING_END] &&
+        !this[EMITTED_END] &&
+        !this[DESTROYED] &&
+        this.buffer.length === 0 &&
+        this[EOF]) {
+      this[EMITTING_END] = true
+      this.emit('end')
+      this.emit('prefinish')
+      this.emit('finish')
+      if (this[CLOSED])
+        this.emit('close')
+      this[EMITTING_END] = false
+    }
+  }
+
+  emit (ev, data, ...extra) {
+    // error and close are only events allowed after calling destroy()
+    if (ev !== 'error' && ev !== 'close' && ev !== DESTROYED && this[DESTROYED])
+      return
+    else if (ev === 'data') {
+      return !data ? false
+        : this[ASYNC] ? defer(() => this[EMITDATA](data))
+        : this[EMITDATA](data)
+    } else if (ev === 'end') {
+      return this[EMITEND]()
+    } else if (ev === 'close') {
+      this[CLOSED] = true
+      // don't emit close before 'end' and 'finish'
+      if (!this[EMITTED_END] && !this[DESTROYED])
+        return
+      const ret = super.emit('close')
+      this.removeAllListeners('close')
+      return ret
+    } else if (ev === 'error') {
+      this[EMITTED_ERROR] = data
+      const ret = super.emit('error', data)
+      this[MAYBE_EMIT_END]()
+      return ret
+    } else if (ev === 'resume') {
+      const ret = super.emit('resume')
+      this[MAYBE_EMIT_END]()
+      return ret
+    } else if (ev === 'finish' || ev === 'prefinish') {
+      const ret = super.emit(ev)
+      this.removeAllListeners(ev)
+      return ret
+    }
+
+    // Some other unknown event
+    const ret = super.emit(ev, data, ...extra)
+    this[MAYBE_EMIT_END]()
+    return ret
+  }
+
+  [EMITDATA] (data) {
+    for (const p of this.pipes) {
+      if (p.dest.write(data) === false)
+        this.pause()
+    }
+    const ret = super.emit('data', data)
+    this[MAYBE_EMIT_END]()
+    return ret
+  }
+
+  [EMITEND] () {
+    if (this[EMITTED_END])
+      return
+
+    this[EMITTED_END] = true
+    this.readable = false
+    if (this[ASYNC])
+      defer(() => this[EMITEND2]())
+    else
+      this[EMITEND2]()
+  }
+
+  [EMITEND2] () {
+    if (this[DECODER]) {
+      const data = this[DECODER].end()
+      if (data) {
+        for (const p of this.pipes) {
+          p.dest.write(data)
+        }
+        super.emit('data', data)
+      }
+    }
+
+    for (const p of this.pipes) {
+      p.end()
+    }
+    const ret = super.emit('end')
+    this.removeAllListeners('end')
+    return ret
+  }
+
+  // const all = await stream.collect()
+  collect () {
+    const buf = []
+    if (!this[OBJECTMODE])
+      buf.dataLength = 0
+    // set the promise first, in case an error is raised
+    // by triggering the flow here.
+    const p = this.promise()
+    this.on('data', c => {
+      buf.push(c)
+      if (!this[OBJECTMODE])
+        buf.dataLength += c.length
+    })
+    return p.then(() => buf)
+  }
+
+  // const data = await stream.concat()
+  concat () {
+    return this[OBJECTMODE]
+      ? Promise.reject(new Error('cannot concat in objectMode'))
+      : this.collect().then(buf =>
+          this[OBJECTMODE]
+            ? Promise.reject(new Error('cannot concat in objectMode'))
+            : this[ENCODING] ? buf.join('') : Buffer.concat(buf, buf.dataLength))
+  }
+
+  // stream.promise().then(() => done, er => emitted error)
+  promise () {
+    return new Promise((resolve, reject) => {
+      this.on(DESTROYED, () => reject(new Error('stream destroyed')))
+      this.on('error', er => reject(er))
+      this.on('end', () => resolve())
+    })
+  }
+
+  // for await (let chunk of stream)
+  [ASYNCITERATOR] () {
+    const next = () => {
+      const res = this.read()
+      if (res !== null)
+        return Promise.resolve({ done: false, value: res })
+
+      if (this[EOF])
+        return Promise.resolve({ done: true })
+
+      let resolve = null
+      let reject = null
+      const onerr = er => {
+        this.removeListener('data', ondata)
+        this.removeListener('end', onend)
+        reject(er)
+      }
+      const ondata = value => {
+        this.removeListener('error', onerr)
+        this.removeListener('end', onend)
+        this.pause()
+        resolve({ value: value, done: !!this[EOF] })
+      }
+      const onend = () => {
+        this.removeListener('error', onerr)
+        this.removeListener('data', ondata)
+        resolve({ done: true })
+      }
+      const ondestroy = () => onerr(new Error('stream destroyed'))
+      return new Promise((res, rej) => {
+        reject = rej
+        resolve = res
+        this.once(DESTROYED, ondestroy)
+        this.once('error', onerr)
+        this.once('end', onend)
+        this.once('data', ondata)
+      })
+    }
+
+    return { next }
+  }
+
+  // for (let chunk of stream)
+  [ITERATOR] () {
+    const next = () => {
+      const value = this.read()
+      const done = value === null
+      return { value, done }
+    }
+    return { next }
+  }
+
+  destroy (er) {
+    if (this[DESTROYED]) {
+      if (er)
+        this.emit('error', er)
+      else
+        this.emit(DESTROYED)
+      return this
+    }
+
+    this[DESTROYED] = true
+
+    // throw away all buffered data, it's never coming out
+    this.buffer.length = 0
+    this[BUFFERLENGTH] = 0
+
+    if (typeof this.close === 'function' && !this[CLOSED])
+      this.close()
+
+    if (er)
+      this.emit('error', er)
+    else // if no error to emit, still reject pending promises
+      this.emit(DESTROYED)
+
+    return this
+  }
+
+  static isStream (s) {
+    return !!s && (s instanceof Minipass || s instanceof Stream ||
+      s instanceof EE && (
+        typeof s.pipe === 'function' || // readable
+        (typeof s.write === 'function' && typeof s.end === 'function') // writable
+      ))
+  }
+}
+
+
+/***/ }),
+
 /***/ 7537:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -1986,6 +2732,18 @@ module.exports = {useNative, useNativeSync}
 /***/ 8495:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+if (typeof process.addon === 'function') { // if the platform supports native resolving prefer that
+  module.exports = process.addon.bind(process)
+} else { // else use the runtime version here
+  module.exports = __webpack_require__(2615)
+}
+
+
+/***/ }),
+
+/***/ 2615:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
 var fs = __webpack_require__(7147)
 var path = __webpack_require__(1017)
 var os = __webpack_require__(2037)
@@ -1996,9 +2754,10 @@ var runtimeRequire =  true ? require : 0 // eslint-disable-line
 var vars = (process.config && process.config.variables) || {}
 var prebuildsOnly = !!{}.PREBUILDS_ONLY
 var abi = process.versions.modules // TODO: support old node where this is undef
-var runtime = isElectron() ? 'electron' : 'node'
-var arch = os.arch()
-var platform = os.platform()
+var runtime = isElectron() ? 'electron' : (isNwjs() ? 'node-webkit' : 'node')
+
+var arch = {}.npm_config_arch || os.arch()
+var platform = {}.npm_config_platform || os.platform()
 var libc = {}.LIBC || (isAlpine(platform) ? 'musl' : 'glibc')
 var armv = {}.ARM_VERSION || (arch === 'arm64' ? '8' : vars.arm_version) || ''
 var uv = (process.versions.uv || '').split('.')[0]
@@ -2006,10 +2765,10 @@ var uv = (process.versions.uv || '').split('.')[0]
 module.exports = load
 
 function load (dir) {
-  return runtimeRequire(load.path(dir))
+  return runtimeRequire(load.resolve(dir))
 }
 
-load.path = function (dir) {
+load.resolve = load.path = function (dir) {
   dir = path.resolve(dir || '.')
 
   try {
@@ -2170,6 +2929,10 @@ function compareTags (runtime) {
   }
 }
 
+function isNwjs () {
+  return !!(process.versions && process.versions.nw)
+}
+
 function isElectron () {
   if (process.versions && process.versions.electron) return true
   if ({}.ELECTRON_RUN_AS_NODE) return true
@@ -2234,24 +2997,29 @@ const t = __webpack_require__(3862)
 const path = __webpack_require__(1017)
 
 module.exports = (opt_, files, cb) => {
-  if (typeof files === 'function')
+  if (typeof files === 'function') {
     cb = files
+  }
 
-  if (Array.isArray(opt_))
+  if (Array.isArray(opt_)) {
     files = opt_, opt_ = {}
+  }
 
-  if (!files || !Array.isArray(files) || !files.length)
+  if (!files || !Array.isArray(files) || !files.length) {
     throw new TypeError('no files or directories specified')
+  }
 
   files = Array.from(files)
 
   const opt = hlo(opt_)
 
-  if (opt.sync && typeof cb === 'function')
+  if (opt.sync && typeof cb === 'function') {
     throw new TypeError('callback not supported for sync tar functions')
+  }
 
-  if (!opt.file && typeof cb === 'function')
+  if (!opt.file && typeof cb === 'function') {
     throw new TypeError('callback only supported with file option')
+  }
 
   return opt.file && opt.sync ? createFileSync(opt, files)
     : opt.file ? createFile(opt, files, cb)
@@ -2290,13 +3058,14 @@ const addFilesSync = (p, files) => {
   files.forEach(file => {
     if (file.charAt(0) === '@') {
       t({
-        file: path.resolve(p.cwd, file.substr(1)),
+        file: path.resolve(p.cwd, file.slice(1)),
         sync: true,
         noResume: true,
         onentry: entry => p.add(entry),
       })
-    } else
+    } else {
       p.add(file)
+    }
   })
   p.end()
 }
@@ -2306,12 +3075,13 @@ const addFilesAsync = (p, files) => {
     const file = files.shift()
     if (file.charAt(0) === '@') {
       return t({
-        file: path.resolve(p.cwd, file.substr(1)),
+        file: path.resolve(p.cwd, file.slice(1)),
         noResume: true,
         onentry: entry => p.add(entry),
       }).then(_ => addFilesAsync(p, files))
-    } else
+    } else {
       p.add(file)
+    }
   }
   p.end()
 }
@@ -2346,29 +3116,35 @@ const path = __webpack_require__(1017)
 const stripSlash = __webpack_require__(6433)
 
 module.exports = (opt_, files, cb) => {
-  if (typeof opt_ === 'function')
+  if (typeof opt_ === 'function') {
     cb = opt_, files = null, opt_ = {}
-  else if (Array.isArray(opt_))
+  } else if (Array.isArray(opt_)) {
     files = opt_, opt_ = {}
+  }
 
-  if (typeof files === 'function')
+  if (typeof files === 'function') {
     cb = files, files = null
+  }
 
-  if (!files)
+  if (!files) {
     files = []
-  else
+  } else {
     files = Array.from(files)
+  }
 
   const opt = hlo(opt_)
 
-  if (opt.sync && typeof cb === 'function')
+  if (opt.sync && typeof cb === 'function') {
     throw new TypeError('callback not supported for sync tar functions')
+  }
 
-  if (!opt.file && typeof cb === 'function')
+  if (!opt.file && typeof cb === 'function') {
     throw new TypeError('callback only supported with file option')
+  }
 
-  if (files.length)
+  if (files.length) {
     filesFilter(opt, files)
+  }
 
   return opt.file && opt.sync ? extractFileSync(opt)
     : opt.file ? extractFile(opt, cb)
@@ -2424,9 +3200,9 @@ const extractFile = (opt, cb) => {
     // This trades a zero-byte read() syscall for a stat
     // However, it will usually result in less memory allocation
     fs.stat(file, (er, stat) => {
-      if (er)
+      if (er) {
         reject(er)
-      else {
+      } else {
         const stream = new fsm.ReadStream(file, {
           readSize: readSize,
           size: stat.size,
@@ -2513,18 +3289,21 @@ class Header {
     this.atime = null
     this.ctime = null
 
-    if (Buffer.isBuffer(data))
+    if (Buffer.isBuffer(data)) {
       this.decode(data, off || 0, ex, gex)
-    else if (data)
+    } else if (data) {
       this.set(data)
+    }
   }
 
   decode (buf, off, ex, gex) {
-    if (!off)
+    if (!off) {
       off = 0
+    }
 
-    if (!buf || !(buf.length >= off + 512))
+    if (!buf || !(buf.length >= off + 512)) {
       throw new Error('need 512 bytes for header')
+    }
 
     this.path = decString(buf, off, 100)
     this.mode = decNumber(buf, off + 100, 8)
@@ -2541,18 +3320,21 @@ class Header {
 
     // old tar versions marked dirs as a file with a trailing /
     this[TYPE] = decString(buf, off + 156, 1)
-    if (this[TYPE] === '')
+    if (this[TYPE] === '') {
       this[TYPE] = '0'
-    if (this[TYPE] === '0' && this.path.substr(-1) === '/')
+    }
+    if (this[TYPE] === '0' && this.path.slice(-1) === '/') {
       this[TYPE] = '5'
+    }
 
     // tar implementations sometimes incorrectly put the stat(dir).size
     // as the size in the tarball, even though Directory entries are
     // not able to have any body at all.  In the very rare chance that
     // it actually DOES have a body, we weren't going to do anything with
     // it anyway, and it'll just be a warning about an invalid header.
-    if (this[TYPE] === '5')
+    if (this[TYPE] === '5') {
       this.size = 0
+    }
 
     this.linkpath = decString(buf, off + 157, 100)
     if (buf.slice(off + 257, off + 265).toString() === 'ustar\u000000') {
@@ -2566,23 +3348,27 @@ class Header {
         this.path = prefix + '/' + this.path
       } else {
         const prefix = decString(buf, off + 345, 130)
-        if (prefix)
+        if (prefix) {
           this.path = prefix + '/' + this.path
+        }
         this.atime = decDate(buf, off + 476, 12)
         this.ctime = decDate(buf, off + 488, 12)
       }
     }
 
     let sum = 8 * 0x20
-    for (let i = off; i < off + 148; i++)
+    for (let i = off; i < off + 148; i++) {
       sum += buf[i]
+    }
 
-    for (let i = off + 156; i < off + 512; i++)
+    for (let i = off + 156; i < off + 512; i++) {
       sum += buf[i]
+    }
 
     this.cksumValid = sum === this.cksum
-    if (this.cksum === null && sum === 8 * 0x20)
+    if (this.cksum === null && sum === 8 * 0x20) {
       this.nullBlock = true
+    }
   }
 
   [SLURP] (ex, global) {
@@ -2590,8 +3376,9 @@ class Header {
       // we slurp in everything except for the path attribute in
       // a global extended header, because that's weird.
       if (ex[k] !== null && ex[k] !== undefined &&
-          !(global && k === 'path'))
+          !(global && k === 'path')) {
         this[k] = ex[k]
+      }
     }
   }
 
@@ -2601,11 +3388,13 @@ class Header {
       off = 0
     }
 
-    if (!off)
+    if (!off) {
       off = 0
+    }
 
-    if (!(buf.length >= off + 512))
+    if (!(buf.length >= off + 512)) {
       throw new Error('need 512 bytes for header')
+    }
 
     const prefixSize = this.ctime || this.atime ? 130 : 155
     const split = splitPrefix(this.path || '', prefixSize)
@@ -2627,20 +3416,22 @@ class Header {
     this.needPax = encNumber(buf, off + 329, 8, this.devmaj) || this.needPax
     this.needPax = encNumber(buf, off + 337, 8, this.devmin) || this.needPax
     this.needPax = encString(buf, off + 345, prefixSize, prefix) || this.needPax
-    if (buf[off + 475] !== 0)
+    if (buf[off + 475] !== 0) {
       this.needPax = encString(buf, off + 345, 155, prefix) || this.needPax
-    else {
+    } else {
       this.needPax = encString(buf, off + 345, 130, prefix) || this.needPax
       this.needPax = encDate(buf, off + 476, 12, this.atime) || this.needPax
       this.needPax = encDate(buf, off + 488, 12, this.ctime) || this.needPax
     }
 
     let sum = 8 * 0x20
-    for (let i = off; i < off + 148; i++)
+    for (let i = off; i < off + 148; i++) {
       sum += buf[i]
+    }
 
-    for (let i = off + 156; i < off + 512; i++)
+    for (let i = off + 156; i < off + 512; i++) {
       sum += buf[i]
+    }
 
     this.cksum = sum
     encNumber(buf, off + 148, 8, this.cksum)
@@ -2651,8 +3442,9 @@ class Header {
 
   set (data) {
     for (const i in data) {
-      if (data[i] !== null && data[i] !== undefined)
+      if (data[i] !== null && data[i] !== undefined) {
         this[i] = data[i]
+      }
     }
   }
 
@@ -2665,10 +3457,11 @@ class Header {
   }
 
   set type (type) {
-    if (types.code.has(type))
+    if (types.code.has(type)) {
       this[TYPE] = types.code.get(type)
-    else
+    } else {
       this[TYPE] = type
+    }
   }
 }
 
@@ -2679,25 +3472,23 @@ const splitPrefix = (p, prefixSize) => {
   let ret
   const root = pathModule.parse(p).root || '.'
 
-  if (Buffer.byteLength(pp) < pathSize)
+  if (Buffer.byteLength(pp) < pathSize) {
     ret = [pp, prefix, false]
-  else {
+  } else {
     // first set prefix to the dir, and path to the base
     prefix = pathModule.dirname(pp)
     pp = pathModule.basename(pp)
 
     do {
-      // both fit!
       if (Buffer.byteLength(pp) <= pathSize &&
-          Buffer.byteLength(prefix) <= prefixSize)
+          Buffer.byteLength(prefix) <= prefixSize) {
+        // both fit!
         ret = [pp, prefix, false]
-
-      // prefix fits in prefix, but path doesn't fit in path
-      else if (Buffer.byteLength(pp) > pathSize &&
-          Buffer.byteLength(prefix) <= prefixSize)
-        ret = [pp.substr(0, pathSize - 1), prefix, true]
-
-      else {
+      } else if (Buffer.byteLength(pp) > pathSize &&
+          Buffer.byteLength(prefix) <= prefixSize) {
+        // prefix fits in prefix, but path doesn't fit in path
+        ret = [pp.slice(0, pathSize - 1), prefix, true]
+      } else {
         // make path take a bit from prefix
         pp = pathModule.join(pathModule.basename(prefix), pp)
         prefix = pathModule.dirname(prefix)
@@ -2705,8 +3496,9 @@ const splitPrefix = (p, prefixSize) => {
     } while (prefix !== root && !ret)
 
     // at this point, found no resolution, just truncate
-    if (!ret)
-      ret = [p.substr(0, pathSize - 1), '', true]
+    if (!ret) {
+      ret = [p.slice(0, pathSize - 1), '', true]
+    }
   }
   return ret
 }
@@ -2815,14 +3607,15 @@ module.exports = opt => opt ? Object.keys(opt).map(k => [
 // 0xff for negative, and 0x80 for positive.
 
 const encode = (num, buf) => {
-  if (!Number.isSafeInteger(num))
-    // The number is so large that javascript cannot represent it with integer
-    // precision.
+  if (!Number.isSafeInteger(num)) {
+  // The number is so large that javascript cannot represent it with integer
+  // precision.
     throw Error('cannot encode number outside of javascript safe integer range')
-  else if (num < 0)
+  } else if (num < 0) {
     encodeNegative(num, buf)
-  else
+  } else {
     encodePositive(num, buf)
+  }
   return buf
 }
 
@@ -2842,11 +3635,11 @@ const encodeNegative = (num, buf) => {
   for (var i = buf.length; i > 1; i--) {
     var byte = num & 0xff
     num = Math.floor(num / 0x100)
-    if (flipped)
+    if (flipped) {
       buf[i - 1] = onesComp(byte)
-    else if (byte === 0)
+    } else if (byte === 0) {
       buf[i - 1] = 0
-    else {
+    } else {
       flipped = true
       buf[i - 1] = twosComp(byte)
     }
@@ -2858,13 +3651,15 @@ const parse = (buf) => {
   const value = pre === 0x80 ? pos(buf.slice(1, buf.length))
     : pre === 0xff ? twos(buf)
     : null
-  if (value === null)
+  if (value === null) {
     throw Error('invalid base256 encoding')
+  }
 
-  if (!Number.isSafeInteger(value))
-    // The number is so large that javascript cannot represent it with integer
-    // precision.
+  if (!Number.isSafeInteger(value)) {
+  // The number is so large that javascript cannot represent it with integer
+  // precision.
     throw Error('parsed number outside of javascript safe integer range')
+  }
 
   return value
 }
@@ -2876,16 +3671,17 @@ const twos = (buf) => {
   for (var i = len - 1; i > -1; i--) {
     var byte = buf[i]
     var f
-    if (flipped)
+    if (flipped) {
       f = onesComp(byte)
-    else if (byte === 0)
+    } else if (byte === 0) {
       f = byte
-    else {
+    } else {
       flipped = true
       f = twosComp(byte)
     }
-    if (f !== 0)
+    if (f !== 0) {
       sum -= f * Math.pow(256, len - i - 1)
+    }
   }
   return sum
 }
@@ -2895,8 +3691,9 @@ const pos = (buf) => {
   var sum = 0
   for (var i = len - 1; i > -1; i--) {
     var byte = buf[i]
-    if (byte !== 0)
+    if (byte !== 0) {
       sum += byte * Math.pow(256, len - i - 1)
+    }
   }
   return sum
 }
@@ -2931,32 +3728,39 @@ const path = __webpack_require__(1017)
 const stripSlash = __webpack_require__(6433)
 
 module.exports = (opt_, files, cb) => {
-  if (typeof opt_ === 'function')
+  if (typeof opt_ === 'function') {
     cb = opt_, files = null, opt_ = {}
-  else if (Array.isArray(opt_))
+  } else if (Array.isArray(opt_)) {
     files = opt_, opt_ = {}
+  }
 
-  if (typeof files === 'function')
+  if (typeof files === 'function') {
     cb = files, files = null
+  }
 
-  if (!files)
+  if (!files) {
     files = []
-  else
+  } else {
     files = Array.from(files)
+  }
 
   const opt = hlo(opt_)
 
-  if (opt.sync && typeof cb === 'function')
+  if (opt.sync && typeof cb === 'function') {
     throw new TypeError('callback not supported for sync tar functions')
+  }
 
-  if (!opt.file && typeof cb === 'function')
+  if (!opt.file && typeof cb === 'function') {
     throw new TypeError('callback only supported with file option')
+  }
 
-  if (files.length)
+  if (files.length) {
     filesFilter(opt, files)
+  }
 
-  if (!opt.noResume)
+  if (!opt.noResume) {
     onentryFunction(opt)
+  }
 
   return opt.file && opt.sync ? listFileSync(opt)
     : opt.file ? listFile(opt, cb)
@@ -3000,9 +3804,9 @@ const listFileSync = opt => {
   try {
     const stat = fs.statSync(file)
     const readSize = opt.maxReadSize || 16 * 1024 * 1024
-    if (stat.size < readSize)
+    if (stat.size < readSize) {
       p.end(fs.readFileSync(file))
-    else {
+    } else {
       let pos = 0
       const buf = Buffer.allocUnsafe(readSize)
       fd = fs.openSync(file, 'r')
@@ -3033,9 +3837,9 @@ const listFile = (opt, cb) => {
     parse.on('end', resolve)
 
     fs.stat(file, (er, stat) => {
-      if (er)
+      if (er) {
         reject(er)
-      else {
+      } else {
         const stream = new fsm.ReadStream(file, {
           readSize: readSize,
           size: stat.size,
@@ -3098,8 +3902,9 @@ const cSet = (cache, key, val) => cache.set(normPath(key), val)
 
 const checkCwd = (dir, cb) => {
   fs.stat(dir, (er, st) => {
-    if (er || !st.isDirectory())
+    if (er || !st.isDirectory()) {
       er = new CwdError(dir, er && er.code || 'ENOTDIR')
+    }
     cb(er)
   })
 }
@@ -3125,27 +3930,31 @@ module.exports = (dir, opt, cb) => {
   const cwd = normPath(opt.cwd)
 
   const done = (er, created) => {
-    if (er)
+    if (er) {
       cb(er)
-    else {
+    } else {
       cSet(cache, dir, true)
-      if (created && doChown)
+      if (created && doChown) {
         chownr(created, uid, gid, er => done(er))
-      else if (needChmod)
+      } else if (needChmod) {
         fs.chmod(dir, mode, cb)
-      else
+      } else {
         cb()
+      }
     }
   }
 
-  if (cache && cGet(cache, dir) === true)
+  if (cache && cGet(cache, dir) === true) {
     return done()
+  }
 
-  if (dir === cwd)
+  if (dir === cwd) {
     return checkCwd(dir, done)
+  }
 
-  if (preserve)
-    return mkdirp(dir, {mode}).then(made => done(null, made), done)
+  if (preserve) {
+    return mkdirp(dir, { mode }).then(made => done(null, made), done)
+  }
 
   const sub = normPath(path.relative(cwd, dir))
   const parts = sub.split('/')
@@ -3153,12 +3962,14 @@ module.exports = (dir, opt, cb) => {
 }
 
 const mkdir_ = (base, parts, mode, cache, unlink, cwd, created, cb) => {
-  if (!parts.length)
+  if (!parts.length) {
     return cb(null, created)
+  }
   const p = parts.shift()
   const part = normPath(path.resolve(base + '/' + p))
-  if (cGet(cache, part))
+  if (cGet(cache, part)) {
     return mkdir_(part, parts, mode, cache, unlink, cwd, created, cb)
+  }
   fs.mkdir(part, mode, onmkdir(part, parts, mode, cache, unlink, cwd, created, cb))
 }
 
@@ -3168,18 +3979,20 @@ const onmkdir = (part, parts, mode, cache, unlink, cwd, created, cb) => er => {
       if (statEr) {
         statEr.path = statEr.path && normPath(statEr.path)
         cb(statEr)
-      } else if (st.isDirectory())
+      } else if (st.isDirectory()) {
         mkdir_(part, parts, mode, cache, unlink, cwd, created, cb)
-      else if (unlink) {
+      } else if (unlink) {
         fs.unlink(part, er => {
-          if (er)
+          if (er) {
             return cb(er)
+          }
           fs.mkdir(part, mode, onmkdir(part, parts, mode, cache, unlink, cwd, created, cb))
         })
-      } else if (st.isSymbolicLink())
+      } else if (st.isSymbolicLink()) {
         return cb(new SymlinkError(part, part + '/' + parts.join('/')))
-      else
+      } else {
         cb(er)
+      }
     })
   } else {
     created = created || part
@@ -3195,8 +4008,9 @@ const checkCwdSync = dir => {
   } catch (er) {
     code = er.code
   } finally {
-    if (!ok)
+    if (!ok) {
       throw new CwdError(dir, code)
+    }
   }
 }
 
@@ -3221,22 +4035,26 @@ module.exports.sync = (dir, opt) => {
 
   const done = (created) => {
     cSet(cache, dir, true)
-    if (created && doChown)
+    if (created && doChown) {
       chownr.sync(created, uid, gid)
-    if (needChmod)
+    }
+    if (needChmod) {
       fs.chmodSync(dir, mode)
+    }
   }
 
-  if (cache && cGet(cache, dir) === true)
+  if (cache && cGet(cache, dir) === true) {
     return done()
+  }
 
   if (dir === cwd) {
     checkCwdSync(cwd)
     return done()
   }
 
-  if (preserve)
+  if (preserve) {
     return done(mkdirp.sync(dir, mode))
+  }
 
   const sub = normPath(path.relative(cwd, dir))
   const parts = sub.split('/')
@@ -3245,8 +4063,9 @@ module.exports.sync = (dir, opt) => {
     p && (part += '/' + p);
     p = parts.shift()) {
     part = normPath(path.resolve(part))
-    if (cGet(cache, part))
+    if (cGet(cache, part)) {
       continue
+    }
 
     try {
       fs.mkdirSync(part, mode)
@@ -3263,8 +4082,9 @@ module.exports.sync = (dir, opt) => {
         created = created || part
         cSet(cache, part, true)
         continue
-      } else if (st.isSymbolicLink())
+      } else if (st.isSymbolicLink()) {
         return new SymlinkError(part, part + '/' + parts.join('/'))
+      }
     }
   }
 
@@ -3287,17 +4107,21 @@ module.exports = (mode, isDir, portable) => {
   // (as some linux distros do), then we'll write the
   // archive with 0o644 instead.  Also, don't ever create
   // a file that is not readable/writable by the owner.
-  if (portable)
+  if (portable) {
     mode = (mode | 0o600) & ~0o22
+  }
 
   // if dirs are readable, then they should be listable
   if (isDir) {
-    if (mode & 0o400)
+    if (mode & 0o400) {
       mode |= 0o100
-    if (mode & 0o40)
+    }
+    if (mode & 0o40) {
       mode |= 0o10
-    if (mode & 0o4)
+    }
+    if (mode & 0o4) {
       mode |= 0o1
+    }
   }
   return mode
 }
@@ -3313,10 +4137,11 @@ module.exports = (mode, isDir, portable) => {
 // within npm install on large package trees.
 // Do not edit without careful benchmarking.
 const normalizeCache = Object.create(null)
-const {hasOwnProperty} = Object.prototype
+const { hasOwnProperty } = Object.prototype
 module.exports = s => {
-  if (!hasOwnProperty.call(normalizeCache, s))
-    normalizeCache[s] = s.normalize('NFKD')
+  if (!hasOwnProperty.call(normalizeCache, s)) {
+    normalizeCache[s] = s.normalize('NFD')
+  }
   return normalizeCache[s]
 }
 
@@ -3366,7 +4191,7 @@ class PackJob {
   }
 }
 
-const MiniPass = __webpack_require__(7008)
+const { Minipass } = __webpack_require__(1241)
 const zlib = __webpack_require__(952)
 const ReadEntry = __webpack_require__(3265)
 const WriteEntry = __webpack_require__(2944)
@@ -3400,7 +4225,7 @@ const path = __webpack_require__(1017)
 const warner = __webpack_require__(4914)
 const normPath = __webpack_require__(1593)
 
-const Pack = warner(class Pack extends MiniPass {
+const Pack = warner(class Pack extends Minipass {
   constructor (opt) {
     super(opt)
     opt = opt || Object.create(null)
@@ -3417,23 +4242,27 @@ const Pack = warner(class Pack extends MiniPass {
     this.readdirCache = opt.readdirCache || new Map()
 
     this[WRITEENTRYCLASS] = WriteEntry
-    if (typeof opt.onwarn === 'function')
+    if (typeof opt.onwarn === 'function') {
       this.on('warn', opt.onwarn)
+    }
 
     this.portable = !!opt.portable
     this.zip = null
     if (opt.gzip) {
-      if (typeof opt.gzip !== 'object')
+      if (typeof opt.gzip !== 'object') {
         opt.gzip = {}
-      if (this.portable)
+      }
+      if (this.portable) {
         opt.gzip.portable = true
+      }
       this.zip = new zlib.Gzip(opt.gzip)
       this.zip.on('data', chunk => super.write(chunk))
       this.zip.on('end', _ => super.end())
       this.zip.on('drain', _ => this[ONDRAIN]())
       this.on('resume', _ => this.zip.resume())
-    } else
+    } else {
       this.on('drain', this[ONDRAIN])
+    }
 
     this.noDirRecurse = !!opt.noDirRecurse
     this.follow = !!opt.follow
@@ -3459,30 +4288,33 @@ const Pack = warner(class Pack extends MiniPass {
   }
 
   end (path) {
-    if (path)
+    if (path) {
       this.write(path)
+    }
     this[ENDED] = true
     this[PROCESS]()
     return this
   }
 
   write (path) {
-    if (this[ENDED])
+    if (this[ENDED]) {
       throw new Error('write after end')
+    }
 
-    if (path instanceof ReadEntry)
+    if (path instanceof ReadEntry) {
       this[ADDTARENTRY](path)
-    else
+    } else {
       this[ADDFSENTRY](path)
+    }
     return this.flowing
   }
 
   [ADDTARENTRY] (p) {
     const absolute = normPath(path.resolve(this.cwd, p.path))
     // in this case, we don't have to wait for the stat
-    if (!this.filter(p.path, p))
+    if (!this.filter(p.path, p)) {
       p.resume()
-    else {
+    } else {
       const job = new PackJob(p.path, absolute, false)
       job.entry = new WriteEntryTar(p, this[ENTRYOPT](job))
       job.entry.on('end', _ => this[JOBDONE](job))
@@ -3506,10 +4338,11 @@ const Pack = warner(class Pack extends MiniPass {
     fs[stat](job.absolute, (er, stat) => {
       job.pending = false
       this[JOBS] -= 1
-      if (er)
+      if (er) {
         this.emit('error', er)
-      else
+      } else {
         this[ONSTAT](job, stat)
+      }
     })
   }
 
@@ -3518,8 +4351,9 @@ const Pack = warner(class Pack extends MiniPass {
     job.stat = stat
 
     // now we have the stat, we can filter it.
-    if (!this.filter(job.path, stat))
+    if (!this.filter(job.path, stat)) {
       job.ignore = true
+    }
 
     this[PROCESS]()
   }
@@ -3530,8 +4364,9 @@ const Pack = warner(class Pack extends MiniPass {
     fs.readdir(job.absolute, (er, entries) => {
       job.pending = false
       this[JOBS] -= 1
-      if (er)
+      if (er) {
         return this.emit('error', er)
+      }
       this[ONREADDIR](job, entries)
     })
   }
@@ -3543,8 +4378,9 @@ const Pack = warner(class Pack extends MiniPass {
   }
 
   [PROCESS] () {
-    if (this[PROCESSING])
+    if (this[PROCESSING]) {
       return
+    }
 
     this[PROCESSING] = true
     for (let w = this[QUEUE].head;
@@ -3561,9 +4397,9 @@ const Pack = warner(class Pack extends MiniPass {
     this[PROCESSING] = false
 
     if (this[ENDED] && !this[QUEUE].length && this[JOBS] === 0) {
-      if (this.zip)
+      if (this.zip) {
         this.zip.end(EOF)
-      else {
+      } else {
         super.write(EOF)
         super.end()
       }
@@ -3581,35 +4417,42 @@ const Pack = warner(class Pack extends MiniPass {
   }
 
   [PROCESSJOB] (job) {
-    if (job.pending)
+    if (job.pending) {
       return
+    }
 
     if (job.entry) {
-      if (job === this[CURRENT] && !job.piped)
+      if (job === this[CURRENT] && !job.piped) {
         this[PIPE](job)
+      }
       return
     }
 
     if (!job.stat) {
-      if (this.statCache.has(job.absolute))
+      if (this.statCache.has(job.absolute)) {
         this[ONSTAT](job, this.statCache.get(job.absolute))
-      else
+      } else {
         this[STAT](job)
+      }
     }
-    if (!job.stat)
+    if (!job.stat) {
       return
+    }
 
     // filtered out!
-    if (job.ignore)
+    if (job.ignore) {
       return
+    }
 
     if (!this.noDirRecurse && job.stat.isDirectory() && !job.readdir) {
-      if (this.readdirCache.has(job.absolute))
+      if (this.readdirCache.has(job.absolute)) {
         this[ONREADDIR](job, this.readdirCache.get(job.absolute))
-      else
+      } else {
         this[READDIR](job)
-      if (!job.readdir)
+      }
+      if (!job.readdir) {
         return
+      }
     }
 
     // we know it doesn't have an entry, because that got checked above
@@ -3619,8 +4462,9 @@ const Pack = warner(class Pack extends MiniPass {
       return
     }
 
-    if (job === this[CURRENT] && !job.piped)
+    if (job === this[CURRENT] && !job.piped) {
       this[PIPE](job)
+    }
   }
 
   [ENTRYOPT] (job) {
@@ -3653,8 +4497,9 @@ const Pack = warner(class Pack extends MiniPass {
   }
 
   [ONDRAIN] () {
-    if (this[CURRENT] && this[CURRENT].entry)
+    if (this[CURRENT] && this[CURRENT].entry) {
       this[CURRENT].entry.resume()
+    }
   }
 
   // like .pipe() but using super, because our write() is special
@@ -3674,20 +4519,23 @@ const Pack = warner(class Pack extends MiniPass {
 
     if (zip) {
       source.on('data', chunk => {
-        if (!zip.write(chunk))
+        if (!zip.write(chunk)) {
           source.pause()
+        }
       })
     } else {
       source.on('data', chunk => {
-        if (!super.write(chunk))
+        if (!super.write(chunk)) {
           source.pause()
+        }
       })
     }
   }
 
   pause () {
-    if (this.zip)
+    if (this.zip) {
       this.zip.pause()
+    }
     return super.pause()
   }
 })
@@ -3777,6 +4625,7 @@ const maxMetaEntrySize = 1024 * 1024
 const Entry = __webpack_require__(3265)
 const Pax = __webpack_require__(630)
 const zlib = __webpack_require__(952)
+const { nextTick } = __webpack_require__(7282)
 
 const gzipHeader = Buffer.from([0x1f, 0x8b])
 const STATE = Symbol('state')
@@ -3808,6 +4657,7 @@ const DONE = Symbol('onDone')
 const SAW_VALID_ENTRY = Symbol('sawValidEntry')
 const SAW_NULL_BLOCK = Symbol('sawNullBlock')
 const SAW_EOF = Symbol('sawEOF')
+const CLOSESTREAM = Symbol('closeStream')
 
 const noop = _ => true
 
@@ -3831,14 +4681,13 @@ module.exports = warner(class Parser extends EE {
       }
     })
 
-    if (opt.ondone)
+    if (opt.ondone) {
       this.on(DONE, opt.ondone)
-    else {
+    } else {
       this.on(DONE, _ => {
         this.emit('prefinish')
         this.emit('finish')
         this.emit('end')
-        this.emit('close')
       })
     }
 
@@ -3863,15 +4712,21 @@ module.exports = warner(class Parser extends EE {
     this[ABORTED] = false
     this[SAW_NULL_BLOCK] = false
     this[SAW_EOF] = false
-    if (typeof opt.onwarn === 'function')
+
+    this.on('end', () => this[CLOSESTREAM]())
+
+    if (typeof opt.onwarn === 'function') {
       this.on('warn', opt.onwarn)
-    if (typeof opt.onentry === 'function')
+    }
+    if (typeof opt.onentry === 'function') {
       this.on('entry', opt.onentry)
+    }
   }
 
   [CONSUMEHEADER] (chunk, position) {
-    if (this[SAW_VALID_ENTRY] === null)
+    if (this[SAW_VALID_ENTRY] === null) {
       this[SAW_VALID_ENTRY] = false
+    }
     let header
     try {
       header = new Header(chunk, position, this[EX], this[GEX])
@@ -3883,8 +4738,9 @@ module.exports = warner(class Parser extends EE {
       if (this[SAW_NULL_BLOCK]) {
         this[SAW_EOF] = true
         // ending an archive with no entries.  pointless, but legal.
-        if (this[STATE] === 'begin')
+        if (this[STATE] === 'begin') {
           this[STATE] = 'header'
+        }
         this[EMIT]('eof')
       } else {
         this[SAW_NULL_BLOCK] = true
@@ -3892,17 +4748,17 @@ module.exports = warner(class Parser extends EE {
       }
     } else {
       this[SAW_NULL_BLOCK] = false
-      if (!header.cksumValid)
-        this.warn('TAR_ENTRY_INVALID', 'checksum failure', {header})
-      else if (!header.path)
-        this.warn('TAR_ENTRY_INVALID', 'path is required', {header})
-      else {
+      if (!header.cksumValid) {
+        this.warn('TAR_ENTRY_INVALID', 'checksum failure', { header })
+      } else if (!header.path) {
+        this.warn('TAR_ENTRY_INVALID', 'path is required', { header })
+      } else {
         const type = header.type
-        if (/^(Symbolic)?Link$/.test(type) && !header.linkpath)
-          this.warn('TAR_ENTRY_INVALID', 'linkpath required', {header})
-        else if (!/^(Symbolic)?Link$/.test(type) && header.linkpath)
-          this.warn('TAR_ENTRY_INVALID', 'linkpath forbidden', {header})
-        else {
+        if (/^(Symbolic)?Link$/.test(type) && !header.linkpath) {
+          this.warn('TAR_ENTRY_INVALID', 'linkpath required', { header })
+        } else if (!/^(Symbolic)?Link$/.test(type) && header.linkpath) {
+          this.warn('TAR_ENTRY_INVALID', 'linkpath forbidden', { header })
+        } else {
           const entry = this[WRITEENTRY] = new Entry(header, this[EX], this[GEX])
 
           // we do this for meta & ignored entries as well, because they
@@ -3911,12 +4767,14 @@ module.exports = warner(class Parser extends EE {
             if (entry.remain) {
               // this might be the one!
               const onend = () => {
-                if (!entry.invalid)
+                if (!entry.invalid) {
                   this[SAW_VALID_ENTRY] = true
+                }
               }
               entry.on('end', onend)
-            } else
+            } else {
               this[SAW_VALID_ENTRY] = true
+            }
           }
 
           if (entry.meta) {
@@ -3940,9 +4798,9 @@ module.exports = warner(class Parser extends EE {
               this[STATE] = entry.remain ? 'ignore' : 'header'
               entry.resume()
             } else {
-              if (entry.remain)
+              if (entry.remain) {
                 this[STATE] = 'body'
-              else {
+              } else {
                 this[STATE] = 'header'
                 entry.end()
               }
@@ -3950,13 +4808,18 @@ module.exports = warner(class Parser extends EE {
               if (!this[READENTRY]) {
                 this[QUEUE].push(entry)
                 this[NEXTENTRY]()
-              } else
+              } else {
                 this[QUEUE].push(entry)
+              }
             }
           }
         }
       }
     }
+  }
+
+  [CLOSESTREAM] () {
+    nextTick(() => this.emit('close'))
   }
 
   [PROCESSENTRY] (entry) {
@@ -3965,9 +4828,9 @@ module.exports = warner(class Parser extends EE {
     if (!entry) {
       this[READENTRY] = null
       go = false
-    } else if (Array.isArray(entry))
+    } else if (Array.isArray(entry)) {
       this.emit.apply(this, entry)
-    else {
+    } else {
       this[READENTRY] = entry
       this.emit('entry', entry)
       if (!entry.emittedEnd) {
@@ -3993,10 +4856,12 @@ module.exports = warner(class Parser extends EE {
       const re = this[READENTRY]
       const drainNow = !re || re.flowing || re.size === re.remain
       if (drainNow) {
-        if (!this[WRITING])
+        if (!this[WRITING]) {
           this.emit('drain')
-      } else
+        }
+      } else {
         re.once('drain', _ => this.emit('drain'))
+      }
     }
   }
 
@@ -4023,17 +4888,19 @@ module.exports = warner(class Parser extends EE {
     const ret = this[CONSUMEBODY](chunk, position)
 
     // if we finished, then the entry is reset
-    if (!this[WRITEENTRY])
+    if (!this[WRITEENTRY]) {
       this[EMITMETA](entry)
+    }
 
     return ret
   }
 
   [EMIT] (ev, data, extra) {
-    if (!this[QUEUE].length && !this[READENTRY])
+    if (!this[QUEUE].length && !this[READENTRY]) {
       this.emit(ev, data, extra)
-    else
+    } else {
       this[QUEUE].push([ev, data, extra])
+    }
   }
 
   [EMITMETA] (entry) {
@@ -4072,8 +4939,9 @@ module.exports = warner(class Parser extends EE {
   }
 
   write (chunk) {
-    if (this[ABORTED])
+    if (this[ABORTED]) {
       return
+    }
 
     // first write, might be gzipped
     if (this[UNZIP] === null && chunk) {
@@ -4086,8 +4954,9 @@ module.exports = warner(class Parser extends EE {
         return true
       }
       for (let i = 0; this[UNZIP] === null && i < gzipHeader.length; i++) {
-        if (chunk[i] !== gzipHeader[i])
+        if (chunk[i] !== gzipHeader[i]) {
           this[UNZIP] = false
+        }
       }
       if (this[UNZIP] === null) {
         const ended = this[ENDED]
@@ -4107,10 +4976,11 @@ module.exports = warner(class Parser extends EE {
     }
 
     this[WRITING] = true
-    if (this[UNZIP])
+    if (this[UNZIP]) {
       this[UNZIP].write(chunk)
-    else
+    } else {
       this[CONSUMECHUNK](chunk)
+    }
     this[WRITING] = false
 
     // return false if there's a queue, or if the current entry isn't flowing
@@ -4120,15 +4990,17 @@ module.exports = warner(class Parser extends EE {
       true
 
     // if we have no queue, then that means a clogged READENTRY
-    if (!ret && !this[QUEUE].length)
+    if (!ret && !this[QUEUE].length) {
       this[READENTRY].once('drain', _ => this.emit('drain'))
+    }
 
     return ret
   }
 
   [BUFFERCONCAT] (c) {
-    if (c && !this[ABORTED])
+    if (c && !this[ABORTED]) {
       this[BUFFER] = this[BUFFER] ? Buffer.concat([this[BUFFER], c]) : c
+    }
   }
 
   [MAYBEEND] () {
@@ -4142,9 +5014,10 @@ module.exports = warner(class Parser extends EE {
         // truncated, likely a damaged file
         const have = this[BUFFER] ? this[BUFFER].length : 0
         this.warn('TAR_BAD_ARCHIVE', `Truncated input (needed ${
-          entry.blockRemain} more bytes, only ${have} available)`, {entry})
-        if (this[BUFFER])
+          entry.blockRemain} more bytes, only ${have} available)`, { entry })
+        if (this[BUFFER]) {
           entry.write(this[BUFFER])
+        }
         entry.end()
       }
       this[EMIT](DONE)
@@ -4152,19 +5025,20 @@ module.exports = warner(class Parser extends EE {
   }
 
   [CONSUMECHUNK] (chunk) {
-    if (this[CONSUMING])
+    if (this[CONSUMING]) {
       this[BUFFERCONCAT](chunk)
-    else if (!chunk && !this[BUFFER])
+    } else if (!chunk && !this[BUFFER]) {
       this[MAYBEEND]()
-    else {
+    } else {
       this[CONSUMING] = true
       if (this[BUFFER]) {
         this[BUFFERCONCAT](chunk)
         const c = this[BUFFER]
         this[BUFFER] = null
         this[CONSUMECHUNKSUB](c)
-      } else
+      } else {
         this[CONSUMECHUNKSUB](chunk)
+      }
 
       while (this[BUFFER] &&
           this[BUFFER].length >= 512 &&
@@ -4177,8 +5051,9 @@ module.exports = warner(class Parser extends EE {
       this[CONSUMING] = false
     }
 
-    if (!this[BUFFER] || this[ENDED])
+    if (!this[BUFFER] || this[ENDED]) {
       this[MAYBEEND]()
+    }
   }
 
   [CONSUMECHUNKSUB] (chunk) {
@@ -4210,18 +5085,19 @@ module.exports = warner(class Parser extends EE {
     }
 
     if (position < length) {
-      if (this[BUFFER])
+      if (this[BUFFER]) {
         this[BUFFER] = Buffer.concat([chunk.slice(position), this[BUFFER]])
-      else
+      } else {
         this[BUFFER] = chunk.slice(position)
+      }
     }
   }
 
   end (chunk) {
     if (!this[ABORTED]) {
-      if (this[UNZIP])
+      if (this[UNZIP]) {
         this[UNZIP].end(chunk)
-      else {
+      } else {
         this[ENDED] = true
         this.write(chunk)
       }
@@ -4264,8 +5140,9 @@ module.exports = () => {
   // '/a/b/c/d' -> ['/', '/a', '/a/b', '/a/b/c', '/a/b/c/d']
   const getDirs = path => {
     const dirs = path.split('/').slice(0, -1).reduce((set, path) => {
-      if (set.length)
+      if (set.length) {
         path = join(set[set.length - 1], path)
+      }
       set.push(path || '/')
       return set
     }, [])
@@ -4280,8 +5157,9 @@ module.exports = () => {
   const getQueues = fn => {
     const res = reservations.get(fn)
     /* istanbul ignore if - unpossible */
-    if (!res)
+    if (!res) {
       throw new Error('function does not have any path reservations')
+    }
     return {
       paths: res.paths.map(path => queues.get(path)),
       dirs: [...res.dirs].map(path => queues.get(path)),
@@ -4291,23 +5169,25 @@ module.exports = () => {
   // check if fn is first in line for all its paths, and is
   // included in the first set for all its dir queues
   const check = fn => {
-    const {paths, dirs} = getQueues(fn)
+    const { paths, dirs } = getQueues(fn)
     return paths.every(q => q[0] === fn) &&
       dirs.every(q => q[0] instanceof Set && q[0].has(fn))
   }
 
   // run the function if it's first in line and not already running
   const run = fn => {
-    if (running.has(fn) || !check(fn))
+    if (running.has(fn) || !check(fn)) {
       return false
+    }
     running.add(fn)
     fn(() => clear(fn))
     return true
   }
 
   const clear = fn => {
-    if (!running.has(fn))
+    if (!running.has(fn)) {
       return false
+    }
 
     const { paths, dirs } = reservations.get(fn)
     const next = new Set()
@@ -4315,29 +5195,31 @@ module.exports = () => {
     paths.forEach(path => {
       const q = queues.get(path)
       assert.equal(q[0], fn)
-      if (q.length === 1)
+      if (q.length === 1) {
         queues.delete(path)
-      else {
+      } else {
         q.shift()
-        if (typeof q[0] === 'function')
+        if (typeof q[0] === 'function') {
           next.add(q[0])
-        else
+        } else {
           q[0].forEach(fn => next.add(fn))
+        }
       }
     })
 
     dirs.forEach(dir => {
       const q = queues.get(dir)
       assert(q[0] instanceof Set)
-      if (q[0].size === 1 && q.length === 1)
+      if (q[0].size === 1 && q.length === 1) {
         queues.delete(dir)
-      else if (q[0].size === 1) {
+      } else if (q[0].size === 1) {
         q.shift()
 
         // must be a function or else the Set would've been reused
         next.add(q[0])
-      } else
+      } else {
         q[0].delete(fn)
+      }
     })
     running.delete(fn)
 
@@ -4354,28 +5236,30 @@ module.exports = () => {
     // effectively removing all parallelization on windows.
     paths = isWindows ? ['win32 parallelization disabled'] : paths.map(p => {
       // don't need normPath, because we skip this entirely for windows
-      return normalize(stripSlashes(join(p))).toLowerCase()
+      return stripSlashes(join(normalize(p))).toLowerCase()
     })
 
     const dirs = new Set(
       paths.map(path => getDirs(path)).reduce((a, b) => a.concat(b))
     )
-    reservations.set(fn, {dirs, paths})
+    reservations.set(fn, { dirs, paths })
     paths.forEach(path => {
       const q = queues.get(path)
-      if (!q)
+      if (!q) {
         queues.set(path, [fn])
-      else
+      } else {
         q.push(fn)
+      }
     })
     dirs.forEach(dir => {
       const q = queues.get(dir)
-      if (!q)
+      if (!q) {
         queues.set(dir, [new Set([fn])])
-      else if (q[q.length - 1] instanceof Set)
+      } else if (q[q.length - 1] instanceof Set) {
         q[q.length - 1].add(fn)
-      else
+      } else {
         q.push(new Set([fn]))
+      }
     })
 
     return run(fn)
@@ -4417,8 +5301,9 @@ class Pax {
 
   encode () {
     const body = this.encodeBody()
-    if (body === '')
+    if (body === '') {
       return null
+    }
 
     const bodyLen = Buffer.byteLength(body)
     // round up to 512 bytes
@@ -4427,8 +5312,9 @@ class Pax {
     const buf = Buffer.allocUnsafe(bufLen)
 
     // 0-fill the header section, it might not hit every field
-    for (let i = 0; i < 512; i++)
+    for (let i = 0; i < 512; i++) {
       buf[i] = 0
+    }
 
     new Header({
       // XXX split the path
@@ -4453,8 +5339,9 @@ class Pax {
     buf.write(body, 512, bodyLen, 'utf8')
 
     // null pad after the body
-    for (let i = bodyLen + 512; i < buf.length; i++)
+    for (let i = bodyLen + 512; i < buf.length; i++) {
       buf[i] = 0
+    }
 
     return buf
   }
@@ -4480,8 +5367,9 @@ class Pax {
   }
 
   encodeField (field) {
-    if (this[field] === null || this[field] === undefined)
+    if (this[field] === null || this[field] === undefined) {
       return ''
+    }
     const v = this[field] instanceof Date ? this[field].getTime() / 1000
       : this[field]
     const s = ' ' +
@@ -4493,8 +5381,9 @@ class Pax {
     // so if it's 9 characters, then adding 1 for the 9 makes it 10
     // which makes it 11 chars.
     let digits = Math.floor(Math.log(byteLen) / Math.log(10)) + 1
-    if (byteLen + digits >= Math.pow(10, digits))
+    if (byteLen + digits >= Math.pow(10, digits)) {
       digits += 1
+    }
     const len = digits + byteLen
     return len + s
   }
@@ -4516,14 +5405,16 @@ const parseKVLine = (set, line) => {
 
   // XXX Values with \n in them will fail this.
   // Refactor to not be a naive line-by-line parse.
-  if (n !== Buffer.byteLength(line) + 1)
+  if (n !== Buffer.byteLength(line) + 1) {
     return set
+  }
 
-  line = line.substr((n + ' ').length)
+  line = line.slice((n + ' ').length)
   const kv = line.split('=')
   const k = kv.shift().replace(/^SCHILY\.(dev|ino|nlink)/, '$1')
-  if (!k)
+  if (!k) {
     return set
+  }
 
   const v = kv.join('=')
   set[k] = /^([A-Z]+\.)?([mac]|birth|creation)time$/.test(k)
@@ -4543,11 +5434,11 @@ module.exports = Pax
 
 "use strict";
 
-const MiniPass = __webpack_require__(7008)
+const { Minipass } = __webpack_require__(1241)
 const normPath = __webpack_require__(1593)
 
 const SLURP = Symbol('slurp')
-module.exports = class ReadEntry extends MiniPass {
+module.exports = class ReadEntry extends Minipass {
   constructor (header, ex, gex) {
     super()
     // read entries always start life paused.  this is to avoid the
@@ -4593,8 +5484,9 @@ module.exports = class ReadEntry extends MiniPass {
 
     this.path = normPath(header.path)
     this.mode = header.mode
-    if (this.mode)
+    if (this.mode) {
       this.mode = this.mode & 0o7777
+    }
     this.uid = header.uid
     this.gid = header.gid
     this.uname = header.uname
@@ -4607,26 +5499,31 @@ module.exports = class ReadEntry extends MiniPass {
     this.uname = header.uname
     this.gname = header.gname
 
-    if (ex)
+    if (ex) {
       this[SLURP](ex)
-    if (gex)
+    }
+    if (gex) {
       this[SLURP](gex, true)
+    }
   }
 
   write (data) {
     const writeLen = data.length
-    if (writeLen > this.blockRemain)
+    if (writeLen > this.blockRemain) {
       throw new Error('writing more to entry than is appropriate')
+    }
 
     const r = this.remain
     const br = this.blockRemain
     this.remain = Math.max(0, r - writeLen)
     this.blockRemain = Math.max(0, br - writeLen)
-    if (this.ignore)
+    if (this.ignore) {
       return true
+    }
 
-    if (r >= writeLen)
+    if (r >= writeLen) {
       return super.write(data)
+    }
 
     // r < writeLen
     return super.write(data.slice(0, r))
@@ -4637,8 +5534,9 @@ module.exports = class ReadEntry extends MiniPass {
       // we slurp in everything except for the path attribute in
       // a global extended header, because that's weird.
       if (ex[k] !== null && ex[k] !== undefined &&
-          !(global && k === 'path'))
+          !(global && k === 'path')) {
         this[k] = k === 'path' || k === 'linkpath' ? normPath(ex[k]) : ex[k]
+      }
     }
   }
 }
@@ -4671,14 +5569,17 @@ const Header = __webpack_require__(1549)
 module.exports = (opt_, files, cb) => {
   const opt = hlo(opt_)
 
-  if (!opt.file)
+  if (!opt.file) {
     throw new TypeError('file is required')
+  }
 
-  if (opt.gzip)
+  if (opt.gzip) {
     throw new TypeError('cannot append to compressed archives')
+  }
 
-  if (!files || !Array.isArray(files) || !files.length)
+  if (!files || !Array.isArray(files) || !files.length) {
     throw new TypeError('no files or directories specified')
+  }
 
   files = Array.from(files)
 
@@ -4697,10 +5598,11 @@ const replaceSync = (opt, files) => {
     try {
       fd = fs.openSync(opt.file, 'r+')
     } catch (er) {
-      if (er.code === 'ENOENT')
+      if (er.code === 'ENOENT') {
         fd = fs.openSync(opt.file, 'w+')
-      else
+      } else {
         throw er
+      }
     }
 
     const st = fs.fstatSync(fd)
@@ -4712,24 +5614,29 @@ const replaceSync = (opt, files) => {
           fd, headBuf, bufPos, headBuf.length - bufPos, position + bufPos
         )
 
-        if (position === 0 && headBuf[0] === 0x1f && headBuf[1] === 0x8b)
+        if (position === 0 && headBuf[0] === 0x1f && headBuf[1] === 0x8b) {
           throw new Error('cannot append to compressed archives')
+        }
 
-        if (!bytes)
+        if (!bytes) {
           break POSITION
+        }
       }
 
       const h = new Header(headBuf)
-      if (!h.cksumValid)
+      if (!h.cksumValid) {
         break
+      }
       const entryBlockSize = 512 * Math.ceil(h.size / 512)
-      if (position + entryBlockSize + 512 > st.size)
+      if (position + entryBlockSize + 512 > st.size) {
         break
+      }
       // the 512 for the header we just parsed will be added as well
       // also jump ahead all the blocks for the body
       position += entryBlockSize
-      if (opt.mtimeCache)
+      if (opt.mtimeCache) {
         opt.mtimeCache.set(h.path, h.mtime)
+      }
     }
     threw = false
 
@@ -4758,21 +5665,24 @@ const replace = (opt, files, cb) => {
 
   const getPos = (fd, size, cb_) => {
     const cb = (er, pos) => {
-      if (er)
+      if (er) {
         fs.close(fd, _ => cb_(er))
-      else
+      } else {
         cb_(null, pos)
+      }
     }
 
     let position = 0
-    if (size === 0)
+    if (size === 0) {
       return cb(null, 0)
+    }
 
     let bufPos = 0
     const headBuf = Buffer.alloc(512)
     const onread = (er, bytes) => {
-      if (er)
+      if (er) {
         return cb(er)
+      }
       bufPos += bytes
       if (bufPos < 512 && bytes) {
         return fs.read(
@@ -4781,27 +5691,33 @@ const replace = (opt, files, cb) => {
         )
       }
 
-      if (position === 0 && headBuf[0] === 0x1f && headBuf[1] === 0x8b)
+      if (position === 0 && headBuf[0] === 0x1f && headBuf[1] === 0x8b) {
         return cb(new Error('cannot append to compressed archives'))
+      }
 
       // truncated header
-      if (bufPos < 512)
+      if (bufPos < 512) {
         return cb(null, position)
+      }
 
       const h = new Header(headBuf)
-      if (!h.cksumValid)
+      if (!h.cksumValid) {
         return cb(null, position)
+      }
 
       const entryBlockSize = 512 * Math.ceil(h.size / 512)
-      if (position + entryBlockSize + 512 > size)
+      if (position + entryBlockSize + 512 > size) {
         return cb(null, position)
+      }
 
       position += entryBlockSize + 512
-      if (position >= size)
+      if (position >= size) {
         return cb(null, position)
+      }
 
-      if (opt.mtimeCache)
+      if (opt.mtimeCache) {
         opt.mtimeCache.set(h.path, h.mtime)
+      }
       bufPos = 0
       fs.read(fd, headBuf, 0, 512, position, onread)
     }
@@ -4817,16 +5733,19 @@ const replace = (opt, files, cb) => {
         return fs.open(opt.file, flag, onopen)
       }
 
-      if (er)
+      if (er) {
         return reject(er)
+      }
 
       fs.fstat(fd, (er, st) => {
-        if (er)
+        if (er) {
           return fs.close(fd, () => reject(er))
+        }
 
         getPos(fd, st.size, (er, position) => {
-          if (er)
+          if (er) {
             return reject(er)
+          }
           const stream = new fsm.WriteStream(opt.file, {
             fd: fd,
             start: position,
@@ -4848,13 +5767,14 @@ const addFilesSync = (p, files) => {
   files.forEach(file => {
     if (file.charAt(0) === '@') {
       t({
-        file: path.resolve(p.cwd, file.substr(1)),
+        file: path.resolve(p.cwd, file.slice(1)),
         sync: true,
         noResume: true,
         onentry: entry => p.add(entry),
       })
-    } else
+    } else {
       p.add(file)
+    }
   })
   p.end()
 }
@@ -4864,12 +5784,13 @@ const addFilesAsync = (p, files) => {
     const file = files.shift()
     if (file.charAt(0) === '@') {
       return t({
-        file: path.resolve(p.cwd, file.substr(1)),
+        file: path.resolve(p.cwd, file.slice(1)),
         noResume: true,
         onentry: entry => p.add(entry),
       }).then(_ => addFilesAsync(p, files))
-    } else
+    } else {
       p.add(file)
+    }
   }
   p.end()
 }
@@ -4898,7 +5819,7 @@ module.exports = path => {
     // but strip the //?/C:/ off of //?/C:/path
     const root = path.charAt(0) === '/' && path.slice(0, 4) !== '//?/' ? '/'
       : parsed.root
-    path = path.substr(root.length)
+    path = path.slice(root.length)
     r += root
     parsed = parse(path)
   }
@@ -5052,21 +5973,24 @@ const isWindows = platform === 'win32'
 // See: https://github.com/npm/node-tar/issues/183
 /* istanbul ignore next */
 const unlinkFile = (path, cb) => {
-  if (!isWindows)
+  if (!isWindows) {
     return fs.unlink(path, cb)
+  }
 
   const name = path + '.DELETE.' + crypto.randomBytes(16).toString('hex')
   fs.rename(path, name, er => {
-    if (er)
+    if (er) {
       return cb(er)
+    }
     fs.unlink(name, cb)
   })
 }
 
 /* istanbul ignore next */
 const unlinkFileSync = path => {
-  if (!isWindows)
+  if (!isWindows) {
     return fs.unlinkSync(path)
+  }
 
   const name = path + '.DELETE.' + crypto.randomBytes(16).toString('hex')
   fs.renameSync(path, name)
@@ -5088,27 +6012,30 @@ const uint32 = (a, b, c) =>
 // Note that on windows, we always drop the entire cache whenever a
 // symbolic link is encountered, because 8.3 filenames are impossible
 // to reason about, and collisions are hazards rather than just failures.
-const cacheKeyNormalize = path => normalize(stripSlash(normPath(path)))
+const cacheKeyNormalize = path => stripSlash(normPath(normalize(path)))
   .toLowerCase()
 
 const pruneCache = (cache, abs) => {
   abs = cacheKeyNormalize(abs)
   for (const path of cache.keys()) {
     const pnorm = cacheKeyNormalize(path)
-    if (pnorm === abs || pnorm.indexOf(abs + '/') === 0)
+    if (pnorm === abs || pnorm.indexOf(abs + '/') === 0) {
       cache.delete(path)
+    }
   }
 }
 
 const dropCache = cache => {
-  for (const key of cache.keys())
+  for (const key of cache.keys()) {
     cache.delete(key)
+  }
 }
 
 class Unpack extends Parser {
   constructor (opt) {
-    if (!opt)
+    if (!opt) {
       opt = {}
+    }
 
     opt.ondone = _ => {
       this[ENDED] = true
@@ -5133,8 +6060,9 @@ class Unpack extends Parser {
 
     if (typeof opt.uid === 'number' || typeof opt.gid === 'number') {
       // need both or neither
-      if (typeof opt.uid !== 'number' || typeof opt.gid !== 'number')
+      if (typeof opt.uid !== 'number' || typeof opt.gid !== 'number') {
         throw new TypeError('cannot set owner without number uid and gid')
+      }
       if (opt.preserveOwner) {
         throw new TypeError(
           'cannot preserve owner in archive and also set owner explicitly')
@@ -5149,10 +6077,11 @@ class Unpack extends Parser {
     }
 
     // default true for root
-    if (opt.preserveOwner === undefined && typeof opt.uid !== 'number')
+    if (opt.preserveOwner === undefined && typeof opt.uid !== 'number') {
       this.preserveOwner = process.getuid && process.getuid() === 0
-    else
+    } else {
       this.preserveOwner = !!opt.preserveOwner
+    }
 
     this.processUid = (this.preserveOwner || this.setOwner) && process.getuid ?
       process.getuid() : null
@@ -5201,8 +6130,9 @@ class Unpack extends Parser {
   // when extracting.  Mark those errors as unrecoverable, because
   // the Unpack contract cannot be met.
   warn (code, msg, data = {}) {
-    if (code === 'TAR_BAD_ARCHIVE' || code === 'TAR_ABORT')
+    if (code === 'TAR_BAD_ARCHIVE' || code === 'TAR_ABORT') {
       data.recoverable = false
+    }
     return super.warn(code, msg, data)
   }
 
@@ -5211,23 +6141,24 @@ class Unpack extends Parser {
       this.emit('prefinish')
       this.emit('finish')
       this.emit('end')
-      this.emit('close')
     }
   }
 
   [CHECKPATH] (entry) {
     if (this.strip) {
       const parts = normPath(entry.path).split('/')
-      if (parts.length < this.strip)
+      if (parts.length < this.strip) {
         return false
+      }
       entry.path = parts.slice(this.strip).join('/')
 
       if (entry.type === 'Link') {
         const linkparts = normPath(entry.linkpath).split('/')
-        if (linkparts.length >= this.strip)
+        if (linkparts.length >= this.strip) {
           entry.linkpath = linkparts.slice(this.strip).join('/')
-        else
+        } else {
           return false
+        }
       }
     }
 
@@ -5253,10 +6184,11 @@ class Unpack extends Parser {
       }
     }
 
-    if (path.isAbsolute(entry.path))
+    if (path.isAbsolute(entry.path)) {
       entry.absolute = normPath(path.resolve(entry.path))
-    else
+    } else {
       entry.absolute = normPath(path.resolve(this.cwd, entry.path))
+    }
 
     // if we somehow ended up with a path that escapes the cwd, and we are
     // not in preservePaths mode, then something is fishy!  This should have
@@ -5278,32 +6210,36 @@ class Unpack extends Parser {
     // may not replace the cwd with a different kind of thing entirely.
     if (entry.absolute === this.cwd &&
         entry.type !== 'Directory' &&
-        entry.type !== 'GNUDumpDir')
+        entry.type !== 'GNUDumpDir') {
       return false
+    }
 
     // only encode : chars that aren't drive letter indicators
     if (this.win32) {
       const { root: aRoot } = path.win32.parse(entry.absolute)
-      entry.absolute = aRoot + wc.encode(entry.absolute.substr(aRoot.length))
+      entry.absolute = aRoot + wc.encode(entry.absolute.slice(aRoot.length))
       const { root: pRoot } = path.win32.parse(entry.path)
-      entry.path = pRoot + wc.encode(entry.path.substr(pRoot.length))
+      entry.path = pRoot + wc.encode(entry.path.slice(pRoot.length))
     }
 
     return true
   }
 
   [ONENTRY] (entry) {
-    if (!this[CHECKPATH](entry))
+    if (!this[CHECKPATH](entry)) {
       return entry.resume()
+    }
 
     assert.equal(typeof entry.absolute, 'string')
 
     switch (entry.type) {
       case 'Directory':
       case 'GNUDumpDir':
-        if (entry.mode)
+        if (entry.mode) {
           entry.mode = entry.mode | 0o700
+        }
 
+      // eslint-disable-next-line no-fallthrough
       case 'File':
       case 'OldFile':
       case 'ContiguousFile':
@@ -5323,10 +6259,10 @@ class Unpack extends Parser {
     // Cwd has to exist, or else nothing works. That's serious.
     // Other errors are warnings, which raise the error in strict
     // mode, but otherwise continue on.
-    if (er.name === 'CwdError')
+    if (er.name === 'CwdError') {
       this.emit('error', er)
-    else {
-      this.warn('TAR_ENTRY_ERROR', er, {entry})
+    } else {
+      this.warn('TAR_ENTRY_ERROR', er, { entry })
       this[UNPEND]()
       entry.resume()
     }
@@ -5376,8 +6312,9 @@ class Unpack extends Parser {
       autoClose: false,
     })
     stream.on('error', er => {
-      if (stream.fd)
+      if (stream.fd) {
         fs.close(stream.fd, () => {})
+      }
 
       // flush all the data out so that we aren't left hanging
       // if the error wasn't actually fatal.  otherwise the parse
@@ -5391,8 +6328,9 @@ class Unpack extends Parser {
     const done = er => {
       if (er) {
         /* istanbul ignore else - we should always have a fd by now */
-        if (stream.fd)
+        if (stream.fd) {
           fs.close(stream.fd, () => {})
+        }
 
         this[ONERROR](er, entry)
         fullyDone()
@@ -5401,10 +6339,11 @@ class Unpack extends Parser {
 
       if (--actions === 0) {
         fs.close(stream.fd, er => {
-          if (er)
+          if (er) {
             this[ONERROR](er, entry)
-          else
+          } else {
             this[UNPEND]()
+          }
           fullyDone()
         })
       }
@@ -5484,7 +6423,7 @@ class Unpack extends Parser {
   [UNSUPPORTED] (entry) {
     entry.unsupported = true
     this.warn('TAR_ENTRY_UNSUPPORTED',
-      `unsupported entry type: ${entry.type}`, {entry})
+      `unsupported entry type: ${entry.type}`, { entry })
     entry.resume()
   }
 
@@ -5526,8 +6465,9 @@ class Unpack extends Parser {
   [CHECKFS] (entry) {
     this[PEND]()
     const paths = [entry.path]
-    if (entry.linkpath)
+    if (entry.linkpath) {
       paths.push(entry.linkpath)
+    }
     this.reservations.reserve(paths, done => this[CHECKFS2](entry, done))
   }
 
@@ -5542,10 +6482,11 @@ class Unpack extends Parser {
     // entry, it'll just fail to unpack, but a symlink to a directory, using an
     // 8.3 shortname or certain unicode attacks, can evade detection and lead
     // to arbitrary writes to anywhere on the system.
-    if (entry.type === 'SymbolicLink')
+    if (entry.type === 'SymbolicLink') {
       dropCache(this.dirCache)
-    else if (entry.type !== 'Directory')
+    } else if (entry.type !== 'Directory') {
       pruneCache(this.dirCache, entry.absolute)
+    }
   }
 
   [CHECKFS2] (entry, fullyDone) {
@@ -5592,8 +6533,9 @@ class Unpack extends Parser {
           done()
           return
         }
-        if (lstatEr || this[ISREUSABLE](entry, st))
+        if (lstatEr || this[ISREUSABLE](entry, st)) {
           return this[MAKEFS](null, entry, done)
+        }
 
         if (st.isDirectory()) {
           if (entry.type === 'Directory') {
@@ -5601,8 +6543,9 @@ class Unpack extends Parser {
               entry.mode &&
               (st.mode & 0o7777) !== entry.mode
             const afterChmod = er => this[MAKEFS](er, entry, done)
-            if (!needChmod)
+            if (!needChmod) {
               return afterChmod()
+            }
             return fs.chmod(entry.absolute, entry.mode, afterChmod)
           }
           // Not a dir entry, have to remove it.
@@ -5620,18 +6563,20 @@ class Unpack extends Parser {
 
         // not a dir, and not reusable
         // don't remove if the cwd, we want that error
-        if (entry.absolute === this.cwd)
+        if (entry.absolute === this.cwd) {
           return this[MAKEFS](null, entry, done)
+        }
 
         unlinkFile(entry.absolute, er =>
           this[MAKEFS](er, entry, done))
       })
     }
 
-    if (this[CHECKED_CWD])
+    if (this[CHECKED_CWD]) {
       start()
-    else
+    } else {
       checkCwd()
+    }
   }
 
   [MAKEFS] (er, entry, done) {
@@ -5662,9 +6607,9 @@ class Unpack extends Parser {
   [LINK] (entry, linkpath, link, done) {
     // XXX: get the type ('symlink' or 'junction') for windows
     fs[link](linkpath, entry.absolute, er => {
-      if (er)
+      if (er) {
         this[ONERROR](er, entry)
-      else {
+      } else {
         this[UNPEND]()
         entry.resume()
       }
@@ -5690,8 +6635,9 @@ class UnpackSync extends Unpack {
 
     if (!this[CHECKED_CWD]) {
       const er = this[MKDIR](this.cwd, this.dmode)
-      if (er)
+      if (er) {
         return this[ONERROR](er, entry)
+      }
       this[CHECKED_CWD] = true
     }
 
@@ -5701,17 +6647,20 @@ class UnpackSync extends Unpack {
       const parent = normPath(path.dirname(entry.absolute))
       if (parent !== this.cwd) {
         const mkParent = this[MKDIR](parent, this.dmode)
-        if (mkParent)
+        if (mkParent) {
           return this[ONERROR](mkParent, entry)
+        }
       }
     }
 
     const [lstatEr, st] = callSync(() => fs.lstatSync(entry.absolute))
-    if (st && (this.keep || this.newer && st.mtime > entry.mtime))
+    if (st && (this.keep || this.newer && st.mtime > entry.mtime)) {
       return this[SKIP](entry)
+    }
 
-    if (lstatEr || this[ISREUSABLE](entry, st))
+    if (lstatEr || this[ISREUSABLE](entry, st)) {
       return this[MAKEFS](null, entry)
+    }
 
     if (st.isDirectory()) {
       if (entry.type === 'Directory') {
@@ -5745,8 +6694,9 @@ class UnpackSync extends Unpack {
       } catch (e) {
         closeError = e
       }
-      if (er || closeError)
+      if (er || closeError) {
         this[ONERROR](er || closeError, entry)
+      }
       done()
     }
 
@@ -5880,14 +6830,17 @@ const r = __webpack_require__(5650)
 module.exports = (opt_, files, cb) => {
   const opt = hlo(opt_)
 
-  if (!opt.file)
+  if (!opt.file) {
     throw new TypeError('file is required')
+  }
 
-  if (opt.gzip)
+  if (opt.gzip) {
     throw new TypeError('cannot append to compressed archives')
+  }
 
-  if (!files || !Array.isArray(files) || !files.length)
+  if (!files || !Array.isArray(files) || !files.length) {
     throw new TypeError('no files or directories specified')
+  }
 
   files = Array.from(files)
 
@@ -5898,8 +6851,9 @@ module.exports = (opt_, files, cb) => {
 const mtimeFilter = opt => {
   const filter = opt.filter
 
-  if (!opt.mtimeCache)
+  if (!opt.mtimeCache) {
     opt.mtimeCache = new Map()
+  }
 
   opt.filter = filter ? (path, stat) =>
     filter(path, stat) && !(opt.mtimeCache.get(path) > stat.mtime)
@@ -5916,10 +6870,12 @@ const mtimeFilter = opt => {
 
 module.exports = Base => class extends Base {
   warn (code, message, data = {}) {
-    if (this.file)
+    if (this.file) {
       data.file = this.file
-    if (this.cwd)
+    }
+    if (this.cwd) {
       data.cwd = this.cwd
+    }
     data.code = message instanceof Error && message.code || code
     data.tarCode = code
     if (!this.strict && data.recoverable !== false) {
@@ -5928,10 +6884,11 @@ module.exports = Base => class extends Base {
         message = message.message
       }
       this.emit('warn', data.tarCode, message, data)
-    } else if (message instanceof Error)
+    } else if (message instanceof Error) {
       this.emit('error', Object.assign(message, data))
-    else
+    } else {
       this.emit('error', Object.assign(new Error(`${code}: ${message}`), data))
+    }
   }
 }
 
@@ -5974,7 +6931,7 @@ module.exports = {
 
 "use strict";
 
-const MiniPass = __webpack_require__(7008)
+const { Minipass } = __webpack_require__(1241)
 const Pax = __webpack_require__(630)
 const Header = __webpack_require__(1549)
 const fs = __webpack_require__(7147)
@@ -5983,8 +6940,9 @@ const normPath = __webpack_require__(1593)
 const stripSlash = __webpack_require__(6433)
 
 const prefixPath = (path, prefix) => {
-  if (!prefix)
+  if (!prefix) {
     return normPath(path)
+  }
   path = normPath(path).replace(/^\.(\/|$)/, '')
   return stripSlash(prefix) + '/' + path
 }
@@ -6015,12 +6973,13 @@ const stripAbsolutePath = __webpack_require__(6208)
 
 const modeFix = __webpack_require__(513)
 
-const WriteEntry = warner(class WriteEntry extends MiniPass {
+const WriteEntry = warner(class WriteEntry extends Minipass {
   constructor (p, opt) {
     opt = opt || {}
     super(opt)
-    if (typeof p !== 'string')
+    if (typeof p !== 'string') {
       throw new TypeError('path is required')
+    }
     this.path = normPath(p)
     // suppress atime, ctime, uid, gid, uname, gname
     this.portable = !!opt.portable
@@ -6047,8 +7006,9 @@ const WriteEntry = warner(class WriteEntry extends MiniPass {
     this.pos = null
     this.remain = null
 
-    if (typeof opt.onwarn === 'function')
+    if (typeof opt.onwarn === 'function') {
       this.on('warn', opt.onwarn)
+    }
 
     let pathWarn = false
     if (!this.preservePaths) {
@@ -6069,8 +7029,9 @@ const WriteEntry = warner(class WriteEntry extends MiniPass {
 
     this.absolute = normPath(opt.absolute || path.resolve(this.cwd, p))
 
-    if (this.path === '')
+    if (this.path === '') {
       this.path = './'
+    }
 
     if (pathWarn) {
       this.warn('TAR_ENTRY_INFO', `stripping ${pathWarn} from absolute path`, {
@@ -6079,22 +7040,25 @@ const WriteEntry = warner(class WriteEntry extends MiniPass {
       })
     }
 
-    if (this.statCache.has(this.absolute))
+    if (this.statCache.has(this.absolute)) {
       this[ONLSTAT](this.statCache.get(this.absolute))
-    else
+    } else {
       this[LSTAT]()
+    }
   }
 
   emit (ev, ...data) {
-    if (ev === 'error')
+    if (ev === 'error') {
       this[HAD_ERROR] = true
+    }
     return super.emit(ev, ...data)
   }
 
   [LSTAT] () {
     fs.lstat(this.absolute, (er, stat) => {
-      if (er)
+      if (er) {
         return this.emit('error', er)
+      }
       this[ONLSTAT](stat)
     })
   }
@@ -6102,8 +7066,9 @@ const WriteEntry = warner(class WriteEntry extends MiniPass {
   [ONLSTAT] (stat) {
     this.statCache.set(this.absolute, stat)
     this.stat = stat
-    if (!stat.isFile())
+    if (!stat.isFile()) {
       stat.size = 0
+    }
     this.type = getType(stat)
     this.emit('stat', stat)
     this[PROCESS]()
@@ -6128,8 +7093,9 @@ const WriteEntry = warner(class WriteEntry extends MiniPass {
   }
 
   [HEADER] () {
-    if (this.type === 'Directory' && this.portable)
+    if (this.type === 'Directory' && this.portable) {
       this.noMtime = true
+    }
 
     this.header = new Header({
       path: this[PREFIX](this.path),
@@ -6171,8 +7137,9 @@ const WriteEntry = warner(class WriteEntry extends MiniPass {
   }
 
   [DIRECTORY] () {
-    if (this.path.substr(-1) !== '/')
+    if (this.path.slice(-1) !== '/') {
       this.path += '/'
+    }
     this.stat.size = 0
     this[HEADER]()
     this.end()
@@ -6180,8 +7147,9 @@ const WriteEntry = warner(class WriteEntry extends MiniPass {
 
   [SYMLINK] () {
     fs.readlink(this.absolute, (er, linkpath) => {
-      if (er)
+      if (er) {
         return this.emit('error', er)
+      }
       this[ONREADLINK](linkpath)
     })
   }
@@ -6205,31 +7173,35 @@ const WriteEntry = warner(class WriteEntry extends MiniPass {
       const linkKey = this.stat.dev + ':' + this.stat.ino
       if (this.linkCache.has(linkKey)) {
         const linkpath = this.linkCache.get(linkKey)
-        if (linkpath.indexOf(this.cwd) === 0)
+        if (linkpath.indexOf(this.cwd) === 0) {
           return this[HARDLINK](linkpath)
+        }
       }
       this.linkCache.set(linkKey, this.absolute)
     }
 
     this[HEADER]()
-    if (this.stat.size === 0)
+    if (this.stat.size === 0) {
       return this.end()
+    }
 
     this[OPENFILE]()
   }
 
   [OPENFILE] () {
     fs.open(this.absolute, 'r', (er, fd) => {
-      if (er)
+      if (er) {
         return this.emit('error', er)
+      }
       this[ONOPENFILE](fd)
     })
   }
 
   [ONOPENFILE] (fd) {
     this.fd = fd
-    if (this[HAD_ERROR])
+    if (this[HAD_ERROR]) {
       return this[CLOSE]()
+    }
 
     this.blockLen = 512 * Math.ceil(this.stat.size / 512)
     this.blockRemain = this.blockLen
@@ -6293,10 +7265,11 @@ const WriteEntry = warner(class WriteEntry extends MiniPass {
       this.buf : this.buf.slice(this.offset, this.offset + bytesRead)
 
     const flushed = this.write(writeBuf)
-    if (!flushed)
+    if (!flushed) {
       this[AWAITDRAIN](() => this[ONDRAIN]())
-    else
+    } else {
       this[ONDRAIN]()
+    }
   }
 
   [AWAITDRAIN] (cb) {
@@ -6318,8 +7291,9 @@ const WriteEntry = warner(class WriteEntry extends MiniPass {
 
   [ONDRAIN] () {
     if (!this.remain) {
-      if (this.blockRemain)
+      if (this.blockRemain) {
         super.write(Buffer.alloc(this.blockRemain))
+      }
       return this[CLOSE](er => er ? this.emit('error', er) : this.end())
     }
 
@@ -6375,7 +7349,7 @@ class WriteEntrySync extends WriteEntry {
   }
 }
 
-const WriteEntryTar = warner(class WriteEntryTar extends MiniPass {
+const WriteEntryTar = warner(class WriteEntryTar extends Minipass {
   constructor (readEntry, opt) {
     opt = opt || {}
     super(opt)
@@ -6387,8 +7361,9 @@ const WriteEntryTar = warner(class WriteEntryTar extends MiniPass {
 
     this.readEntry = readEntry
     this.type = readEntry.type
-    if (this.type === 'Directory' && this.portable)
+    if (this.type === 'Directory' && this.portable) {
       this.noMtime = true
+    }
 
     this.prefix = opt.prefix || null
 
@@ -6404,8 +7379,9 @@ const WriteEntryTar = warner(class WriteEntryTar extends MiniPass {
     this.ctime = this.portable ? null : readEntry.ctime
     this.linkpath = normPath(readEntry.linkpath)
 
-    if (typeof opt.onwarn === 'function')
+    if (typeof opt.onwarn === 'function') {
       this.on('warn', opt.onwarn)
+    }
 
     let pathWarn = false
     if (!this.preservePaths) {
@@ -6475,15 +7451,17 @@ const WriteEntryTar = warner(class WriteEntryTar extends MiniPass {
 
   write (data) {
     const writeLen = data.length
-    if (writeLen > this.blockRemain)
+    if (writeLen > this.blockRemain) {
       throw new Error('writing more to entry than is appropriate')
+    }
     this.blockRemain -= writeLen
     return super.write(data)
   }
 
   end () {
-    if (this.blockRemain)
+    if (this.blockRemain) {
       super.write(Buffer.alloc(this.blockRemain))
+    }
     return super.end()
   }
 })
@@ -6498,6 +7476,716 @@ const getType = stat =>
   : 'Unsupported'
 
 module.exports = WriteEntry
+
+
+/***/ }),
+
+/***/ 1241:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+const proc =
+  typeof process === 'object' && process
+    ? process
+    : {
+        stdout: null,
+        stderr: null,
+      }
+const EE = __webpack_require__(2361)
+const Stream = __webpack_require__(2781)
+const stringdecoder = __webpack_require__(1576)
+const SD = stringdecoder.StringDecoder
+
+const EOF = Symbol('EOF')
+const MAYBE_EMIT_END = Symbol('maybeEmitEnd')
+const EMITTED_END = Symbol('emittedEnd')
+const EMITTING_END = Symbol('emittingEnd')
+const EMITTED_ERROR = Symbol('emittedError')
+const CLOSED = Symbol('closed')
+const READ = Symbol('read')
+const FLUSH = Symbol('flush')
+const FLUSHCHUNK = Symbol('flushChunk')
+const ENCODING = Symbol('encoding')
+const DECODER = Symbol('decoder')
+const FLOWING = Symbol('flowing')
+const PAUSED = Symbol('paused')
+const RESUME = Symbol('resume')
+const BUFFER = Symbol('buffer')
+const PIPES = Symbol('pipes')
+const BUFFERLENGTH = Symbol('bufferLength')
+const BUFFERPUSH = Symbol('bufferPush')
+const BUFFERSHIFT = Symbol('bufferShift')
+const OBJECTMODE = Symbol('objectMode')
+// internal event when stream is destroyed
+const DESTROYED = Symbol('destroyed')
+// internal event when stream has an error
+const ERROR = Symbol('error')
+const EMITDATA = Symbol('emitData')
+const EMITEND = Symbol('emitEnd')
+const EMITEND2 = Symbol('emitEnd2')
+const ASYNC = Symbol('async')
+const ABORT = Symbol('abort')
+const ABORTED = Symbol('aborted')
+const SIGNAL = Symbol('signal')
+
+const defer = fn => Promise.resolve().then(fn)
+
+// TODO remove when Node v8 support drops
+const doIter = global._MP_NO_ITERATOR_SYMBOLS_ !== '1'
+const ASYNCITERATOR =
+  (doIter && Symbol.asyncIterator) || Symbol('asyncIterator not implemented')
+const ITERATOR =
+  (doIter && Symbol.iterator) || Symbol('iterator not implemented')
+
+// events that mean 'the stream is over'
+// these are treated specially, and re-emitted
+// if they are listened for after emitting.
+const isEndish = ev => ev === 'end' || ev === 'finish' || ev === 'prefinish'
+
+const isArrayBuffer = b =>
+  b instanceof ArrayBuffer ||
+  (typeof b === 'object' &&
+    b.constructor &&
+    b.constructor.name === 'ArrayBuffer' &&
+    b.byteLength >= 0)
+
+const isArrayBufferView = b => !Buffer.isBuffer(b) && ArrayBuffer.isView(b)
+
+class Pipe {
+  constructor(src, dest, opts) {
+    this.src = src
+    this.dest = dest
+    this.opts = opts
+    this.ondrain = () => src[RESUME]()
+    dest.on('drain', this.ondrain)
+  }
+  unpipe() {
+    this.dest.removeListener('drain', this.ondrain)
+  }
+  // istanbul ignore next - only here for the prototype
+  proxyErrors() {}
+  end() {
+    this.unpipe()
+    if (this.opts.end) this.dest.end()
+  }
+}
+
+class PipeProxyErrors extends Pipe {
+  unpipe() {
+    this.src.removeListener('error', this.proxyErrors)
+    super.unpipe()
+  }
+  constructor(src, dest, opts) {
+    super(src, dest, opts)
+    this.proxyErrors = er => dest.emit('error', er)
+    src.on('error', this.proxyErrors)
+  }
+}
+
+class Minipass extends Stream {
+  constructor(options) {
+    super()
+    this[FLOWING] = false
+    // whether we're explicitly paused
+    this[PAUSED] = false
+    this[PIPES] = []
+    this[BUFFER] = []
+    this[OBJECTMODE] = (options && options.objectMode) || false
+    if (this[OBJECTMODE]) this[ENCODING] = null
+    else this[ENCODING] = (options && options.encoding) || null
+    if (this[ENCODING] === 'buffer') this[ENCODING] = null
+    this[ASYNC] = (options && !!options.async) || false
+    this[DECODER] = this[ENCODING] ? new SD(this[ENCODING]) : null
+    this[EOF] = false
+    this[EMITTED_END] = false
+    this[EMITTING_END] = false
+    this[CLOSED] = false
+    this[EMITTED_ERROR] = null
+    this.writable = true
+    this.readable = true
+    this[BUFFERLENGTH] = 0
+    this[DESTROYED] = false
+    if (options && options.debugExposeBuffer === true) {
+      Object.defineProperty(this, 'buffer', { get: () => this[BUFFER] })
+    }
+    if (options && options.debugExposePipes === true) {
+      Object.defineProperty(this, 'pipes', { get: () => this[PIPES] })
+    }
+    this[SIGNAL] = options && options.signal
+    this[ABORTED] = false
+    if (this[SIGNAL]) {
+      this[SIGNAL].addEventListener('abort', () => this[ABORT]())
+      if (this[SIGNAL].aborted) {
+        this[ABORT]()
+      }
+    }
+  }
+
+  get bufferLength() {
+    return this[BUFFERLENGTH]
+  }
+
+  get encoding() {
+    return this[ENCODING]
+  }
+  set encoding(enc) {
+    if (this[OBJECTMODE]) throw new Error('cannot set encoding in objectMode')
+
+    if (
+      this[ENCODING] &&
+      enc !== this[ENCODING] &&
+      ((this[DECODER] && this[DECODER].lastNeed) || this[BUFFERLENGTH])
+    )
+      throw new Error('cannot change encoding')
+
+    if (this[ENCODING] !== enc) {
+      this[DECODER] = enc ? new SD(enc) : null
+      if (this[BUFFER].length)
+        this[BUFFER] = this[BUFFER].map(chunk => this[DECODER].write(chunk))
+    }
+
+    this[ENCODING] = enc
+  }
+
+  setEncoding(enc) {
+    this.encoding = enc
+  }
+
+  get objectMode() {
+    return this[OBJECTMODE]
+  }
+  set objectMode(om) {
+    this[OBJECTMODE] = this[OBJECTMODE] || !!om
+  }
+
+  get ['async']() {
+    return this[ASYNC]
+  }
+  set ['async'](a) {
+    this[ASYNC] = this[ASYNC] || !!a
+  }
+
+  // drop everything and get out of the flow completely
+  [ABORT]() {
+    this[ABORTED] = true
+    this.emit('abort', this[SIGNAL].reason)
+    this.destroy(this[SIGNAL].reason)
+  }
+
+  get aborted() {
+    return this[ABORTED]
+  }
+  set aborted(_) {}
+
+  write(chunk, encoding, cb) {
+    if (this[ABORTED]) return false
+    if (this[EOF]) throw new Error('write after end')
+
+    if (this[DESTROYED]) {
+      this.emit(
+        'error',
+        Object.assign(
+          new Error('Cannot call write after a stream was destroyed'),
+          { code: 'ERR_STREAM_DESTROYED' }
+        )
+      )
+      return true
+    }
+
+    if (typeof encoding === 'function') (cb = encoding), (encoding = 'utf8')
+
+    if (!encoding) encoding = 'utf8'
+
+    const fn = this[ASYNC] ? defer : f => f()
+
+    // convert array buffers and typed array views into buffers
+    // at some point in the future, we may want to do the opposite!
+    // leave strings and buffers as-is
+    // anything else switches us into object mode
+    if (!this[OBJECTMODE] && !Buffer.isBuffer(chunk)) {
+      if (isArrayBufferView(chunk))
+        chunk = Buffer.from(chunk.buffer, chunk.byteOffset, chunk.byteLength)
+      else if (isArrayBuffer(chunk)) chunk = Buffer.from(chunk)
+      else if (typeof chunk !== 'string')
+        // use the setter so we throw if we have encoding set
+        this.objectMode = true
+    }
+
+    // handle object mode up front, since it's simpler
+    // this yields better performance, fewer checks later.
+    if (this[OBJECTMODE]) {
+      /* istanbul ignore if - maybe impossible? */
+      if (this.flowing && this[BUFFERLENGTH] !== 0) this[FLUSH](true)
+
+      if (this.flowing) this.emit('data', chunk)
+      else this[BUFFERPUSH](chunk)
+
+      if (this[BUFFERLENGTH] !== 0) this.emit('readable')
+
+      if (cb) fn(cb)
+
+      return this.flowing
+    }
+
+    // at this point the chunk is a buffer or string
+    // don't buffer it up or send it to the decoder
+    if (!chunk.length) {
+      if (this[BUFFERLENGTH] !== 0) this.emit('readable')
+      if (cb) fn(cb)
+      return this.flowing
+    }
+
+    // fast-path writing strings of same encoding to a stream with
+    // an empty buffer, skipping the buffer/decoder dance
+    if (
+      typeof chunk === 'string' &&
+      // unless it is a string already ready for us to use
+      !(encoding === this[ENCODING] && !this[DECODER].lastNeed)
+    ) {
+      chunk = Buffer.from(chunk, encoding)
+    }
+
+    if (Buffer.isBuffer(chunk) && this[ENCODING])
+      chunk = this[DECODER].write(chunk)
+
+    // Note: flushing CAN potentially switch us into not-flowing mode
+    if (this.flowing && this[BUFFERLENGTH] !== 0) this[FLUSH](true)
+
+    if (this.flowing) this.emit('data', chunk)
+    else this[BUFFERPUSH](chunk)
+
+    if (this[BUFFERLENGTH] !== 0) this.emit('readable')
+
+    if (cb) fn(cb)
+
+    return this.flowing
+  }
+
+  read(n) {
+    if (this[DESTROYED]) return null
+
+    if (this[BUFFERLENGTH] === 0 || n === 0 || n > this[BUFFERLENGTH]) {
+      this[MAYBE_EMIT_END]()
+      return null
+    }
+
+    if (this[OBJECTMODE]) n = null
+
+    if (this[BUFFER].length > 1 && !this[OBJECTMODE]) {
+      if (this.encoding) this[BUFFER] = [this[BUFFER].join('')]
+      else this[BUFFER] = [Buffer.concat(this[BUFFER], this[BUFFERLENGTH])]
+    }
+
+    const ret = this[READ](n || null, this[BUFFER][0])
+    this[MAYBE_EMIT_END]()
+    return ret
+  }
+
+  [READ](n, chunk) {
+    if (n === chunk.length || n === null) this[BUFFERSHIFT]()
+    else {
+      this[BUFFER][0] = chunk.slice(n)
+      chunk = chunk.slice(0, n)
+      this[BUFFERLENGTH] -= n
+    }
+
+    this.emit('data', chunk)
+
+    if (!this[BUFFER].length && !this[EOF]) this.emit('drain')
+
+    return chunk
+  }
+
+  end(chunk, encoding, cb) {
+    if (typeof chunk === 'function') (cb = chunk), (chunk = null)
+    if (typeof encoding === 'function') (cb = encoding), (encoding = 'utf8')
+    if (chunk) this.write(chunk, encoding)
+    if (cb) this.once('end', cb)
+    this[EOF] = true
+    this.writable = false
+
+    // if we haven't written anything, then go ahead and emit,
+    // even if we're not reading.
+    // we'll re-emit if a new 'end' listener is added anyway.
+    // This makes MP more suitable to write-only use cases.
+    if (this.flowing || !this[PAUSED]) this[MAYBE_EMIT_END]()
+    return this
+  }
+
+  // don't let the internal resume be overwritten
+  [RESUME]() {
+    if (this[DESTROYED]) return
+
+    this[PAUSED] = false
+    this[FLOWING] = true
+    this.emit('resume')
+    if (this[BUFFER].length) this[FLUSH]()
+    else if (this[EOF]) this[MAYBE_EMIT_END]()
+    else this.emit('drain')
+  }
+
+  resume() {
+    return this[RESUME]()
+  }
+
+  pause() {
+    this[FLOWING] = false
+    this[PAUSED] = true
+  }
+
+  get destroyed() {
+    return this[DESTROYED]
+  }
+
+  get flowing() {
+    return this[FLOWING]
+  }
+
+  get paused() {
+    return this[PAUSED]
+  }
+
+  [BUFFERPUSH](chunk) {
+    if (this[OBJECTMODE]) this[BUFFERLENGTH] += 1
+    else this[BUFFERLENGTH] += chunk.length
+    this[BUFFER].push(chunk)
+  }
+
+  [BUFFERSHIFT]() {
+    if (this[OBJECTMODE]) this[BUFFERLENGTH] -= 1
+    else this[BUFFERLENGTH] -= this[BUFFER][0].length
+    return this[BUFFER].shift()
+  }
+
+  [FLUSH](noDrain) {
+    do {} while (this[FLUSHCHUNK](this[BUFFERSHIFT]()) && this[BUFFER].length)
+
+    if (!noDrain && !this[BUFFER].length && !this[EOF]) this.emit('drain')
+  }
+
+  [FLUSHCHUNK](chunk) {
+    this.emit('data', chunk)
+    return this.flowing
+  }
+
+  pipe(dest, opts) {
+    if (this[DESTROYED]) return
+
+    const ended = this[EMITTED_END]
+    opts = opts || {}
+    if (dest === proc.stdout || dest === proc.stderr) opts.end = false
+    else opts.end = opts.end !== false
+    opts.proxyErrors = !!opts.proxyErrors
+
+    // piping an ended stream ends immediately
+    if (ended) {
+      if (opts.end) dest.end()
+    } else {
+      this[PIPES].push(
+        !opts.proxyErrors
+          ? new Pipe(this, dest, opts)
+          : new PipeProxyErrors(this, dest, opts)
+      )
+      if (this[ASYNC]) defer(() => this[RESUME]())
+      else this[RESUME]()
+    }
+
+    return dest
+  }
+
+  unpipe(dest) {
+    const p = this[PIPES].find(p => p.dest === dest)
+    if (p) {
+      this[PIPES].splice(this[PIPES].indexOf(p), 1)
+      p.unpipe()
+    }
+  }
+
+  addListener(ev, fn) {
+    return this.on(ev, fn)
+  }
+
+  on(ev, fn) {
+    const ret = super.on(ev, fn)
+    if (ev === 'data' && !this[PIPES].length && !this.flowing) this[RESUME]()
+    else if (ev === 'readable' && this[BUFFERLENGTH] !== 0)
+      super.emit('readable')
+    else if (isEndish(ev) && this[EMITTED_END]) {
+      super.emit(ev)
+      this.removeAllListeners(ev)
+    } else if (ev === 'error' && this[EMITTED_ERROR]) {
+      if (this[ASYNC]) defer(() => fn.call(this, this[EMITTED_ERROR]))
+      else fn.call(this, this[EMITTED_ERROR])
+    }
+    return ret
+  }
+
+  get emittedEnd() {
+    return this[EMITTED_END]
+  }
+
+  [MAYBE_EMIT_END]() {
+    if (
+      !this[EMITTING_END] &&
+      !this[EMITTED_END] &&
+      !this[DESTROYED] &&
+      this[BUFFER].length === 0 &&
+      this[EOF]
+    ) {
+      this[EMITTING_END] = true
+      this.emit('end')
+      this.emit('prefinish')
+      this.emit('finish')
+      if (this[CLOSED]) this.emit('close')
+      this[EMITTING_END] = false
+    }
+  }
+
+  emit(ev, data, ...extra) {
+    // error and close are only events allowed after calling destroy()
+    if (ev !== 'error' && ev !== 'close' && ev !== DESTROYED && this[DESTROYED])
+      return
+    else if (ev === 'data') {
+      return !this[OBJECTMODE] && !data
+        ? false
+        : this[ASYNC]
+        ? defer(() => this[EMITDATA](data))
+        : this[EMITDATA](data)
+    } else if (ev === 'end') {
+      return this[EMITEND]()
+    } else if (ev === 'close') {
+      this[CLOSED] = true
+      // don't emit close before 'end' and 'finish'
+      if (!this[EMITTED_END] && !this[DESTROYED]) return
+      const ret = super.emit('close')
+      this.removeAllListeners('close')
+      return ret
+    } else if (ev === 'error') {
+      this[EMITTED_ERROR] = data
+      super.emit(ERROR, data)
+      const ret =
+        !this[SIGNAL] || this.listeners('error').length
+          ? super.emit('error', data)
+          : false
+      this[MAYBE_EMIT_END]()
+      return ret
+    } else if (ev === 'resume') {
+      const ret = super.emit('resume')
+      this[MAYBE_EMIT_END]()
+      return ret
+    } else if (ev === 'finish' || ev === 'prefinish') {
+      const ret = super.emit(ev)
+      this.removeAllListeners(ev)
+      return ret
+    }
+
+    // Some other unknown event
+    const ret = super.emit(ev, data, ...extra)
+    this[MAYBE_EMIT_END]()
+    return ret
+  }
+
+  [EMITDATA](data) {
+    for (const p of this[PIPES]) {
+      if (p.dest.write(data) === false) this.pause()
+    }
+    const ret = super.emit('data', data)
+    this[MAYBE_EMIT_END]()
+    return ret
+  }
+
+  [EMITEND]() {
+    if (this[EMITTED_END]) return
+
+    this[EMITTED_END] = true
+    this.readable = false
+    if (this[ASYNC]) defer(() => this[EMITEND2]())
+    else this[EMITEND2]()
+  }
+
+  [EMITEND2]() {
+    if (this[DECODER]) {
+      const data = this[DECODER].end()
+      if (data) {
+        for (const p of this[PIPES]) {
+          p.dest.write(data)
+        }
+        super.emit('data', data)
+      }
+    }
+
+    for (const p of this[PIPES]) {
+      p.end()
+    }
+    const ret = super.emit('end')
+    this.removeAllListeners('end')
+    return ret
+  }
+
+  // const all = await stream.collect()
+  collect() {
+    const buf = []
+    if (!this[OBJECTMODE]) buf.dataLength = 0
+    // set the promise first, in case an error is raised
+    // by triggering the flow here.
+    const p = this.promise()
+    this.on('data', c => {
+      buf.push(c)
+      if (!this[OBJECTMODE]) buf.dataLength += c.length
+    })
+    return p.then(() => buf)
+  }
+
+  // const data = await stream.concat()
+  concat() {
+    return this[OBJECTMODE]
+      ? Promise.reject(new Error('cannot concat in objectMode'))
+      : this.collect().then(buf =>
+          this[OBJECTMODE]
+            ? Promise.reject(new Error('cannot concat in objectMode'))
+            : this[ENCODING]
+            ? buf.join('')
+            : Buffer.concat(buf, buf.dataLength)
+        )
+  }
+
+  // stream.promise().then(() => done, er => emitted error)
+  promise() {
+    return new Promise((resolve, reject) => {
+      this.on(DESTROYED, () => reject(new Error('stream destroyed')))
+      this.on('error', er => reject(er))
+      this.on('end', () => resolve())
+    })
+  }
+
+  // for await (let chunk of stream)
+  [ASYNCITERATOR]() {
+    let stopped = false
+    const stop = () => {
+      this.pause()
+      stopped = true
+      return Promise.resolve({ done: true })
+    }
+    const next = () => {
+      if (stopped) return stop()
+      const res = this.read()
+      if (res !== null) return Promise.resolve({ done: false, value: res })
+
+      if (this[EOF]) return stop()
+
+      let resolve = null
+      let reject = null
+      const onerr = er => {
+        this.removeListener('data', ondata)
+        this.removeListener('end', onend)
+        this.removeListener(DESTROYED, ondestroy)
+        stop()
+        reject(er)
+      }
+      const ondata = value => {
+        this.removeListener('error', onerr)
+        this.removeListener('end', onend)
+        this.removeListener(DESTROYED, ondestroy)
+        this.pause()
+        resolve({ value: value, done: !!this[EOF] })
+      }
+      const onend = () => {
+        this.removeListener('error', onerr)
+        this.removeListener('data', ondata)
+        this.removeListener(DESTROYED, ondestroy)
+        stop()
+        resolve({ done: true })
+      }
+      const ondestroy = () => onerr(new Error('stream destroyed'))
+      return new Promise((res, rej) => {
+        reject = rej
+        resolve = res
+        this.once(DESTROYED, ondestroy)
+        this.once('error', onerr)
+        this.once('end', onend)
+        this.once('data', ondata)
+      })
+    }
+
+    return {
+      next,
+      throw: stop,
+      return: stop,
+      [ASYNCITERATOR]() {
+        return this
+      },
+    }
+  }
+
+  // for (let chunk of stream)
+  [ITERATOR]() {
+    let stopped = false
+    const stop = () => {
+      this.pause()
+      this.removeListener(ERROR, stop)
+      this.removeListener(DESTROYED, stop)
+      this.removeListener('end', stop)
+      stopped = true
+      return { done: true }
+    }
+
+    const next = () => {
+      if (stopped) return stop()
+      const value = this.read()
+      return value === null ? stop() : { value }
+    }
+    this.once('end', stop)
+    this.once(ERROR, stop)
+    this.once(DESTROYED, stop)
+
+    return {
+      next,
+      throw: stop,
+      return: stop,
+      [ITERATOR]() {
+        return this
+      },
+    }
+  }
+
+  destroy(er) {
+    if (this[DESTROYED]) {
+      if (er) this.emit('error', er)
+      else this.emit(DESTROYED)
+      return this
+    }
+
+    this[DESTROYED] = true
+
+    // throw away all buffered data, it's never coming out
+    this[BUFFER].length = 0
+    this[BUFFERLENGTH] = 0
+
+    if (typeof this.close === 'function' && !this[CLOSED]) this.close()
+
+    if (er) this.emit('error', er)
+    // if no error to emit, still reject pending promises
+    else this.emit(DESTROYED)
+
+    return this
+  }
+
+  static isStream(s) {
+    return (
+      !!s &&
+      (s instanceof Minipass ||
+        s instanceof Stream ||
+        (s instanceof EE &&
+          // readable
+          (typeof s.pipe === 'function' ||
+            // writable
+            (typeof s.write === 'function' && typeof s.end === 'function'))))
+    )
+  }
+}
+
+exports.Minipass = Minipass
 
 
 /***/ }),
@@ -6595,6 +8283,8 @@ try {
 
 const { EMPTY_BUFFER } = __webpack_require__(9336);
 
+const FastBuffer = Buffer[Symbol.species];
+
 /**
  * Merges an array of buffers into a new buffer.
  *
@@ -6616,7 +8306,9 @@ function concat(list, totalLength) {
     offset += buf.length;
   }
 
-  if (offset < totalLength) return target.slice(0, offset);
+  if (offset < totalLength) {
+    return new FastBuffer(target.buffer, target.byteOffset, offset);
+  }
 
   return target;
 }
@@ -6658,11 +8350,11 @@ function _unmask(buffer, mask) {
  * @public
  */
 function toArrayBuffer(buf) {
-  if (buf.byteLength === buf.buffer.byteLength) {
+  if (buf.length === buf.buffer.byteLength) {
     return buf.buffer;
   }
 
-  return buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength);
+  return buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.length);
 }
 
 /**
@@ -6681,9 +8373,9 @@ function toBuffer(data) {
   let buf;
 
   if (data instanceof ArrayBuffer) {
-    buf = Buffer.from(data);
+    buf = new FastBuffer(data);
   } else if (ArrayBuffer.isView(data)) {
-    buf = Buffer.from(data.buffer, data.byteOffset, data.byteLength);
+    buf = new FastBuffer(data.buffer, data.byteOffset, data.byteLength);
   } else {
     buf = Buffer.from(data);
     toBuffer.readOnly = false;
@@ -6692,30 +8384,31 @@ function toBuffer(data) {
   return buf;
 }
 
-try {
-  const bufferUtil = __webpack_require__(1098);
+module.exports = {
+  concat,
+  mask: _mask,
+  toArrayBuffer,
+  toBuffer,
+  unmask: _unmask
+};
 
-  module.exports = {
-    concat,
-    mask(source, mask, output, offset, length) {
+/* istanbul ignore else  */
+if (!{}.WS_NO_BUFFER_UTIL) {
+  try {
+    const bufferUtil = __webpack_require__(1098);
+
+    module.exports.mask = function (source, mask, output, offset, length) {
       if (length < 48) _mask(source, mask, output, offset, length);
       else bufferUtil.mask(source, mask, output, offset, length);
-    },
-    toArrayBuffer,
-    toBuffer,
-    unmask(buffer, mask) {
+    };
+
+    module.exports.unmask = function (buffer, mask) {
       if (buffer.length < 32) _unmask(buffer, mask);
       else bufferUtil.unmask(buffer, mask);
-    }
-  };
-} catch (e) /* istanbul ignore next */ {
-  module.exports = {
-    concat,
-    mask: _mask,
-    toArrayBuffer,
-    toBuffer,
-    unmask: _unmask
-  };
+    };
+  } catch (e) {
+    // Continue regardless of the error.
+  }
 }
 
 
@@ -6925,7 +8618,7 @@ const EventTarget = {
    * Register an event listener.
    *
    * @param {String} type A string representing the event type to listen for
-   * @param {Function} listener The listener to add
+   * @param {(Function|Object)} handler The listener to add
    * @param {Object} [options] An options object specifies characteristics about
    *     the event listener
    * @param {Boolean} [options.once=false] A `Boolean` indicating that the
@@ -6933,7 +8626,17 @@ const EventTarget = {
    *     the listener would be automatically removed when invoked.
    * @public
    */
-  addEventListener(type, listener, options = {}) {
+  addEventListener(type, handler, options = {}) {
+    for (const listener of this.listeners(type)) {
+      if (
+        !options[kForOnEventAttribute] &&
+        listener[kListener] === handler &&
+        !listener[kForOnEventAttribute]
+      ) {
+        return;
+      }
+    }
+
     let wrapper;
 
     if (type === 'message') {
@@ -6943,7 +8646,7 @@ const EventTarget = {
         });
 
         event[kTarget] = this;
-        listener.call(this, event);
+        callListener(handler, this, event);
       };
     } else if (type === 'close') {
       wrapper = function onClose(code, message) {
@@ -6954,7 +8657,7 @@ const EventTarget = {
         });
 
         event[kTarget] = this;
-        listener.call(this, event);
+        callListener(handler, this, event);
       };
     } else if (type === 'error') {
       wrapper = function onError(error) {
@@ -6964,21 +8667,21 @@ const EventTarget = {
         });
 
         event[kTarget] = this;
-        listener.call(this, event);
+        callListener(handler, this, event);
       };
     } else if (type === 'open') {
       wrapper = function onOpen() {
         const event = new Event('open');
 
         event[kTarget] = this;
-        listener.call(this, event);
+        callListener(handler, this, event);
       };
     } else {
       return;
     }
 
     wrapper[kForOnEventAttribute] = !!options[kForOnEventAttribute];
-    wrapper[kListener] = listener;
+    wrapper[kListener] = handler;
 
     if (options.once) {
       this.once(type, wrapper);
@@ -6991,7 +8694,7 @@ const EventTarget = {
    * Remove an event listener.
    *
    * @param {String} type A string representing the event type to remove
-   * @param {Function} handler The listener to remove
+   * @param {(Function|Object)} handler The listener to remove
    * @public
    */
   removeEventListener(type, handler) {
@@ -7011,6 +8714,22 @@ module.exports = {
   EventTarget,
   MessageEvent
 };
+
+/**
+ * Call an event listener
+ *
+ * @param {(Function|Object)} listener The listener to call
+ * @param {*} thisArg The value to use as `this`` when calling the listener
+ * @param {Event} event The event to pass to the listener
+ * @private
+ */
+function callListener(listener, thisArg, event) {
+  if (typeof listener === 'object' && listener.handleEvent) {
+    listener.handleEvent.call(listener, event);
+  } else {
+    listener.call(thisArg, event);
+  }
+}
 
 
 /***/ }),
@@ -7301,6 +9020,7 @@ const bufferUtil = __webpack_require__(1737);
 const Limiter = __webpack_require__(7876);
 const { kStatusCode } = __webpack_require__(9336);
 
+const FastBuffer = Buffer[Symbol.species];
 const TRAILER = Buffer.from([0x00, 0x00, 0xff, 0xff]);
 const kPerMessageDeflate = Symbol('permessage-deflate');
 const kTotalLength = Symbol('total-length');
@@ -7732,7 +9452,9 @@ class PerMessageDeflate {
         this._deflate[kTotalLength]
       );
 
-      if (fin) data = data.slice(0, data.length - 4);
+      if (fin) {
+        data = new FastBuffer(data.buffer, data.byteOffset, data.length - 4);
+      }
 
       //
       // Ensure that the callback will not be called again in
@@ -7826,6 +9548,7 @@ const {
 const { concat, toArrayBuffer, unmask } = __webpack_require__(1737);
 const { isValidStatusCode, isValidUTF8 } = __webpack_require__(7908);
 
+const FastBuffer = Buffer[Symbol.species];
 const GET_INFO = 0;
 const GET_PAYLOAD_LENGTH_16 = 1;
 const GET_PAYLOAD_LENGTH_64 = 2;
@@ -7911,8 +9634,13 @@ class Receiver extends Writable {
 
     if (n < this._buffers[0].length) {
       const buf = this._buffers[0];
-      this._buffers[0] = buf.slice(n);
-      return buf.slice(0, n);
+      this._buffers[0] = new FastBuffer(
+        buf.buffer,
+        buf.byteOffset + n,
+        buf.length - n
+      );
+
+      return new FastBuffer(buf.buffer, buf.byteOffset, n);
     }
 
     const dst = Buffer.allocUnsafe(n);
@@ -7925,7 +9653,11 @@ class Receiver extends Writable {
         dst.set(this._buffers.shift(), offset);
       } else {
         dst.set(new Uint8Array(buf.buffer, buf.byteOffset, n), offset);
-        this._buffers[0] = buf.slice(n);
+        this._buffers[0] = new FastBuffer(
+          buf.buffer,
+          buf.byteOffset + n,
+          buf.length - n
+        );
       }
 
       n -= buf.length;
@@ -8073,7 +9805,10 @@ class Receiver extends Writable {
         );
       }
 
-      if (this._payloadLength > 0x7d) {
+      if (
+        this._payloadLength > 0x7d ||
+        (this._opcode === 0x08 && this._payloadLength === 1)
+      ) {
         this._loop = false;
         return error(
           RangeError,
@@ -8360,14 +10095,6 @@ class Receiver extends Writable {
       if (data.length === 0) {
         this.emit('conclude', 1005, EMPTY_BUFFER);
         this.end();
-      } else if (data.length === 1) {
-        return error(
-          RangeError,
-          'invalid payload length 1',
-          true,
-          1002,
-          'WS_ERR_INVALID_CONTROL_PAYLOAD_LENGTH'
-        );
       } else {
         const code = data.readUInt16BE(0);
 
@@ -8381,7 +10108,11 @@ class Receiver extends Writable {
           );
         }
 
-        const buf = data.slice(2);
+        const buf = new FastBuffer(
+          data.buffer,
+          data.byteOffset + 2,
+          data.length - 2
+        );
 
         if (!this._skipUTF8Validation && !isValidUTF8(buf)) {
           return error(
@@ -9163,6 +10894,8 @@ module.exports = { parse };
 "use strict";
 
 
+const { isUtf8 } = __webpack_require__(4300);
+
 //
 // Allowed token characters:
 //
@@ -9268,22 +11001,26 @@ function _isValidUTF8(buf) {
   return true;
 }
 
-try {
-  const isValidUTF8 = __webpack_require__(8403);
+module.exports = {
+  isValidStatusCode,
+  isValidUTF8: _isValidUTF8,
+  tokenChars
+};
 
-  module.exports = {
-    isValidStatusCode,
-    isValidUTF8(buf) {
-      return buf.length < 150 ? _isValidUTF8(buf) : isValidUTF8(buf);
-    },
-    tokenChars
+if (isUtf8) {
+  module.exports.isValidUTF8 = function (buf) {
+    return buf.length < 24 ? _isValidUTF8(buf) : isUtf8(buf);
   };
-} catch (e) /* istanbul ignore next */ {
-  module.exports = {
-    isValidStatusCode,
-    isValidUTF8: _isValidUTF8,
-    tokenChars
-  };
+} /* istanbul ignore else  */ else if (!{}.WS_NO_UTF_8_VALIDATE) {
+  try {
+    const isValidUTF8 = __webpack_require__(8403);
+
+    module.exports.isValidUTF8 = function (buf) {
+      return buf.length < 32 ? _isValidUTF8(buf) : isValidUTF8(buf);
+    };
+  } catch (e) {
+    // Continue regardless of the error.
+  }
 }
 
 
@@ -9525,21 +11262,36 @@ class WebSocketServer extends EventEmitter {
   handleUpgrade(req, socket, head, cb) {
     socket.on('error', socketOnError);
 
-    const key =
-      req.headers['sec-websocket-key'] !== undefined
-        ? req.headers['sec-websocket-key']
-        : false;
+    const key = req.headers['sec-websocket-key'];
     const version = +req.headers['sec-websocket-version'];
 
-    if (
-      req.method !== 'GET' ||
-      req.headers.upgrade.toLowerCase() !== 'websocket' ||
-      !key ||
-      !keyRegex.test(key) ||
-      (version !== 8 && version !== 13) ||
-      !this.shouldHandle(req)
-    ) {
-      return abortHandshake(socket, 400);
+    if (req.method !== 'GET') {
+      const message = 'Invalid HTTP method';
+      abortHandshakeOrEmitwsClientError(this, req, socket, 405, message);
+      return;
+    }
+
+    if (req.headers.upgrade.toLowerCase() !== 'websocket') {
+      const message = 'Invalid Upgrade header';
+      abortHandshakeOrEmitwsClientError(this, req, socket, 400, message);
+      return;
+    }
+
+    if (!key || !keyRegex.test(key)) {
+      const message = 'Missing or invalid Sec-WebSocket-Key header';
+      abortHandshakeOrEmitwsClientError(this, req, socket, 400, message);
+      return;
+    }
+
+    if (version !== 8 && version !== 13) {
+      const message = 'Missing or invalid Sec-WebSocket-Version header';
+      abortHandshakeOrEmitwsClientError(this, req, socket, 400, message);
+      return;
+    }
+
+    if (!this.shouldHandle(req)) {
+      abortHandshake(socket, 400);
+      return;
     }
 
     const secWebSocketProtocol = req.headers['sec-websocket-protocol'];
@@ -9549,7 +11301,9 @@ class WebSocketServer extends EventEmitter {
       try {
         protocols = subprotocol.parse(secWebSocketProtocol);
       } catch (err) {
-        return abortHandshake(socket, 400);
+        const message = 'Invalid Sec-WebSocket-Protocol header';
+        abortHandshakeOrEmitwsClientError(this, req, socket, 400, message);
+        return;
       }
     }
 
@@ -9574,7 +11328,10 @@ class WebSocketServer extends EventEmitter {
           extensions[PerMessageDeflate.extensionName] = perMessageDeflate;
         }
       } catch (err) {
-        return abortHandshake(socket, 400);
+        const message =
+          'Invalid or unacceptable Sec-WebSocket-Extensions header';
+        abortHandshakeOrEmitwsClientError(this, req, socket, 400, message);
+        return;
       }
     }
 
@@ -9741,7 +11498,7 @@ function emitClose(server) {
 }
 
 /**
- * Handle premature socket errors.
+ * Handle socket errors.
  *
  * @private
  */
@@ -9759,27 +11516,54 @@ function socketOnError() {
  * @private
  */
 function abortHandshake(socket, code, message, headers) {
-  if (socket.writable) {
-    message = message || http.STATUS_CODES[code];
-    headers = {
-      Connection: 'close',
-      'Content-Type': 'text/html',
-      'Content-Length': Buffer.byteLength(message),
-      ...headers
-    };
+  //
+  // The socket is writable unless the user destroyed or ended it before calling
+  // `server.handleUpgrade()` or in the `verifyClient` function, which is a user
+  // error. Handling this does not make much sense as the worst that can happen
+  // is that some of the data written by the user might be discarded due to the
+  // call to `socket.end()` below, which triggers an `'error'` event that in
+  // turn causes the socket to be destroyed.
+  //
+  message = message || http.STATUS_CODES[code];
+  headers = {
+    Connection: 'close',
+    'Content-Type': 'text/html',
+    'Content-Length': Buffer.byteLength(message),
+    ...headers
+  };
 
-    socket.write(
-      `HTTP/1.1 ${code} ${http.STATUS_CODES[code]}\r\n` +
-        Object.keys(headers)
-          .map((h) => `${h}: ${headers[h]}`)
-          .join('\r\n') +
-        '\r\n\r\n' +
-        message
-    );
+  socket.once('finish', socket.destroy);
+
+  socket.end(
+    `HTTP/1.1 ${code} ${http.STATUS_CODES[code]}\r\n` +
+      Object.keys(headers)
+        .map((h) => `${h}: ${headers[h]}`)
+        .join('\r\n') +
+      '\r\n\r\n' +
+      message
+  );
+}
+
+/**
+ * Emit a `'wsClientError'` event on a `WebSocketServer` if there is at least
+ * one listener for it, otherwise call `abortHandshake()`.
+ *
+ * @param {WebSocketServer} server The WebSocket server
+ * @param {http.IncomingMessage} req The request object
+ * @param {(net.Socket|tls.Socket)} socket The socket of the upgrade request
+ * @param {Number} code The HTTP response status code
+ * @param {String} message The HTTP response body
+ * @private
+ */
+function abortHandshakeOrEmitwsClientError(server, req, socket, code, message) {
+  if (server.listenerCount('wsClientError')) {
+    const err = new Error(message);
+    Error.captureStackTrace(err, abortHandshakeOrEmitwsClientError);
+
+    server.emit('wsClientError', err, socket, req);
+  } else {
+    abortHandshake(socket, code, message);
   }
-
-  socket.removeListener('error', socketOnError);
-  socket.destroy();
 }
 
 
@@ -9821,10 +11605,11 @@ const {
 const { format, parse } = __webpack_require__(9450);
 const { toBuffer } = __webpack_require__(1737);
 
+const closeTimeout = 30 * 1000;
+const kAborted = Symbol('kAborted');
+const protocolVersions = [8, 13];
 const readyStates = ['CONNECTING', 'OPEN', 'CLOSING', 'CLOSED'];
 const subprotocolRegex = /^[!#$%&'*+\-.0-9A-Z^_`|a-z~]+$/;
-const protocolVersions = [8, 13];
-const closeTimeout = 30 * 1000;
 
 /**
  * Class representing a WebSocket.
@@ -10072,7 +11857,8 @@ class WebSocket extends EventEmitter {
     if (this.readyState === WebSocket.CLOSED) return;
     if (this.readyState === WebSocket.CONNECTING) {
       const msg = 'WebSocket was closed before the connection was established';
-      return abortHandshake(this, this._req, msg);
+      abortHandshake(this, this._req, msg);
+      return;
     }
 
     if (this.readyState === WebSocket.CLOSING) {
@@ -10267,7 +12053,8 @@ class WebSocket extends EventEmitter {
     if (this.readyState === WebSocket.CLOSED) return;
     if (this.readyState === WebSocket.CONNECTING) {
       const msg = 'WebSocket was closed before the connection was established';
-      return abortHandshake(this, this._req, msg);
+      abortHandshake(this, this._req, msg);
+      return;
     }
 
     if (this._socket) {
@@ -10438,7 +12225,7 @@ function initAsClient(websocket, address, protocols, options) {
     hostname: undefined,
     protocol: undefined,
     timeout: undefined,
-    method: undefined,
+    method: 'GET',
     host: undefined,
     path: undefined,
     port: undefined
@@ -10467,20 +12254,20 @@ function initAsClient(websocket, address, protocols, options) {
   }
 
   const isSecure = parsedUrl.protocol === 'wss:';
-  const isUnixSocket = parsedUrl.protocol === 'ws+unix:';
-  let invalidURLMessage;
+  const isIpcUrl = parsedUrl.protocol === 'ws+unix:';
+  let invalidUrlMessage;
 
-  if (parsedUrl.protocol !== 'ws:' && !isSecure && !isUnixSocket) {
-    invalidURLMessage =
+  if (parsedUrl.protocol !== 'ws:' && !isSecure && !isIpcUrl) {
+    invalidUrlMessage =
       'The URL\'s protocol must be one of "ws:", "wss:", or "ws+unix:"';
-  } else if (isUnixSocket && !parsedUrl.pathname) {
-    invalidURLMessage = "The URL's pathname is empty";
+  } else if (isIpcUrl && !parsedUrl.pathname) {
+    invalidUrlMessage = "The URL's pathname is empty";
   } else if (parsedUrl.hash) {
-    invalidURLMessage = 'The URL contains a fragment identifier';
+    invalidUrlMessage = 'The URL contains a fragment identifier';
   }
 
-  if (invalidURLMessage) {
-    const err = new SyntaxError(invalidURLMessage);
+  if (invalidUrlMessage) {
+    const err = new SyntaxError(invalidUrlMessage);
 
     if (websocket._redirects === 0) {
       throw err;
@@ -10492,7 +12279,7 @@ function initAsClient(websocket, address, protocols, options) {
 
   const defaultPort = isSecure ? 443 : 80;
   const key = randomBytes(16).toString('base64');
-  const get = isSecure ? https.get : http.get;
+  const request = isSecure ? https.request : http.request;
   const protocolSet = new Set();
   let perMessageDeflate;
 
@@ -10503,11 +12290,11 @@ function initAsClient(websocket, address, protocols, options) {
     ? parsedUrl.hostname.slice(1, -1)
     : parsedUrl.hostname;
   opts.headers = {
+    ...opts.headers,
     'Sec-WebSocket-Version': opts.protocolVersion,
     'Sec-WebSocket-Key': key,
     Connection: 'Upgrade',
-    Upgrade: 'websocket',
-    ...opts.headers
+    Upgrade: 'websocket'
   };
   opts.path = parsedUrl.pathname + parsedUrl.search;
   opts.timeout = opts.handshakeTimeout;
@@ -10550,16 +12337,22 @@ function initAsClient(websocket, address, protocols, options) {
     opts.auth = `${parsedUrl.username}:${parsedUrl.password}`;
   }
 
-  if (isUnixSocket) {
+  if (isIpcUrl) {
     const parts = opts.path.split(':');
 
     opts.socketPath = parts[0];
     opts.path = parts[1];
   }
 
+  let req;
+
   if (opts.followRedirects) {
     if (websocket._redirects === 0) {
-      websocket._originalHost = parsedUrl.host;
+      websocket._originalIpc = isIpcUrl;
+      websocket._originalSecure = isSecure;
+      websocket._originalHostOrSocketPath = isIpcUrl
+        ? opts.socketPath
+        : parsedUrl.host;
 
       const headers = options && options.headers;
 
@@ -10574,15 +12367,27 @@ function initAsClient(websocket, address, protocols, options) {
           options.headers[key.toLowerCase()] = value;
         }
       }
-    } else if (parsedUrl.host !== websocket._originalHost) {
-      //
-      // Match curl 7.77.0 behavior and drop the following headers. These
-      // headers are also dropped when following a redirect to a subdomain.
-      //
-      delete opts.headers.authorization;
-      delete opts.headers.cookie;
-      delete opts.headers.host;
-      opts.auth = undefined;
+    } else if (websocket.listenerCount('redirect') === 0) {
+      const isSameHost = isIpcUrl
+        ? websocket._originalIpc
+          ? opts.socketPath === websocket._originalHostOrSocketPath
+          : false
+        : websocket._originalIpc
+        ? false
+        : parsedUrl.host === websocket._originalHostOrSocketPath;
+
+      if (!isSameHost || (websocket._originalSecure && !isSecure)) {
+        //
+        // Match curl 7.77.0 behavior and drop the following headers. These
+        // headers are also dropped when following a redirect to a subdomain.
+        //
+        delete opts.headers.authorization;
+        delete opts.headers.cookie;
+
+        if (!isSameHost) delete opts.headers.host;
+
+        opts.auth = undefined;
+      }
     }
 
     //
@@ -10594,9 +12399,24 @@ function initAsClient(websocket, address, protocols, options) {
       options.headers.authorization =
         'Basic ' + Buffer.from(opts.auth).toString('base64');
     }
-  }
 
-  let req = (websocket._req = get(opts));
+    req = websocket._req = request(opts);
+
+    if (websocket._redirects) {
+      //
+      // Unlike what is done for the `'upgrade'` event, no early exit is
+      // triggered here if the user calls `websocket.close()` or
+      // `websocket.terminate()` from a listener of the `'redirect'` event. This
+      // is because the user can also call `request.destroy()` with an error
+      // before calling `websocket.close()` or `websocket.terminate()` and this
+      // would result in an error being emitted on the `request` object with no
+      // `'error'` event listeners attached.
+      //
+      websocket.emit('redirect', websocket.url, req);
+    }
+  } else {
+    req = websocket._req = request(opts);
+  }
 
   if (opts.timeout) {
     req.on('timeout', () => {
@@ -10605,7 +12425,7 @@ function initAsClient(websocket, address, protocols, options) {
   }
 
   req.on('error', (err) => {
-    if (req === null || req.aborted) return;
+    if (req === null || req[kAborted]) return;
 
     req = websocket._req = null;
     emitErrorAndClose(websocket, err);
@@ -10652,12 +12472,17 @@ function initAsClient(websocket, address, protocols, options) {
     websocket.emit('upgrade', res);
 
     //
-    // The user may have closed the connection from a listener of the `upgrade`
-    // event.
+    // The user may have closed the connection from a listener of the
+    // `'upgrade'` event.
     //
     if (websocket.readyState !== WebSocket.CONNECTING) return;
 
     req = websocket._req = null;
+
+    if (res.headers.upgrade.toLowerCase() !== 'websocket') {
+      abortHandshake(websocket, socket, 'Invalid Upgrade header');
+      return;
+    }
 
     const digest = createHash('sha1')
       .update(key + GUID)
@@ -10738,10 +12563,16 @@ function initAsClient(websocket, address, protocols, options) {
       skipUTF8Validation: opts.skipUTF8Validation
     });
   });
+
+  if (opts.finishRequest) {
+    opts.finishRequest(req, websocket);
+  } else {
+    req.end();
+  }
 }
 
 /**
- * Emit the `'error'` and `'close'` event.
+ * Emit the `'error'` and `'close'` events.
  *
  * @param {WebSocket} websocket The WebSocket instance
  * @param {Error} The error to emit
@@ -10798,6 +12629,7 @@ function abortHandshake(websocket, stream, message) {
   Error.captureStackTrace(err, abortHandshake);
 
   if (stream.setHeader) {
+    stream[kAborted] = true;
     stream.abort();
 
     if (stream.socket && !stream.socket.destroyed) {
@@ -10809,8 +12641,7 @@ function abortHandshake(websocket, stream, message) {
       stream.socket.destroy();
     }
 
-    stream.once('abort', websocket.emitClose.bind(websocket));
-    websocket.emit('error', err);
+    process.nextTick(emitErrorAndClose, websocket, err);
   } else {
     stream.destroy(err);
     stream.once('error', websocket.emit.bind(websocket, 'error'));
@@ -10846,7 +12677,7 @@ function sendAfterClose(websocket, data, cb) {
       `WebSocket is not open: readyState ${websocket.readyState} ` +
         `(${readyStates[websocket.readyState]})`
     );
-    cb(err);
+    process.nextTick(cb, err);
   }
 }
 
@@ -11587,6 +13418,14 @@ module.exports = require("path");
 
 /***/ }),
 
+/***/ 7282:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("process");
+
+/***/ }),
+
 /***/ 2781:
 /***/ ((module) => {
 
@@ -11697,9 +13536,9 @@ var __webpack_exports__ = {};
 (() => {
 "use strict";
 
-;// CONCATENATED MODULE: external "process"
-const external_process_namespaceObject = require("process");
-var external_process_default = /*#__PURE__*/__webpack_require__.n(external_process_namespaceObject);
+// EXTERNAL MODULE: external "process"
+var external_process_ = __webpack_require__(7282);
+var external_process_default = /*#__PURE__*/__webpack_require__.n(external_process_);
 // EXTERNAL MODULE: external "path"
 var external_path_ = __webpack_require__(1017);
 var external_path_default = /*#__PURE__*/__webpack_require__.n(external_path_);
@@ -13098,7 +14937,7 @@ const Config = new ConfigData();
 
 
 
-let deviceAuthPath = external_path_default().join("/", "Applications", "Pritunl.app", "Contents", "Resources", "Pritunl Device Authentication");
+let deviceAuthPath = external_path_default().join(__dirname, "..", "..", "..", "service_macos", "Pritunl Device Authentication");
 let procs = {};
 function Tpm_open(callerId, privKey64) {
     let proc = external_child_process_default().execFile(deviceAuthPath);
