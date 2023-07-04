@@ -6,7 +6,6 @@ export CXXFLAGS="-mmacosx-version-min=11.0"
 export CPPFLAGS="-mmacosx-version-min=11.0"
 export LINKFLAGS="-mmacosx-version-min=11.0"
 
-make clean
 OPENSSL_CFLAGS="-I/Users/apple/build/openssl/include" \
   OPENSSL_SSL_CFLAGS="-I/Users/apple/build/openssl/include" \
   OPENSSL_CRYPTO_CFLAGS="-I/Users/apple/build/openssl/include" \

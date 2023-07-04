@@ -33,6 +33,7 @@ cd ../
 tar xf openssl-1.1.1u.tar.gz
 cd ./openssl-1.1.1u
 sh ../build_openssl.sh
+sh ../build_openssl_arm.sh
 cd ../
 
 tar xf pkcs11-helper-1.29.0.tar.bz2
@@ -40,9 +41,10 @@ cd ./pkcs11-helper-1.29.0
 sh ../build_pkcs11h.sh
 cd ../
 
-tar xf openvpn-2.5.8.tar.gz
-cd ./openvpn-2.5.8
+tar xf openvpn-2.6.5.tar.gz
+cd ./openvpn-2.6.5
 sh ../build_openvpn.sh
+sh ../build_openvpn_arm.sh
 cd ../
 
 

@@ -8,7 +8,6 @@ export LINKFLAGS="-mmacosx-version-min=11.0"
 export OPENSSL_CFLAGS="-I/Users/apple/build/openssl/include"
 export OPENSSL_LIBS="-L/Users/apple/build/openssl/lib -lssl -lcrypto -lz"
 
-make clean
 #autoreconf --verbose --install --force
 ./configure \
   --disable-debug \
