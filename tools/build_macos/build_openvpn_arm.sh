@@ -28,6 +28,7 @@ OPENSSL_CFLAGS="-I/Users/apple/build/openssl/include" \
     --disable-plugins \
     --disable-plugin-auth-pam \
     --disable-plugin-down-root \
+    --disable-lz4 \
     --with-crypto-library=openssl \
     --build=arm-apple-darwin \
     --enable-pkcs11 \

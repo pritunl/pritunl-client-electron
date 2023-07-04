@@ -2,6 +2,9 @@ mkdir -p /Users/apple/build
 cp ./* /Users/apple/build/
 cp ../../openvpn_macos/* /Users/apple/build/
 cd /Users/apple/build
+rm -f /Users/apple/build/openvpn
+rm -f /Users/apple/build/openvpn_arm64
+rm -f /Users/apple/build/openvpn10
 
 tar xf autoconf-2.71.tar.gz
 cd ./autoconf-2.71
