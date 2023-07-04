@@ -30,8 +30,8 @@ cd ./lzo-2.10
 sh ../build_lzo.sh
 cd ../
 
-tar xf openssl-1.1.1s.tar.gz
-cd ./openssl-1.1.1s
+tar xf openssl-1.1.1u.tar.gz
+cd ./openssl-1.1.1u
 sh ../build_openssl.sh
 cd ../
 
