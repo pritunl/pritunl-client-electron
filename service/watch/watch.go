@@ -114,7 +114,7 @@ func wakeWatch() {
 		}
 
 		time.Sleep(1 * time.Second)
-		if utils.SinceAbs(curTime) > 30*time.Second {
+		if utils.SinceAbs(curTime) > 45*time.Second {
 			restartLock.Lock()
 			if utils.SinceAbs(lastRestart) > 60*time.Second {
 				lastRestart = time.Now()
