@@ -11,5 +11,5 @@ make
 sudo make install
 
 cd /usr/local/bin
-sudo ln -s glibtool libtool
-sudo ln -s glibtoolize libtoolize
+sudo ln -sf glibtool libtool
+sudo ln -sf glibtoolize libtoolize
