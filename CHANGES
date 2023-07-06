@@ -1,6 +1,10 @@
 Pritunl Client Changelog
 ========================
 
+<%= version %>
+
+Add macOS DNS options
+
 Version 1.3.3484.2 2023-03-28
 -----------------------------
 
