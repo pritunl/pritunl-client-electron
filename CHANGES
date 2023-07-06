@@ -4,6 +4,7 @@ Pritunl Client Changelog
 <%= version %>
 
 Add macOS DNS options
+Update openvpn client
 
 Version 1.3.3484.2 2023-03-28
 -----------------------------
