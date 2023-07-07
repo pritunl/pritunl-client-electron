@@ -366,10 +366,15 @@ func RestartProfiles(resetNet bool) (err error) {
 
 	for _, prfl := range prfls2 {
 		if prfl.Reconnect {
-			err = prfl.Start(false, true, true)
-			if err != nil {
-				return
-			}
+			go func() {
+				e := prfl.Start(false, true, true)
+				if e != nil {
+					logrus.WithFields(logrus.Fields{
+						"profile_id": prfl.Id,
+						"error":      e,
+					}).Error("profile: Failed to restart profile")
+				}
+			}()
 		}
 	}
 
