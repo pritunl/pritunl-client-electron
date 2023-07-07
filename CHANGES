@@ -1,6 +1,10 @@
 Pritunl Client Changelog
 ========================
 
+<%= version %>
+
+Fix issues with reconnection
+
 Version 1.3.3584.5 2023-07-06
 -----------------------------
 
