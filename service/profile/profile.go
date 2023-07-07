@@ -4368,13 +4368,14 @@ func (p *Profile) Restart() {
 	p.waiters = []chan bool{}
 	stateLock.Unlock()
 
-	err = prflCopy.Start(false, false, true)
-	if err != nil {
-		logrus.WithFields(logrus.Fields{
-			"error": err,
-		}).Error("profile: Restart error")
-		return
-	}
+	go func() {
+		err = prflCopy.Start(false, false, true)
+		if err != nil {
+			logrus.WithFields(logrus.Fields{
+				"error": err,
+			}).Error("profile: Restart error")
+		}
+	}()
 
 	return
 }
