@@ -436,7 +436,7 @@ app.on('ready', function() {
             },
             {
               label: 'Close',
-              accelerator: 'CmdOrCtrl+Q',
+              accelerator: 'CmdOrCtrl+W',
               role: 'close'
             },
             {
