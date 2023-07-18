@@ -329,7 +329,7 @@ function initAppMenu() {
 				},
 				{
 					label: "Close",
-					accelerator: "CmdOrCtrl+Q",
+					accelerator: "CmdOrCtrl+W",
 					role: "close",
 				},
 				{
