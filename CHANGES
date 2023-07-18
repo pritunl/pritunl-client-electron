@@ -1,6 +1,10 @@
 Pritunl Client Changelog
 ========================
 
+<%= version %>
+
+Fix server compatibility issue
+
 Version 1.3.3585.79 2023-07-07
 ------------------------------
 
