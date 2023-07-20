@@ -364,7 +364,7 @@ export default class ProfileConnect extends React.Component<Props, State> {
 
 	render(): JSX.Element {
 		let connected = this.connected()
-		let hasWg = Constants.state.wg
+		let hasWg = Constants.state.wg && this.props.profile.wg
 
 		let buttonClass = ""
 		let buttonLabel = ""
