@@ -935,6 +935,8 @@ func (p *Profile) setStartWait(err error) {
 }
 
 func (p *Profile) pushOutput(output string) {
+	output = strings.TrimSpace(output)
+
 	// TODO classic client
 	if p.SystemProfile == nil {
 		evt := &event.Event{
@@ -947,7 +949,7 @@ func (p *Profile) pushOutput(output string) {
 		evt.Init()
 	}
 
-	err := log.ProfilePushLog(p.Id, output+"/n")
+	err := log.ProfilePushLog(p.Id, output)
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
 			"output": output,
