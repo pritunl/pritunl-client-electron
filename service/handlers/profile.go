@@ -7,6 +7,7 @@ import (
 	"github.com/pritunl/pritunl-client-electron/service/profile"
 	"github.com/pritunl/pritunl-client-electron/service/sprofile"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
+	"github.com/sirupsen/logrus"
 )
 
 type profileData struct {
@@ -102,7 +103,13 @@ func profilePost(c *gin.Context) {
 	prfl.Init()
 
 	go func() {
-		_ = prfl.Start(data.Timeout, false, false)
+		err = prfl.Start(data.Timeout, false, false)
+		if err != nil {
+			logrus.WithFields(logrus.Fields{
+				"profile_id": prfl.Id,
+				"error":      err,
+			}).Error("profile: Failed to start profile")
+		}
 	}()
 
 	err = prfl.StartWait()
