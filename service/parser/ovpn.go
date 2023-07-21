@@ -150,6 +150,7 @@ func (o *Ovpn) Export() string {
 
 	output += "pull-filter ignore \"ping-restart\"\n"
 
+	output += "ignore-unknown-option data-ciphers\n"
 	output += "data-ciphers \"AES-256-GCM:AES-128-GCM:" +
 		"CHACHA20-POLY1305:AES-256-CBC:AES-128-CBC\"\n"
 
