@@ -114,10 +114,7 @@ func ClearProfileLog(prflId string) (err error) {
 	prflsPath := getPath()
 	logPth := filepath.Join(prflsPath, prflId+".log")
 
-	err = utils.CreateWriteLock(logPth, "", 0600)
-	if err != nil {
-		return
-	}
+	os.Remove(logPth)
 
 	return
 }
