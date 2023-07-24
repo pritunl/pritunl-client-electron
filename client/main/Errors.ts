@@ -39,3 +39,9 @@ export class RequestError extends BaseError {
 		super("RequestError", wrapErr, message, args)
 	}
 }
+
+export class ProcessError extends BaseError {
+	constructor(wrapErr: Error, message: string, args?: {[key: string]: any}) {
+		super("ProcessError", wrapErr, message, args)
+	}
+}
