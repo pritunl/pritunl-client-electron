@@ -7,6 +7,7 @@ import * as Utils from "./Utils";
 import * as Service from "./Service"
 import Config from "./Config"
 import * as Errors from "../app/Errors";
+import * as Tpm from "./Tpm"
 
 let tray: electron.Tray
 let awaken: boolean
@@ -425,6 +426,12 @@ function init() {
 					main.run()
 				} else if (event.type === "sso_auth") {
 					Utils.openLink(event.data.url)
+				} else if (event.type === "tpm_open") {
+					Tpm.open(event.data.id, event.data.private_key)
+				} else if (event.type === "tpm_sign") {
+					Tpm.sign(event.data.id, event.data.sign_data)
+				} else if (event.type === "tpm_close") {
+					Tpm.close(event.data.id)
 				}
 			})
 		})
