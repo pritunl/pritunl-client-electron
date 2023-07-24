@@ -638,6 +638,14 @@ export function New(self: Profile): Profile {
 			return ""
 		}
 
+		for (let line of data.split("\n")) {
+			if (line.startsWith("setenv UV_NAME")) {
+				let lineSpl = line.split(" ")
+				this.device_name = lineSpl[lineSpl.length-1]
+				break
+			}
+		}
+
 		if (this.key_data) {
 			let decKeyData = await MiscUtils.decryptString(this.key_data)
 			data += decKeyData
