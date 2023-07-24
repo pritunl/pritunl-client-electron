@@ -334,6 +334,7 @@ function initAppMenu() {
 				},
 				{
 					label: "Exit",
+					accelerator: "Cmd+Q",
 					click: function() {
 						electron.app.quit()
 					},
