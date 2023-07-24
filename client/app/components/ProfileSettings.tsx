@@ -297,6 +297,14 @@ export default class ProfileSettings extends React.Component<Props, State> {
 						}}
 					/>
 					<PageSwitch
+						label="Disable DNS"
+						help="Disable configuring the DNS configuration provided by the server on this profile."
+						checked={!!profile.disable_dns}
+						onToggle={(): void => {
+							this.set("disable_dns", !profile.disable_dns)
+						}}
+					/>
+					<PageSwitch
 						label="Force DNS configuration"
 						help="Configure only one DNS server to correct issues with macOS DNS server priority."
 						hidden={Constants.platform !== "darwin"}
