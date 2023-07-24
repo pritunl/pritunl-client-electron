@@ -44,6 +44,7 @@ export interface Profile {
 	dynamic_firewall?: boolean
 	device_auth?: boolean
 	disable_gateway?: boolean
+	disable_dns?: boolean
 	force_dns?: boolean
 	sso_auth?: boolean
 	password_mode?: string
@@ -133,6 +134,7 @@ export interface ProfileData {
 	dynamic_firewall?: boolean
 	device_auth?: boolean
 	disable_gateway?: boolean
+	disable_dns?: boolean
 	force_dns?: boolean
 	sso_auth?: boolean
 	server_public_key?: string
@@ -406,6 +408,7 @@ export function New(self: Profile): Profile {
 			device_auth: this.device_auth,
 			disable_reconnect_local: this.disable_reconnect_local,
 			disable_gateway: this.disable_gateway,
+			disable_dns: this.disable_dns,
 			force_dns: this.force_dns,
 			sso_auth: this.sso_auth,
 			password_mode: this.password_mode,
@@ -439,6 +442,7 @@ export function New(self: Profile): Profile {
 		this.device_auth = data.device_auth
 		this.disable_reconnect_local = data.disable_reconnect_local
 		this.disable_gateway = data.disable_gateway
+		this.disable_dns = data.disable_dns
 		this.force_dns = data.force_dns
 		this.sso_auth = data.sso_auth
 		this.password_mode = data.password_mode
@@ -471,6 +475,7 @@ export function New(self: Profile): Profile {
 			dynamic_firewall: this.dynamic_firewall,
 			device_auth: this.device_auth,
 			disable_gateway: this.disable_gateway,
+			disable_dns: this.disable_dns,
 			force_dns: this.force_dns,
 			sso_auth: this.sso_auth,
 			password_mode: this.password_mode,
@@ -504,6 +509,7 @@ export function New(self: Profile): Profile {
 		this.device_auth = data.device_auth
 		this.disable_reconnect_local = data.disable_reconnect_local
 		this.disable_gateway = data.disable_gateway
+		this.disable_dns = data.disable_dns
 		this.sso_auth = data.sso_auth
 		this.password_mode = data.password_mode
 		this.token = data.token
