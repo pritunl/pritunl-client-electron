@@ -780,6 +780,15 @@ export function New(self: Profile): Profile {
 		}
 
 		try {
+			await RequestUtils
+				.del('/log/' + this.id)
+				.set('Accept', 'application/json')
+				.end()
+		} catch (err) {
+			Logger.errorAlert(err, 10)
+		}
+
+		try {
 			await MiscUtils.fileDelete(this.confPath())
 		} catch {}
 		try {
