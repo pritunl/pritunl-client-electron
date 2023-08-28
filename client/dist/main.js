@@ -449,6 +449,7 @@ app.on('ready', function() {
             },
             {
               label: 'Exit',
+              accelerator: "Cmd+Q",
               click: function() {
                 app.quit();
               }

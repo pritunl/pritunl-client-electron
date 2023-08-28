@@ -15360,6 +15360,7 @@ function initAppMenu() {
                 },
                 {
                     label: "Exit",
+                    accelerator: "Cmd+Q",
                     click: function () {
                         external_electron_default().app.quit();
                     },
