@@ -788,17 +788,11 @@ func (p *Profile) writeConfWgQuick(data *WgConf) (pth, pth2 string,
 		Endpoint:   fmt.Sprintf("%s:%d", data.Hostname, data.Port),
 	}
 
-	if !p.DisableDns && data.DnsServers != nil && len(data.DnsServers) > 0 {
-		if runtime.GOOS == "darwin" && config.Config.EnableWgDns {
-			err = utils.SetScutilDns(p.Id,
-				data.DnsServers, data.SearchDomains)
-			if err != nil {
-				return
-			}
-		} else {
-			templData.HasDns = true
-			templData.DnsServers = strings.Join(data.DnsServers, ",")
-		}
+	if !p.DisableDns && data.DnsServers != nil && len(data.DnsServers) > 0 &&
+		(runtime.GOOS != "darwin" || !config.Config.EnableWgDns) {
+
+		templData.HasDns = true
+		templData.DnsServers = strings.Join(data.DnsServers, ",")
 	}
 
 	output := &bytes.Buffer{}
@@ -3683,7 +3677,7 @@ func (p *Profile) updateWgHandshake() (err error) {
 	return
 }
 
-func (p *Profile) watchWg() {
+func (p *Profile) watchWg(data *WgData) {
 	defer func() {
 		panc := recover()
 		if panc != nil {
@@ -3748,6 +3742,20 @@ func (p *Profile) watchWg() {
 
 		p.restartSafe()
 		return
+	}
+
+	if !p.DisableDns && data.Configuration.DnsServers != nil &&
+		len(data.Configuration.DnsServers) > 0 &&
+		runtime.GOOS == "darwin" &&
+		config.Config.EnableWgDns {
+
+		err := utils.SetScutilDns(p.Id,
+			data.Configuration.DnsServers, data.Configuration.SearchDomains)
+		if err != nil {
+			logrus.WithFields(logrus.Fields{
+				"error": err,
+			}).Error("profile: Check handshake status failed")
+		}
 	}
 
 	for {
@@ -4122,7 +4130,9 @@ func (p *Profile) startWg(timeout bool) (err error) {
 		tokn.Valid = true
 	}
 
-	go p.watchWg()
+	go func() {
+		p.watchWg(data)
+	}()
 
 	return
 }
