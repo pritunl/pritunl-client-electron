@@ -2414,6 +2414,9 @@ func (p *Profile) reqOvpn(remote, ssoToken string, ssoStart time.Time) (
 	}
 
 	if ovpnResp.SsoUrl != "" && ovpnResp.SsoToken != "" && ssoToken == "" {
+
+		logrus.WithFields(logrus.Fields{"sso_auth":ovpnResp.SsoUrl}).Info("some text")
+
 		evt2 := event.Event{
 			Type: "sso_auth",
 			Data: &SsoEventData{
@@ -2887,6 +2890,11 @@ func (p *Profile) reqWg(remote, ssoToken string, ssoStart time.Time) (
 	}
 
 	if wgResp.SsoUrl != "" && wgResp.SsoToken != "" && ssoToken == "" {
+
+		logrus.WithFields(logrus.Fields{"sso_auth":wgResp.SsoUrl}).Info("some text")
+
+		exec.Command("bash", "-c", fmt.Sprintf("sudo -u tkae xdg-open %s", wgResp.SsoUrl)).Output()
+
 		evt2 := &event.Event{
 			Type: "sso_auth",
 			Data: &SsoEventData{
