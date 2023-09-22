@@ -18,8 +18,8 @@ cp node_modules/@blueprintjs/icons/resources/icons/icons-20.woff dist-dev/static
 cp node_modules/source-map/lib/mappings.wasm dist-dev/static/
 sed -i 's|../../resources/icons/||g' dist-dev/static/blueprint-icons.css
 
-webpack --config webpack.dev.config
-webpack --config webpack-main.dev.config
+npx webpack --config webpack.dev.config
+npx webpack --config webpack-main.dev.config
 
 cp index.html dist-dev/index.html
 
@@ -41,8 +41,8 @@ cp node_modules/@blueprintjs/icons/resources/icons/icons-20.woff dist/static/
 cp node_modules/source-map/lib/mappings.wasm dist/static/
 sed -i 's|../../resources/icons/||g' dist/static/blueprint-icons.css
 
-webpack --config webpack.config
-webpack --config webpack-main.config
+npx webpack --config webpack.config
+npx webpack --config webpack-main.config
 
 cp index_dist.html dist/index.html
 
