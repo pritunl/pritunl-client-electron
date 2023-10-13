@@ -2,9 +2,22 @@
 
 ```
 npm install
-cd ./node_modules/@github/webauthn-json/dist/
-ln -sf ./esm/* ./
-cd ../../../../
+```
+
+#### locked packages
+
+```
+@blueprintjs/core
+@blueprintjs/datetime
+@blueprintjs/icons
+@types/react
+@types/react-dom
+ace-builds
+react
+react-dom
+utf-8-validate
+ws
+webpack
 ```
 
 #### lint
