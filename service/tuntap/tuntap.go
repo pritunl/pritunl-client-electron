@@ -2,7 +2,6 @@ package tuntap
 
 import (
 	"fmt"
-	"path"
 	"path/filepath"
 	"runtime"
 	"sort"
@@ -21,6 +20,7 @@ var (
 	curTotalSize = 0
 	taps         = []string{}
 	tapsLock     = sync.Mutex{}
+	renameError  = false
 )
 
 func getToolpath() string {
@@ -56,7 +56,7 @@ func Configure() (err error) {
 		return
 	}
 
-	pth := path.Join(systemDir, "netsh.exe")
+	pth := filepath.Join(systemDir, "netsh.exe")
 
 	for i := 0; i < size; i++ {
 		_, _ = utils.ExecInputOutputCombindLogged(
@@ -101,7 +101,9 @@ func Get() (adpaters []string, count int, err error) {
 
 		count += 1
 
-		if !strings.Contains(strings.ToLower(line), "pritunl") {
+		if !renameError && !strings.Contains(
+			strings.ToLower(line), "pritunl") {
+
 			continue
 		}
 
@@ -153,33 +155,58 @@ func Resize(size int) (err error) {
 
 	add := size - curSize
 
+	output := ""
+
 	for i := 0; i < add; i++ {
 		tapName := fmt.Sprintf("Pritunl %d", curSize+1)
 
-		_, err = utils.ExecCombinedOutputLogged(
-			nil,
-			toolpath,
-			"create",
-			"--name", tapName,
-		)
-		if err != nil {
-			err = nil
-
-			_, _ = utils.ExecCombinedOutputLogged(
-				[]string{
-					"No devices",
-				},
+		if renameError {
+			output, err = utils.ExecCombinedOutputLogged(
+				nil,
 				toolpath,
-				"delete",
-				tapName,
+				"create",
 			)
-
-			_, err = utils.ExecCombinedOutputLogged(
+		} else {
+			output, err = utils.ExecCombinedOutputLogged(
 				nil,
 				toolpath,
 				"create",
 				"--name", tapName,
 			)
+		}
+		if err != nil {
+			err = nil
+
+			if strings.Contains(strings.ToLower(output), "renaming") {
+				if !renameError {
+					renameError = true
+					_ = Clean()
+				}
+			} else {
+				_, _ = utils.ExecCombinedOutputLogged(
+					[]string{
+						"No devices",
+					},
+					toolpath,
+					"delete",
+					tapName,
+				)
+			}
+
+			if renameError {
+				output, err = utils.ExecCombinedOutputLogged(
+					nil,
+					toolpath,
+					"create",
+				)
+			} else {
+				output, err = utils.ExecCombinedOutputLogged(
+					nil,
+					toolpath,
+					"create",
+					"--name", tapName,
+				)
+			}
 			if err != nil {
 				err = nil
 
