@@ -17,7 +17,7 @@ func Uninstall() {
 	cmd.Stderr = os.Stderr
 	cmd.Run()
 
-	err := TunTapClean()
+	err := TunTapClean(false)
 	if err != nil {
 		fmt.Println(err.Error())
 	}

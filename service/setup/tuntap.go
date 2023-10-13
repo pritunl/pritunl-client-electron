@@ -1,7 +1,7 @@
 package setup
 
 import (
-	"path"
+	"path/filepath"
 	"strings"
 
 	"github.com/dropbox/godropbox/errors"
@@ -10,14 +10,14 @@ import (
 )
 
 func TunTapPath() string {
-	return path.Join(RootDir(), "tuntap")
+	return filepath.Join(RootDir(), "tuntap")
 }
 
 func TapCtlPath() string {
-	return path.Join(TunTapPath(), "tapctl.exe")
+	return filepath.Join(TunTapPath(), "tapctl.exe")
 }
 
-func TunTapGet() (adpaters []string, err error) {
+func TunTapGet(all bool) (adpaters []string, err error) {
 	output, err := ExecOutput(
 		TunTapPath(),
 		TapCtlPath(),
@@ -36,7 +36,9 @@ func TunTapGet() (adpaters []string, err error) {
 
 		name := strings.ToLower(lines[1])
 
-		if name != "ethernet" && name != "local" && name != "pritunl" {
+		if !all && name != "ethernet" &&
+			name != "local" && name != "pritunl" {
+
 			continue
 		}
 
@@ -65,8 +67,8 @@ func TunTapInstall() (err error) {
 	return
 }
 
-func TunTapClean() (err error) {
-	adapters, err := TunTapGet()
+func TunTapClean(all bool) (err error) {
+	adapters, err := TunTapGet(all)
 	if err != nil {
 		return
 	}

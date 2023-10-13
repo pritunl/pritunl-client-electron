@@ -21,7 +21,7 @@ func Install() {
 		fmt.Println(err.Error())
 	}
 
-	err = TunTapClean()
+	err = TunTapClean(false)
 	if err != nil {
 		fmt.Println(err.Error())
 	}
