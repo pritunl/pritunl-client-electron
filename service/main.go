@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"fmt"
 	"net"
 	"net/http"
 	"os"
@@ -36,6 +37,7 @@ import (
 func main() {
 	install := flag.Bool("install", false, "run post install")
 	uninstall := flag.Bool("uninstall", false, "run pre uninstall")
+	clean := flag.Bool("clean", false, "clean up tuntap adapters")
 	devPtr := flag.Bool("dev", false, "development mode")
 	flag.Parse()
 
@@ -46,6 +48,14 @@ func main() {
 
 	if *uninstall {
 		setup.Uninstall()
+		return
+	}
+
+	if *clean {
+		err := setup.TunTapClean(true)
+		if err != nil {
+			fmt.Println(err.Error())
+		}
 		return
 	}
 
