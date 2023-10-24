@@ -35,7 +35,7 @@
     "request": "2.88.2"
   },
   "devDependencies": {
-    "electron": "25.2.0",
+    "electron": "25.8.4",
     "@electron/rebuild": "3.2.13",
     "electron-packager": "17.1.1",
     "rcedit": "3.0.1",
