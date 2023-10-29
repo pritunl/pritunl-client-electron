@@ -30,6 +30,7 @@ type Sprofile struct {
 	DeviceAuth         bool             `json:"device_auth"`
 	DisableGateway     bool             `json:"disable_gateway"`
 	DisableDns         bool             `json:"disable_dns"`
+	RestrictClient     bool             `json:"restrict_client"`
 	ForceDns           bool             `json:"force_dns"`
 	SsoAuth            bool             `json:"sso_auth"`
 	PasswordMode       string           `json:"password_mode"`
