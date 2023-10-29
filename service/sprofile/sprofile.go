@@ -58,6 +58,7 @@ type Sprofile struct {
 	DeviceAuth         bool     `json:"device_auth"`
 	DisableGateway     bool     `json:"disable_gateway"`
 	DisableDns         bool     `json:"disable_dns"`
+	RestrictClient     bool     `json:"restrict_client"`
 	ForceDns           bool     `json:"force_dns"`
 	SsoAuth            bool     `json:"sso_auth"`
 	PasswordMode       string   `json:"password_mode"`
@@ -95,6 +96,7 @@ type SprofileClient struct {
 	DeviceAuth         bool     `json:"device_auth"`
 	DisableGateway     bool     `json:"disable_Gateway"`
 	DisableDns         bool     `json:"disable_dns"`
+	RestrictClient     bool     `json:"restrict_client"`
 	ForceDns           bool     `json:"force_dns"`
 	SsoAuth            bool     `json:"sso_auth"`
 	PasswordMode       string   `json:"password_mode"`
@@ -135,6 +137,7 @@ func (s *Sprofile) Client() (sprflc *SprofileClient) {
 		DeviceAuth:         s.DeviceAuth,
 		DisableGateway:     s.DisableGateway,
 		DisableDns:         s.DisableDns,
+		RestrictClient:     s.RestrictClient,
 		ForceDns:           s.ForceDns,
 		SsoAuth:            s.SsoAuth,
 		PasswordMode:       s.PasswordMode,
@@ -189,6 +192,7 @@ func (s *Sprofile) Copy() (sprfl *Sprofile) {
 		DeviceAuth:         s.DeviceAuth,
 		DisableGateway:     s.DisableGateway,
 		DisableDns:         s.DisableDns,
+		RestrictClient:     s.RestrictClient,
 		ForceDns:           s.ForceDns,
 		SsoAuth:            s.SsoAuth,
 		PasswordMode:       s.PasswordMode,
@@ -360,6 +364,7 @@ func (s *Sprofile) syncUpdate(data string) (updated bool, err error) {
 		s.DeviceAuth = confData.DeviceAuth
 		s.DisableGateway = confData.DisableGateway
 		s.DisableDns = confData.DisableDns
+		s.RestrictClient = confData.RestrictClient
 		s.ForceDns = confData.ForceDns
 		s.SsoAuth = confData.SsoAuth
 		s.PasswordMode = confData.PasswordMode
