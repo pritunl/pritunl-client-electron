@@ -248,6 +248,7 @@ type Profile struct {
 	DeviceAuth         bool               `json:"-"`
 	DisableGateway     bool               `json:"-"`
 	DisableDns         bool               `json:"-"`
+	RestrictClient     bool               `json:"-"`
 	ForceDns           bool               `json:"-"`
 	SsoAuth            bool               `json:"-"`
 	ServerPublicKey    string             `json:"-"`

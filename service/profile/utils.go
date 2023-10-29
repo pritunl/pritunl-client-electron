@@ -265,6 +265,7 @@ func UpdateSystemProfile(prfl *Profile, sPrfl *sprofile.Sprofile) {
 	prfl.DeviceAuth = sPrfl.DeviceAuth
 	prfl.DisableGateway = sPrfl.DisableGateway
 	prfl.DisableDns = sPrfl.DisableDns
+	prfl.RestrictClient = sPrfl.RestrictClient
 	prfl.ForceDns = sPrfl.ForceDns
 	prfl.SsoAuth = sPrfl.SsoAuth
 	prfl.ServerPublicKey = serverPublicKey
