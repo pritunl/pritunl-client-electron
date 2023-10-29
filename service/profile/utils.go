@@ -33,22 +33,22 @@ func GetWgPath() string {
 
 		break
 	case "darwin":
-		path, _ := exec.LookPath("/usr/bin/wg")
-		if path != "" {
-			return path
+		exists, _ := utils.Exists("/usr/bin/wg")
+		if exists {
+			return "/usr/bin/wg"
 		}
 
-		path, _ = exec.LookPath("/usr/local/bin/wg")
-		if path != "" {
-			return path
+		exists, _ = utils.Exists("/usr/local/bin/wg")
+		if exists {
+			return "/usr/local/bin/wg"
 		}
 
-		path, _ = exec.LookPath("/opt/homebrew/bin/wg")
-		if path != "" {
-			return path
+		exists, _ = utils.Exists("/opt/homebrew/bin/wg")
+		if exists {
+			return "/opt/homebrew/bin/wg"
 		}
 
-		path, _ = exec.LookPath("wg")
+		path, _ := exec.LookPath("wg")
 		if path != "" {
 			return path
 		}
@@ -83,22 +83,22 @@ func GetWgQuickPath() string {
 
 		break
 	case "darwin":
-		path, _ := exec.LookPath("/usr/bin/wg-quick")
-		if path != "" {
-			return path
+		exists, _ := utils.Exists("/usr/bin/wg-quick")
+		if exists {
+			return "/usr/bin/wg-quick"
 		}
 
-		path, _ = exec.LookPath("/usr/local/bin/wg-quick")
-		if path != "" {
-			return path
+		exists, _ = utils.Exists("/usr/local/bin/wg-quick")
+		if exists {
+			return "/usr/local/bin/wg-quick"
 		}
 
-		path, _ = exec.LookPath("/opt/homebrew/bin/wg-quick")
-		if path != "" {
-			return path
+		exists, _ = utils.Exists("/opt/homebrew/bin/wg-quick")
+		if exists {
+			return "/opt/homebrew/bin/wg-quick"
 		}
 
-		path, _ = exec.LookPath("wg-quick")
+		path, _ := exec.LookPath("wg-quick")
 		if path != "" {
 			return path
 		}
@@ -153,8 +153,8 @@ func getOpenvpnPath() (pth string) {
 			pth = filepath.Join(string(os.PathSeparator), "Applications",
 				"Pritunl.app", "Contents", "Resources", "pritunl-openvpn10")
 		} else {
-			pth = filepath.Join(string(os.PathSeparator), "Applications",
-				"Pritunl.app", "Contents", "Resources", "pritunl-openvpn")
+			pth = filepath.Join(utils.GetRootDir(), "..",
+				"openvpn_macos", "openvpn_arm64")
 		}
 		break
 	case "linux":
