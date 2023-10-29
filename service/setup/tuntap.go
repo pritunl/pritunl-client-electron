@@ -7,6 +7,7 @@ import (
 	"github.com/dropbox/godropbox/errors"
 	"github.com/pritunl/pritunl-client-electron/service/command"
 	"github.com/pritunl/pritunl-client-electron/service/errortypes"
+	"github.com/pritunl/pritunl-client-electron/service/utils"
 )
 
 func TunTapPath() string {
@@ -14,6 +15,14 @@ func TunTapPath() string {
 }
 
 func TapCtlPath() string {
+	pth := filepath.Join(utils.GetRootDir(), "..",
+		"tuntap_win", "tapctl.exe")
+
+	exists, _ := utils.ExistsFile(pth)
+	if exists {
+		return pth
+	}
+
 	return filepath.Join(TunTapPath(), "tapctl.exe")
 }
 
