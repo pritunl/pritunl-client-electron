@@ -67,12 +67,10 @@ func main() {
 
 	cmd = exec.Command(signtool,
 		"sign",
-		"/a",
-		"/n", "Pritunl",
-		"/tr", "http://timestamp.digicert.com",
+		"/sha1", "055219bfb2cfe0b43a7e653da125b2f74bbe3003",
+		"/tr", "http://timestamp.sectigo.com",
 		"/td", "sha256",
 		"/fd", "sha256",
-		"/d", "Pritunl",
 		"service.exe",
 	)
 	cmd.Stdout = os.Stdout
@@ -150,12 +148,10 @@ func main() {
 
 	cmd = exec.Command(signtool,
 		"sign",
-		"/a",
-		"/n", "Pritunl",
-		"/tr", "http://timestamp.digicert.com",
+		"/sha1", "055219bfb2cfe0b43a7e653da125b2f74bbe3003",
+		"/tr", "http://timestamp.sectigo.com",
 		"/td", "sha256",
 		"/fd", "sha256",
-		"/d", "Pritunl",
 		"pritunl.exe",
 	)
 	cmd.Stdout = os.Stdout
