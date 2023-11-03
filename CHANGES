@@ -1,7 +1,8 @@
 Pritunl Client Changelog
 ========================
 
-<%= version %>
+Version 1.3.3704.98 2023-11-03
+------------------------------
 
 Fix network adapter issues on Windows
 
