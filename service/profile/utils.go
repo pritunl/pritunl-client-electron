@@ -153,8 +153,8 @@ func getOpenvpnPath() (pth string) {
 			pth = filepath.Join(string(os.PathSeparator), "Applications",
 				"Pritunl.app", "Contents", "Resources", "pritunl-openvpn10")
 		} else {
-			pth = filepath.Join(utils.GetRootDir(), "..",
-				"openvpn_macos", "openvpn_arm64")
+			pth = filepath.Join(string(os.PathSeparator), "Applications",
+				"Pritunl.app", "Contents", "Resources", "pritunl-openvpn")
 		}
 		break
 	case "linux":
