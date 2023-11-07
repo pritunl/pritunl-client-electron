@@ -20,7 +20,7 @@ codesign --force --timestamp --options=runtime -s "Developer ID Application: Pri
 # Device Auth
 cd service_macos
 rm -f "Pritunl Device Authentication"
-swiftc -sdk /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -target arm64-apple-macos11 -framework CryptoKit -framework LocalAuthentication -framework Security -framework Foundation device_auth.swift -o "Pritunl Device Authentication"
+swiftc -sdk $(xcrun --show-sdk-path --sdk macosx) -target arm64-apple-macos11 -framework CryptoKit -framework LocalAuthentication -framework Security -framework Foundation device_auth.swift -o "Pritunl Device Authentication"
 cp "Pritunl Device Authentication" "../build/resources/Pritunl Device Authentication"
 codesign --force --timestamp --options=runtime -s "Developer ID Application: Pritunl, Inc. (U22BLATN63)" "Pritunl Device Authentication"
 cd ..
