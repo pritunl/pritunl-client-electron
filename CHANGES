@@ -1,6 +1,10 @@
 Pritunl Client Changelog
 ========================
 
+<%= version %>
+
+Fix macOS device authentication compatibility issues
+
 Version 1.3.3705.92 2023-11-04
 ------------------------------
 
