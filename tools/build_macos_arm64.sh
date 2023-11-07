@@ -20,7 +20,7 @@ codesign --force --timestamp --options=runtime -s "Developer ID Application: Pri
 # Device Auth
 cd service_macos
 rm -f "Pritunl Device Authentication"
-swiftc device_auth.swift -o "Pritunl Device Authentication"
+swiftc -sdk /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -target arm64-apple-macos11 -framework CryptoKit -framework LocalAuthentication -framework Security -framework Foundation device_auth.swift -o "Pritunl Device Authentication"
 cp "Pritunl Device Authentication" "../build/resources/Pritunl Device Authentication"
 codesign --force --timestamp --options=runtime -s "Developer ID Application: Pritunl, Inc. (U22BLATN63)" "Pritunl Device Authentication"
 cd ..
@@ -62,6 +62,8 @@ npm install
   --osx-sign.identity="Developer ID Application: Pritunl, Inc. (U22BLATN63)" \
   --osx-notarize.appleId="contact@pritunl.com" \
   --osx-notarize.appleIdPassword="@keychain:xcode" \
+  --osx-notarize.teamId="U22BLATN63" \
+  --osx-notarize.tool="notarytool" \
   --out=../build/macos/Applications
 
 cd ../
@@ -91,8 +93,6 @@ zip Pritunl.arm64.pkg.zip Pritunl.arm64.pkg
 rm -f Build.pkg
 
 # Notarize
-xcrun altool --notarize-app --primary-bundle-id "com.pritunl.client.electron.pkg" --username "contact@pritunl.com" --password "@keychain:xcode" --asc-provider U22BLATN63 --file Pritunl.arm64.pkg
-#sleep 3
-#xcrun altool --notarize-app --primary-bundle-id "com.pritunl.client.electron.zip" --username "contact@pritunl.com" --password "@keychain:xcode" --asc-provider U22BLATN63 --file Pritunl.arm64.pkg.zip
+xcrun notarytool submit Pritunl.arm64.pkg --keychain-profile "xcode" --apple-id "contact@pritunl.com" --team-id U22BLATN63 --output-format json
 sleep 10
-xcrun altool --notarization-history 0 --username "contact@pritunl.com" --password "@keychain:xcode"
+xcrun notarytool history 0 --team-id U22BLATN63
