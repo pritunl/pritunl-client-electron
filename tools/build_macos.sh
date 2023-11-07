@@ -63,9 +63,7 @@ npm install
   --osx-sign.entitlements-inherit="/Users/apple/go/src/github.com/pritunl/pritunl-client-electron/resources_macos/entitlements.plist" \
   --osx-sign.entitlementsInherit="/Users/apple/go/src/github.com/pritunl/pritunl-client-electron/resources_macos/entitlements.plist" \
   --osx-sign.identity="Developer ID Application: Pritunl, Inc. (U22BLATN63)" \
-  --osx-notarize.appleId="contact@pritunl.com" \
-  --osx-notarize.appleIdPassword="@keychain:xcode" \
-  --osx-notarize.teamId="U22BLATN63" \
+  --osx-notarize.keychainProfile="Pritunl" \
   --osx-notarize.tool="notarytool" \
   --out=../build/macos/Applications
 
@@ -96,6 +94,6 @@ zip Pritunl.pkg.zip Pritunl.pkg
 rm -f Build.pkg
 
 # Notarize
-xcrun notarytool submit Pritunl.pkg --keychain-profile "xcode" --apple-id "contact@pritunl.com" --team-id U22BLATN63 --output-format json
+xcrun notarytool submit Pritunl.pkg --keychain-profile "Pritunl" --apple-id "contact@pritunl.com" --team-id U22BLATN63 --output-format json
 sleep 10
-xcrun notarytool history 0 --team-id U22BLATN63
+xcrun notarytool history --keychain-profile "Pritunl" --apple-id "contact@pritunl.com" --team-id U22BLATN63
