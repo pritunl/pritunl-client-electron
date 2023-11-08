@@ -7,4 +7,5 @@ const (
 var (
 	Development = false
 	Macos10     = false
+	Interrupt   = false
 )
