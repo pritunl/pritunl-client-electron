@@ -640,8 +640,6 @@ func ResetNetworking() {
 			}).Error("utils: Reset networking error")
 		}
 
-		command.Command("route", "-n", "flush").Run()
-
 		err = command.Command(
 			"/usr/sbin/networksetup",
 			"-switchtolocation",
@@ -655,8 +653,6 @@ func ResetNetworking() {
 				"error": err,
 			}).Error("utils: Reset networking error")
 		}
-
-		command.Command("route", "-n", "flush").Run()
 
 		err = command.Command(
 			"/usr/sbin/networksetup",
