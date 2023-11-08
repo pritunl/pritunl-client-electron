@@ -14907,7 +14907,7 @@ const Config = new ConfigData();
 
 
 let deviceAuthPath = external_path_default().join("/", "Applications", "Pritunl.app", "Contents", "Resources", "Pritunl Device Authentication");
-if (external_process_default().argv.indexOf("--dev")) {
+if (external_process_default().argv.indexOf("--dev") !== -1) {
     deviceAuthPath = external_path_default().join(__dirname, "..", "..", "..", "service_macos", "Pritunl Device Authentication");
 }
 let procs = {};
