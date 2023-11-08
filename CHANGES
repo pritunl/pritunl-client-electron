@@ -1,6 +1,10 @@
 Pritunl Client Changelog
 ========================
 
+<%= version %>
+
+Fix macOS service issues
+
 Version 1.3.3708.51 2023-11-07
 ------------------------------
 
