@@ -3,12 +3,12 @@ package config
 import (
 	"encoding/json"
 	"io/ioutil"
-	"os"
 	"path/filepath"
 
 	"github.com/dropbox/godropbox/errors"
 	"github.com/pritunl/pritunl-client-electron/service/errortypes"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
+	"github.com/sirupsen/logrus"
 )
 
 var (
@@ -67,19 +67,15 @@ func (c *ConfigData) Save() (err error) {
 func Load() (err error) {
 	data := &ConfigData{}
 
-	pth := GetPath()
-
-	_, err = os.Stat(pth)
+	pth, exists, move, err := FindPath()
 	if err != nil {
-		if os.IsNotExist(err) {
-			err = nil
-			data.loaded = true
-			Config = data
-		} else {
-			err = &errortypes.ReadError{
-				errors.Wrap(err, "config: File stat error"),
-			}
-		}
+		return
+	}
+
+	if !exists {
+		err = nil
+		data.loaded = true
+		Config = data
 		return
 	}
 
@@ -102,6 +98,20 @@ func Load() (err error) {
 	data.loaded = true
 
 	Config = data
+
+	if move {
+		newPath := GetPath()
+
+		logrus.WithFields(logrus.Fields{
+			"old_path": pth,
+			"new_path": newPath,
+		}).Info("config: Moving config path")
+
+		err = Save()
+		if err != nil {
+			return
+		}
+	}
 
 	return
 }
