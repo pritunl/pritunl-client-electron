@@ -22,7 +22,6 @@ import (
 	"github.com/dropbox/godropbox/container/set"
 	"github.com/dropbox/godropbox/errors"
 	"github.com/pritunl/pritunl-client-electron/service/command"
-	"github.com/pritunl/pritunl-client-electron/service/constants"
 	"github.com/pritunl/pritunl-client-electron/service/errortypes"
 	"github.com/pritunl/pritunl-client-electron/service/platform"
 	"github.com/sirupsen/logrus"
@@ -861,15 +860,6 @@ func GetWinDrive() string {
 }
 
 func GetAuthPath() (pth string) {
-	if constants.Development {
-		pth = filepath.Join(GetRootDir(), "..", "dev")
-
-		_ = os.MkdirAll(pth, 0755)
-
-		pth = filepath.Join(pth, "auth")
-		return
-	}
-
 	switch runtime.GOOS {
 	case "windows":
 		pth = filepath.Join(GetWinDrive(), "ProgramData", "Pritunl")
@@ -890,15 +880,6 @@ func GetAuthPath() (pth string) {
 }
 
 func GetLogPath() (pth string) {
-	if constants.Development {
-		pth = filepath.Join(GetRootDir(), "..", "dev", "log")
-
-		_ = os.MkdirAll(pth, 0755)
-
-		pth = filepath.Join(pth, "pritunl-client.log")
-		return
-	}
-
 	switch runtime.GOOS {
 	case "windows":
 		pth = filepath.Join(GetWinDrive(), "ProgramData", "Pritunl")
@@ -919,15 +900,6 @@ func GetLogPath() (pth string) {
 }
 
 func GetLogPath2() (pth string) {
-	if constants.Development {
-		pth = filepath.Join(GetRootDir(), "..", "dev", "log")
-
-		_ = os.MkdirAll(pth, 0755)
-
-		pth = filepath.Join(pth, "pritunl-client.log.1")
-		return
-	}
-
 	switch runtime.GOOS {
 	case "windows":
 		pth = filepath.Join(GetWinDrive(), "ProgramData", "Pritunl")
@@ -948,16 +920,7 @@ func GetLogPath2() (pth string) {
 }
 
 func InitTempDir() (err error) {
-	if constants.Development {
-		pth := filepath.Join(GetRootDir(), "..", "dev", "tmp")
-		err = os.MkdirAll(pth, 0755)
-		if err != nil {
-			err = &IoError{
-				errors.Wrap(err, "utils: Failed to create temp directory"),
-			}
-			return
-		}
-	} else if runtime.GOOS != "windows" {
+	if runtime.GOOS != "windows" {
 		pth := filepath.Join(string(filepath.Separator), "tmp", "pritunl")
 
 		_ = os.RemoveAll(pth)
@@ -974,12 +937,6 @@ func InitTempDir() (err error) {
 }
 
 func GetTempDir() (pth string, err error) {
-	if constants.Development {
-		pth = filepath.Join(GetRootDir(), "..", "dev", "tmp")
-		err = os.MkdirAll(pth, 0755)
-		return
-	}
-
 	if runtime.GOOS == "windows" {
 		pth = filepath.Join(GetWinDrive(), "ProgramData", "Pritunl", "Temp")
 		err = platform.MkdirSecure(pth)
@@ -1006,15 +963,6 @@ func GetTempDir() (pth string, err error) {
 }
 
 func GetPidPath() (pth string) {
-	if constants.Development {
-		pth = filepath.Join(GetRootDir(), "..", "dev")
-
-		_ = os.MkdirAll(pth, 0755)
-
-		pth = filepath.Join(pth, "pritunl.pid")
-		return
-	}
-
 	switch runtime.GOOS {
 	case "linux", "darwin":
 		pth = filepath.Join(string(filepath.Separator),

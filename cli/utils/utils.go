@@ -8,7 +8,6 @@ import (
 	"runtime"
 
 	"github.com/dropbox/godropbox/errors"
-	"github.com/pritunl/pritunl-client-electron/cli/constants"
 	"github.com/pritunl/pritunl-client-electron/cli/errortypes"
 )
 
@@ -46,22 +45,6 @@ func GetRootDir() (pth string) {
 }
 
 func GetAuthPath() (pth string) {
-	if constants.Development {
-		pth = filepath.Join(GetRootDir(), "..", "dev")
-
-		err := os.MkdirAll(pth, 0755)
-		if err != nil {
-			err = &errortypes.ReadError{
-				errors.Wrap(err, "utils: Failed to create dev directory"),
-			}
-			panic(err)
-		}
-
-		pth = filepath.Join(pth, "auth")
-
-		return
-	}
-
 	switch runtime.GOOS {
 	case "windows":
 		pth = filepath.Join(GetWinDrive(), "ProgramData", "Pritunl", "auth")
