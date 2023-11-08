@@ -13608,16 +13608,11 @@ if ((external_process_default()).platform === "linux" || (external_process_defau
     unix = true;
 }
 function getAuthPath() {
-    if (external_process_default().argv.indexOf("--dev") !== -1) {
-        return external_path_default().join(__dirname, "..", "..", "dev", "auth");
+    if ((external_process_default()).platform === "win32") {
+        return external_path_default().join(winDrive, "ProgramData", "Pritunl", "auth");
     }
     else {
-        if ((external_process_default()).platform === "win32") {
-            return external_path_default().join(winDrive, "ProgramData", "Pritunl", "auth");
-        }
-        else {
-            return external_path_default().join((external_path_default()).sep, "var", "run", "pritunl.auth");
-        }
+        return external_path_default().join((external_path_default()).sep, "var", "run", "pritunl.auth");
     }
 }
 function _load() {
@@ -14653,7 +14648,7 @@ let authAttempts = 0;
 let connAttempts = 0;
 let dialogShown = false;
 let curSocket = "";
-function connect(dev) {
+function connect() {
     let socketId = MiscUtils_uuid();
     curSocket = socketId;
     return new Promise(async (resolve, reject) => {
@@ -14677,7 +14672,7 @@ function connect(dev) {
                             authAttempts = 0;
                             connAttempts = 0;
                             dialogShown = false;
-                            connect(dev);
+                            connect();
                         }
                         else {
                             external_electron_default().app.quit();
@@ -14688,7 +14683,7 @@ function connect(dev) {
             else {
                 authAttempts += 1;
                 setTimeout(() => {
-                    connect(dev);
+                    connect();
                 }, 500);
             }
             return;
@@ -14727,7 +14722,7 @@ function connect(dev) {
                                 authAttempts = 0;
                                 connAttempts = 0;
                                 dialogShown = false;
-                                connect(dev);
+                                connect();
                             }
                             else {
                                 external_electron_default().app.quit();
@@ -14738,7 +14733,7 @@ function connect(dev) {
                 else {
                     connAttempts += 1;
                 }
-                connect(dev);
+                connect();
             }, 1000);
         };
         socket = new wrapper(wsHost + "/events", {
@@ -15292,9 +15287,7 @@ class Main {
         else {
             indexUrl = "file://" + external_path_default().join(__dirname, "..", "index.html");
         }
-        indexUrl += "?dev=" + (external_process_default().argv.indexOf("--dev") !== -1 ?
-            "true" : "false");
-        indexUrl += "&dataPath=" + encodeURIComponent(external_electron_default().app.getPath("userData"));
+        indexUrl += "?dataPath=" + encodeURIComponent(external_electron_default().app.getPath("userData"));
         indexUrl += "&frameless=" + (framelessClient ? "true" : "false");
         this.window.loadURL(indexUrl, {
             userAgent: "pritunl",
@@ -15417,7 +15410,7 @@ function init() {
         return;
     }
     main_Config.load().then(() => {
-        connect(external_process_default().argv.indexOf("--dev") !== -1).then(() => {
+        connect().then(() => {
             if (external_process_default().argv.indexOf("--no-main") !== -1) {
                 if (main_Config.disable_tray_icon) {
                     external_electron_default().app.quit();
