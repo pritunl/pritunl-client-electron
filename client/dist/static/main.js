@@ -14905,7 +14905,11 @@ const Config = new ConfigData();
 
 
 
+
 let deviceAuthPath = external_path_default().join("/", "Applications", "Pritunl.app", "Contents", "Resources", "Pritunl Device Authentication");
+if (external_process_default().argv.indexOf("--dev")) {
+    deviceAuthPath = external_path_default().join(__dirname, "..", "..", "..", "service_macos", "Pritunl Device Authentication");
+}
 let procs = {};
 function Tpm_open(callerId, privKey64) {
     let proc = external_child_process_default().execFile(deviceAuthPath);
@@ -15287,7 +15291,9 @@ class Main {
         else {
             indexUrl = "file://" + external_path_default().join(__dirname, "..", "index.html");
         }
-        indexUrl += "?dataPath=" + encodeURIComponent(external_electron_default().app.getPath("userData"));
+        indexUrl += "?dev=" + (external_process_default().argv.indexOf("--dev") !== -1 ?
+            "true" : "false");
+        indexUrl += "&dataPath=" + encodeURIComponent(external_electron_default().app.getPath("userData"));
         indexUrl += "&frameless=" + (framelessClient ? "true" : "false");
         this.window.loadURL(indexUrl, {
             userAgent: "pritunl",
