@@ -21,6 +21,7 @@ export const hostname = os.hostname()
 export const args = new Map<string, string>();
 export let production = true;
 export let authPath = '';
+export let deviceAuthPath = '';
 export let frameless = false
 
 export let winDrive = 'C:\\';
@@ -48,13 +49,12 @@ for (let item of queryVals) {
 
 if (args.get('dev') === 'true') {
 	production = false;
-	authPath = path.join(__dirname, '..', '..', 'dev', 'auth');
+}
+
+if (process.platform === 'win32') {
+	authPath = path.join(winDrive, 'ProgramData', 'Pritunl', 'auth');
 } else {
-	if (process.platform === 'win32') {
-		authPath = path.join(winDrive, 'ProgramData', 'Pritunl', 'auth');
-	} else {
-		authPath = path.join(path.sep, 'var', 'run', 'pritunl.auth');
-	}
+	authPath = path.join(path.sep, 'var', 'run', 'pritunl.auth');
 }
 
 if (args.get("frameless") === "true") {
