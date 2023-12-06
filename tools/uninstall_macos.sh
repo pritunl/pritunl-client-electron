@@ -20,7 +20,7 @@ sudo rm -f /private/var/db/receipts/com.pritunl.pkg.Pritunl.bom
 sudo rm -f /private/var/db/receipts/com.pritunl.pkg.Pritunl.plist
 
 # Profiles
-rm -rf ~/Library/Application Support/pritunl
+sudo rm -rf /Library/Application\ Support/Pritunl
 rm -rf ~/Library/Caches/pritunl
 rm -rf ~/Library/Preferences/com.electron.pritunl.plist
 
