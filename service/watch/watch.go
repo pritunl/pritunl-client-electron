@@ -194,8 +194,8 @@ func dnsWatch() {
 
 		check = 2
 		errorCount = 0
-		global, _ := utils.GetScutilKey("State", "/Network/Global/DNS")
 
+		global, _ := utils.GetScutilKey("State", utils.PritunlScutilKey)
 		if strings.Contains(global, "No such key") {
 			continue
 		}
@@ -269,13 +269,6 @@ func dnsWatch() {
 			}).Warn("watch: Lost DNS settings updating...")
 
 			restartLock.Lock()
-
-			err = utils.BackupScutilDns()
-			if err != nil {
-				logrus.WithFields(logrus.Fields{
-					"error": err,
-				}).Error("watch: Failed to backup DNS settings")
-			}
 
 			err = utils.RestoreScutilDns(false)
 			if err != nil {
