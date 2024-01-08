@@ -33,6 +33,10 @@ var (
 	macDnsLock       = sync.Mutex{}
 )
 
+const (
+	PritunlScutilKey = "/Network/Service/Pritunl/DNS"
+)
+
 func init() {
 	lockedInterfaces = set.NewSet()
 }
@@ -183,11 +187,6 @@ func RemoveScutilKey(typ, key string) (err error) {
 func SetScutilDns(connId string, addresses, domains []string) (err error) {
 	logrus.Info("utils: Configure DNS")
 
-	serviceId, err := GetScutilService()
-	if err != nil {
-		return
-	}
-
 	macDnsLock.Lock()
 	defer macDnsLock.Unlock()
 
@@ -197,14 +196,16 @@ func SetScutilDns(connId string, addresses, domains []string) (err error) {
 			"d.init\n"+
 			"d.add ServerAddresses * %s\n"+
 			"d.add SearchDomains * %s\n"+
-			"d.add Pritunl true\n"+
-			"remove State:/Network/Service/%s/DNS\n"+
-			"set State:/Network/Service/%s/DNS\n"+
-			"set Setup:/Network/Service/%s/DNS\n"+
+			"d.add SupplementalMatchDomains \"\"\n"+
+			"remove State:%s\n"+
+			"remove Setup:%s\n"+
+			"set State:%s\n"+
+			"set Setup:%s\n"+
 			"set State:/Network/Pritunl/Connection/%s\n"+
 			"quit\n",
 			strings.Join(addresses, " "), strings.Join(domains, " "),
-			serviceId, serviceId, serviceId, connId))
+			PritunlScutilKey, PritunlScutilKey, PritunlScutilKey,
+			PritunlScutilKey, connId))
 
 	err = cmd.Run()
 	if err != nil {
@@ -320,52 +321,12 @@ func CopyClearScutilMultiKey(typ, src string, dsts ...*ScutilKey) (
 	return
 }
 
-func GetScutilService() (serviceId string, err error) {
-	for i := 0; i < 80; i++ {
-		data, e := GetScutilKey("State", "/Network/Global/IPv4")
-		if e != nil {
-			err = e
-			return
-		}
-
-		dataSpl := strings.Split(data, "PrimaryService :")
-		if len(dataSpl) < 2 {
-			if i < 79 {
-				time.Sleep(250 * time.Millisecond)
-				continue
-			}
-
-			logrus.WithFields(logrus.Fields{
-				"output": data,
-			}).Error("utils: Failed to find primary service from scutil")
-
-			err = &CommandError{
-				errors.New(
-					"utils: Failed to find primary service from scutil"),
-			}
-			return
-		}
-
-		serviceId = strings.Split(dataSpl[1], "\n")[0]
-		serviceId = strings.TrimSpace(serviceId)
-
-		break
-	}
-
-	return
-}
-
 func RestoreScutilDns(force bool) (err error) {
 	if runtime.GOOS != "darwin" {
 		return
 	}
 
 	logrus.Info("utils: Restore DNS")
-
-	serviceId, err := GetScutilService()
-	if err != nil {
-		return
-	}
 
 	connIds, err := GetScutilConnIds()
 	if err != nil {
@@ -377,67 +338,40 @@ func RestoreScutilDns(force bool) (err error) {
 	if connected && !force {
 		restoreKey = fmt.Sprintf(
 			"/Network/Pritunl/Connection/%s", connIds[0])
-	} else {
-		restoreKey = fmt.Sprintf(
-			"/Network/Pritunl/Restore/%s", serviceId)
 	}
 
-	serviceKey := fmt.Sprintf("/Network/Service/%s/DNS", serviceId)
-
-	if !connected {
-		data, e := GetScutilKey("State", serviceKey)
-		if e != nil {
-			err = e
-			return
-		}
-
-		data2, e := GetScutilKey("Setup", serviceKey)
-		if e != nil {
-			err = e
-			return
-		}
-
-		if !strings.Contains(data, "Pritunl : true") &&
-			!strings.Contains(data2, "Pritunl : true") {
-
-			logrus.WithFields(logrus.Fields{
-				"restore_key": restoreKey,
-				"service_key": serviceKey,
-			}).Info("utils: DNS not active")
-			return
-		}
-
-		data, err = GetScutilKey("State", restoreKey)
+	if restoreKey != "" {
+		err = CopyClearScutilMultiKey(
+			"State", restoreKey,
+			&ScutilKey{
+				Type: "State",
+				Key:  PritunlScutilKey,
+			},
+			&ScutilKey{
+				Type: "Setup",
+				Key:  PritunlScutilKey,
+			},
+		)
 		if err != nil {
 			return
 		}
-
-		if strings.Contains(data, "No such key") {
+	} else {
+		err = RemoveScutilKey("State", PritunlScutilKey)
+		if err != nil {
 			logrus.WithFields(logrus.Fields{
-				"restore_key": restoreKey,
-				"service_key": serviceKey,
-			}).Error("utils: Failed to find restore key")
-
-			err = &errortypes.NotFoundError{
-				errors.New("utils: Restore key not found"),
-			}
+				"type": "State",
+				"key":  PritunlScutilKey,
+			}).Error("utils: Failed to clear DNS service")
 			return
 		}
-	}
-
-	err = CopyClearScutilMultiKey(
-		"State", restoreKey,
-		&ScutilKey{
-			Type: "State",
-			Key:  serviceKey,
-		},
-		&ScutilKey{
-			Type: "Setup",
-			Key:  serviceKey,
-		},
-	)
-	if err != nil {
-		return
+		err = RemoveScutilKey("Setup", PritunlScutilKey)
+		if err != nil {
+			logrus.WithFields(logrus.Fields{
+				"type": "Setup",
+				"key":  PritunlScutilKey,
+			}).Error("utils: Failed to clear DNS service")
+			return
+		}
 	}
 
 	ClearDNSCache()
@@ -450,22 +384,17 @@ func RefreshScutilDns() (err error) {
 		return
 	}
 
-	serviceId, err := GetScutilService()
-	if err != nil {
-		return
-	}
-
-	serviceKey := fmt.Sprintf("/Network/Service/%s/DNS", serviceId)
+	logrus.Info("utils: Refresh DNS")
 
 	err = CopyClearScutilMultiKey(
-		"State", serviceKey,
+		"State", PritunlScutilKey,
 		&ScutilKey{
 			Type: "State",
-			Key:  serviceKey,
+			Key:  PritunlScutilKey,
 		},
 		&ScutilKey{
 			Type: "Setup",
-			Key:  serviceKey,
+			Key:  PritunlScutilKey,
 		},
 	)
 	if err != nil {
@@ -473,38 +402,6 @@ func RefreshScutilDns() (err error) {
 	}
 
 	ClearDNSCacheFast()
-
-	return
-}
-
-func BackupScutilDns() (err error) {
-	if runtime.GOOS != "darwin" {
-		return
-	}
-
-	serviceId, err := GetScutilService()
-	if err != nil {
-		return
-	}
-
-	restoreKey := fmt.Sprintf("/Network/Pritunl/Restore/%s", serviceId)
-	serviceKey := fmt.Sprintf("/Network/Service/%s/DNS", serviceId)
-
-	data, err := GetScutilKey("State", serviceKey)
-	if err != nil {
-		return
-	}
-
-	if strings.Contains(data, "No such key") ||
-		strings.Contains(data, "Pritunl : true") {
-
-		return
-	}
-
-	err = CopyScutilKey("State", serviceKey, restoreKey)
-	if err != nil {
-		return
-	}
 
 	return
 }
