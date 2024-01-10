@@ -3817,6 +3817,7 @@ func (p *Profile) startWg(timeout bool) (err error) {
 
 	remotesSet := set.NewSet()
 	remotes := []string{}
+	attemptedHosts := []string{}
 	syncRemotesSet := set.NewSet()
 	syncRemotes := []string{}
 	p.PrivateKey = ""
@@ -3918,6 +3919,7 @@ func (p *Profile) startWg(timeout bool) (err error) {
 
 	for _, i := range mathrand.Perm(len(syncRemotes)) {
 		remote := syncRemotes[i]
+		attemptedHosts = append(attemptedHosts, remote)
 
 		data, final, evt, err = p.reqWg(remote, "", time.Time{})
 		if err == nil || final {
@@ -3933,6 +3935,7 @@ func (p *Profile) startWg(timeout bool) (err error) {
 	if err != nil {
 		for _, i := range mathrand.Perm(len(remotes)) {
 			remote := remotes[i]
+			attemptedHosts = append(attemptedHosts, remote)
 
 			data, final, evt, err = p.reqWg(remote, "", time.Time{})
 			if err == nil || final {
@@ -3958,6 +3961,7 @@ func (p *Profile) startWg(timeout bool) (err error) {
 		}
 
 		logrus.WithFields(logrus.Fields{
+			"hosts": attemptedHosts,
 			"error": err,
 		}).Error("profile: Request wg connection failed")
 		err = nil
