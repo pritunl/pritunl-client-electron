@@ -43,6 +43,7 @@ var ListCmd = &cobra.Command{
 						State:           sprfl.FormatedState(),
 						RunState:        sprfl.FormatedRunState(),
 						RegistrationKey: sprfl.RegistrationKey,
+						Connected:       sprfl.Profile.ClientAddr != "",
 						Uptime:          sprfl.Profile.Uptime(),
 						Status:          sprfl.Profile.FormatedTime(),
 						ServerAddress:   sprfl.Profile.ServerAddr,
