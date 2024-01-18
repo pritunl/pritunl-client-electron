@@ -279,7 +279,7 @@ func dnsWatch() {
 
 			restartLock.Unlock()
 		} else if utils.SinceAbs(lastDnsRefresh) >= 30*time.Second &&
-			!config.Config.DisableDnsRefresh {
+			config.Config.EnableDnsRefresh {
 
 			lastDnsRefresh = time.Now()
 
