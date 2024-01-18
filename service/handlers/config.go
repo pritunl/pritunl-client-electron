@@ -9,22 +9,22 @@ import (
 )
 
 type configData struct {
-	DisableDnsWatch   bool `json:"disable_dns_watch"`
-	DisableDnsRefresh bool `json:"disable_dns_refresh"`
-	DisableWakeWatch  bool `json:"disable_wake_watch"`
-	DisableNetClean   bool `json:"disable_net_clean"`
-	EnableWgDns       bool `json:"enable_wg_dns"`
-	InterfaceMetric   int  `json:"interface_metric"`
+	DisableDnsWatch  bool `json:"disable_dns_watch"`
+	EnableDnsRefresh bool `json:"enable_dns_refresh"`
+	DisableWakeWatch bool `json:"disable_wake_watch"`
+	DisableNetClean  bool `json:"disable_net_clean"`
+	EnableWgDns      bool `json:"enable_wg_dns"`
+	InterfaceMetric  int  `json:"interface_metric"`
 }
 
 func configGet(c *gin.Context) {
 	data := &configData{
-		DisableDnsWatch:   config.Config.DisableDnsWatch,
-		DisableDnsRefresh: config.Config.DisableDnsRefresh,
-		DisableWakeWatch:  config.Config.DisableWakeWatch,
-		DisableNetClean:   config.Config.DisableNetClean,
-		EnableWgDns:       config.Config.EnableWgDns,
-		InterfaceMetric:   config.Config.InterfaceMetric,
+		DisableDnsWatch:  config.Config.DisableDnsWatch,
+		EnableDnsRefresh: config.Config.EnableDnsRefresh,
+		DisableWakeWatch: config.Config.DisableWakeWatch,
+		DisableNetClean:  config.Config.DisableNetClean,
+		EnableWgDns:      config.Config.EnableWgDns,
+		InterfaceMetric:  config.Config.InterfaceMetric,
 	}
 
 	c.JSON(200, data)
@@ -43,7 +43,7 @@ func configPut(c *gin.Context) {
 	}
 
 	config.Config.DisableDnsWatch = data.DisableDnsWatch
-	config.Config.DisableDnsRefresh = data.DisableDnsRefresh
+	config.Config.EnableDnsRefresh = data.EnableDnsRefresh
 	config.Config.DisableWakeWatch = data.DisableWakeWatch
 	config.Config.DisableNetClean = data.DisableNetClean
 	config.Config.EnableWgDns = data.EnableWgDns
