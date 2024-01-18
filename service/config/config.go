@@ -21,7 +21,7 @@ type ConfigData struct {
 	path              string `json:"-"`
 	loaded            bool   `json:"-"`
 	DisableDnsWatch   bool   `json:"disable_dns_watch"`
-	DisableDnsRefresh bool   `json:"disable_dns_refresh"`
+	EnableDnsRefresh  bool   `json:"enable_dns_refresh"`
 	DisableWakeWatch  bool   `json:"disable_wake_watch"`
 	DisableNetClean   bool   `json:"disable_net_clean"`
 	EnableWgDns       bool   `json:"enable_wg_dns"`
