@@ -147,6 +147,66 @@ func main() {
 	}
 
 	cmd = exec.Command(signtool,
+		"npx", "@electron/fuses",
+		"write", "--app", "pritunl.exe",
+		"EnableNodeOptionsEnvironmentVariable=off",
+	)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err = cmd.Run()
+	if err != nil {
+		panic(err)
+	}
+
+	cmd = exec.Command(signtool,
+		"npx", "@electron/fuses",
+		"write", "--app", "pritunl.exe",
+		"EnableNodeCliInspectArguments=off",
+	)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err = cmd.Run()
+	if err != nil {
+		panic(err)
+	}
+
+	cmd = exec.Command(signtool,
+		"npx", "@electron/fuses",
+		"write", "--app", "pritunl.exe",
+		"EnableEmbeddedAsarIntegrityValidation=on",
+	)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err = cmd.Run()
+	if err != nil {
+		panic(err)
+	}
+
+	cmd = exec.Command(signtool,
+		"npx", "@electron/fuses",
+		"write", "--app", "pritunl.exe",
+		"OnlyLoadAppFromAsar=on",
+	)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err = cmd.Run()
+	if err != nil {
+		panic(err)
+	}
+
+	cmd = exec.Command(signtool,
+		"npx", "@electron/fuses",
+		"write", "--app", "pritunl.exe",
+		"LoadBrowserProcessSpecificV8Snapshot=on",
+	)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err = cmd.Run()
+	if err != nil {
+		panic(err)
+	}
+
+	cmd = exec.Command(signtool,
 		"sign",
 		"/sha1", "055219bfb2cfe0b43a7e653da125b2f74bbe3003",
 		"/tr", "http://timestamp.sectigo.com",
