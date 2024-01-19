@@ -5,6 +5,7 @@ Version 1.3.3781.28 2024-01-19
 ------------------------------
 
 Fix network reset on macOS
+Disable Electron debugging
 
 Version 1.3.3772.10 2024-01-10
 ------------------------------
