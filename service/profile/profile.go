@@ -790,7 +790,7 @@ func (p *Profile) writeConfWgQuick(data *WgConf) (pth, pth2 string,
 	}
 
 	if !p.DisableDns && data.DnsServers != nil && len(data.DnsServers) > 0 &&
-		(runtime.GOOS != "darwin" || !config.Config.EnableWgDns) {
+		(runtime.GOOS != "darwin" || config.Config.DisableWgDns) {
 
 		templData.HasDns = true
 		templData.DnsServers = strings.Join(data.DnsServers, ",")
@@ -3748,7 +3748,7 @@ func (p *Profile) watchWg(data *WgData) {
 	if !p.DisableDns && data.Configuration.DnsServers != nil &&
 		len(data.Configuration.DnsServers) > 0 &&
 		runtime.GOOS == "darwin" &&
-		config.Config.EnableWgDns {
+		!config.Config.DisableWgDns {
 
 		err := utils.SetScutilDns(p.Id,
 			data.Configuration.DnsServers, data.Configuration.SearchDomains)
@@ -4465,7 +4465,7 @@ func (p *Profile) Stop() {
 	}
 
 	if p.Mode == Wg && runtime.GOOS == "darwin" &&
-		config.Config.EnableWgDns {
+		!config.Config.DisableWgDns {
 
 		err = utils.ClearScutilDns(p.Id)
 		if err != nil {
