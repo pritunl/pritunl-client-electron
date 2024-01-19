@@ -6,7 +6,8 @@ export interface Config {
 	disable_dns_watch?: boolean
 	disable_wake_watch?: boolean
 	disable_net_clean?: boolean
-	enable_wg_dns?: boolean
+	disable_browser_open?: boolean
+	disable_wg_dns?: boolean
 	interface_metric?: number
 }
 
