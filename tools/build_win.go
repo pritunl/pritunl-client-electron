@@ -146,8 +146,8 @@ func main() {
 		panic(err)
 	}
 
-	cmd = exec.Command(signtool,
-		"npx", "@electron/fuses",
+	cmd = exec.Command("npx",
+		"@electron/fuses",
 		"write", "--app", "pritunl.exe",
 		"EnableNodeOptionsEnvironmentVariable=off",
 	)
@@ -158,8 +158,8 @@ func main() {
 		panic(err)
 	}
 
-	cmd = exec.Command(signtool,
-		"npx", "@electron/fuses",
+	cmd = exec.Command("npx",
+		"@electron/fuses",
 		"write", "--app", "pritunl.exe",
 		"EnableNodeCliInspectArguments=off",
 	)
@@ -170,8 +170,8 @@ func main() {
 		panic(err)
 	}
 
-	cmd = exec.Command(signtool,
-		"npx", "@electron/fuses",
+	cmd = exec.Command("npx",
+		"@electron/fuses",
 		"write", "--app", "pritunl.exe",
 		"EnableEmbeddedAsarIntegrityValidation=on",
 	)
@@ -182,8 +182,8 @@ func main() {
 		panic(err)
 	}
 
-	cmd = exec.Command(signtool,
-		"npx", "@electron/fuses",
+	cmd = exec.Command("npx",
+		"@electron/fuses",
 		"write", "--app", "pritunl.exe",
 		"OnlyLoadAppFromAsar=on",
 	)
@@ -194,8 +194,8 @@ func main() {
 		panic(err)
 	}
 
-	cmd = exec.Command(signtool,
-		"npx", "@electron/fuses",
+	cmd = exec.Command("npx",
+		"@electron/fuses",
 		"write", "--app", "pritunl.exe",
 		"LoadBrowserProcessSpecificV8Snapshot=on",
 	)
