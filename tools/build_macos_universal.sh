@@ -60,32 +60,13 @@ mkdir -p build/macos/Applications
 cd client
 npm install
 ./node_modules/.bin/electron-rebuild
-./node_modules/.bin/electron-packager ./ Pritunl \
-  --platform=darwin \
-  --arch=universal \
-  --icon=./www/img/pritunl.icns \
-  --darwinDarkModeSupport=true \
-  --extra-resource="../build/resources/pritunl-service" \
-  --extra-resource="../build/resources/pritunl-client" \
-  --extra-resource="../build/resources/pritunl-openvpn" \
-  --extra-resource="../build/resources/pritunl-openvpn10" \
-  --extra-resource="../build/resources/Pritunl Device Authentication" \
-  --osxUniversal.x64ArchFiles="*" \
-  --osx-sign.hardenedRuntime \
-  --osx-sign.hardened-runtime \
-  --no-osx-sign.gatekeeper-assess \
-  --osx-sign.entitlements="/Users/apple/go/src/github.com/pritunl/pritunl-client-electron/resources_macos/entitlements.plist" \
-  --osx-sign.entitlements-inherit="/Users/apple/go/src/github.com/pritunl/pritunl-client-electron/resources_macos/entitlements.plist" \
-  --osx-sign.entitlementsInherit="/Users/apple/go/src/github.com/pritunl/pritunl-client-electron/resources_macos/entitlements.plist" \
-  --osx-sign.identity="Developer ID Application: Pritunl, Inc. (U22BLATN63)" \
-  --osx-notarize.keychainProfile="Pritunl" \
-  --osx-notarize.tool="notarytool" \
-  --out=../build/macos/Applications
+node package.js
 
 cd ../
 mv build/macos/Applications/Pritunl-darwin-universal/Pritunl.app build/macos/Applications/
 rm -rf build/macos/Applications/Pritunl-darwin-universal
 sleep 3
+npx @electron/fuses read --app build/macos/Applications/Pritunl.app
 #codesign --force --deep --timestamp --options=runtime --entitlements="./resources_macos/entitlements.plist" --sign "Developer ID Application: Pritunl, Inc. (U22BLATN63)" build/macos/Applications/Pritunl.app/Contents/MacOS/Pritunl
 
 # Files
