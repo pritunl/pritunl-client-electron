@@ -194,18 +194,6 @@ func main() {
 		panic(err)
 	}
 
-	cmd = exec.Command("npx",
-		"@electron/fuses",
-		"write", "--app", "pritunl.exe",
-		"LoadBrowserProcessSpecificV8Snapshot=on",
-	)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	err = cmd.Run()
-	if err != nil {
-		panic(err)
-	}
-
 	cmd = exec.Command(signtool,
 		"sign",
 		"/sha1", "055219bfb2cfe0b43a7e653da125b2f74bbe3003",
