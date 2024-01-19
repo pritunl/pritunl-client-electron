@@ -13,7 +13,7 @@ type configData struct {
 	EnableDnsRefresh bool `json:"enable_dns_refresh"`
 	DisableWakeWatch bool `json:"disable_wake_watch"`
 	DisableNetClean  bool `json:"disable_net_clean"`
-	EnableWgDns      bool `json:"enable_wg_dns"`
+	DisableWgDns     bool `json:"disable_wg_dns"`
 	InterfaceMetric  int  `json:"interface_metric"`
 }
 
@@ -23,7 +23,7 @@ func configGet(c *gin.Context) {
 		EnableDnsRefresh: config.Config.EnableDnsRefresh,
 		DisableWakeWatch: config.Config.DisableWakeWatch,
 		DisableNetClean:  config.Config.DisableNetClean,
-		EnableWgDns:      config.Config.EnableWgDns,
+		DisableWgDns:     config.Config.DisableWgDns,
 		InterfaceMetric:  config.Config.InterfaceMetric,
 	}
 
@@ -46,7 +46,7 @@ func configPut(c *gin.Context) {
 	config.Config.EnableDnsRefresh = data.EnableDnsRefresh
 	config.Config.DisableWakeWatch = data.DisableWakeWatch
 	config.Config.DisableNetClean = data.DisableNetClean
-	config.Config.EnableWgDns = data.EnableWgDns
+	config.Config.DisableWgDns = data.DisableWgDns
 	config.Config.InterfaceMetric = data.InterfaceMetric
 
 	err = config.Save()
