@@ -36,6 +36,7 @@
   },
   "devDependencies": {
     "electron": "28.1.1",
+    "@electron/fuses": "1.7.0",
     "@electron/rebuild": "3.4.1",
     "electron-packager": "17.1.2",
     "rcedit": "4.0.1",
