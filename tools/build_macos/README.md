@@ -6,8 +6,8 @@ rm -f /Users/apple/build/openvpn
 rm -f /Users/apple/build/openvpn_arm64
 rm -f /Users/apple/build/openvpn10
 
-tar xf autoconf-2.71.tar.gz
-cd ./autoconf-2.71
+tar xf autoconf-2.72.tar.gz
+cd ./autoconf-2.72
 sh ../build_autoconf.sh
 cd ../
 
@@ -33,8 +33,8 @@ cd ./lzo-2.10
 sh ../build_lzo.sh
 cd ../
 
-tar xf openssl-1.1.1u.tar.gz
-cd ./openssl-1.1.1u
+tar xf openssl-3.2.0.tar.gz
+cd ./openssl-3.2.0
 sh ../build_openssl.sh
 sh ../build_openssl_arm.sh
 cd ../

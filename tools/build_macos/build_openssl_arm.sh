@@ -14,9 +14,11 @@ perl ./Configure \
   darwin64-arm64-cc \
   enable-ec_nistp_64_gcc_128 \
   zlib \
+  no-ssl3 \
+  no-ssl3-method \
   no-asm \
   no-shared \
-  --openssldir=etc/"openssl@1.1" \
+  --openssldir=etc/"openssl@3" \
   --prefix=/Users/apple/build/openssl
 make
 make test
