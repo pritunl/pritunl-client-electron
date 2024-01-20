@@ -2,6 +2,9 @@ const packager = require('electron-packager');
 const path = require("path");
 const fuses = require("@electron/fuses");
 
+let entitlementsPath = path.resolve(__dirname, '..',
+  'resources_macos', 'entitlements.plist');
+
 async function packageApp() {
   try {
     const appPaths = await packager({
@@ -22,15 +25,21 @@ async function packageApp() {
         x64ArchFiles: '*'
       },
       osxSign: {
-        'hardened-runtime': true,
-        'entitlements': '/Users/apple/go/src/github.com/pritunl/pritunl-client-electron/resources_macos/entitlements.plist',
-        'entitlements-inherit': '/Users/apple/go/src/github.com/pritunl/pritunl-client-electron/resources_macos/entitlements.plist',
+        hardenedRuntime: true,
+        // TODO
+        // optionsForFile: (filePath) => {
+        //   return {
+        //     entitlements: entitlementsPath,
+        //     hardenedRuntime: true,
+        //   }
+        // },
         identity: 'Developer ID Application: Pritunl, Inc. (U22BLATN63)'
       },
       osxNotarize: {
         keychainProfile: 'Pritunl',
         tool: 'notarytool'
       },
+      asar: true,
       out: '../build/macos/Applications',
       gatekeeperAssess: false,
       afterCopyExtraResources: [
@@ -46,8 +55,11 @@ async function packageApp() {
 
           await fuses.flipFuses(electronPath, {
             version: fuses.FuseVersion.V1,
+            [fuses.FuseV1Options.RunAsNode]: false,
             [fuses.FuseV1Options.EnableNodeOptionsEnvironmentVariable]: false,
             [fuses.FuseV1Options.EnableNodeCliInspectArguments]: false,
+            [fuses.FuseV1Options.EnableEmbeddedAsarIntegrityValidation]: true,
+            [fuses.FuseV1Options.OnlyLoadAppFromAsar]: true,
           });
 
           callback();
