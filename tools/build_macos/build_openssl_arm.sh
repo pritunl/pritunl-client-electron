@@ -1,8 +1,6 @@
 #!/bin/bash
 set -e
 
-cp ../10-main.conf ./Configurations/10-main.conf
-
 export CFLAGS="-mmacosx-version-min=11.0"
 export CXXFLAGS="-mmacosx-version-min=11.0"
 export CPPFLAGS="-mmacosx-version-min=11.0"
