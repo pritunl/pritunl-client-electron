@@ -35,9 +35,9 @@
     "request": "2.88.2"
   },
   "devDependencies": {
-    "electron": "28.1.1",
+    "electron": "28.1.4",
     "@electron/fuses": "1.7.0",
-    "@electron/rebuild": "3.4.1",
+    "@electron/rebuild": "3.5.0",
     "electron-packager": "17.1.2",
     "rcedit": "4.0.1",
     "rimraf": "5.0.5",
