@@ -149,6 +149,18 @@ func main() {
 	cmd = exec.Command("npx",
 		"@electron/fuses",
 		"write", "--app", "pritunl.exe",
+		"RunAsNode=off",
+	)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err = cmd.Run()
+	if err != nil {
+		panic(err)
+	}
+
+	cmd = exec.Command("npx",
+		"@electron/fuses",
+		"write", "--app", "pritunl.exe",
 		"EnableNodeOptionsEnvironmentVariable=off",
 	)
 	cmd.Stdout = os.Stdout
