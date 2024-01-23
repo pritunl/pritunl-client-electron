@@ -1,7 +1,8 @@
 Pritunl Client Changelog
 ========================
 
-<%= version %>
+Version 1.3.3785.81 2024-01-23
+------------------------------
 
 Fix wg DNS issue on macOS
 
