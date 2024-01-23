@@ -190,13 +190,27 @@ func SetScutilDns(connId string, addresses, domains []string) (err error) {
 	macDnsLock.Lock()
 	defer macDnsLock.Unlock()
 
-	cmd := command.Command("/usr/sbin/scutil")
-	cmd.Stdin = strings.NewReader(
-		fmt.Sprintf("open\n"+
+	input := ""
+	if domains == nil || len(domains) == 0 {
+		input = fmt.Sprintf("open\n"+
+			"d.init\n"+
+			"d.add ServerAddresses * %s\n"+
+			"d.add SupplementalMatchDomains * \"\"\n"+
+			"remove State:%s\n"+
+			"remove Setup:%s\n"+
+			"set State:%s\n"+
+			"set Setup:%s\n"+
+			"set State:/Network/Pritunl/Connection/%s\n"+
+			"quit\n",
+			strings.Join(addresses, " "),
+			PritunlScutilKey, PritunlScutilKey, PritunlScutilKey,
+			PritunlScutilKey, connId)
+	} else {
+		input = fmt.Sprintf("open\n"+
 			"d.init\n"+
 			"d.add ServerAddresses * %s\n"+
 			"d.add SearchDomains * %s\n"+
-			"d.add SupplementalMatchDomains \"\"\n"+
+			"d.add SupplementalMatchDomains * \"\"\n"+
 			"remove State:%s\n"+
 			"remove Setup:%s\n"+
 			"set State:%s\n"+
@@ -205,7 +219,11 @@ func SetScutilDns(connId string, addresses, domains []string) (err error) {
 			"quit\n",
 			strings.Join(addresses, " "), strings.Join(domains, " "),
 			PritunlScutilKey, PritunlScutilKey, PritunlScutilKey,
-			PritunlScutilKey, connId))
+			PritunlScutilKey, connId)
+	}
+
+	cmd := command.Command("/usr/sbin/scutil")
+	cmd.Stdin = strings.NewReader(input)
 
 	err = cmd.Run()
 	if err != nil {
