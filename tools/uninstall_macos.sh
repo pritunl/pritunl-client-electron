@@ -20,7 +20,6 @@ sudo rm -f /private/var/db/receipts/com.pritunl.pkg.Pritunl.bom
 sudo rm -f /private/var/db/receipts/com.pritunl.pkg.Pritunl.plist
 
 # Profiles
-sudo rm -rf /Library/Application\ Support/Pritunl
 rm -rf ~/Library/Caches/pritunl
 rm -rf ~/Library/Preferences/com.electron.pritunl.plist
 
@@ -43,6 +42,12 @@ sudo rm -f /Library/LaunchDaemons/net.sf.tuntaposx.tap.plist
 sudo rm -f /Library/LaunchDaemons/net.sf.tuntaposx.tun.plist
 sudo rm -rf /usr/local/bin/pritunl-openvpn
 sudo rm -rf /usr/local/bin/pritunl-service
+
+read -r -p "Clear Pritunl Client Secure Enclave Key? [y/N] " response
+if [[ "$response" =~ ^([yY][eE][sS]|[yY])+$ ]]
+then
+    sudo rm -rf /Library/Application\ Support/Pritunl
+fi
 
 echo "###################################################"
 echo "Uninstallation Successful"
