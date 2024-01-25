@@ -4,6 +4,7 @@
     <organization>com.pritunl</organization>
     <domains enable_localSystem="true"/>
     <options customize="never" require-scripts="true" rootVolumeOnly="true"/>
+    <options customize="always" hostArchitectures="x86_64,arm64"/>
     <background file="diagram.tiff" alignment="bottomleft" scaling="none"/>
     <welcome file="welcome.html" mime-type="text/html"/>
     <license file="license.txt"/>
