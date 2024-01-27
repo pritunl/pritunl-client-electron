@@ -129,12 +129,24 @@ export default class ConfigView extends React.Component<{}, State> {
 			<div className="layout horizontal">
 				<PageSwitch
 					disabled={this.state.disabled}
-					label="Enable WireGuard DNS watch"
-					help="Enable WireGuard DNS watch on macOS."
-					checked={!!this.state.config.enable_wg_dns}
+					label="Enable DNS refresh"
+					help="Automatically refresh DNS to fix issues with macOS DNS cache."
+					checked={!!this.state.config.enable_dns_refresh}
 					onToggle={(): void => {
-						this.set("enable_wg_dns",
-							!this.state.config.enable_wg_dns)
+						this.set("enable_dns_refresh",
+							!this.state.config.enable_dns_refresh)
+					}}
+				/>
+			</div>
+			<div className="layout horizontal">
+				<PageSwitch
+					disabled={this.state.disabled}
+					label="Disable WireGuard DNS watch"
+					help="Disable WireGuard DNS watch on macOS."
+					checked={!!this.state.config.disable_wg_dns}
+					onToggle={(): void => {
+						this.set("disable_wg_dns",
+							!this.state.config.disable_wg_dns)
 					}}
 				/>
 			</div>
