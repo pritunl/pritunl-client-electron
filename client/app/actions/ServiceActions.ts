@@ -17,6 +17,7 @@ export function connect(prfl: ProfileTypes.ProfileData,
 	return new Promise<void>((resolve): void => {
 		RequestUtils
 			.post('/profile')
+			.timeout(120)
 			.set('Accept', 'application/json')
 			.send(prfl)
 			.end()
