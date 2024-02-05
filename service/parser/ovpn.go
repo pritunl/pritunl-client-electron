@@ -608,7 +608,7 @@ func Import(data, fixedRemote, fixedRemote6 string,
 				continue
 			}
 
-			rcvbuf, e := strconv.Atoi(lines[1])
+			mssFix, e := strconv.Atoi(lines[1])
 			if e != nil {
 				logrus.WithFields(logrus.Fields{
 					"line": line,
@@ -616,7 +616,7 @@ func Import(data, fixedRemote, fixedRemote6 string,
 				continue
 			}
 
-			o.RcvBuf = rcvbuf
+			o.MssFix = mssFix
 			break
 		case "tun-mtu":
 			if len(lines) != 2 {
@@ -626,7 +626,7 @@ func Import(data, fixedRemote, fixedRemote6 string,
 				continue
 			}
 
-			rcvbuf, e := strconv.Atoi(lines[1])
+			tunMtu, e := strconv.Atoi(lines[1])
 			if e != nil {
 				logrus.WithFields(logrus.Fields{
 					"line": line,
@@ -634,7 +634,7 @@ func Import(data, fixedRemote, fixedRemote6 string,
 				continue
 			}
 
-			o.RcvBuf = rcvbuf
+			o.TunMtu = tunMtu
 			break
 		case "remote-cert-tls":
 			if len(lines) != 2 {
