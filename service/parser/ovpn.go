@@ -36,6 +36,8 @@ type Ovpn struct {
 	RedirectGateway   string
 	SndBuf            int
 	RcvBuf            int
+	MssFix            int
+	TunMtu            int
 	RemoteCertTls     string
 	Compress          string
 	CompLzo           string
@@ -119,6 +121,12 @@ func (o *Ovpn) Export() string {
 	}
 	if o.RcvBuf > 0 {
 		output += fmt.Sprintf("rcvbuf %d\n", o.RcvBuf)
+	}
+	if o.MssFix > 0 {
+		output += fmt.Sprintf("mssfix %d\n", o.MssFix)
+	}
+	if o.TunMtu > 0 {
+		output += fmt.Sprintf("tun-mtu %d\n", o.TunMtu)
 	}
 	if o.RemoteCertTls != "" {
 		output += fmt.Sprintf("remote-cert-tls %s\n", o.RemoteCertTls)
@@ -587,6 +595,42 @@ func Import(data, fixedRemote, fixedRemote6 string,
 				logrus.WithFields(logrus.Fields{
 					"line": line,
 				}).Warn("parser: Configuration line ignored [26]")
+				continue
+			}
+
+			o.RcvBuf = rcvbuf
+			break
+		case "mssfix":
+			if len(lines) != 2 {
+				logrus.WithFields(logrus.Fields{
+					"line": line,
+				}).Warn("parser: Configuration line ignored [37]")
+				continue
+			}
+
+			rcvbuf, e := strconv.Atoi(lines[1])
+			if e != nil {
+				logrus.WithFields(logrus.Fields{
+					"line": line,
+				}).Warn("parser: Configuration line ignored [38]")
+				continue
+			}
+
+			o.RcvBuf = rcvbuf
+			break
+		case "tun-mtu":
+			if len(lines) != 2 {
+				logrus.WithFields(logrus.Fields{
+					"line": line,
+				}).Warn("parser: Configuration line ignored [39]")
+				continue
+			}
+
+			rcvbuf, e := strconv.Atoi(lines[1])
+			if e != nil {
+				logrus.WithFields(logrus.Fields{
+					"line": line,
+				}).Warn("parser: Configuration line ignored [40]")
 				continue
 			}
 
