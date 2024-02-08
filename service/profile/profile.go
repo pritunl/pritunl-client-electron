@@ -163,6 +163,7 @@ type WgConf struct {
 	Gateway       string   `json:"gateway"`
 	Gateway6      string   `json:"gateway6"`
 	Port          int      `json:"port"`
+	Mtu           int      `json:"mtu"`
 	WebPort       int      `json:"web_port"`
 	WebNoSsl      bool     `json:"web_no_ssl"`
 	PublicKey     string   `json:"public_key"`
@@ -787,6 +788,11 @@ func (p *Profile) writeConfWgQuick(data *WgConf) (pth, pth2 string,
 		PublicKey:  data.PublicKey,
 		AllowedIps: strings.Join(allowedIps, ","),
 		Endpoint:   fmt.Sprintf("%s:%d", data.Hostname, data.Port),
+	}
+
+	if data.Mtu != 0 {
+		templData.HasMtu = true
+		templData.Mtu = data.Mtu
 	}
 
 	if !p.DisableDns && data.DnsServers != nil && len(data.DnsServers) > 0 &&
