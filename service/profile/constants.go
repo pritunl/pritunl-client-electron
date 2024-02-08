@@ -14,7 +14,8 @@ const (
 	Wg                = "wg"
 	wgConfTempl       = `[Interface]
 Address = {{.Address}}
-PrivateKey = {{.PrivateKey}}{{if .HasDns}}
+PrivateKey = {{.PrivateKey}}{{if .HasMtu}}
+MTU = {{.Mtu}}{{end}}{{if .HasDns}}
 DNS = {{.DnsServers}}{{end}}
 
 [Peer]
@@ -32,6 +33,8 @@ var (
 type WgConfData struct {
 	Address    string
 	PrivateKey string
+	HasMtu     bool
+	Mtu        int
 	HasDns     bool
 	DnsServers string
 	PublicKey  string
