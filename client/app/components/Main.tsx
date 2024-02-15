@@ -193,21 +193,6 @@ export default class Main extends React.Component<{}, State> {
 		}
 	}
 
-	onClassicIface = async (): Promise<void> => {
-		Config.classic_interface = !Config.classic_interface
-		await Config.save({
-			classic_interface: Config.classic_interface,
-		})
-
-		if (Config.classic_interface) {
-			Alert.success("Switched to classic interface, restart client " +
-				"for configuration to take effect")
-		} else {
-			Alert.success("Switched to new interface, restart client " +
-				"for configuration to take effect")
-		}
-	}
-
 	onAlert = (toasts: number): void => {
 		if (!toasts) {
 			document.getElementById("toaster2").style.display = "none"
@@ -260,13 +245,6 @@ export default class Main extends React.Component<{}, State> {
 			frameLabel = "Enable Window Frame"
 		} else {
 			frameLabel = "Disable Window Frame"
-		}
-
-		let ifaceLabel = ""
-		if (Config.classic_interface) {
-			ifaceLabel = "Use New Interface"
-		} else {
-			ifaceLabel = "Use Classic Interface"
 		}
 
 		let page: JSX.Element;
@@ -342,16 +320,6 @@ export default class Main extends React.Component<{}, State> {
 					}
 				}}
 				onClick={this.onWindowFrame}
-			/>
-			<Blueprint.MenuItem
-				text={ifaceLabel}
-				icon="comparison"
-				onKeyDown={(evt): void => {
-					if (evt.key === "Enter") {
-						this.onClassicIface()
-					}
-				}}
-				onClick={this.onClassicIface}
 			/>
 			<Blueprint.MenuItem
 				text="View Logs"
