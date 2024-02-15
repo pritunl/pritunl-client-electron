@@ -148,10 +148,8 @@ class Main {
 		let minHeight = 440
 		let maxWidth = 670
 		let maxHeight = 800
-		let classicIface = Config.classic_interface
 
-		if ((process.platform === "win32" && !classicIface) ||
-			(Config.frameless && !classicIface)) {
+		if (process.platform === "win32" || Config.frameless) {
 
 			frameless = true
 			framelessClient = true
@@ -176,10 +174,6 @@ class Main {
 		}
 
 		let zoomFactor = 1
-		if (process.platform === "darwin" && classicIface) {
-			zoomFactor = 0.8
-		}
-
 		if (zoomFactor !== 1) {
 			width = Math.round(width * zoomFactor)
 			height = Math.round(height * zoomFactor)
@@ -250,14 +244,7 @@ class Main {
 			}
 		}, 800)
 
-		let indexUrl = ""
-		if (classicIface) {
-			indexUrl = "file://" + path.join(__dirname, "..",
-				"index_orig.html")
-		} else {
-			indexUrl = "file://" + path.join(__dirname, "..",
-				"index.html")
-		}
+		let indexUrl = "file://" + path.join(__dirname, "..", "index.html")
 		indexUrl += "?dev=" + (process.argv.indexOf("--dev") !== -1 ?
 			"true" : "false")
 		indexUrl += "&dataPath=" + encodeURIComponent(
