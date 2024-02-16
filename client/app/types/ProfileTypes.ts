@@ -67,6 +67,7 @@ export interface Profile {
 	key_data?: string
 
 	formattedName(): string
+	formattedNameShort(): string
 	formattedStatus(): string
 	formattedUptime(): string
 	formatedHosts(): string[]
@@ -136,6 +137,7 @@ export interface ProfileData {
 	device_auth?: boolean
 	disable_gateway?: boolean
 	disable_dns?: boolean
+	restrict_client?: boolean
 	force_dns?: boolean
 	sso_auth?: boolean
 	server_public_key?: string
@@ -152,6 +154,13 @@ export function New(self: Profile): Profile {
 			return this.name
 		}
 		return this.server + " (" + this.user + ")"
+	}
+
+	self.formattedNameShort = function(): string {
+		if (this.name) {
+			return this.name
+		}
+		return this.server
 	}
 
 	self.formattedStatus = function(): string {
@@ -416,6 +425,7 @@ export function New(self: Profile): Profile {
 			token: this.token,
 			token_ttl: this.token_ttl,
 			disable_reconnect: this.disable_reconnect,
+			restrict_client: this.restrict_client,
 			disabled: this.disabled,
 			sync_time: this.sync_time,
 			sync_hosts: this.sync_hosts,
@@ -450,6 +460,7 @@ export function New(self: Profile): Profile {
 		this.token = data.token
 		this.token_ttl = data.token_ttl
 		this.disable_reconnect = data.disable_reconnect
+		this.restrict_client = data.restrict_client
 		this.sync_time = data.sync_time
 		this.sync_hosts = data.sync_hosts || []
 		this.sync_hash = data.sync_hash
@@ -483,6 +494,7 @@ export function New(self: Profile): Profile {
 			token: this.token,
 			token_ttl: this.token_ttl,
 			disable_reconnect: this.disable_reconnect,
+			restrict_client: this.restrict_client,
 			disabled: this.disabled,
 			sync_time: this.sync_time,
 			sync_hosts: this.sync_hosts,
@@ -516,6 +528,7 @@ export function New(self: Profile): Profile {
 		this.token = data.token
 		this.token_ttl = data.token_ttl
 		this.disable_reconnect = data.disable_reconnect
+		this.restrict_client = data.restrict_client
 		this.sync_hosts = data.sync_hosts
 		this.sync_hash = data.sync_hash
 		this.server_public_key = data.server_public_key
