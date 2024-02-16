@@ -144,17 +144,16 @@ class Main {
 		let framelessClient = false
 		let width = 424
 		let height = 528
-		let minWidth = 405
+		let minWidth = 385
 		let minHeight = 440
 		let maxWidth = 670
 		let maxHeight = 800
 
 		if (process.platform === "win32" || Config.frameless) {
-
 			frameless = true
 			framelessClient = true
 			width = 430
-			minWidth = 430
+			minWidth = 410
 
 			if (process.platform === "win32") {
 				frameless = false
