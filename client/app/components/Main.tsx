@@ -247,12 +247,15 @@ export default class Main extends React.Component<{}, State> {
 			frameLabel = "Disable Window Frame"
 		}
 
+		let profilesHidden = false
 		let page: JSX.Element;
 		switch (this.state.path) {
 			case "/":
+				profilesHidden = true
 				page = <Profiles/>
 				break
 			case "/profiles":
+				profilesHidden = true
 				page = <Profiles/>
 				break
 			case "/logs":
@@ -446,6 +449,7 @@ export default class Main extends React.Component<{}, State> {
 					<button
 						className="bp3-button bp3-minimal bp3-icon-people"
 						style={css.link}
+						hidden={profilesHidden}
 						onClick={() => {
 							this.setState({
 								...this.state,
