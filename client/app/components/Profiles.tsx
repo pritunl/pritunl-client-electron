@@ -46,10 +46,13 @@ export default class Profiles extends React.Component<{}, State> {
 	render(): JSX.Element {
 		let profilesDom: JSX.Element[] = [];
 
+		let minimal = this.state.profiles.length > 3;
+
 		this.state.profiles.forEach((prfl: ProfileTypes.ProfileRo): void => {
 			profilesDom.push(<Profile
 				key={prfl.id}
 				profile={prfl}
+				minimal={minimal}
 			/>);
 		});
 
