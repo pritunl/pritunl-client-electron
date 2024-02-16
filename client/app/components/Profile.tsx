@@ -17,10 +17,12 @@ import ProfileSettings from "./ProfileSettings";
 
 interface Props {
 	profile: ProfileTypes.ProfileRo;
+	minimal: boolean;
 }
 
 interface State {
 	profile: ProfileTypes.Profile;
+	open: boolean;
 	message: string;
 	disabled: boolean;
 	changed: boolean;
@@ -57,9 +59,7 @@ const css = {
 	deleteButton: {
 	} as React.CSSProperties,
 	deleteButtonBox: {
-		position: "absolute",
-		top: "4px",
-		right: "4px",
+		marginTop: "1px",
 	} as React.CSSProperties,
 	buttons: {
 	} as React.CSSProperties,
@@ -67,12 +67,45 @@ const css = {
 		margin: '10px 0 0 0',
 	} as React.CSSProperties,
 	header: {
+		userSelect: 'none',
 		position: 'absolute',
 		top: 0,
 		left: 0,
 		right: 0,
 		padding: '4px',
 		height: '39px',
+		color: 'inherit',
+		border: 'none',
+		font: 'inherit',
+		cursor: 'default',
+		outline: 'inherit',
+	} as React.CSSProperties,
+	headerOpen: {
+		userSelect: 'none',
+		position: 'absolute',
+		top: 0,
+		left: 0,
+		right: 0,
+		padding: '4px',
+		height: '39px',
+		color: 'inherit',
+		border: 'none',
+		font: 'inherit',
+		cursor: 'pointer',
+	} as React.CSSProperties,
+	headerClosed: {
+		userSelect: 'none',
+		position: 'absolute',
+		top: 0,
+		left: 0,
+		right: 0,
+		padding: '4px',
+		height: '39px',
+		color: 'inherit',
+		border: 'none',
+		font: 'inherit',
+		cursor: 'pointer',
+		backgroundColor: 'inherit',
 	} as React.CSSProperties,
 	headerLabel: {
 		fontSize: "1.09em",
@@ -109,6 +142,7 @@ export default class Profile extends React.Component<Props, State> {
 		super(props, context);
 		this.state = {
 			profile: null,
+			open: false,
 			message: '',
 			disabled: false,
 			changed: false,
@@ -212,12 +246,68 @@ export default class Profile extends React.Component<Props, State> {
 			})
 		}
 
-		return <div className="bp3-card layout vertical" style={css.card}>
-			<div className="bp3-card-header" style={css.header}>
+		let header: JSX.Element;
+		if (this.props.minimal) {
+			header = <button
+				className={(this.state.open ? "bp3-card-header " : "") +
+					"layout horizontal tab-toggle"}
+				style={this.state.open ? css.headerOpen : css.headerClosed}
+				onClick={(evt): void => {
+					let target = evt.target as HTMLElement;
+
+					if (this.props.minimal &&
+						target.className && target.className.indexOf &&
+						target.className.indexOf('tab-toggle') !== -1) {
+
+						this.setState({
+							...this.state,
+							open: !this.state.open,
+						})
+					}
+				}}
+			>
 				<h3
+					className="tab-toggle"
 					style={css.headerLabel}
-				>{profile.formattedName() || 'Profile'}</h3>
-				<div style={css.deleteButtonBox}>
+				>{profile.formattedNameShort() || 'Profile'}</h3>
+				<div className="flex tab-toggle"/>
+				<ProfileConnect
+					profile={this.props.profile}
+					minimal={true}
+					hidden={!this.props.minimal || this.state.open}
+				/>
+				<div
+					style={css.deleteButtonBox}
+					hidden={this.props.minimal && !this.state.open}
+				>
+					<ConfirmButton
+						className="bp3-minimal bp3-intent-danger bp3-icon-trash"
+						style={css.deleteButton}
+						safe={true}
+						progressClassName="bp3-intent-danger"
+						dialogClassName="bp3-intent-danger bp3-icon-delete"
+						dialogLabel="Delete Profile"
+						confirmMsg="Permanently delete this profile"
+						items={[profile.formattedName()]}
+						disabled={this.state.disabled}
+						onConfirm={this.onDelete}
+					/>
+				</div>
+			</button>
+		} else {
+			header = <div
+				className="bp3-card-header layout horizontal tab-toggle"
+				style={css.header}
+			>
+				<h3
+					className="tab-toggle"
+					style={css.headerLabel}
+				>{profile.formattedNameShort() || 'Profile'}</h3>
+				<div className="flex tab-toggle"/>
+				<div
+					style={css.deleteButtonBox}
+					hidden={this.props.minimal && !this.state.open}
+				>
 					<ConfirmButton
 						className="bp3-minimal bp3-intent-danger bp3-icon-trash"
 						style={css.deleteButton}
@@ -232,49 +322,55 @@ export default class Profile extends React.Component<Props, State> {
 					/>
 				</div>
 			</div>
-			<div
-				className="layout vertical"
-				style={css.regBox}
-				hidden={!profile.registration_key}
-			>
-				<div className="bp3-card layout vertical" style={css.reg}>
-					<h3
-						className="bp3-text-intent-danger"
-						style={css.regTitle}
-					>Device Registration Required</h3>
-					Contact Server Administrator with Code:
-					<h3
-						className="bp3-text-intent-primary"
-						style={css.regName}
-					>{Constants.hostname}</h3>
-					<h1
-						className="bp3-text-intent-primary"
-						style={css.regKey}
-					>{profile.registration_key}</h1>
+		}
+
+		return <div className="bp3-card layout vertical" style={css.card}>
+			{header}
+			<div hidden={this.props.minimal && !this.state.open}>
+				<div
+					className="layout vertical"
+					style={css.regBox}
+					hidden={!profile.registration_key}
+				>
+					<div className="bp3-card layout vertical" style={css.reg}>
+						<h3
+							className="bp3-text-intent-danger"
+							style={css.regTitle}
+						>Device Registration Required</h3>
+						Contact Server Administrator with Code:
+						<h3
+							className="bp3-text-intent-primary"
+							style={css.regName}
+						>{Constants.hostname}</h3>
+						<h1
+							className="bp3-text-intent-primary"
+							style={css.regKey}
+						>{profile.registration_key}</h1>
+					</div>
 				</div>
-			</div>
-			<div className="layout horizontal" style={css.body}>
+				<div className="layout horizontal" style={css.body}>
+					<PageInfo
+						style={css.label}
+						fields={fieldsLeft}
+					/>
+					<PageInfo
+						style={css.label}
+						fields={fieldsRight}
+					/>
+				</div>
 				<PageInfo
-					style={css.label}
-					fields={fieldsLeft}
+					style={css.labelLast}
+					hidden={!longIp}
+					fields={fieldsLong}
 				/>
-				<PageInfo
-					style={css.label}
-					fields={fieldsRight}
-				/>
-			</div>
-			<PageInfo
-				style={css.labelLast}
-				hidden={!longIp}
-				fields={fieldsLong}
-			/>
-			<div style={css.message} hidden={!this.state.message}>
-				{this.state.message}
-			</div>
-			<div className="layout horizontal">
-				<div style={css.buttons}>
-					<ProfileConnect profile={this.props.profile}/>
-					<ProfileSettings profile={this.props.profile}/>
+				<div style={css.message} hidden={!this.state.message}>
+					{this.state.message}
+				</div>
+				<div className="layout horizontal">
+					<div style={css.buttons}>
+						<ProfileConnect profile={this.props.profile}/>
+						<ProfileSettings profile={this.props.profile}/>
+					</div>
 				</div>
 			</div>
 		</div>;
