@@ -281,7 +281,7 @@ export default class ProfileSettings extends React.Component<Props, State> {
 					<PageSwitch
 						label="Disable Auto Reconnect"
 						help="Disable automatically reconnecting on disconnect."
-						hidden={!!system}
+						hidden={!!system || profile.restrict_client}
 						checked={!!profile.disable_reconnect_local}
 						onToggle={(): void => {
 							this.set("disable_reconnect_local",
@@ -291,6 +291,7 @@ export default class ProfileSettings extends React.Component<Props, State> {
 					<PageSwitch
 						label="Disable Default Gateway"
 						help="Disable routing internet traffic through the VPN connection."
+						hidden={profile.restrict_client}
 						checked={!!profile.disable_gateway}
 						onToggle={(): void => {
 							this.set("disable_gateway", !profile.disable_gateway)
@@ -299,6 +300,7 @@ export default class ProfileSettings extends React.Component<Props, State> {
 					<PageSwitch
 						label="Disable DNS"
 						help="Disable configuring the DNS configuration provided by the server on this profile."
+						hidden={profile.restrict_client}
 						checked={!!profile.disable_dns}
 						onToggle={(): void => {
 							this.set("disable_dns", !profile.disable_dns)
