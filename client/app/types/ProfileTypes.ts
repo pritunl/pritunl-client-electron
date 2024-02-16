@@ -41,6 +41,7 @@ export interface Profile {
 	pre_connect_msg?: string
 	disable_reconnect?: boolean
 	disable_reconnect_local?: boolean
+	restrict_client?: boolean
 	dynamic_firewall?: boolean
 	device_auth?: boolean
 	disable_gateway?: boolean
