@@ -79,7 +79,6 @@ function connect(): void {
 
 	socket.on('message', (dataBuf: Buffer): void => {
 		let data = JSON.parse(dataBuf.toString());
-		console.log(data);
 		EventDispatcher.dispatch(data);
 	});
 }
