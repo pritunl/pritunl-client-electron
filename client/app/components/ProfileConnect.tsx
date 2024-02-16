@@ -9,6 +9,8 @@ import * as Logger from "../Logger";
 
 interface Props {
 	profile: ProfileTypes.ProfileRo
+	minimal?: boolean
+	hidden?: boolean
 	onConfirm?: () => void
 }
 
@@ -46,7 +48,11 @@ const css = {
 	} as React.CSSProperties,
 	button: {
 		marginTop: "10px",
-		marginRight: "10px",
+		marginRight: "5px",
+	} as React.CSSProperties,
+	buttonMinimal: {
+		marginTop: "1px",
+		marginRight: "5px",
 	} as React.CSSProperties,
 	dialog: {
 		width: "340px",
@@ -377,10 +383,17 @@ export default class ProfileConnect extends React.Component<Props, State> {
 			buttonLabel = "Connect"
 		}
 
-		return <div style={css.box}>
+		let cssButton = css.button
+		let minimalButton = ""
+		if (this.props.minimal) {
+			cssButton = css.buttonMinimal
+			minimalButton = " bp3-minimal"
+		}
+
+		return <div style={css.box} hidden={this.props.hidden}>
 			<button
-				className={"bp3-button " + buttonClass}
-				style={css.button}
+				className={"bp3-button " + buttonClass + minimalButton}
+				style={cssButton}
 				type="button"
 				hidden={hasWg && !connected}
 				disabled={this.state.disabled}
@@ -391,8 +404,8 @@ export default class ProfileConnect extends React.Component<Props, State> {
 				{buttonLabel}
 			</button>
 			<button
-				className="bp3-button bp3-intent-success bp3-icon-link"
-				style={css.button}
+				className={"bp3-button bp3-intent-success bp3-icon-link" + minimalButton}
+				style={cssButton}
 				type="button"
 				hidden={!hasWg || connected}
 				disabled={this.state.disabled}
@@ -400,11 +413,11 @@ export default class ProfileConnect extends React.Component<Props, State> {
 					this.onConnect("ovpn")
 				}}
 			>
-				OpenVPN
+				{this.props.minimal ? "OVPN" : "OpenVPN"}
 			</button>
 			<button
-				className="bp3-button bp3-intent-primary bp3-icon-link"
-				style={css.button}
+				className={"bp3-button bp3-intent-primary bp3-icon-link" + minimalButton}
+				style={cssButton}
 				type="button"
 				hidden={!hasWg || connected}
 				disabled={this.state.disabled}
@@ -412,7 +425,7 @@ export default class ProfileConnect extends React.Component<Props, State> {
 					this.onConnect("wg")
 				}}
 			>
-				WireGuard
+				{this.props.minimal ? "WG" : "WireGuard"}
 			</button>
 			<Blueprint.Dialog
 				title="Profile Connect"
