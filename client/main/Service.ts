@@ -3,6 +3,8 @@ import fs from "fs"
 import path from "path"
 import process from "process"
 import * as Request from "./Request"
+import * as RequestUtils from './RequestUtils';
+import * as Auth from "./Auth"
 import * as Logger from "./Logger"
 import electron from "electron";
 import * as MiscUtils from "../app/utils/MiscUtils";
@@ -36,47 +38,19 @@ if (process.platform === "linux" || process.platform === "darwin") {
 	unix = true
 }
 
-function getAuthPath(): string {
-	if (process.argv.indexOf("--dev") !== -1) {
-		return path.join(__dirname, "..", "..", "dev", "auth")
-	} else {
-		if (process.platform === "win32") {
-			return path.join(winDrive, "ProgramData", "Pritunl", "auth")
-		} else {
-			return path.join(path.sep, "var", "run", "pritunl.auth")
-		}
-	}
-}
-
-function getAuthToken(): Promise<string> {
-	return new Promise<string>((resolve, reject): void => {
-		fs.readFile(getAuthPath(), "utf-8", (err, data: string): void => {
-			resolve(data ? data.trim() : "")
-		})
-	})
-}
-
 export function sync(): Promise<boolean> {
 	return new Promise<boolean>(async (resolve) => {
-		let token: string
 		try {
-			token = await getAuthToken()
+			await Auth.load()
 		} catch(err) {
 			Logger.error(err.message || err)
 			resolve(false)
 			return
 		}
 
-		let req = new Request.Request()
-
-		if (unix) {
-			req.unix(unixPath)
-		} else {
-			req.tcp(webHost)
-		}
-
-		req.get("/status")
-			.set("Auth-Token", token)
+		RequestUtils
+			.get("/status")
+			.set("Auth-Token", Auth.token)
 			.set("User-Agent", "pritunl")
 			.end()
 			.then((resp: Request.Response) => {
@@ -99,25 +73,17 @@ export function sync(): Promise<boolean> {
 
 export function wakeup(): Promise<boolean> {
 	return new Promise<boolean>(async (resolve) => {
-		let token: string
 		try {
-			token = await getAuthToken()
+			await Auth.load()
 		} catch(err) {
 			Logger.error(err.message || err)
 			resolve(false)
 			return
 		}
 
-		let req = new Request.Request()
-
-		if (unix) {
-			req.unix(unixPath)
-		} else {
-			req.tcp(webHost)
-		}
-
-		req.post("/wakeup")
-			.set("Auth-Token", token)
+		RequestUtils
+			.post("/wakeup")
+			.set("Auth-Token", Auth.token)
 			.set("User-Agent", "pritunl")
 			.end()
 			.then((resp: Request.Response) => {
@@ -138,19 +104,17 @@ let connAttempts = 0
 let dialogShown = false
 let curSocket = ""
 
-export function connect(dev: boolean): Promise<void> {
+export function connect(): Promise<void> {
 	let socketId = MiscUtils.uuid()
 	curSocket = socketId
 
 	return new Promise<void>(async (resolve, reject) => {
-		let token: string
 		try {
-			token = await getAuthToken()
+			await Auth.load()
 		} catch(err) {
-			token = ""
 		}
 
-		if (!token) {
+		if (!Auth.token) {
 			if (authAttempts > 10) {
 				if (!dialogShown) {
 					dialogShown = true
@@ -165,7 +129,7 @@ export function connect(dev: boolean): Promise<void> {
 							authAttempts = 0
 							connAttempts = 0
 							dialogShown = false
-							connect(dev)
+							connect()
 						} else {
 							electron.app.quit()
 						}
@@ -174,7 +138,7 @@ export function connect(dev: boolean): Promise<void> {
 			} else {
 				authAttempts += 1
 				setTimeout(() => {
-					connect(dev)
+					connect()
 				}, 500)
 			}
 			return
@@ -186,7 +150,7 @@ export function connect(dev: boolean): Promise<void> {
 		let wsHost = ""
 		let headers = {
 			"User-Agent": "pritunl",
-			"Auth-Token": token,
+			"Auth-Token": Auth.token,
 		} as any
 
 		if (unix) {
@@ -217,7 +181,7 @@ export function connect(dev: boolean): Promise<void> {
 								authAttempts = 0
 								connAttempts = 0
 								dialogShown = false
-								connect(dev)
+								connect()
 							} else {
 								electron.app.quit()
 							}
@@ -226,7 +190,7 @@ export function connect(dev: boolean): Promise<void> {
 				} else {
 					connAttempts += 1
 				}
-				connect(dev)
+				connect()
 			}, 1000)
 		}
 
