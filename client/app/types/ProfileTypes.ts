@@ -1029,6 +1029,10 @@ export function New(self: Profile): Profile {
 		let syncError: any
 
 		for (let syncHost of syncHosts) {
+			if (!syncHost) {
+				continue
+			}
+
 			try {
 				syncData = await this._sync(syncHost)
 				syncError = null
