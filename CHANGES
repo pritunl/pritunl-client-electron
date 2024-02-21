@@ -1,6 +1,10 @@
 Pritunl Client Changelog
 ========================
 
+<%= version %>
+
+Add minimal interface
+
 Version 1.3.3785.81 2024-01-23
 ------------------------------
 
