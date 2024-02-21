@@ -139,6 +139,32 @@ export class Request {
 		return this
 	}
 
+	parseError(wrapErr: Error, msg: string): Errors.RequestError {
+		let data: {[key: string]: any} = {}
+
+		if (this.ssl !== undefined) {
+			data.ssl = this.ssl
+		}
+		if (this.hostname) {
+			data.hostname = this.hostname
+		}
+		if (this.port) {
+			data.port = this.port
+		}
+		if (this.method) {
+			data.method = this.method
+		}
+		if (this.path) {
+			data.path = this.path
+		}
+		if (this.ttl !== undefined) {
+			data.ttl = this.ttl
+		}
+
+		return new Errors.RequestError(
+			wrapErr, msg, data)
+	}
+
 	end(): Promise<Response> {
 		return new Promise<Response>((resolve, reject): void => {
 			try {
@@ -179,14 +205,14 @@ export class Request {
 				}
 
 				req.on("timeout", () => {
-					let err = new Errors.RequestError(null, "Request: Timeout error")
+					let err = this.parseError(null, "Request: Timeout error")
 					req.destroy(err)
 					Logger.error(err.message)
 					reject(err)
 				})
 
 				req.on("error", (err) => {
-					err = new Errors.RequestError(err, "Request: HTTP error")
+					err = this.parseError(err, "Request:  Client error")
 					Logger.error(err.message)
 					reject(err)
 				})
@@ -197,7 +223,7 @@ export class Request {
 
 				req.end()
 			} catch (err) {
-				err = new Errors.RequestError(err, "Request: Exception")
+				err = this.parseError(err, "Request: Exception")
 				Logger.error(err.message)
 				reject(err)
 			}
