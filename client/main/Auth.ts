@@ -13,14 +13,10 @@ if (process.platform === "linux" || process.platform === "darwin") {
 }
 
 function getAuthPath(): string {
-	if (process.argv.indexOf("--dev") !== -1) {
-		return path.join(__dirname, "..", "..", "dev", "auth")
+	if (process.platform === "win32") {
+		return path.join(winDrive, "ProgramData", "Pritunl", "auth")
 	} else {
-		if (process.platform === "win32") {
-			return path.join(winDrive, "ProgramData", "Pritunl", "auth")
-		} else {
-			return path.join(path.sep, "var", "run", "pritunl.auth")
-		}
+		return path.join(path.sep, "var", "run", "pritunl.auth")
 	}
 }
 
