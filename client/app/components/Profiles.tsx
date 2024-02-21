@@ -13,7 +13,7 @@ const css = {
 };
 
 export default class Profiles extends React.Component<{}, State> {
-	interval: NodeJS.Timer
+	interval: NodeJS.Timeout
 
 	constructor(props: any, context: any) {
 		super(props, context);
