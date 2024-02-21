@@ -1,7 +1,7 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 9176:
+/***/ 7795:
 /***/ ((module) => {
 
 "use strict";
@@ -43,28 +43,28 @@ module.exports = { mask, unmask };
 
 /***/ }),
 
-/***/ 1098:
+/***/ 6309:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
 try {
-  module.exports = __webpack_require__(8495)(__dirname);
+  module.exports = __webpack_require__(5091)(__dirname);
 } catch (e) {
-  module.exports = __webpack_require__(9176);
+  module.exports = __webpack_require__(7795);
 }
 
 
 /***/ }),
 
-/***/ 4570:
+/***/ 1697:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-const fs = __webpack_require__(7147)
-const path = __webpack_require__(1017)
+const fs = __webpack_require__(9896)
+const path = __webpack_require__(6928)
 
 /* istanbul ignore next */
 const LCHOWN = fs.lchown ? 'lchown' : 'chown'
@@ -233,14 +233,14 @@ chownr.sync = chownrSync
 
 /***/ }),
 
-/***/ 2276:
+/***/ 5733:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
 
-const MiniPass = __webpack_require__(3)
-const EE = (__webpack_require__(2361).EventEmitter)
-const fs = __webpack_require__(7147)
+const MiniPass = __webpack_require__(8607)
+const EE = (__webpack_require__(4434).EventEmitter)
+const fs = __webpack_require__(9896)
 
 let writev = fs.writev
 /* istanbul ignore next */
@@ -663,7 +663,7 @@ exports.WriteStreamSync = WriteStreamSync
 
 /***/ }),
 
-/***/ 3:
+/***/ 8607:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -672,9 +672,9 @@ const proc = typeof process === 'object' && process ? process : {
   stdout: null,
   stderr: null,
 }
-const EE = __webpack_require__(2361)
-const Stream = __webpack_require__(2781)
-const SD = (__webpack_require__(1576).StringDecoder)
+const EE = __webpack_require__(4434)
+const Stream = __webpack_require__(2203)
+const SD = (__webpack_require__(3193).StringDecoder)
 
 const EOF = Symbol('EOF')
 const MAYBE_EMIT_END = Symbol('maybeEmitEnd')
@@ -1320,14 +1320,14 @@ module.exports = class Minipass extends Stream {
 
 /***/ }),
 
-/***/ 1074:
+/***/ 7880:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 // Update with any zlib constants that are added or changed in the future.
 // Node v6 didn't export this, so we just hard code the version and rely
 // on all the other hard-coded values from zlib v4736.  When node v6
 // support drops, we can just export the realZlibConstants object.
-const realZlibConstants = (__webpack_require__(9796).constants) ||
+const realZlibConstants = (__webpack_require__(3106).constants) ||
   /* istanbul ignore next */ { ZLIB_VERNUM: 4736 }
 
 module.exports = Object.freeze(Object.assign(Object.create(null), {
@@ -1442,18 +1442,18 @@ module.exports = Object.freeze(Object.assign(Object.create(null), {
 
 /***/ }),
 
-/***/ 952:
+/***/ 1857:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
 
 
-const assert = __webpack_require__(9491)
-const Buffer = (__webpack_require__(4300).Buffer)
-const realZlib = __webpack_require__(9796)
+const assert = __webpack_require__(2613)
+const Buffer = (__webpack_require__(181).Buffer)
+const realZlib = __webpack_require__(3106)
 
-const constants = exports.constants = __webpack_require__(1074)
-const Minipass = __webpack_require__(1933)
+const constants = exports.constants = __webpack_require__(7880)
+const Minipass = __webpack_require__(4211)
 
 const OriginalBufferConcat = Buffer.concat
 
@@ -1798,7 +1798,7 @@ if (typeof realZlib.BrotliCompress === 'function') {
 
 /***/ }),
 
-/***/ 1933:
+/***/ 4211:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -1807,9 +1807,9 @@ const proc = typeof process === 'object' && process ? process : {
   stdout: null,
   stderr: null,
 }
-const EE = __webpack_require__(2361)
-const Stream = __webpack_require__(2781)
-const SD = (__webpack_require__(1576).StringDecoder)
+const EE = __webpack_require__(4434)
+const Stream = __webpack_require__(2203)
+const SD = (__webpack_require__(3193).StringDecoder)
 
 const EOF = Symbol('EOF')
 const MAYBE_EMIT_END = Symbol('maybeEmitEnd')
@@ -2455,15 +2455,15 @@ module.exports = class Minipass extends Stream {
 
 /***/ }),
 
-/***/ 7537:
+/***/ 2034:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const optsArg = __webpack_require__(1457)
-const pathArg = __webpack_require__(7252)
+const optsArg = __webpack_require__(5571)
+const pathArg = __webpack_require__(8790)
 
-const {mkdirpNative, mkdirpNativeSync} = __webpack_require__(555)
-const {mkdirpManual, mkdirpManualSync} = __webpack_require__(8179)
-const {useNative, useNativeSync} = __webpack_require__(5893)
+const {mkdirpNative, mkdirpNativeSync} = __webpack_require__(2389)
+const {mkdirpManual, mkdirpManualSync} = __webpack_require__(7296)
+const {useNative, useNativeSync} = __webpack_require__(4921)
 
 
 const mkdirp = (path, opts) => {
@@ -2493,10 +2493,10 @@ module.exports = mkdirp
 
 /***/ }),
 
-/***/ 389:
+/***/ 4625:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const {dirname} = __webpack_require__(1017)
+const {dirname} = __webpack_require__(6928)
 
 const findMade = (opts, parent, path = undefined) => {
   // we never want the 'made' return value to be a root directory
@@ -2529,10 +2529,10 @@ module.exports = {findMade, findMadeSync}
 
 /***/ }),
 
-/***/ 8179:
+/***/ 7296:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const {dirname} = __webpack_require__(1017)
+const {dirname} = __webpack_require__(6928)
 
 const mkdirpManual = (path, opts, made) => {
   opts.recursive = false
@@ -2600,12 +2600,12 @@ module.exports = {mkdirpManual, mkdirpManualSync}
 
 /***/ }),
 
-/***/ 555:
+/***/ 2389:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const {dirname} = __webpack_require__(1017)
-const {findMade, findMadeSync} = __webpack_require__(389)
-const {mkdirpManual, mkdirpManualSync} = __webpack_require__(8179)
+const {dirname} = __webpack_require__(6928)
+const {findMade, findMadeSync} = __webpack_require__(4625)
+const {mkdirpManual, mkdirpManualSync} = __webpack_require__(7296)
 
 const mkdirpNative = (path, opts) => {
   opts.recursive = true
@@ -2646,11 +2646,11 @@ module.exports = {mkdirpNative, mkdirpNativeSync}
 
 /***/ }),
 
-/***/ 1457:
+/***/ 5571:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const { promisify } = __webpack_require__(3837)
-const fs = __webpack_require__(7147)
+const { promisify } = __webpack_require__(9023)
+const fs = __webpack_require__(9896)
 const optsArg = opts => {
   if (!opts)
     opts = { mode: 0o777, fs }
@@ -2676,11 +2676,11 @@ module.exports = optsArg
 
 /***/ }),
 
-/***/ 7252:
+/***/ 8790:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const platform = {}.__TESTING_MKDIRP_PLATFORM__ || process.platform
-const { resolve, parse } = __webpack_require__(1017)
+const { resolve, parse } = __webpack_require__(6928)
 const pathArg = path => {
   if (/\0/.test(path)) {
     // simulate same failure that node raises
@@ -2712,10 +2712,10 @@ module.exports = pathArg
 
 /***/ }),
 
-/***/ 5893:
+/***/ 4921:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const fs = __webpack_require__(7147)
+const fs = __webpack_require__(9896)
 
 const version = {}.__TESTING_MKDIRP_NODE_VERSION__ || process.version
 const versArr = version.replace(/^v/, '').split('.')
@@ -2729,24 +2729,24 @@ module.exports = {useNative, useNativeSync}
 
 /***/ }),
 
-/***/ 8495:
+/***/ 5091:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 if (typeof process.addon === 'function') { // if the platform supports native resolving prefer that
   module.exports = process.addon.bind(process)
 } else { // else use the runtime version here
-  module.exports = __webpack_require__(2615)
+  module.exports = __webpack_require__(4831)
 }
 
 
 /***/ }),
 
-/***/ 2615:
+/***/ 4831:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var fs = __webpack_require__(7147)
-var path = __webpack_require__(1017)
-var os = __webpack_require__(2037)
+var fs = __webpack_require__(9896)
+var path = __webpack_require__(6928)
+var os = __webpack_require__(857)
 
 // Workaround to fix webpack's build warnings: 'the request of a dependency is an expression'
 var runtimeRequire =  true ? require : 0 // eslint-disable-line
@@ -2955,7 +2955,7 @@ load.compareTuples = compareTuples
 
 /***/ }),
 
-/***/ 9610:
+/***/ 8302:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -2963,38 +2963,38 @@ var __webpack_unused_export__;
 
 
 // high-level commands
-__webpack_unused_export__ = /* unused reexport */ __webpack_require__(1150)
-__webpack_unused_export__ = /* unused reexport */ __webpack_require__(5650)
-__webpack_unused_export__ = /* unused reexport */ __webpack_require__(3862)
-__webpack_unused_export__ = /* unused reexport */ __webpack_require__(9318)
-__webpack_unused_export__ = /* unused reexport */ __webpack_require__(9812)
+__webpack_unused_export__ = /* unused reexport */ __webpack_require__(4656)
+__webpack_unused_export__ = /* unused reexport */ __webpack_require__(7150)
+__webpack_unused_export__ = /* unused reexport */ __webpack_require__(4832)
+__webpack_unused_export__ = /* unused reexport */ __webpack_require__(1621)
+__webpack_unused_export__ = /* unused reexport */ __webpack_require__(6559)
 
 // classes
-/* unused reexport */ __webpack_require__(7511)
-/* unused reexport */ __webpack_require__(7633)
-/* unused reexport */ __webpack_require__(4588)
-/* unused reexport */ __webpack_require__(3265)
-/* unused reexport */ __webpack_require__(2944)
-/* unused reexport */ __webpack_require__(1549)
-/* unused reexport */ __webpack_require__(630)
-/* unused reexport */ __webpack_require__(987)
+/* unused reexport */ __webpack_require__(3593)
+/* unused reexport */ __webpack_require__(8646)
+/* unused reexport */ __webpack_require__(5009)
+/* unused reexport */ __webpack_require__(3009)
+/* unused reexport */ __webpack_require__(1996)
+/* unused reexport */ __webpack_require__(877)
+/* unused reexport */ __webpack_require__(8087)
+/* unused reexport */ __webpack_require__(6543)
 
 
 /***/ }),
 
-/***/ 1150:
+/***/ 4656:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
 // tar -c
-const hlo = __webpack_require__(764)
+const hlo = __webpack_require__(1743)
 
-const Pack = __webpack_require__(7511)
-const fsm = __webpack_require__(2276)
-const t = __webpack_require__(3862)
-const path = __webpack_require__(1017)
+const Pack = __webpack_require__(3593)
+const fsm = __webpack_require__(5733)
+const t = __webpack_require__(4832)
+const path = __webpack_require__(6928)
 
 module.exports = (opt_, files, cb) => {
   if (typeof files === 'function') {
@@ -3101,19 +3101,19 @@ const create = (opt, files) => {
 
 /***/ }),
 
-/***/ 9812:
+/***/ 6559:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
 // tar -x
-const hlo = __webpack_require__(764)
-const Unpack = __webpack_require__(7633)
-const fs = __webpack_require__(7147)
-const fsm = __webpack_require__(2276)
-const path = __webpack_require__(1017)
-const stripSlash = __webpack_require__(6433)
+const hlo = __webpack_require__(1743)
+const Unpack = __webpack_require__(8646)
+const fs = __webpack_require__(9896)
+const fsm = __webpack_require__(5733)
+const path = __webpack_require__(6928)
+const stripSlash = __webpack_require__(8725)
 
 module.exports = (opt_, files, cb) => {
   if (typeof opt_ === 'function') {
@@ -3222,7 +3222,7 @@ const extract = opt => new Unpack(opt)
 
 /***/ }),
 
-/***/ 2040:
+/***/ 7212:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 // Get the appropriate flag to use for creating files
@@ -3235,7 +3235,7 @@ const extract = opt => new Unpack(opt)
 // Only supported in Node v12.9.0 and above.
 const platform = {}.__FAKE_PLATFORM__ || process.platform
 const isWindows = platform === 'win32'
-const fs = global.__FAKE_TESTING_FS__ || __webpack_require__(7147)
+const fs = global.__FAKE_TESTING_FS__ || __webpack_require__(9896)
 
 /* istanbul ignore next */
 const { O_CREAT, O_TRUNC, O_WRONLY, UV_FS_O_FILEMAP = 0 } = fs.constants
@@ -3249,7 +3249,7 @@ module.exports = !fMapEnabled ? () => 'w'
 
 /***/ }),
 
-/***/ 1549:
+/***/ 877:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -3259,9 +3259,9 @@ module.exports = !fMapEnabled ? () => 'w'
 // the data could not be faithfully encoded in a simple header.
 // (Also, check header.needPax to see if it needs a pax header.)
 
-const types = __webpack_require__(987)
-const pathModule = (__webpack_require__(1017).posix)
-const large = __webpack_require__(5304)
+const types = __webpack_require__(6543)
+const pathModule = (__webpack_require__(6928).posix)
+const large = __webpack_require__(4318)
 
 const SLURP = Symbol('slurp')
 const TYPE = Symbol('type')
@@ -3561,7 +3561,7 @@ module.exports = Header
 
 /***/ }),
 
-/***/ 764:
+/***/ 1743:
 /***/ ((module) => {
 
 "use strict";
@@ -3598,7 +3598,7 @@ module.exports = opt => opt ? Object.keys(opt).map(k => [
 
 /***/ }),
 
-/***/ 5304:
+/***/ 4318:
 /***/ ((module) => {
 
 "use strict";
@@ -3710,7 +3710,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ 3862:
+/***/ 4832:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -3720,12 +3720,12 @@ module.exports = {
 // maybe some DRY opportunity here?
 
 // tar -t
-const hlo = __webpack_require__(764)
-const Parser = __webpack_require__(4588)
-const fs = __webpack_require__(7147)
-const fsm = __webpack_require__(2276)
-const path = __webpack_require__(1017)
-const stripSlash = __webpack_require__(6433)
+const hlo = __webpack_require__(1743)
+const Parser = __webpack_require__(5009)
+const fs = __webpack_require__(9896)
+const fsm = __webpack_require__(5733)
+const path = __webpack_require__(6928)
+const stripSlash = __webpack_require__(8725)
 
 module.exports = (opt_, files, cb) => {
   if (typeof opt_ === 'function') {
@@ -3857,7 +3857,7 @@ const list = opt => new Parser(opt)
 
 /***/ }),
 
-/***/ 7561:
+/***/ 9149:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -3867,11 +3867,11 @@ const list = opt => new Parser(opt)
 // TODO: This should probably be a class, not functionally
 // passing around state in a gazillion args.
 
-const mkdirp = __webpack_require__(7537)
-const fs = __webpack_require__(7147)
-const path = __webpack_require__(1017)
-const chownr = __webpack_require__(4570)
-const normPath = __webpack_require__(1593)
+const mkdirp = __webpack_require__(2034)
+const fs = __webpack_require__(9896)
+const path = __webpack_require__(6928)
+const chownr = __webpack_require__(1697)
+const normPath = __webpack_require__(3373)
 
 class SymlinkError extends Error {
   constructor (symlink, path) {
@@ -4094,7 +4094,7 @@ module.exports.sync = (dir, opt) => {
 
 /***/ }),
 
-/***/ 513:
+/***/ 6425:
 /***/ ((module) => {
 
 "use strict";
@@ -4129,7 +4129,7 @@ module.exports = (mode, isDir, portable) => {
 
 /***/ }),
 
-/***/ 5064:
+/***/ 5995:
 /***/ ((module) => {
 
 // warning: extremely hot code path.
@@ -4148,7 +4148,7 @@ module.exports = s => {
 
 /***/ }),
 
-/***/ 1593:
+/***/ 3373:
 /***/ ((module) => {
 
 // on windows, either \ or / are valid directory separators.
@@ -4163,7 +4163,7 @@ module.exports = platform !== 'win32' ? p => p
 
 /***/ }),
 
-/***/ 7511:
+/***/ 3593:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -4191,13 +4191,13 @@ class PackJob {
   }
 }
 
-const { Minipass } = __webpack_require__(1241)
-const zlib = __webpack_require__(952)
-const ReadEntry = __webpack_require__(3265)
-const WriteEntry = __webpack_require__(2944)
+const { Minipass } = __webpack_require__(5904)
+const zlib = __webpack_require__(1857)
+const ReadEntry = __webpack_require__(3009)
+const WriteEntry = __webpack_require__(1996)
 const WriteEntrySync = WriteEntry.Sync
 const WriteEntryTar = WriteEntry.Tar
-const Yallist = __webpack_require__(1123)
+const Yallist = __webpack_require__(7841)
 const EOF = Buffer.alloc(1024)
 const ONSTAT = Symbol('onStat')
 const ENDED = Symbol('ended')
@@ -4220,10 +4220,10 @@ const WRITEENTRYCLASS = Symbol('writeEntryClass')
 const WRITE = Symbol('write')
 const ONDRAIN = Symbol('ondrain')
 
-const fs = __webpack_require__(7147)
-const path = __webpack_require__(1017)
-const warner = __webpack_require__(4914)
-const normPath = __webpack_require__(1593)
+const fs = __webpack_require__(9896)
+const path = __webpack_require__(6928)
+const warner = __webpack_require__(472)
+const normPath = __webpack_require__(3373)
 
 const Pack = warner(class Pack extends Minipass {
   constructor (opt) {
@@ -4603,7 +4603,7 @@ module.exports = Pack
 
 /***/ }),
 
-/***/ 4588:
+/***/ 5009:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -4629,15 +4629,15 @@ module.exports = Pack
 //
 // ignored entries get .resume() called on them straight away
 
-const warner = __webpack_require__(4914)
-const Header = __webpack_require__(1549)
-const EE = __webpack_require__(2361)
-const Yallist = __webpack_require__(1123)
+const warner = __webpack_require__(472)
+const Header = __webpack_require__(877)
+const EE = __webpack_require__(4434)
+const Yallist = __webpack_require__(7841)
 const maxMetaEntrySize = 1024 * 1024
-const Entry = __webpack_require__(3265)
-const Pax = __webpack_require__(630)
-const zlib = __webpack_require__(952)
-const { nextTick } = __webpack_require__(7282)
+const Entry = __webpack_require__(3009)
+const Pax = __webpack_require__(8087)
+const zlib = __webpack_require__(1857)
+const { nextTick } = __webpack_require__(932)
 
 const gzipHeader = Buffer.from([0x1f, 0x8b])
 const STATE = Symbol('state')
@@ -5163,7 +5163,7 @@ module.exports = warner(class Parser extends EE {
 
 /***/ }),
 
-/***/ 4475:
+/***/ 5823:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 // A path exclusive reservation system
@@ -5174,10 +5174,10 @@ module.exports = warner(class Parser extends EE {
 // Used by async unpack to avoid clobbering paths in use,
 // while still allowing maximal safe parallelization.
 
-const assert = __webpack_require__(9491)
-const normalize = __webpack_require__(5064)
-const stripSlashes = __webpack_require__(6433)
-const { join } = __webpack_require__(1017)
+const assert = __webpack_require__(2613)
+const normalize = __webpack_require__(5995)
+const stripSlashes = __webpack_require__(8725)
+const { join } = __webpack_require__(6928)
 
 const platform = {}.TESTING_TAR_FAKE_PLATFORM || process.platform
 const isWindows = platform === 'win32'
@@ -5326,13 +5326,13 @@ module.exports = () => {
 
 /***/ }),
 
-/***/ 630:
+/***/ 8087:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-const Header = __webpack_require__(1549)
-const path = __webpack_require__(1017)
+const Header = __webpack_require__(877)
+const path = __webpack_require__(6928)
 
 class Pax {
   constructor (obj, global) {
@@ -5484,13 +5484,13 @@ module.exports = Pax
 
 /***/ }),
 
-/***/ 3265:
+/***/ 3009:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-const { Minipass } = __webpack_require__(1241)
-const normPath = __webpack_require__(1593)
+const { Minipass } = __webpack_require__(5904)
+const normPath = __webpack_require__(3373)
 
 const SLURP = Symbol('slurp')
 module.exports = class ReadEntry extends Minipass {
@@ -5599,19 +5599,19 @@ module.exports = class ReadEntry extends Minipass {
 
 /***/ }),
 
-/***/ 5650:
+/***/ 7150:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
 // tar -r
-const hlo = __webpack_require__(764)
-const Pack = __webpack_require__(7511)
-const fs = __webpack_require__(7147)
-const fsm = __webpack_require__(2276)
-const t = __webpack_require__(3862)
-const path = __webpack_require__(1017)
+const hlo = __webpack_require__(1743)
+const Pack = __webpack_require__(3593)
+const fs = __webpack_require__(9896)
+const fsm = __webpack_require__(5733)
+const t = __webpack_require__(4832)
+const path = __webpack_require__(6928)
 
 // starting at the head of the file, read a Header
 // If the checksum is invalid, that's our position to start writing
@@ -5619,7 +5619,7 @@ const path = __webpack_require__(1017)
 // and try again.
 // Write the new Pack stream starting there.
 
-const Header = __webpack_require__(1549)
+const Header = __webpack_require__(877)
 
 module.exports = (opt_, files, cb) => {
   const opt = hlo(opt_)
@@ -5853,11 +5853,11 @@ const addFilesAsync = (p, files) => {
 
 /***/ }),
 
-/***/ 6208:
+/***/ 314:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 // unix absolute paths are also absolute on win32, so we use this for both
-const { isAbsolute, parse } = (__webpack_require__(1017).win32)
+const { isAbsolute, parse } = (__webpack_require__(6928).win32)
 
 // returns [root, stripped]
 // Note that windows will think that //x/y/z/a has a "root" of //x/y, and in
@@ -5884,7 +5884,7 @@ module.exports = path => {
 
 /***/ }),
 
-/***/ 6433:
+/***/ 8725:
 /***/ ((module) => {
 
 // warning: extremely hot code path.
@@ -5904,7 +5904,7 @@ module.exports = str => {
 
 /***/ }),
 
-/***/ 987:
+/***/ 6543:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
@@ -5956,7 +5956,7 @@ exports.code = new Map(Array.from(exports.name).map(kv => [kv[1], kv[0]]))
 
 /***/ }),
 
-/***/ 7633:
+/***/ 8646:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -5968,18 +5968,18 @@ exports.code = new Map(Array.from(exports.name).map(kv => [kv[1], kv[0]]))
 // (like a Link depending on its target) or destructive operations (like
 // clobbering an fs object to create one of a different type.)
 
-const assert = __webpack_require__(9491)
-const Parser = __webpack_require__(4588)
-const fs = __webpack_require__(7147)
-const fsm = __webpack_require__(2276)
-const path = __webpack_require__(1017)
-const mkdir = __webpack_require__(7561)
-const wc = __webpack_require__(2853)
-const pathReservations = __webpack_require__(4475)
-const stripAbsolutePath = __webpack_require__(6208)
-const normPath = __webpack_require__(1593)
-const stripSlash = __webpack_require__(6433)
-const normalize = __webpack_require__(5064)
+const assert = __webpack_require__(2613)
+const Parser = __webpack_require__(5009)
+const fs = __webpack_require__(9896)
+const fsm = __webpack_require__(5733)
+const path = __webpack_require__(6928)
+const mkdir = __webpack_require__(9149)
+const wc = __webpack_require__(8567)
+const pathReservations = __webpack_require__(5823)
+const stripAbsolutePath = __webpack_require__(314)
+const normPath = __webpack_require__(3373)
+const stripSlash = __webpack_require__(8725)
+const normalize = __webpack_require__(5995)
 
 const ONENTRY = Symbol('onEntry')
 const CHECKFS = Symbol('checkFs')
@@ -6006,8 +6006,8 @@ const DOCHOWN = Symbol('doChown')
 const UID = Symbol('uid')
 const GID = Symbol('gid')
 const CHECKED_CWD = Symbol('checkedCwd')
-const crypto = __webpack_require__(6113)
-const getFlag = __webpack_require__(2040)
+const crypto = __webpack_require__(6982)
+const getFlag = __webpack_require__(7212)
 const platform = {}.TESTING_TAR_FAKE_PLATFORM || process.platform
 const isWindows = platform === 'win32'
 
@@ -6870,7 +6870,7 @@ module.exports = Unpack
 
 /***/ }),
 
-/***/ 9318:
+/***/ 1621:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -6878,8 +6878,8 @@ module.exports = Unpack
 
 // tar -u
 
-const hlo = __webpack_require__(764)
-const r = __webpack_require__(5650)
+const hlo = __webpack_require__(1743)
+const r = __webpack_require__(7150)
 // just call tar.r with the filter and mtimeCache
 
 module.exports = (opt_, files, cb) => {
@@ -6918,7 +6918,7 @@ const mtimeFilter = opt => {
 
 /***/ }),
 
-/***/ 4914:
+/***/ 472:
 /***/ ((module) => {
 
 "use strict";
@@ -6950,7 +6950,7 @@ module.exports = Base => class extends Base {
 
 /***/ }),
 
-/***/ 2853:
+/***/ 8567:
 /***/ ((module) => {
 
 "use strict";
@@ -6981,18 +6981,18 @@ module.exports = {
 
 /***/ }),
 
-/***/ 2944:
+/***/ 1996:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-const { Minipass } = __webpack_require__(1241)
-const Pax = __webpack_require__(630)
-const Header = __webpack_require__(1549)
-const fs = __webpack_require__(7147)
-const path = __webpack_require__(1017)
-const normPath = __webpack_require__(1593)
-const stripSlash = __webpack_require__(6433)
+const { Minipass } = __webpack_require__(5904)
+const Pax = __webpack_require__(8087)
+const Header = __webpack_require__(877)
+const fs = __webpack_require__(9896)
+const path = __webpack_require__(6928)
+const normPath = __webpack_require__(3373)
+const stripSlash = __webpack_require__(8725)
 
 const prefixPath = (path, prefix) => {
   if (!prefix) {
@@ -7022,11 +7022,11 @@ const AWAITDRAIN = Symbol('awaitDrain')
 const ONDRAIN = Symbol('ondrain')
 const PREFIX = Symbol('prefix')
 const HAD_ERROR = Symbol('hadError')
-const warner = __webpack_require__(4914)
-const winchars = __webpack_require__(2853)
-const stripAbsolutePath = __webpack_require__(6208)
+const warner = __webpack_require__(472)
+const winchars = __webpack_require__(8567)
+const stripAbsolutePath = __webpack_require__(314)
 
-const modeFix = __webpack_require__(513)
+const modeFix = __webpack_require__(6425)
 
 const WriteEntry = warner(class WriteEntry extends Minipass {
   constructor (p, opt) {
@@ -7535,7 +7535,7 @@ module.exports = WriteEntry
 
 /***/ }),
 
-/***/ 1241:
+/***/ 5904:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -7547,9 +7547,9 @@ const proc =
         stdout: null,
         stderr: null,
       }
-const EE = __webpack_require__(2361)
-const Stream = __webpack_require__(2781)
-const stringdecoder = __webpack_require__(1576)
+const EE = __webpack_require__(4434)
+const Stream = __webpack_require__(2203)
+const stringdecoder = __webpack_require__(3193)
 const SD = stringdecoder.StringDecoder
 
 const EOF = Symbol('EOF')
@@ -8245,7 +8245,7 @@ exports.Minipass = Minipass
 
 /***/ }),
 
-/***/ 7073:
+/***/ 7462:
 /***/ ((module) => {
 
 "use strict";
@@ -8315,28 +8315,28 @@ module.exports = isValidUTF8;
 
 /***/ }),
 
-/***/ 8403:
+/***/ 9830:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
 try {
-  module.exports = __webpack_require__(8495)(__dirname);
+  module.exports = __webpack_require__(5091)(__dirname);
 } catch (e) {
-  module.exports = __webpack_require__(7073);
+  module.exports = __webpack_require__(7462);
 }
 
 
 /***/ }),
 
-/***/ 1737:
+/***/ 3384:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-const { EMPTY_BUFFER } = __webpack_require__(9336);
+const { EMPTY_BUFFER } = __webpack_require__(9468);
 
 /**
  * Merges an array of buffers into a new buffer.
@@ -8446,7 +8446,7 @@ module.exports = {
 /* istanbul ignore else  */
 if (!{}.WS_NO_BUFFER_UTIL) {
   try {
-    const bufferUtil = __webpack_require__(1098);
+    const bufferUtil = __webpack_require__(6309);
 
     module.exports.mask = function (source, mask, output, offset, length) {
       if (length < 48) _mask(source, mask, output, offset, length);
@@ -8465,7 +8465,7 @@ if (!{}.WS_NO_BUFFER_UTIL) {
 
 /***/ }),
 
-/***/ 9336:
+/***/ 9468:
 /***/ ((module) => {
 
 "use strict";
@@ -8485,13 +8485,13 @@ module.exports = {
 
 /***/ }),
 
-/***/ 131:
+/***/ 5959:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-const { kForOnEventAttribute, kListener } = __webpack_require__(9336);
+const { kForOnEventAttribute, kListener } = __webpack_require__(9468);
 
 const kCode = Symbol('kCode');
 const kData = Symbol('kData');
@@ -8785,13 +8785,13 @@ function callListener(listener, thisArg, event) {
 
 /***/ }),
 
-/***/ 9450:
+/***/ 9052:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-const { tokenChars } = __webpack_require__(7908);
+const { tokenChars } = __webpack_require__(5694);
 
 /**
  * Adds an offer to the map of extension offers or a parameter to the map of
@@ -8996,7 +8996,7 @@ module.exports = { format, parse };
 
 /***/ }),
 
-/***/ 7876:
+/***/ 4593:
 /***/ ((module) => {
 
 "use strict";
@@ -9059,17 +9059,17 @@ module.exports = Limiter;
 
 /***/ }),
 
-/***/ 2106:
+/***/ 8361:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-const zlib = __webpack_require__(9796);
+const zlib = __webpack_require__(3106);
 
-const bufferUtil = __webpack_require__(1737);
-const Limiter = __webpack_require__(7876);
-const { kStatusCode } = __webpack_require__(9336);
+const bufferUtil = __webpack_require__(3384);
+const Limiter = __webpack_require__(4593);
+const { kStatusCode } = __webpack_require__(9468);
 
 const TRAILER = Buffer.from([0x00, 0x00, 0xff, 0xff]);
 const kPerMessageDeflate = Symbol('permessage-deflate');
@@ -9578,23 +9578,23 @@ function inflateOnError(err) {
 
 /***/ }),
 
-/***/ 7728:
+/***/ 1072:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-const { Writable } = __webpack_require__(2781);
+const { Writable } = __webpack_require__(2203);
 
-const PerMessageDeflate = __webpack_require__(2106);
+const PerMessageDeflate = __webpack_require__(8361);
 const {
   BINARY_TYPES,
   EMPTY_BUFFER,
   kStatusCode,
   kWebSocket
-} = __webpack_require__(9336);
-const { concat, toArrayBuffer, unmask } = __webpack_require__(1737);
-const { isValidStatusCode, isValidUTF8 } = __webpack_require__(7908);
+} = __webpack_require__(9468);
+const { concat, toArrayBuffer, unmask } = __webpack_require__(3384);
+const { isValidStatusCode, isValidUTF8 } = __webpack_require__(5694);
 
 const GET_INFO = 0;
 const GET_PAYLOAD_LENGTH_16 = 1;
@@ -10204,7 +10204,7 @@ function error(ErrorCtor, message, prefix, statusCode, errorCode) {
 
 /***/ }),
 
-/***/ 4601:
+/***/ 8120:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -10212,14 +10212,14 @@ function error(ErrorCtor, message, prefix, statusCode, errorCode) {
 
 
 
-const net = __webpack_require__(1808);
-const tls = __webpack_require__(4404);
-const { randomFillSync } = __webpack_require__(6113);
+const net = __webpack_require__(9278);
+const tls = __webpack_require__(4756);
+const { randomFillSync } = __webpack_require__(6982);
 
-const PerMessageDeflate = __webpack_require__(2106);
-const { EMPTY_BUFFER } = __webpack_require__(9336);
-const { isValidStatusCode } = __webpack_require__(7908);
-const { mask: applyMask, toBuffer } = __webpack_require__(1737);
+const PerMessageDeflate = __webpack_require__(8361);
+const { EMPTY_BUFFER } = __webpack_require__(9468);
+const { isValidStatusCode } = __webpack_require__(5694);
+const { mask: applyMask, toBuffer } = __webpack_require__(3384);
 
 const kByteLength = Symbol('kByteLength');
 const maskBuffer = Buffer.alloc(4);
@@ -10690,13 +10690,13 @@ module.exports = Sender;
 
 /***/ }),
 
-/***/ 3419:
+/***/ 6497:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-const { Duplex } = __webpack_require__(2781);
+const { Duplex } = __webpack_require__(2203);
 
 /**
  * Emits the `'close'` event on a stream.
@@ -10857,13 +10857,13 @@ module.exports = createWebSocketStream;
 
 /***/ }),
 
-/***/ 7467:
+/***/ 9263:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-const { tokenChars } = __webpack_require__(7908);
+const { tokenChars } = __webpack_require__(5694);
 
 /**
  * Parses the `Sec-WebSocket-Protocol` header into a set of subprotocol names.
@@ -10927,7 +10927,7 @@ module.exports = { parse };
 
 /***/ }),
 
-/***/ 7908:
+/***/ 5694:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -11047,7 +11047,7 @@ module.exports = {
 /* istanbul ignore else  */
 if (!{}.WS_NO_UTF_8_VALIDATE) {
   try {
-    const isValidUTF8 = __webpack_require__(8403);
+    const isValidUTF8 = __webpack_require__(9830);
 
     module.exports.isValidUTF8 = function (buf) {
       return buf.length < 150 ? _isValidUTF8(buf) : isValidUTF8(buf);
@@ -11060,7 +11060,7 @@ if (!{}.WS_NO_UTF_8_VALIDATE) {
 
 /***/ }),
 
-/***/ 6087:
+/***/ 7164:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -11068,18 +11068,18 @@ if (!{}.WS_NO_UTF_8_VALIDATE) {
 
 
 
-const EventEmitter = __webpack_require__(2361);
-const http = __webpack_require__(3685);
-const https = __webpack_require__(5687);
-const net = __webpack_require__(1808);
-const tls = __webpack_require__(4404);
-const { createHash } = __webpack_require__(6113);
+const EventEmitter = __webpack_require__(4434);
+const http = __webpack_require__(8611);
+const https = __webpack_require__(5692);
+const net = __webpack_require__(9278);
+const tls = __webpack_require__(4756);
+const { createHash } = __webpack_require__(6982);
 
-const extension = __webpack_require__(9450);
-const PerMessageDeflate = __webpack_require__(2106);
-const subprotocol = __webpack_require__(7467);
-const WebSocket = __webpack_require__(8955);
-const { GUID, kWebSocket } = __webpack_require__(9336);
+const extension = __webpack_require__(9052);
+const PerMessageDeflate = __webpack_require__(8361);
+const subprotocol = __webpack_require__(9263);
+const WebSocket = __webpack_require__(5082);
+const { GUID, kWebSocket } = __webpack_require__(9468);
 
 const keyRegex = /^[+/0-9A-Za-z]{22}==$/;
 
@@ -11603,7 +11603,7 @@ function abortHandshakeOrEmitwsClientError(server, req, socket, code, message) {
 
 /***/ }),
 
-/***/ 8955:
+/***/ 5082:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -11611,18 +11611,18 @@ function abortHandshakeOrEmitwsClientError(server, req, socket, code, message) {
 
 
 
-const EventEmitter = __webpack_require__(2361);
-const https = __webpack_require__(5687);
-const http = __webpack_require__(3685);
-const net = __webpack_require__(1808);
-const tls = __webpack_require__(4404);
-const { randomBytes, createHash } = __webpack_require__(6113);
-const { Readable } = __webpack_require__(2781);
-const { URL } = __webpack_require__(7310);
+const EventEmitter = __webpack_require__(4434);
+const https = __webpack_require__(5692);
+const http = __webpack_require__(8611);
+const net = __webpack_require__(9278);
+const tls = __webpack_require__(4756);
+const { randomBytes, createHash } = __webpack_require__(6982);
+const { Readable } = __webpack_require__(2203);
+const { URL } = __webpack_require__(7016);
 
-const PerMessageDeflate = __webpack_require__(2106);
-const Receiver = __webpack_require__(7728);
-const Sender = __webpack_require__(4601);
+const PerMessageDeflate = __webpack_require__(8361);
+const Receiver = __webpack_require__(1072);
+const Sender = __webpack_require__(8120);
 const {
   BINARY_TYPES,
   EMPTY_BUFFER,
@@ -11632,12 +11632,12 @@ const {
   kStatusCode,
   kWebSocket,
   NOOP
-} = __webpack_require__(9336);
+} = __webpack_require__(9468);
 const {
   EventTarget: { addEventListener, removeEventListener }
-} = __webpack_require__(131);
-const { format, parse } = __webpack_require__(9450);
-const { toBuffer } = __webpack_require__(1737);
+} = __webpack_require__(5959);
+const { format, parse } = __webpack_require__(9052);
+const { toBuffer } = __webpack_require__(3384);
 
 const closeTimeout = 30 * 1000;
 const kAborted = Symbol('kAborted');
@@ -12916,7 +12916,7 @@ function socketOnError() {
 
 /***/ }),
 
-/***/ 1678:
+/***/ 9417:
 /***/ ((module) => {
 
 "use strict";
@@ -12932,7 +12932,7 @@ module.exports = function (Yallist) {
 
 /***/ }),
 
-/***/ 1123:
+/***/ 7841:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -13360,13 +13360,13 @@ function Node (value, prev, next, list) {
 
 try {
   // add if support for Symbol.iterator is present
-  __webpack_require__(1678)(Yallist)
+  __webpack_require__(9417)(Yallist)
 } catch (er) {}
 
 
 /***/ }),
 
-/***/ 9491:
+/***/ 2613:
 /***/ ((module) => {
 
 "use strict";
@@ -13374,7 +13374,7 @@ module.exports = require("assert");
 
 /***/ }),
 
-/***/ 4300:
+/***/ 181:
 /***/ ((module) => {
 
 "use strict";
@@ -13382,7 +13382,7 @@ module.exports = require("buffer");
 
 /***/ }),
 
-/***/ 6113:
+/***/ 6982:
 /***/ ((module) => {
 
 "use strict";
@@ -13390,7 +13390,7 @@ module.exports = require("crypto");
 
 /***/ }),
 
-/***/ 2361:
+/***/ 4434:
 /***/ ((module) => {
 
 "use strict";
@@ -13398,7 +13398,7 @@ module.exports = require("events");
 
 /***/ }),
 
-/***/ 7147:
+/***/ 9896:
 /***/ ((module) => {
 
 "use strict";
@@ -13406,7 +13406,7 @@ module.exports = require("fs");
 
 /***/ }),
 
-/***/ 3685:
+/***/ 8611:
 /***/ ((module) => {
 
 "use strict";
@@ -13414,7 +13414,7 @@ module.exports = require("http");
 
 /***/ }),
 
-/***/ 5687:
+/***/ 5692:
 /***/ ((module) => {
 
 "use strict";
@@ -13422,7 +13422,7 @@ module.exports = require("https");
 
 /***/ }),
 
-/***/ 1808:
+/***/ 9278:
 /***/ ((module) => {
 
 "use strict";
@@ -13430,7 +13430,7 @@ module.exports = require("net");
 
 /***/ }),
 
-/***/ 2037:
+/***/ 857:
 /***/ ((module) => {
 
 "use strict";
@@ -13438,7 +13438,7 @@ module.exports = require("os");
 
 /***/ }),
 
-/***/ 1017:
+/***/ 6928:
 /***/ ((module) => {
 
 "use strict";
@@ -13446,7 +13446,7 @@ module.exports = require("path");
 
 /***/ }),
 
-/***/ 7282:
+/***/ 932:
 /***/ ((module) => {
 
 "use strict";
@@ -13454,7 +13454,7 @@ module.exports = require("process");
 
 /***/ }),
 
-/***/ 2781:
+/***/ 2203:
 /***/ ((module) => {
 
 "use strict";
@@ -13462,7 +13462,7 @@ module.exports = require("stream");
 
 /***/ }),
 
-/***/ 1576:
+/***/ 3193:
 /***/ ((module) => {
 
 "use strict";
@@ -13470,7 +13470,7 @@ module.exports = require("string_decoder");
 
 /***/ }),
 
-/***/ 4404:
+/***/ 4756:
 /***/ ((module) => {
 
 "use strict";
@@ -13478,7 +13478,7 @@ module.exports = require("tls");
 
 /***/ }),
 
-/***/ 7310:
+/***/ 7016:
 /***/ ((module) => {
 
 "use strict";
@@ -13486,7 +13486,7 @@ module.exports = require("url");
 
 /***/ }),
 
-/***/ 3837:
+/***/ 9023:
 /***/ ((module) => {
 
 "use strict";
@@ -13494,7 +13494,7 @@ module.exports = require("util");
 
 /***/ }),
 
-/***/ 9796:
+/***/ 3106:
 /***/ ((module) => {
 
 "use strict";
@@ -13565,13 +13565,13 @@ var __webpack_exports__ = {};
 "use strict";
 
 // EXTERNAL MODULE: external "process"
-var external_process_ = __webpack_require__(7282);
+var external_process_ = __webpack_require__(932);
 var external_process_default = /*#__PURE__*/__webpack_require__.n(external_process_);
 // EXTERNAL MODULE: external "path"
-var external_path_ = __webpack_require__(1017);
+var external_path_ = __webpack_require__(6928);
 var external_path_default = /*#__PURE__*/__webpack_require__.n(external_path_);
 // EXTERNAL MODULE: external "fs"
-var external_fs_ = __webpack_require__(7147);
+var external_fs_ = __webpack_require__(9896);
 var external_fs_default = /*#__PURE__*/__webpack_require__.n(external_fs_);
 ;// CONCATENATED MODULE: external "electron"
 const external_electron_namespaceObject = require("electron");
@@ -13631,15 +13631,15 @@ function openLink(url) {
 }
 
 // EXTERNAL MODULE: ./node_modules/ws/lib/stream.js
-var stream = __webpack_require__(3419);
+var stream = __webpack_require__(6497);
 // EXTERNAL MODULE: ./node_modules/ws/lib/receiver.js
-var receiver = __webpack_require__(7728);
+var receiver = __webpack_require__(1072);
 // EXTERNAL MODULE: ./node_modules/ws/lib/sender.js
-var sender = __webpack_require__(4601);
+var sender = __webpack_require__(8120);
 // EXTERNAL MODULE: ./node_modules/ws/lib/websocket.js
-var websocket = __webpack_require__(8955);
+var websocket = __webpack_require__(5082);
 // EXTERNAL MODULE: ./node_modules/ws/lib/websocket-server.js
-var websocket_server = __webpack_require__(6087);
+var websocket_server = __webpack_require__(7164);
 ;// CONCATENATED MODULE: ./node_modules/ws/wrapper.mjs
 
 
@@ -13704,10 +13704,10 @@ function load() {
 }
 
 // EXTERNAL MODULE: external "http"
-var external_http_ = __webpack_require__(3685);
+var external_http_ = __webpack_require__(8611);
 var external_http_default = /*#__PURE__*/__webpack_require__.n(external_http_);
 // EXTERNAL MODULE: external "https"
-var external_https_ = __webpack_require__(5687);
+var external_https_ = __webpack_require__(5692);
 var external_https_default = /*#__PURE__*/__webpack_require__.n(external_https_);
 ;// CONCATENATED MODULE: ./main/Errors.js
 class BaseError extends Error {
@@ -14037,12 +14037,12 @@ class Errors_BaseError extends Error {
         }
     }
 }
-class Errors_ReadError extends (/* unused pure expression or super */ null && (Errors_BaseError)) {
+class Errors_ReadError extends Errors_BaseError {
     constructor(wrapErr, message, args) {
         super("ReadError", wrapErr, message, args);
     }
 }
-class Errors_WriteError extends (/* unused pure expression or super */ null && (Errors_BaseError)) {
+class Errors_WriteError extends Errors_BaseError {
     constructor(wrapErr, message, args) {
         super("WriteError", wrapErr, message, args);
     }
@@ -14052,22 +14052,22 @@ class ParseError extends Errors_BaseError {
         super("ParseError", wrapErr, message, args);
     }
 }
-class Errors_RequestError extends (/* unused pure expression or super */ null && (Errors_BaseError)) {
+class Errors_RequestError extends Errors_BaseError {
     constructor(wrapErr, message, args) {
         super("RequestError", wrapErr, message, args);
     }
 }
-class ExecError extends (/* unused pure expression or super */ null && (Errors_BaseError)) {
+class ExecError extends Errors_BaseError {
     constructor(wrapErr, message, args) {
         super("ExecError", wrapErr, message, args);
     }
 }
-class UnknownError extends (/* unused pure expression or super */ null && (Errors_BaseError)) {
+class UnknownError extends Errors_BaseError {
     constructor(wrapErr, message, args) {
         super("UnknownError", wrapErr, message, args);
     }
 }
-class UnhandledError extends (/* unused pure expression or super */ null && (Errors_BaseError)) {
+class UnhandledError extends Errors_BaseError {
     constructor(wrapErr, message, origMessage, origStack) {
         super("UnhandledError", wrapErr, message, {
             message: origMessage,
@@ -14078,7 +14078,7 @@ class UnhandledError extends (/* unused pure expression or super */ null && (Err
 }
 
 // EXTERNAL MODULE: ./node_modules/tar/index.js
-var node_modules_tar = __webpack_require__(9610);
+var node_modules_tar = __webpack_require__(8302);
 ;// CONCATENATED MODULE: ./app/utils/MiscUtils.js
 
 
@@ -15245,17 +15245,15 @@ class Main {
         let framelessClient = false;
         let width = 424;
         let height = 528;
-        let minWidth = 405;
+        let minWidth = 385;
         let minHeight = 440;
         let maxWidth = 670;
         let maxHeight = 800;
-        let classicIface = main_Config.classic_interface;
-        if (((external_process_default()).platform === "win32" && !classicIface) ||
-            (main_Config.frameless && !classicIface)) {
+        if ((external_process_default()).platform === "win32" || main_Config.frameless) {
             frameless = true;
             framelessClient = true;
             width = 430;
-            minWidth = 430;
+            minWidth = 410;
             if ((external_process_default()).platform === "win32") {
                 frameless = false;
                 titleBarStyle = "hidden";
@@ -15272,9 +15270,6 @@ class Main {
             }
         }
         let zoomFactor = 1;
-        if ((external_process_default()).platform === "darwin" && classicIface) {
-            zoomFactor = 0.8;
-        }
         if (zoomFactor !== 1) {
             width = Math.round(width * zoomFactor);
             height = Math.round(height * zoomFactor);
@@ -15339,13 +15334,7 @@ class Main {
                 });
             }
         }, 800);
-        let indexUrl = "";
-        if (classicIface) {
-            indexUrl = "file://" + external_path_default().join(__dirname, "..", "index_orig.html");
-        }
-        else {
-            indexUrl = "file://" + external_path_default().join(__dirname, "..", "index.html");
-        }
+        let indexUrl = "file://" + external_path_default().join(__dirname, "..", "index.html");
         indexUrl += "?dev=" + (external_process_default().argv.indexOf("--dev") !== -1 ?
             "true" : "false");
         indexUrl += "&dataPath=" + encodeURIComponent(external_electron_default().app.getPath("userData"));
