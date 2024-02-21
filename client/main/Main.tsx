@@ -10,6 +10,7 @@ import * as Errors from "../app/Errors";
 import * as Tpm from "./Tpm"
 
 let tray: electron.Tray
+let trayCurIcon: boolean
 let awaken: boolean
 let ready: boolean
 let readyError: string
@@ -302,7 +303,9 @@ function initTray() {
 	tray.setContextMenu(trayMenu)
 
 	Service.sync().then((status: boolean): void => {
-		tray.setImage(getTrayIcon(status))
+		if (tray) {
+			tray.setImage(getTrayIcon(status))
+		}
 	})
 }
 
