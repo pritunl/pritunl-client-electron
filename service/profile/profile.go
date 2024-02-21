@@ -80,7 +80,7 @@ var (
 	}
 	clientInsecure = &http.Client{
 		Transport: clientTransport,
-		Timeout:   6 * time.Second,
+		Timeout:   10 * time.Second,
 	}
 	clientConnInsecure = &http.Client{
 		Transport: clientTransport,
@@ -3700,7 +3700,7 @@ func (p *Profile) watchWg(data *WgData) {
 
 	time.Sleep(1 * time.Second)
 
-	for i := 0; i < 30; i++ {
+	for i := 0; i < 40; i++ {
 		if p.stop {
 			p.stopSafe()
 			return
