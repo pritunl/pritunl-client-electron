@@ -116,6 +116,20 @@ export class Importer {
 					let data = await MiscUtils.fileRead(filePth)
 					keyData += "<tls-auth>\n" + data + "</tls-auth>\n"
 				}
+			} else if (line.startsWith("tls-crypt ")) {
+				split = line.split(" ")
+				split.shift()
+
+				filePth = split.join(" ")
+
+				if (this.files[filePth]) {
+					keyData += "<tls-crypt>\n" + this.files[filePth] + "</tls-crypt>\n"
+				} else {
+					filePth = path.join(path.dirname(pth), path.normalize(filePth))
+
+					let data = await MiscUtils.fileRead(filePth)
+					keyData += "<tls-crypt>\n" + data + "</tls-crypt>\n"
+				}
 			} else {
 				ovpnData += line + "\n"
 			}

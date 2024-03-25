@@ -160,6 +160,31 @@ Importer.prototype.import = function(pth, data, callback) {
           waiter.done();
         }.bind(this));
       }
+    } else if (line.startsWith('tls-crypt ')) {
+      split = line.split(' ');
+      split.shift();
+
+      filePth = split.join(' ');
+
+      if (this.files[filePth]) {
+        keyData += '<tls-crypt>\n' + this.files[filePth] + '</tls-crypt>\n';
+      } else {
+        filePth = path.join(path.dirname(pth), path.normalize(filePth));
+        waiter.add();
+
+        fs.readFile(filePth, 'utf8', function(err, data) {
+          if (err) {
+            err = new errors.ReadError(
+                'importer: Failed to read profile tls crypt key (%s)', err);
+            logger.error(err);
+            return;
+          }
+
+          keyData += '<tls-crypt>\n' + data + '</tls-crypt>\n';
+          waiter.done();
+        }.bind(this));
+      }
+
     } else {
       ovpnData += line + '\n';
     }

@@ -306,6 +306,15 @@ export function New(self: Profile): Profile {
 				eIndex + 12, data.length)
 		}
 
+		sIndex = data.indexOf("<tls-crypt>")
+		eIndex = data.indexOf("</tls-crypt>\n")
+		if (sIndex > 0 && eIndex > 0) {
+			keyData += data.substring(sIndex, eIndex + 13)
+			data = data.substring(0, sIndex) + data.substring(
+				eIndex + 13, data.length)
+		}
+
+
 		sIndex = data.indexOf("<key>")
 		eIndex = data.indexOf("</key>\n")
 		if (sIndex > 0 &&  eIndex > 0) {
@@ -363,6 +372,12 @@ export function New(self: Profile): Profile {
 		eIndex = data.indexOf("</tls-auth>\n")
 		if (sIndex > 0 && eIndex > 0) {
 			keyData += data.substring(sIndex, eIndex + 12)
+		}
+
+		sIndex = data.indexOf("<tls-crypt>")
+		eIndex = data.indexOf("</tls-crypt>\n")
+		if (sIndex > 0 && eIndex > 0) {
+			keyData += data.substring(sIndex, eIndex + 13)
 		}
 
 		sIndex = data.indexOf("<key>")
@@ -889,6 +904,12 @@ export function New(self: Profile): Profile {
 		eIndex = curData.indexOf("</tls-auth>")
 		if (sIndex >= 0 &&  eIndex >= 0) {
 			tlsAuth += curData.substring(sIndex, eIndex + 11) + "\n"
+		}
+
+		sIndex = curData.indexOf("<tls-crypt>")
+		eIndex = curData.indexOf("</tls-crypt>")
+		if (sIndex >= 0 &&  eIndex >= 0) {
+			tlsAuth += curData.substring(sIndex, eIndex + 12) + "\n"
 		}
 
 		sIndex = curData.indexOf("<cert>")
