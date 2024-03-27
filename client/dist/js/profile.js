@@ -784,6 +784,14 @@ Profile.prototype.encryptKey = function(callback) {
       eIndex + 12, this.data.length);
   }
 
+  sIndex = this.data.indexOf('<tls-crypt>');
+  eIndex = this.data.indexOf('</tls-crypt>\n');
+  if (sIndex > 0 &&  eIndex > 0) {
+    keyData += this.data.substring(sIndex, eIndex + 13);
+    this.data = this.data.substring(0, sIndex) + this.data.substring(
+      eIndex + 13, this.data.length);
+  }
+
   sIndex = this.data.indexOf('<key>');
   eIndex = this.data.indexOf('</key>\n');
   if (sIndex > 0 &&  eIndex > 0) {
@@ -906,6 +914,7 @@ Profile.prototype.updateSync = function(data) {
   var sIndex;
   var eIndex;
   var tlsAuth = '';
+  var tlsCrypt = '';
   var cert = '';
   var key = '';
   var jsonData = '';
@@ -972,6 +981,12 @@ Profile.prototype.updateSync = function(data) {
     tlsAuth += this.data.substring(sIndex, eIndex + 11) + '\n';
   }
 
+  sIndex = this.data.indexOf('<tls-crypt>');
+  eIndex = this.data.indexOf('</tls-crypt>');
+  if (sIndex >= 0 && eIndex >= 0) {
+    tlsCrypt += this.data.substring(sIndex, eIndex + 12) + '\n';
+  }
+
   sIndex = this.data.indexOf('<cert>');
   eIndex = this.data.indexOf('</cert>');
   if (sIndex >= 0 && eIndex >= 0) {
@@ -984,7 +999,7 @@ Profile.prototype.updateSync = function(data) {
     key = this.data.substring(sIndex, eIndex + 6) + '\n';
   }
 
-  this.data = data + tlsAuth + cert + key;
+  this.data = data + tlsAuth + tlsCrypt + cert + key;
   this.saveData();
 };
 

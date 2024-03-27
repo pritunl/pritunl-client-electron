@@ -46,6 +46,7 @@ type Ovpn struct {
 	KeyDirection      int
 	CaCert            string
 	TlsAuth           string
+	TlsCrypt          string
 	Cert              string
 	Key               string
 
@@ -168,6 +169,11 @@ func (o *Ovpn) Export() string {
 	if o.TlsAuth != "" {
 		output += fmt.Sprintf("<tls-auth>\n%s</tls-auth>\n", o.TlsAuth)
 	}
+
+	if o.TlsCrypt != "" {
+		output += fmt.Sprintf("<tls-crypt>\n%s</tls-crypt>\n", o.TlsCrypt)
+	}
+
 	if o.Cert != "" {
 		output += fmt.Sprintf("<cert>\n%s</cert>\n", o.Cert)
 	}
@@ -188,7 +194,8 @@ func Import(data, fixedRemote, fixedRemote6 string,
 	}
 
 	inCa := false
-	inTls := false
+	inTlsAuth := false
+	inTlsCrypt := false
 	inCert := false
 	inKey := false
 
@@ -213,12 +220,18 @@ func Import(data, fixedRemote, fixedRemote6 string,
 				continue
 			}
 			o.CaCert += line + "\n"
-		} else if inTls {
+		} else if inTlsAuth {
 			if line == "</tls-auth>" {
-				inTls = false
+				inTlsAuth = false
 				continue
 			}
 			o.TlsAuth += line + "\n"
+		} else if inTlsCrypt {
+			if line == "</tls-crypt>" {
+				inTlsCrypt = false
+				continue
+			}
+			o.TlsCrypt += line + "\n"
 		} else if inCert {
 			if line == "</cert>" {
 				inCert = false
@@ -242,7 +255,10 @@ func Import(data, fixedRemote, fixedRemote6 string,
 			inCa = true
 			break
 		case "<tls-auth>":
-			inTls = true
+			inTlsAuth = true
+			break
+		case "<tls-crypt>":
+			inTlsCrypt = true
 			break
 		case "<cert>":
 			inCert = true
