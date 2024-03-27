@@ -13583,6 +13583,16 @@ var external_child_process_default = /*#__PURE__*/__webpack_require__.n(external
 
 
 
+function uuid() {
+    return (+new Date() + Math.floor(Math.random() * 999999)).toString(36);
+}
+function uuidRand() {
+    let id = "";
+    for (let i = 0; i < 4; i++) {
+        id += Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+    }
+    return id;
+}
 function openLink(url) {
     let u = new URL(url);
     if (u.protocol !== "http:" && u.protocol !== "https:") {
@@ -13952,10 +13962,7 @@ class Request_Request {
     }
 }
 
-// EXTERNAL MODULE: external "crypto"
-var external_crypto_ = __webpack_require__(6982);
 ;// CONCATENATED MODULE: ./main/RequestUtils.js
-
 
 
 function get(path) {
@@ -14008,22 +14015,6 @@ function del(path) {
     req.delete(path)
         .set("Auth-Token", Auth.token)
         .set("User-Agent", "pritunl");
-    return req;
-}
-function authGet(host, path, token, secret) {
-    let req = new Request.Request();
-    req.get(host + path)
-        .set("Auth-Token", Auth.token)
-        .set("User-Agent", "pritunl");
-    let authTimestamp = Math.floor(new Date().getTime() / 1000).toString();
-    let authNonce = MiscUtils.nonce();
-    let authString = [token, authTimestamp, authNonce, "get", path].join("&");
-    let authSignature = crypto.createHmac("sha512", secret).update(authString).digest("base64");
-    req.secure(false)
-        .set("Auth-Token", token)
-        .set("Auth-Timestamp", authTimestamp)
-        .set("Auth-Nonce", authNonce)
-        .set("Auth-Signature", authSignature);
     return req;
 }
 
@@ -14094,10 +14085,10 @@ var node_modules_tar = __webpack_require__(8302);
 
 
 
-function uuid() {
+function MiscUtils_uuid() {
     return (+new Date() + Math.floor(Math.random() * 999999)).toString(36);
 }
-function uuidRand() {
+function MiscUtils_uuidRand() {
     let id = "";
     for (let i = 0; i < 4; i++) {
         id += Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
@@ -14713,7 +14704,7 @@ let connAttempts = 0;
 let dialogShown = false;
 let curSocket = "";
 function connect() {
-    let socketId = uuid();
+    let socketId = MiscUtils_uuid();
     curSocket = socketId;
     return new Promise(async (resolve, reject) => {
         try {
@@ -14971,11 +14962,20 @@ const Config = new ConfigData();
 
 
 let deviceAuthPath = external_path_default().join("/", "Applications", "Pritunl.app", "Contents", "Resources", "Pritunl Device Authentication");
+if (external_process_default().argv.indexOf("--dev") !== -1) {
+    deviceAuthPath = external_path_default().join(__dirname, "..", "..", "..", "service_macos", "Pritunl Device Authentication");
+}
 let procs = {};
 function Tpm_open(callerId, privKey64) {
     let proc = external_child_process_default().execFile(deviceAuthPath);
     let stderr = "";
     setTimeout(() => {
+        if (proc.exitCode === null) {
+            let err = new ProcessError(null, "Tpm: Secure enclave process timed out", {
+                caller_id: callerId,
+            });
+            error(err.message);
+        }
         proc.kill("SIGINT");
     }, 10000);
     proc.on("error", (err) => {
@@ -15041,9 +15041,27 @@ function Tpm_open(callerId, privKey64) {
             });
         }
     });
+    let outBuffer = "";
     proc.stdout.on("data", (data) => {
-        let dataObj = JSON.parse(data.replace(/\s/g, ""));
-        let req = new Request_Request();
+        outBuffer += data;
+        if (!outBuffer.includes("\n")) {
+            return;
+        }
+        let lines = outBuffer.split("\n");
+        let line = lines[0];
+        outBuffer = lines.slice(1).join("\n");
+        let dataObj;
+        try {
+            dataObj = JSON.parse(line.replace(/\s/g, ""));
+        }
+        catch (_a) {
+            let err = new RequestError(null, "Tpm: Failed to parse line", {
+                caller_id: callerId,
+                line: data,
+            });
+            error(err.message);
+            return;
+        }
         post("/tpm/callback")
             .set("Auth-Token", token)
             .set("User-Agent", "pritunl")
@@ -15442,7 +15460,7 @@ function init() {
         return;
     }
     main_Config.load().then(() => {
-        connect(external_process_default().argv.indexOf("--dev") !== -1).then(() => {
+        connect().then(() => {
             if (external_process_default().argv.indexOf("--no-main") !== -1) {
                 if (main_Config.disable_tray_icon) {
                     external_electron_default().app.quit();
