@@ -300,6 +300,7 @@ func (s *Sprofile) syncUpdate(data string) (updated bool, err error) {
 	sIndex := 0
 	eIndex := 0
 	tlsAuth := ""
+	tlsCrypt := ""
 	cert := ""
 	key := ""
 	jsonData := ""
@@ -390,6 +391,12 @@ func (s *Sprofile) syncUpdate(data string) (updated bool, err error) {
 		tlsAuth += s.OvpnData[sIndex:eIndex+11] + "\n"
 	}
 
+	sIndex = strings.Index(s.OvpnData, "<tls-crypt>")
+	eIndex = strings.Index(s.OvpnData, "</tls-crypt>")
+	if sIndex >= 0 && eIndex >= 0 {
+		tlsCrypt += s.OvpnData[sIndex:eIndex+12] + "\n"
+	}
+
 	sIndex = strings.Index(s.OvpnData, "<cert>")
 	eIndex = strings.Index(s.OvpnData, "</cert>")
 	if sIndex >= 0 && eIndex >= 0 {
@@ -402,7 +409,7 @@ func (s *Sprofile) syncUpdate(data string) (updated bool, err error) {
 		key += s.OvpnData[sIndex:eIndex+6] + "\n"
 	}
 
-	s.OvpnData = data + tlsAuth + cert + key
+	s.OvpnData = data + tlsAuth + tlsCrypt + cert + key
 	err = s.Commit()
 	if err != nil {
 		return
