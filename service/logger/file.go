@@ -44,6 +44,7 @@ func (s *fileSender) send(entry *logrus.Entry) (err error) {
 	}
 
 	if stat.Size() >= 200000 {
+		file.Close()
 		os.Remove(utils.GetLogPath2())
 		err = os.Rename(utils.GetLogPath(), utils.GetLogPath2())
 		if err != nil {
@@ -53,7 +54,6 @@ func (s *fileSender) send(entry *logrus.Entry) (err error) {
 			return
 		}
 
-		file.Close()
 		file, err = os.OpenFile(utils.GetLogPath(),
 			os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
 		if err != nil {
