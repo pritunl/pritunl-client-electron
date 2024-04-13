@@ -382,7 +382,7 @@ function init() {
 	}
 
 	Config.load().then(() => {
-		Service.connect(process.argv.indexOf("--dev") !== -1).then(() => {
+		Service.connect().then(() => {
 			if (process.argv.indexOf("--no-main") !== -1) {
 				if (Config.disable_tray_icon) {
 					electron.app.quit()
