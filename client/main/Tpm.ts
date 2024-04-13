@@ -5,9 +5,14 @@ import * as Errors from "./Errors"
 import * as Request from "./Request"
 import * as RequestUtils from './RequestUtils'
 import * as Auth from "./Auth"
+import process from "process";
 
 let deviceAuthPath = path.join("/", "Applications", "Pritunl.app",
 	"Contents", "Resources", "Pritunl Device Authentication")
+if (process.argv.indexOf("--dev") !== -1) {
+	deviceAuthPath = path.join(__dirname, "..", "..", "..",
+		"service_macos", "Pritunl Device Authentication");
+}
 
 let procs: {[key: string]: childprocess.ChildProcess} = {}
 
@@ -16,6 +21,16 @@ export function open(callerId: string, privKey64: string): void {
 	let stderr = ""
 
 	setTimeout(() => {
+		if (proc.exitCode === null) {
+			let err = new Errors.ProcessError(
+				null,
+				"Tpm: Secure enclave process timed out",
+				{
+					caller_id: callerId,
+				},
+			)
+			Logger.error(err.message)
+		}
 		proc.kill("SIGINT")
 	}, 10000)
 
@@ -113,10 +128,31 @@ export function open(callerId: string, privKey64: string): void {
 		}
 	})
 
+	let outBuffer = ""
 	proc.stdout.on("data", (data) => {
-		let dataObj = JSON.parse(data.replace(/\s/g, ""))
+		outBuffer += data
+		if (!outBuffer.includes("\n")) {
+			return
+		}
+		let lines = outBuffer.split("\n")
+		let line = lines[0]
+		outBuffer = lines.slice(1).join("\n")
 
-		let req = new Request.Request()
+		let dataObj: {[key: string]: any}
+		try {
+			dataObj = JSON.parse(line.replace(/\s/g, ""))
+		} catch {
+			let err = new Errors.RequestError(
+				null,
+				"Tpm: Failed to parse line",
+				{
+					caller_id: callerId,
+					line: data,
+				},
+			)
+			Logger.error(err.message)
+			return
+		}
 
 		RequestUtils
 			.post("/tpm/callback")
