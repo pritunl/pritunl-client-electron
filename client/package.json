@@ -35,10 +35,10 @@
     "request": "2.88.2"
   },
   "devDependencies": {
-    "electron": "29.0.0",
-    "@electron/fuses": "1.7.0",
+    "electron": "30.0.1",
+    "@electron/fuses": "1.8.0",
     "@electron/rebuild": "3.6.0",
-    "electron-packager": "17.1.2",
+    "@electron/packager": "18.3.2",
     "rcedit": "4.0.1",
     "rimraf": "5.0.5",
     "source-map-loader": "5.0.0",
