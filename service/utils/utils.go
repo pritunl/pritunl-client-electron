@@ -635,7 +635,7 @@ func ResetDns() {
 		return
 	}
 
-	logrus.Info("utils: Reseting DNS")
+	logrus.Info("utils: Resetting DNS")
 
 	networkResetLock.Lock()
 	defer networkResetLock.Unlock()
