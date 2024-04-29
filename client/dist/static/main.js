@@ -6010,6 +6010,7 @@ const crypto = __webpack_require__(6982)
 const getFlag = __webpack_require__(7212)
 const platform = {}.TESTING_TAR_FAKE_PLATFORM || process.platform
 const isWindows = platform === 'win32'
+const DEFAULT_MAX_DEPTH = 1024
 
 // Unlinks on Windows are not atomic.
 //
@@ -6143,6 +6144,12 @@ class Unpack extends Parser {
     this.processGid = (this.preserveOwner || this.setOwner) && process.getgid ?
       process.getgid() : null
 
+    // prevent excessively deep nesting of subfolders
+    // set to `Infinity` to remove this restriction
+    this.maxDepth = typeof opt.maxDepth === 'number'
+      ? opt.maxDepth
+      : DEFAULT_MAX_DEPTH
+
     // mostly just for testing, but useful in some cases.
     // Forcibly trigger a chown on every entry, no matter what
     this.forceChown = opt.forceChown === true
@@ -6200,13 +6207,13 @@ class Unpack extends Parser {
   }
 
   [CHECKPATH] (entry) {
+    const p = normPath(entry.path)
+    const parts = p.split('/')
+
     if (this.strip) {
-      const parts = normPath(entry.path).split('/')
       if (parts.length < this.strip) {
         return false
       }
-      entry.path = parts.slice(this.strip).join('/')
-
       if (entry.type === 'Link') {
         const linkparts = normPath(entry.linkpath).split('/')
         if (linkparts.length >= this.strip) {
@@ -6215,11 +6222,21 @@ class Unpack extends Parser {
           return false
         }
       }
+      parts.splice(0, this.strip)
+      entry.path = parts.join('/')
+    }
+
+    if (isFinite(this.maxDepth) && parts.length > this.maxDepth) {
+      this.warn('TAR_ENTRY_ERROR', 'path excessively deep', {
+        entry,
+        path: p,
+        depth: parts.length,
+        maxDepth: this.maxDepth,
+      })
+      return false
     }
 
     if (!this.preservePaths) {
-      const p = normPath(entry.path)
-      const parts = p.split('/')
       if (parts.includes('..') || isWindows && /^[a-z]:\.\.$/i.test(parts[0])) {
         this.warn('TAR_ENTRY_ERROR', `path contains '..'`, {
           entry,
