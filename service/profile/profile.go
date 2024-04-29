@@ -1978,6 +1978,7 @@ func (p *Profile) openOvpn() (data *OvpnData, err error) {
 		}
 
 		logrus.WithFields(logrus.Fields{
+			"host":  remote,
 			"error": err,
 		}).Warn("profile: Request ovpn connection error")
 
@@ -1997,6 +1998,7 @@ func (p *Profile) openOvpn() (data *OvpnData, err error) {
 			}
 
 			logrus.WithFields(logrus.Fields{
+				"host":  remote,
 				"error": err,
 			}).Warn("profile: Request ovpn connection error")
 
