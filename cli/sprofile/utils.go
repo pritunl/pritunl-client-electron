@@ -525,6 +525,7 @@ func ImportTar(filename string) (err error) {
 		}
 		return
 	}
+	defer tarFile.Close()
 
 	tr := tar.NewReader(tarFile)
 	for {
