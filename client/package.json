@@ -29,7 +29,7 @@
     "tar": "6.2.1",
     "terser-webpack-plugin": "5.3.10",
     "utf-8-validate": "5.0.10",
-    "ws": "8.11.0",
+    "ws": "8.17.1",
     "jquery": "3.7.1",
     "mustache": "4.2.0",
     "request": "2.88.2"
