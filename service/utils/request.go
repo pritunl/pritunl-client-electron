@@ -102,7 +102,7 @@ func StripPort(hostport string) string {
 }
 
 func FormatHostPort(hostname string, port int) string {
-	if strings.Contains(hostname, ":") {
+	if strings.Contains(hostname, ":") && !strings.Contains(hostname, "[") {
 		hostname = "[" + hostname + "]"
 	}
 	return fmt.Sprintf("%s:%d", hostname, port)

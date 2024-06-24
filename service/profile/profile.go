@@ -2294,7 +2294,7 @@ func (p *Profile) reqOvpn(remote, ssoToken string, ssoStart time.Time) (
 		)
 	}
 
-	if strings.Count(remote, ":") > 1 {
+	if strings.Count(remote, ":") > 1 && !strings.Contains(remote, "[") {
 		remote = "[" + remote + "]"
 	}
 
@@ -2767,7 +2767,7 @@ func (p *Profile) reqWg(remote, ssoToken string, ssoStart time.Time) (
 		)
 	}
 
-	if strings.Count(remote, ":") > 1 {
+	if strings.Count(remote, ":") > 1 && !strings.Contains(remote, "[") {
 		remote = "[" + remote + "]"
 	}
 
@@ -3128,7 +3128,7 @@ func (p *Profile) pingWg() (wgData *WgPingData, retry bool, err error) {
 		p.OrgId, p.UserId, p.ServerId,
 	)
 
-	if strings.Contains(remote, ":") {
+	if strings.Contains(remote, ":") && !strings.Contains(remote, "[") {
 		remote = "[" + remote + "]"
 	}
 
