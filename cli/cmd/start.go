@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"github.com/pritunl/pritunl-client-electron/cli/sprofile"
-	"github.com/pritunl/pritunl-client-electron/cli/terminal"
 	"github.com/spf13/cobra"
 )
 
@@ -14,14 +13,7 @@ var StartCmd = &cobra.Command{
 			cobra.CheckErr("cmd: Missing profile ID")
 		}
 
-		if passwordPrompt {
-			password = terminal.ReadPassword()
-			if password == "" {
-				cobra.CheckErr("cmd: Password is empty")
-			}
-		}
-
-		err := sprofile.Start(args[0], mode, password)
+		err := sprofile.Start(args[0], mode, password, passwordPrompt)
 		cobra.CheckErr(err)
 	},
 }
