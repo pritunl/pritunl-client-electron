@@ -13,11 +13,14 @@ import (
 	"strings"
 	"time"
 
+	"github.com/dropbox/godropbox/container/set"
 	"github.com/dropbox/godropbox/errors"
 	"github.com/pritunl/pritunl-client-electron/cli/errortypes"
 	"github.com/pritunl/pritunl-client-electron/cli/profile"
 	"github.com/pritunl/pritunl-client-electron/cli/service"
+	"github.com/pritunl/pritunl-client-electron/cli/terminal"
 	"github.com/pritunl/pritunl-client-electron/cli/utils"
+	"github.com/spf13/cobra"
 )
 
 var (
@@ -277,7 +280,82 @@ func GetAll() (sprfls []*Sprofile, err error) {
 	return
 }
 
-func Start(sprflId, mode, password string) (err error) {
+func PasswordPrompt(sprfl *Sprofile) (pass string, err error) {
+	passModes := set.NewSet()
+
+	passModesStr := strings.Split(sprfl.PasswordMode, "_")
+	for _, passMode := range passModesStr {
+		passModes.Add(passMode)
+	}
+
+	if passModes.Contains("pin") {
+		part := terminal.ReadPassword("Pin")
+		if part == "" {
+			cobra.CheckErr("cmd: Pin is empty")
+		}
+		pass += part
+	}
+
+	if passModes.Contains("duo") {
+		part := terminal.ReadPassword("Duo Passcode")
+		if part == "" {
+			cobra.CheckErr("cmd: Duo Passcode is empty")
+		}
+		pass += part
+	}
+
+	if passModes.Contains("onelogin") {
+		part := terminal.ReadPassword("OneLogin Passcode")
+		if part == "" {
+			cobra.CheckErr("cmd: OneLogin Passcode is empty")
+		}
+		pass += part
+	}
+
+	if passModes.Contains("okta") {
+		part := terminal.ReadPassword("Okta Passcode")
+		if part == "" {
+			cobra.CheckErr("cmd: Okta Passcode is empty")
+		}
+		pass += part
+	}
+
+	if passModes.Contains("otp") {
+		part := terminal.ReadPassword("Authenticator Passcode")
+		if part == "" {
+			cobra.CheckErr("cmd: Authenticator Passcode is empty")
+		}
+		pass += part
+	}
+
+	if passModes.Contains("yubikey") {
+		part := terminal.ReadPassword("YubiKey")
+		if part == "" {
+			cobra.CheckErr("cmd: YubiKey is empty")
+		}
+		pass += part
+	}
+
+	if passModes.Contains("yubikey") {
+		part := terminal.ReadPassword("YubiKey")
+		if part == "" {
+			cobra.CheckErr("cmd: YubiKey is empty")
+		}
+		pass += part
+	}
+
+	if pass == "" {
+		part := terminal.ReadPassword("Password")
+		if part == "" {
+			cobra.CheckErr("cmd: Password is empty")
+		}
+		pass += part
+	}
+
+	return
+}
+
+func Start(sprflId, mode, password string, passwordPrompt bool) (err error) {
 	sprfl, err := Match(sprflId)
 	if err != nil {
 		return
@@ -301,6 +379,13 @@ func Start(sprflId, mode, password string) (err error) {
 	}
 
 	reqUrl := service.GetAddress() + "/profile"
+
+	if passwordPrompt {
+		password, err = PasswordPrompt(sprfl)
+		if err != nil {
+			return
+		}
+	}
 
 	authKey, err := service.GetAuthKey()
 	if err != nil {
