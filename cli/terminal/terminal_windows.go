@@ -5,8 +5,8 @@ import (
 	"os"
 )
 
-func ReadPassword() string {
-	fmt.Print("Password: ")
+func ReadPassword(prompt string) string {
+	fmt.Print(prompt + ": ")
 
 	password := ""
 	_, err := fmt.Scanln(&password)

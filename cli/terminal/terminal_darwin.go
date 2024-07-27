@@ -8,8 +8,8 @@ import (
 	"golang.org/x/term"
 )
 
-func ReadPassword() string {
-	fmt.Print("Password: ")
+func ReadPassword(prompt string) string {
+	fmt.Print(prompt + ": ")
 
 	passwordByt, err := term.ReadPassword(syscall.Stdin)
 	if err != nil {
