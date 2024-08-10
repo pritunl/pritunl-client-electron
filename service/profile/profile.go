@@ -756,24 +756,28 @@ func (p *Profile) writeConfWgQuick(data *WgConf) (pth, pth2 string,
 	allowedIps := []string{}
 	if data.Routes != nil {
 		for _, route := range data.Routes {
-			if (p.DisableGateway && route.Network == "0.0.0.0/0") ||
-				route.NetGateway {
-
+			if p.DisableGateway && route.Network == "0.0.0.0/0" {
 				continue
 			}
 
-			allowedIps = append(allowedIps, route.Network)
+			if route.NetGateway {
+				allowedIps = append(allowedIps, "!"+route.Network)
+			} else {
+				allowedIps = append(allowedIps, route.Network)
+			}
 		}
 	}
 	if data.Routes6 != nil {
 		for _, route := range data.Routes6 {
-			if p.DisableGateway && route.Network == "::/0" ||
-				route.NetGateway {
-
+			if p.DisableGateway && route.Network == "::/0" {
 				continue
 			}
 
-			allowedIps = append(allowedIps, route.Network)
+			if route.NetGateway {
+				allowedIps = append(allowedIps, "!"+route.Network)
+			} else {
+				allowedIps = append(allowedIps, route.Network)
+			}
 		}
 	}
 
@@ -3318,17 +3322,19 @@ func (p *Profile) confWgLinux(data *WgConf) (err error) {
 	if data.Routes != nil {
 		for _, route := range data.Routes {
 			if route.NetGateway {
-				continue
+				allowedIps = append(allowedIps, "!"+route.Network)
+			} else {
+				allowedIps = append(allowedIps, route.Network)
 			}
-			allowedIps = append(allowedIps, route.Network)
 		}
 	}
 	if data.Routes6 != nil {
 		for _, route := range data.Routes6 {
 			if route.NetGateway {
-				continue
+				allowedIps = append(allowedIps, "!"+route.Network)
+			} else {
+				allowedIps = append(allowedIps, route.Network)
 			}
-			allowedIps = append(allowedIps, route.Network)
 		}
 	}
 
