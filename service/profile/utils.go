@@ -210,6 +210,11 @@ func GetBashPath() string {
 			return path
 		}
 
+		path, _ = exec.LookPath("/bin/bash")
+		if path != "" {
+			return path
+		}
+
 		break
 	case "linux":
 		break
