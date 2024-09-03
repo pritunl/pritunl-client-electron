@@ -40,6 +40,7 @@ import (
 	"github.com/pritunl/pritunl-client-electron/service/config"
 	"github.com/pritunl/pritunl-client-electron/service/errortypes"
 	"github.com/pritunl/pritunl-client-electron/service/event"
+	"github.com/pritunl/pritunl-client-electron/service/geosort"
 	"github.com/pritunl/pritunl-client-electron/service/log"
 	"github.com/pritunl/pritunl-client-electron/service/network"
 	"github.com/pritunl/pritunl-client-electron/service/parser"
@@ -246,6 +247,8 @@ type Profile struct {
 	Username           string             `json:"-"`
 	Password           string             `json:"-"`
 	DynamicFirewall    bool               `json:"-"`
+	GeoSort            string             `json:"-"`
+	ForceConnect       bool               `json:"-"`
 	DeviceAuth         bool               `json:"-"`
 	DisableGateway     bool               `json:"-"`
 	DisableDns         bool               `json:"-"`
@@ -255,6 +258,8 @@ type Profile struct {
 	ServerPublicKey    string             `json:"-"`
 	ServerBoxPublicKey string             `json:"-"`
 	TokenTtl           int                `json:"-"`
+	PublicAddr4        string             `json:"-"`
+	PublicAddr6        string             `json:"-"`
 	Iface              string             `json:"iface"`
 	Tuniface           string             `json:"tun_iface"`
 	Routes             []*Route           `json:"routes'"`
@@ -1255,6 +1260,8 @@ func (p *Profile) Copy() (prfl *Profile) {
 		Username:           p.Username,
 		Password:           p.Password,
 		DynamicFirewall:    p.DynamicFirewall,
+		GeoSort:            p.GeoSort,
+		ForceConnect:       p.ForceConnect,
 		DeviceAuth:         p.DeviceAuth,
 		DisableGateway:     p.DisableGateway,
 		DisableDns:         p.DisableDns,
@@ -1327,6 +1334,8 @@ func (p *Profile) Start(timeout, delay, automatic bool) (err error) {
 		"device_auth":      p.DeviceAuth,
 		"disable_gateway":  p.DisableGateway,
 		"disable_dns":      p.DisableDns,
+		"geo_sort":         p.GeoSort,
+		"force_connect":    p.ForceConnect,
 		"force_dns":        p.ForceDns,
 		"sso_auth":         p.SsoAuth,
 		"reconnect":        p.Reconnect,
@@ -1974,22 +1983,47 @@ func (p *Profile) openOvpn() (data *OvpnData, err error) {
 
 	var evt *event.Event
 	final := false
-	for _, i := range mathrand.Perm(len(syncRemotes)) {
-		remote := syncRemotes[i]
-
-		data, final, evt, err = p.reqOvpn(remote, "", time.Time{})
-		if err == nil || final {
-			break
+	if p.GeoSort != "" {
+		p.PublicAddr4, p.PublicAddr6, remotes, err = geosort.SortRemotes(
+			p.PublicAddr4, p.PublicAddr6, remotes, p.GeoSort)
+		if err != nil {
+			return
 		}
 
-		logrus.WithFields(logrus.Fields{
-			"host":  remote,
-			"error": err,
-		}).Warn("profile: Request ovpn connection error")
+		for _, remote := range remotes {
+			data, final, evt, err = p.reqOvpn(remote, "", time.Time{})
+			if err == nil || final {
+				break
+			}
 
-		if p.stop {
-			p.stopSafe()
-			return
+			logrus.WithFields(logrus.Fields{
+				"host":  remote,
+				"error": err,
+			}).Warn("profile: Request ovpn connection error")
+
+			if p.stop {
+				p.stopSafe()
+				return
+			}
+		}
+	} else {
+		for _, i := range mathrand.Perm(len(syncRemotes)) {
+			remote := syncRemotes[i]
+
+			data, final, evt, err = p.reqOvpn(remote, "", time.Time{})
+			if err == nil || final {
+				break
+			}
+
+			logrus.WithFields(logrus.Fields{
+				"host":  remote,
+				"error": err,
+			}).Warn("profile: Request ovpn connection error")
+
+			if p.stop {
+				p.stopSafe()
+				return
+			}
 		}
 	}
 
@@ -2117,21 +2151,28 @@ func (p *Profile) reqOvpn(remote, ssoToken string, ssoStart time.Time) (
 	addr6 := ""
 
 	if p.DynamicFirewall || p.DeviceAuth {
-		addr4, err = utils.GetPublicAddress4()
-		if err != nil {
-			logrus.WithFields(logrus.Fields{
-				"error": err,
-			}).Info("profile: Failed to get public IPv4 address")
-			err = nil
+		if p.PublicAddr4 == "" {
+			addr4, err = utils.GetPublicAddress4()
+			if err != nil {
+				logrus.WithFields(logrus.Fields{
+					"error": err,
+				}).Info("profile: Failed to get public IPv4 address")
+				err = nil
+			}
 		}
 
-		addr6, err = utils.GetPublicAddress6()
-		if err != nil {
-			//logrus.WithFields(logrus.Fields{
-			//	"error": err,
-			//}).Info("profile: Failed to get public IPv6 address")
-			err = nil
+		if p.PublicAddr4 == "" && p.PublicAddr6 == "" {
+			addr6, err = utils.GetPublicAddress6()
+			if err != nil {
+				//logrus.WithFields(logrus.Fields{
+				//	"error": err,
+				//}).Info("profile: Failed to get public IPv6 address")
+				err = nil
+			}
 		}
+
+		p.PublicAddr4 = addr4
+		p.PublicAddr6 = addr6
 	}
 
 	ovpnBox := &OvpnKeyBox{
@@ -3948,18 +3989,40 @@ func (p *Profile) startWg(timeout bool) (err error) {
 	final := false
 	var data *WgData
 
-	for _, i := range mathrand.Perm(len(syncRemotes)) {
-		remote := syncRemotes[i]
-		attemptedHosts = append(attemptedHosts, remote)
-
-		data, final, evt, err = p.reqWg(remote, "", time.Time{})
-		if err == nil || final {
-			break
+	if p.GeoSort != "" {
+		p.PublicAddr4, p.PublicAddr6, remotes, err = geosort.SortRemotes(
+			p.PublicAddr4, p.PublicAddr6, remotes, p.GeoSort)
+		if err != nil {
+			return
 		}
 
-		if p.stop {
-			p.stopSafe()
-			return
+		for _, remote := range remotes {
+			attemptedHosts = append(attemptedHosts, remote)
+
+			data, final, evt, err = p.reqWg(remote, "", time.Time{})
+			if err == nil || final {
+				break
+			}
+
+			if p.stop {
+				p.stopSafe()
+				return
+			}
+		}
+	} else {
+		for _, i := range mathrand.Perm(len(syncRemotes)) {
+			remote := syncRemotes[i]
+			attemptedHosts = append(attemptedHosts, remote)
+
+			data, final, evt, err = p.reqWg(remote, "", time.Time{})
+			if err == nil || final {
+				break
+			}
+
+			if p.stop {
+				p.stopSafe()
+				return
+			}
 		}
 	}
 
