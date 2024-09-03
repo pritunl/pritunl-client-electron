@@ -271,6 +271,7 @@ type Profile struct {
 	WebPort            int                `json:"web_port"`
 	WebNoSsl           bool               `json:"web_no_ssl"`
 	RegistrationKey    string             `json:"registration_key"`
+	SsoUrl             string             `json:"sso_url"`
 	SystemProfile      *sprofile.Sprofile `json:"-"`
 }
 
@@ -2436,6 +2437,10 @@ func (p *Profile) reqOvpn(remote, ssoToken string, ssoStart time.Time) (
 		}
 		evt2.Init()
 
+		if p.SystemProfile != nil {
+			p.SsoUrl = ovpnResp.SsoUrl
+		}
+
 		p.Status = "authenticating"
 		p.update()
 
@@ -2444,6 +2449,10 @@ func (p *Profile) reqOvpn(remote, ssoToken string, ssoStart time.Time) (
 		ovpnData, _, evt, err = p.reqOvpn(remote, ovpnResp.SsoToken, time.Now())
 		if err != nil {
 			return
+		}
+
+		if p.SystemProfile != nil {
+			p.SsoUrl = ""
 		}
 
 		final = true
@@ -2909,6 +2918,10 @@ func (p *Profile) reqWg(remote, ssoToken string, ssoStart time.Time) (
 		}
 		evt2.Init()
 
+		if p.SystemProfile != nil {
+			p.SsoUrl = wgResp.SsoUrl
+		}
+
 		p.Status = "authenticating"
 		p.update()
 
@@ -2917,6 +2930,10 @@ func (p *Profile) reqWg(remote, ssoToken string, ssoStart time.Time) (
 		wgData, _, evt, err = p.reqWg(remote, wgResp.SsoToken, time.Now())
 		if err != nil {
 			return
+		}
+
+		if p.SystemProfile != nil {
+			p.SsoUrl = ""
 		}
 
 		final = true
