@@ -1,6 +1,10 @@
 Pritunl Client Changelog
 ========================
 
+<%= version %>
+
+Add sso auth support to cli
+
 Version 1.3.3883.60 2024-04-30
 ------------------------------
 
