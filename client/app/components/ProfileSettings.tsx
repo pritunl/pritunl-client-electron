@@ -23,6 +23,7 @@ interface State {
 	profile: ProfileTypes.Profile
 	setAutoStart: boolean
 	setSystem: boolean
+	showData: boolean
 }
 
 const css = {
@@ -45,6 +46,15 @@ const css = {
 	input: {
 		width: "100%",
 	} as React.CSSProperties,
+	toggleDataBtn: {
+		opacity: "0.5",
+	} as React.CSSProperties,
+	dataInfoBox: {
+		height: "100px",
+		overflowY: "scroll",
+		border: "1px solid rgba(16, 22, 26, 0.4)",
+		borderRadius: "2px",
+	} as React.CSSProperties,
 }
 
 export default class ProfileSettings extends React.Component<Props, State> {
@@ -57,6 +67,7 @@ export default class ProfileSettings extends React.Component<Props, State> {
 			profile: null,
 			setAutoStart: null,
 			setSystem: null,
+			showData: false,
 		}
 	}
 
@@ -178,6 +189,13 @@ export default class ProfileSettings extends React.Component<Props, State> {
 		})
 	}
 
+	toggleData = (): void => {
+		this.setState({
+			...this.state,
+			showData: !this.state.showData,
+		})
+	}
+
 	render(): JSX.Element {
 		let profile: ProfileTypes.Profile = this.state.profile ||
 			this.props.profile;
@@ -201,6 +219,124 @@ export default class ProfileSettings extends React.Component<Props, State> {
 			lastSync = MiscUtils.formatDateLess(profile.sync_time)
 		} else {
 			lastSync = "Never"
+		}
+
+		let dataInfo: JSX.Element;
+		if (this.state.showData) {
+			dataInfo = <div style={css.dataInfoBox}>
+				<PageInfo
+					fields={[
+						{
+							label: 'System',
+							value: profile.system,
+						},
+						{
+							label: 'UV Name',
+							value: profile.uv_name,
+						},
+						{
+							label: 'State',
+							value: profile.state,
+						},
+						{
+							label: 'WireGuard',
+							value: profile.wg,
+						},
+						{
+							label: 'Last Mode',
+							value: profile.last_mode,
+						},
+						{
+							label: 'Organization ID',
+							value: profile.organization_id,
+						},
+						{
+							label: 'Organization',
+							value: profile.organization,
+						},
+						{
+							label: 'Server ID',
+							value: profile.server_id,
+						},
+						{
+							label: 'Server',
+							value: profile.server,
+						},
+						{
+							label: 'User ID',
+							value: profile.user_id,
+						},
+						{
+							label: 'User',
+							value: profile.user,
+						},
+						{
+							label: 'Pre Connect Message',
+							value: profile.pre_connect_msg,
+						},
+						{
+							label: 'Disable Reconnect',
+							value: profile.disable_reconnect,
+						},
+						{
+							label: 'Disable Reconnect Local',
+							value: profile.disable_reconnect_local,
+						},
+						{
+							label: 'Restrict Client',
+							value: profile.restrict_client,
+						},
+						{
+							label: 'Dynamic Firewall',
+							value: profile.dynamic_firewall,
+						},
+						{
+							label: 'Geo Sort',
+							value: profile.geo_sort,
+						},
+						{
+							label: 'Force Connect',
+							value: profile.force_connect,
+						},
+						{
+							label: 'Device Auth',
+							value: profile.device_auth,
+						},
+						{
+							label: 'Disable Gateway',
+							value: profile.disable_gateway,
+						},
+						{
+							label: 'Disable DNS',
+							value: profile.disable_dns,
+						},
+						{
+							label: 'Force DNS',
+							value: profile.force_dns,
+						},
+						{
+							label: 'SSO Auth',
+							value: profile.sso_auth,
+						},
+						{
+							label: 'Password Mode',
+							value: profile.password_mode,
+						},
+						{
+							label: 'Token',
+							value: profile.token,
+						},
+						{
+							label: 'Token TTL',
+							value: profile.token_ttl,
+						},
+						{
+							label: 'Sync Hash',
+							value: profile.sync_hash,
+						},
+					]}
+				/>
+			</div>
 		}
 
 		return <div style={css.box}>
@@ -331,21 +467,31 @@ export default class ProfileSettings extends React.Component<Props, State> {
 							},
 						]}
 					/>
+					{dataInfo}
 				</div>
 				<div className="bp3-dialog-footer">
 					<div className="bp3-dialog-footer-actions">
+						<button
+							className="bp3-button bp3-icon-console"
+							type="button"
+							style={css.toggleDataBtn}
+							disabled={this.state.disabled}
+							onClick={this.toggleData}
+						>Debugging</button>
 						<button
 							className="bp3-button bp3-intent-danger bp3-icon-cross"
 							type="button"
 							disabled={this.state.disabled}
 							onClick={this.closeDialog}
-						>Cancel</button>
+						>Cancel
+						</button>
 						<button
 							className="bp3-button bp3-intent-success bp3-icon-tick"
 							type="button"
 							disabled={this.state.disabled || !this.state.changed}
 							onClick={this.onSave}
-						>Save</button>
+						>Save
+						</button>
 					</div>
 				</div>
 			</Blueprint.Dialog>
