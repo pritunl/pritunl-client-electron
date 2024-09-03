@@ -26,7 +26,14 @@ var (
 func GetWgPath() string {
 	switch runtime.GOOS {
 	case "windows":
-		path, _ := exec.LookPath("wg.exe")
+		path, _ := exec.LookPath(filepath.Join(utils.GetWinDrive(),
+			"Program Files", "WireGuard", "wg.exe"))
+		exists, _ := utils.Exists(path)
+		if exists {
+			return path
+		}
+
+		path, _ = exec.LookPath("wg.exe")
 		if path != "" {
 			return path
 		}
@@ -76,7 +83,14 @@ func GetWgUtilPath() string {
 func GetWgQuickPath() string {
 	switch runtime.GOOS {
 	case "windows":
-		path, _ := exec.LookPath("wg-quick.exe")
+		path, _ := exec.LookPath(filepath.Join(utils.GetWinDrive(),
+			"Program Files", "WireGuard", "wg-quick.exe"))
+		exists, _ := utils.Exists(path)
+		if exists {
+			return path
+		}
+
+		path, _ = exec.LookPath("wg-quick.exe")
 		if path != "" {
 			return path
 		}
