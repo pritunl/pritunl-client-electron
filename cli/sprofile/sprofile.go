@@ -27,6 +27,8 @@ type Sprofile struct {
 	User               string           `json:"user"`
 	PreConnectMsg      string           `json:"pre_connect_msg"`
 	DynamicFirewall    bool             `json:"dynamic_firewall"`
+	GeoSort            string           `json:"geo_sort"`
+	ForceConnect       bool             `json:"force_connect"`
 	DeviceAuth         bool             `json:"device_auth"`
 	DisableGateway     bool             `json:"disable_gateway"`
 	DisableDns         bool             `json:"disable_dns"`
