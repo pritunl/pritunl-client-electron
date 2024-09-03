@@ -43,6 +43,8 @@ export interface Profile {
 	disable_reconnect_local?: boolean
 	restrict_client?: boolean
 	dynamic_firewall?: boolean
+	geo_sort?: string
+	force_connect?: boolean
 	device_auth?: boolean
 	disable_gateway?: boolean
 	disable_dns?: boolean
@@ -134,6 +136,8 @@ export interface ProfileData {
 	username?: string
 	password?: string
 	dynamic_firewall?: boolean
+	geo_sort?: string
+	force_connect?: boolean
 	device_auth?: boolean
 	disable_gateway?: boolean
 	disable_dns?: boolean
@@ -430,6 +434,8 @@ export function New(self: Profile): Profile {
 			user: this.user,
 			pre_connect_msg: this.pre_connect_msg,
 			dynamic_firewall: this.dynamic_firewall,
+			geo_sort: this.geo_sort,
+			force_connect: this.force_connect,
 			device_auth: this.device_auth,
 			disable_reconnect_local: this.disable_reconnect_local,
 			disable_gateway: this.disable_gateway,
@@ -465,6 +471,8 @@ export function New(self: Profile): Profile {
 		this.user = data.user
 		this.pre_connect_msg = data.pre_connect_msg
 		this.dynamic_firewall = data.dynamic_firewall
+		this.geo_sort = data.geo_sort
+		this.force_connect = data.force_connect
 		this.device_auth = data.device_auth
 		this.disable_reconnect_local = data.disable_reconnect_local
 		this.disable_gateway = data.disable_gateway
@@ -500,6 +508,8 @@ export function New(self: Profile): Profile {
 			user: this.user,
 			pre_connect_msg: this.pre_connect_msg,
 			dynamic_firewall: this.dynamic_firewall,
+			geo_sort: this.geo_sort,
+			force_connect: this.force_connect,
 			device_auth: this.device_auth,
 			disable_gateway: this.disable_gateway,
 			disable_dns: this.disable_dns,
@@ -534,6 +544,8 @@ export function New(self: Profile): Profile {
 		this.user = data.user || this.user
 		this.pre_connect_msg = data.pre_connect_msg
 		this.dynamic_firewall = data.dynamic_firewall
+		this.geo_sort = data.geo_sort
+		this.force_connect = data.force_connect
 		this.device_auth = data.device_auth
 		this.disable_reconnect_local = data.disable_reconnect_local
 		this.disable_gateway = data.disable_gateway
@@ -582,6 +594,14 @@ export function New(self: Profile): Profile {
 
 	self.convertUser = async function(): Promise<void> {
 		if (!this.system) {
+			return
+		}
+
+		if (this.force_connect) {
+			let err = new Errors.WriteError(
+				null, "Profiles: Profile autostart enforced by server",
+				{profile_id: this.id})
+			Logger.errorAlert(err, 10)
 			return
 		}
 
