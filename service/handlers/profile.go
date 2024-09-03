@@ -36,8 +36,27 @@ type profileData struct {
 	Timeout            bool     `json:"timeout"`
 }
 
-func profileGet(c *gin.Context) {
+func profilesGet(c *gin.Context) {
 	c.JSON(200, profile.GetProfiles())
+}
+
+func profileGet(c *gin.Context) {
+	prflId := utils.FilterStr(c.Param("profile_id"))
+	if prflId == "" {
+		err := &errortypes.ParseError{
+			errors.New("handler: Invalid profile ID"),
+		}
+		utils.AbortWithError(c, 400, err)
+		return
+	}
+
+	prfl := profile.GetProfile(prflId)
+	if prfl == nil {
+		utils.AbortWithStatus(c, 404)
+		return
+	}
+
+	c.JSON(200, prfl)
 }
 
 func profilePost(c *gin.Context) {
