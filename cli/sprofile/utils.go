@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"crypto/tls"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -291,7 +292,7 @@ func PasswordPrompt(sprfl *Sprofile) (pass string, err error) {
 	if passModes.Contains("pin") {
 		part := terminal.ReadPassword("Pin")
 		if part == "" {
-			cobra.CheckErr("cmd: Pin is empty")
+			cobra.CheckErr("sprofile: Pin is empty")
 		}
 		pass += part
 	}
@@ -299,7 +300,7 @@ func PasswordPrompt(sprfl *Sprofile) (pass string, err error) {
 	if passModes.Contains("duo") {
 		part := terminal.ReadPassword("Duo Passcode")
 		if part == "" {
-			cobra.CheckErr("cmd: Duo Passcode is empty")
+			cobra.CheckErr("sprofile: Duo Passcode is empty")
 		}
 		pass += part
 	}
@@ -307,7 +308,7 @@ func PasswordPrompt(sprfl *Sprofile) (pass string, err error) {
 	if passModes.Contains("onelogin") {
 		part := terminal.ReadPassword("OneLogin Passcode")
 		if part == "" {
-			cobra.CheckErr("cmd: OneLogin Passcode is empty")
+			cobra.CheckErr("sprofile: OneLogin Passcode is empty")
 		}
 		pass += part
 	}
@@ -315,7 +316,7 @@ func PasswordPrompt(sprfl *Sprofile) (pass string, err error) {
 	if passModes.Contains("okta") {
 		part := terminal.ReadPassword("Okta Passcode")
 		if part == "" {
-			cobra.CheckErr("cmd: Okta Passcode is empty")
+			cobra.CheckErr("sprofile: Okta Passcode is empty")
 		}
 		pass += part
 	}
@@ -323,7 +324,7 @@ func PasswordPrompt(sprfl *Sprofile) (pass string, err error) {
 	if passModes.Contains("otp") {
 		part := terminal.ReadPassword("Authenticator Passcode")
 		if part == "" {
-			cobra.CheckErr("cmd: Authenticator Passcode is empty")
+			cobra.CheckErr("sprofile: Authenticator Passcode is empty")
 		}
 		pass += part
 	}
@@ -331,7 +332,7 @@ func PasswordPrompt(sprfl *Sprofile) (pass string, err error) {
 	if passModes.Contains("yubikey") {
 		part := terminal.ReadPassword("YubiKey")
 		if part == "" {
-			cobra.CheckErr("cmd: YubiKey is empty")
+			cobra.CheckErr("sprofile: YubiKey is empty")
 		}
 		pass += part
 	}
@@ -339,7 +340,7 @@ func PasswordPrompt(sprfl *Sprofile) (pass string, err error) {
 	if passModes.Contains("yubikey") {
 		part := terminal.ReadPassword("YubiKey")
 		if part == "" {
-			cobra.CheckErr("cmd: YubiKey is empty")
+			cobra.CheckErr("sprofile: YubiKey is empty")
 		}
 		pass += part
 	}
@@ -347,7 +348,7 @@ func PasswordPrompt(sprfl *Sprofile) (pass string, err error) {
 	if pass == "" {
 		part := terminal.ReadPassword("Password")
 		if part == "" {
-			cobra.CheckErr("cmd: Password is empty")
+			cobra.CheckErr("sprofile: Password is empty")
 		}
 		pass += part
 	}
@@ -436,6 +437,24 @@ func Start(sprflId, mode, password string, passwordPrompt bool) (err error) {
 				resp.StatusCode),
 		}
 		return
+	}
+
+	if sprfl.SsoAuth {
+		for i := 0; i < 50; i++ {
+			prfl, e := profile.Get(sprfl.Id)
+			if e != nil {
+				break
+			}
+
+			if prfl != nil && prfl.SsoUrl != "" {
+				fmt.Println("Single sign-on authentication required, " +
+					"open link to complete authentication:")
+				fmt.Println(prfl.SsoUrl)
+				break
+			}
+
+			time.Sleep(100 * time.Millisecond)
+		}
 	}
 
 	return
