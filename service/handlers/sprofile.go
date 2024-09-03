@@ -23,6 +23,8 @@ type sprofileData struct {
 	User               string   `json:"user"`
 	PreConnectMsg      string   `json:"pre_connect_msg"`
 	DynamicFirewall    bool     `json:"dynamic_firewall"`
+	GeoSort            string   `json:"geo_sort"`
+	ForceConnect       bool     `json:"force_connect"`
 	DeviceAuth         bool     `json:"device_auth"`
 	DisableGateway     bool     `json:"disable_gateway"`
 	DisableDns         bool     `json:"disable_dns"`
@@ -60,6 +62,25 @@ func sprofilesGet(c *gin.Context) {
 	c.JSON(200, prfls)
 }
 
+func sprofileGet(c *gin.Context) {
+	prflId := utils.FilterStr(c.Param("profile_id"))
+	if prflId == "" {
+		err := &errortypes.ParseError{
+			errors.New("handler: Invalid profile ID"),
+		}
+		utils.AbortWithError(c, 400, err)
+		return
+	}
+
+	prfl := sprofile.Get(prflId)
+	if prfl == nil {
+		utils.AbortWithStatus(c, 505)
+		return
+	}
+
+	c.JSON(200, prfl.Client())
+}
+
 func sprofilePut(c *gin.Context) {
 	data := &sprofileData{}
 
@@ -94,6 +115,8 @@ func sprofilePut(c *gin.Context) {
 		User:               data.User,
 		PreConnectMsg:      data.PreConnectMsg,
 		DynamicFirewall:    data.DynamicFirewall,
+		GeoSort:            data.GeoSort,
+		ForceConnect:       data.ForceConnect,
 		DeviceAuth:         data.DeviceAuth,
 		DisableGateway:     data.DisableGateway,
 		DisableDns:         data.DisableDns,
