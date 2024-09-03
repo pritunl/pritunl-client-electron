@@ -17,7 +17,7 @@ for optionname in ${!foreign_option_*} ; do
     if [ "$part2" == "DNS" ] ; then
       DNS_SERVERS="$DNS_SERVERS $part3"
     fi
-    if [[ "$part2" == "DOMAIN" || "$part2" == "DOMAIN-SEARCH" ]] ; then
+    if [[ "$part2" == "DOMAIN-SEARCH" ]] ; then
       DNS_SEARCH="$DNS_SEARCH $part3"
     fi
   fi
@@ -88,7 +88,7 @@ for optionname in ${!foreign_option_*} ; do
     if [ "$part2" == "DNS" ] ; then
       DNS_SERVERS="$DNS_SERVERS $part3"
     fi
-    if [[ "$part2" == "DOMAIN" || "$part2" == "DOMAIN-SEARCH" ]] ; then
+    if [[ "$part2" == "DOMAIN-SEARCH" ]] ; then
       DNS_SEARCH="$DNS_SEARCH $part3"
     fi
   fi
@@ -212,7 +212,7 @@ up)
       if [ "$part2" == "DNS" ] ; then
         IF_DNS_NAMESERVERS="$IF_DNS_NAMESERVERS $part3"
       fi
-      if [[ "$part2" == "DOMAIN" || "$part2" == "DOMAIN-SEARCH" ]] ; then
+      if [[ "$part2" == "DOMAIN-SEARCH" ]] ; then
         IF_DNS_SEARCH="$IF_DNS_SEARCH $part3"
       fi
     fi
