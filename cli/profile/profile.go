@@ -30,6 +30,7 @@ type Profile struct {
 	ClientAddr   string   `json:"client_addr"`
 	MacAddr      string   `json:"mac_addr"`
 	MacAddrs     []string `json:"mac_addrs"`
+	SsoUrl       string   `json:"sso_url"`
 }
 
 func (p *Profile) Uptime() int64 {
