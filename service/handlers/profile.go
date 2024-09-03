@@ -23,6 +23,8 @@ type profileData struct {
 	Username           string   `json:"username"`
 	Password           string   `json:"password"`
 	DynamicFirewall    bool     `json:"dynamic_firewall"`
+	GeoSort            string   `json:"geo_sort"`
+	ForceConnect       bool     `json:"force_connect"`
 	DeviceAuth         bool     `json:"device_auth"`
 	DisableGateway     bool     `json:"disable_gateway"`
 	DisableDns         bool     `json:"disable_dns"`
@@ -110,6 +112,8 @@ func profilePost(c *gin.Context) {
 		Username:           data.Username,
 		Password:           data.Password,
 		DynamicFirewall:    data.DynamicFirewall,
+		GeoSort:            data.GeoSort,
+		ForceConnect:       data.ForceConnect,
 		DeviceAuth:         data.DeviceAuth,
 		DisableGateway:     data.DisableGateway,
 		DisableDns:         data.DisableDns,
