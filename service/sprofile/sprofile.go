@@ -55,6 +55,8 @@ type Sprofile struct {
 	User               string   `json:"user"`
 	PreConnectMsg      string   `json:"pre_connect_msg"`
 	DynamicFirewall    bool     `json:"dynamic_firewall"`
+	GeoSort            string   `json:"geo_sort"`
+	ForceConnect       bool     `json:"force_connect"`
 	DeviceAuth         bool     `json:"device_auth"`
 	DisableGateway     bool     `json:"disable_gateway"`
 	DisableDns         bool     `json:"disable_dns"`
@@ -93,6 +95,8 @@ type SprofileClient struct {
 	User               string   `json:"user"`
 	PreConnectMsg      string   `json:"pre_connect_msg"`
 	DynamicFirewall    bool     `json:"dynamic_firewall"`
+	GeoSort            string   `json:"geo_sort"`
+	ForceConnect       bool     `json:"force_connect"`
 	DeviceAuth         bool     `json:"device_auth"`
 	DisableGateway     bool     `json:"disable_Gateway"`
 	DisableDns         bool     `json:"disable_dns"`
@@ -134,6 +138,8 @@ func (s *Sprofile) Client() (sprflc *SprofileClient) {
 		User:               s.User,
 		PreConnectMsg:      s.PreConnectMsg,
 		DynamicFirewall:    s.DynamicFirewall,
+		GeoSort:            s.GeoSort,
+		ForceConnect:       s.ForceConnect,
 		DeviceAuth:         s.DeviceAuth,
 		DisableGateway:     s.DisableGateway,
 		DisableDns:         s.DisableDns,
@@ -189,6 +195,8 @@ func (s *Sprofile) Copy() (sprfl *Sprofile) {
 		User:               s.User,
 		PreConnectMsg:      s.PreConnectMsg,
 		DynamicFirewall:    s.DynamicFirewall,
+		GeoSort:            s.GeoSort,
+		ForceConnect:       s.ForceConnect,
 		DeviceAuth:         s.DeviceAuth,
 		DisableGateway:     s.DisableGateway,
 		DisableDns:         s.DisableDns,
@@ -362,6 +370,8 @@ func (s *Sprofile) syncUpdate(data string) (updated bool, err error) {
 		s.User = confData.User
 		s.PreConnectMsg = confData.PreConnectMsg
 		s.DynamicFirewall = confData.DynamicFirewall
+		s.GeoSort = confData.GeoSort
+		s.ForceConnect = confData.ForceConnect
 		s.DeviceAuth = confData.DeviceAuth
 		s.DisableGateway = confData.DisableGateway
 		s.DisableDns = confData.DisableDns
