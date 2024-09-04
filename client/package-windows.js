@@ -1,29 +1,44 @@
-const electronInstaller = require('electron-winstaller');
-const path = require("path");
+const wix = require("electron-wix-msi")
+const path = require("path")
+
+// https://github.com/wixtoolset/wix3/releases/tag/wix3141rtm
 
 async function packageApp() {
-  try {
-    await electronInstaller.createWindowsInstaller({
-      appDirectory: "..\\build\\win\\pritunl-win32-x64\\",
-      outputDirectory: "..\\build\\",
-      authors: "Pritunl, Inc",
-      owners: "Pritunl, Inc",
-      exe: "Pritunl.exe",
-      description: "Pritunl Enterprise VPN Server Client",
-      title: "Pritunl Client",
-      name: "PritunlClient",
-      setupMsi: "Pritunl.msi",
-      setupExe: "Pritunl.exe",
-      //signWithParams: "",
-      iconUrl: "",
-      setupIcon: "",
-      //windowsSign: "",
-    });
+  const msiCreator = new wix.MSICreator({
+    appDirectory: "..\\build\\win\\pritunl-win32-x64\\",
+    description: "Pritunl Enterprise VPN Client",
+    exe: "Pritunl",
+    name: "Pritunl",
+    manufacturer: "Pritunl",
+    appUserModelId: "com.pritunl.client",
+    upgradeCode: "4D794255-3D77-4574-928F-119D1450224D",
+    icon: ".\\www\\img\\logo.ico",
+    version: "1.3.3883.60",
+    outputDirectory: "..\\build\\"
+    //signWithParams: "todo signtool.exe",
+    // ui: {
+    //   images: {
+    //     background: "493x312",
+    //     banner: "493x58",
+    //
+    //   }
+    // }
+  })
 
-    console.log("Successfully packaged app");
-  } catch (err) {
-    console.error("Error packaging app:", err);
-  }
+  const supportBinaries = await msiCreator.create()
+
+  // supportBinaries.forEach(async (binary) => {
+  //   console.log("**************************************************")
+  //   console.log(binary)
+  //   console.log("**************************************************")
+  //   //await signFile(binary)
+  // })
+
+  await msiCreator.compile()
+
+  console.log("**************************************************")
+  console.log("done")
+  console.log("**************************************************")
 }
 
-packageApp();
+packageApp()
