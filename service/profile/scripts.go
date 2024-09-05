@@ -69,6 +69,24 @@ quit
 EOF
 fi
 
+if [ "$DNS_SEARCH" ]; then
+SERVICE_ID="$(/usr/sbin/scutil <<-EOF |
+open
+show State:/Network/Global/IPv4
+quit
+EOF
+grep PrimaryService | sed -e 's/.*PrimaryService : //'
+)"
+  /usr/sbin/scutil <<-EOF > /dev/null
+open
+get State:/Network/Service/${SERVICE_ID}/DNS
+d.add SearchDomains * ${DNS_SEARCH}
+set State:/Network/Service/${SERVICE_ID}/DNS
+set Setup:/Network/Service/${SERVICE_ID}/DNS
+quit
+EOF
+fi
+
 /usr/bin/dscacheutil -flushcache || true
 /usr/bin/killall -HUP mDNSResponder || true
 
@@ -136,6 +154,24 @@ remove Setup:/Network/Service/Pritunl/DNS
 set State:/Network/Service/Pritunl/DNS
 set Setup:/Network/Service/Pritunl/DNS
 set State:/Network/Pritunl/Connection/${CONN_ID}
+quit
+EOF
+fi
+
+if [ "$DNS_SEARCH" ]; then
+SERVICE_ID="$(/usr/sbin/scutil <<-EOF |
+open
+show State:/Network/Global/IPv4
+quit
+EOF
+grep PrimaryService | sed -e 's/.*PrimaryService : //'
+)"
+  /usr/sbin/scutil <<-EOF > /dev/null
+open
+get State:/Network/Service/${SERVICE_ID}/DNS
+d.add SearchDomains * ${DNS_SEARCH}
+set State:/Network/Service/${SERVICE_ID}/DNS
+set Setup:/Network/Service/${SERVICE_ID}/DNS
 quit
 EOF
 fi
