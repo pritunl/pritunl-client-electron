@@ -145,7 +145,7 @@ func getOpenvpnPath() (pth string) {
 					"openvpn_macos", "openvpn10")
 			} else {
 				pth = filepath.Join(utils.GetRootDir(), "..",
-					"openvpn_macos", "openvpn")
+					"openvpn_macos", "openvpn_arm64")
 			}
 			break
 		case "linux":
