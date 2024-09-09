@@ -34,8 +34,10 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: "..\build\win\pritunl-win32-x64\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\tuntap_win\*"; DestDir: "{app}\tuntap"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\openvpn_win\*"; DestDir: "{app}\openvpn"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\tuntap_win\tuntap_amd64\*"; DestDir: "{app}\tuntap_amd64"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\tuntap_win\tuntap_arm64\*"; DestDir: "{app}\tuntap_arm64"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\openvpn_win\openvpn_amd64\*"; DestDir: "{app}\openvpn_amd64"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\openvpn_win\openvpn_arm64\*"; DestDir: "{app}\openvpn_arm64"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\service\service.exe"; DestDir: "{app}"; DestName: "pritunl-service.exe"; Flags: ignoreversion
 Source: "..\cli\cli.exe"; DestDir: "{app}"; DestName: "pritunl-client.exe"; Flags: ignoreversion
 
