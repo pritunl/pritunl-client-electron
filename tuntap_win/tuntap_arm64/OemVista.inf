@@ -55,7 +55,7 @@
 
 ; This version number should match the version
 ; number given in ..\version.m4.
-   DriverVer = 10/08/2020,9.24.6.601
+   DriverVer = 02/27/2024,9.27.0.0
 
 [Strings]
    DeviceDescription = "TAP-Windows Adapter V9"
@@ -65,9 +65,9 @@
 ;                      Manufacturer + Product Section (Done)
 ;----------------------------------------------------------------
 [Manufacturer]
-   %Provider% = tap0901, NTamd64
+   %Provider% = tap0901, NTARM64
 
-[tap0901.NTamd64]
+[tap0901.NTARM64]
    %DeviceDescription% = tap0901.ndi, root\tap0901 ; Root enumerated
    %DeviceDescription% = tap0901.ndi, tap0901      ; Legacy
 
