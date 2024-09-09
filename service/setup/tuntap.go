@@ -1,35 +1,17 @@
 package setup
 
 import (
-	"path/filepath"
-	"strings"
-
 	"github.com/dropbox/godropbox/errors"
 	"github.com/pritunl/pritunl-client-electron/service/command"
 	"github.com/pritunl/pritunl-client-electron/service/errortypes"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
+	"strings"
 )
-
-func TunTapPath() string {
-	return filepath.Join(RootDir(), "tuntap")
-}
-
-func TapCtlPath() string {
-	pth := filepath.Join(utils.GetRootDir(), "..",
-		"tuntap_win", "tapctl.exe")
-
-	exists, _ := utils.ExistsFile(pth)
-	if exists {
-		return pth
-	}
-
-	return filepath.Join(TunTapPath(), "tapctl.exe")
-}
 
 func TunTapGet(all bool) (adpaters []string, err error) {
 	output, err := ExecOutput(
-		TunTapPath(),
-		TapCtlPath(),
+		utils.TunTapPath(),
+		utils.TapCtlPath(),
 		"list",
 	)
 	if err != nil {
@@ -63,7 +45,7 @@ func TunTapInstall() (err error) {
 		"-a", "oemvista.inf",
 		"-i",
 	)
-	cmd.Dir = TunTapPath()
+	cmd.Dir = utils.TunTapPath()
 
 	err = cmd.Run()
 	if err != nil {
@@ -84,11 +66,11 @@ func TunTapClean(all bool) (err error) {
 
 	for _, adapter := range adapters {
 		cmd := command.Command(
-			TapCtlPath(),
+			utils.TapCtlPath(),
 			"delete",
 			adapter,
 		)
-		cmd.Dir = TunTapPath()
+		cmd.Dir = utils.TunTapPath()
 
 		err = cmd.Run()
 		if err != nil {

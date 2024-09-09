@@ -23,18 +23,6 @@ var (
 	renameError  = false
 )
 
-func getToolpath() string {
-	pth := filepath.Join(utils.GetRootDir(), "..",
-		"tuntap_win", "tapctl.exe")
-
-	exists, _ := utils.ExistsFile(pth)
-	if exists {
-		return pth
-	}
-
-	return filepath.Join(utils.GetRootDir(), "tuntap", "tapctl.exe")
-}
-
 func Configure() (err error) {
 	if runtime.GOOS != "windows" {
 		return
@@ -81,7 +69,7 @@ func Configure() (err error) {
 }
 
 func Get() (adpaters []string, count int, err error) {
-	toolpath := getToolpath()
+	toolpath := utils.TapCtlPath()
 
 	output, err := utils.ExecCombinedOutputLogged(
 		nil,
@@ -114,7 +102,7 @@ func Get() (adpaters []string, count int, err error) {
 }
 
 func Clean() (err error) {
-	toolpath := getToolpath()
+	toolpath := utils.TapCtlPath()
 
 	adapters, totalCount, err := Get()
 	if err != nil {
@@ -143,7 +131,7 @@ func Resize(size int) (err error) {
 	tapsLock.Lock()
 	defer tapsLock.Unlock()
 
-	toolpath := getToolpath()
+	toolpath := utils.TapCtlPath()
 
 	if size <= 3 {
 		size = 3
