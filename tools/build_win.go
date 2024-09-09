@@ -9,37 +9,7 @@ import (
 const signtool = "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.22621.0\\x64\\signtool.exe"
 
 func main() {
-	err := os.Remove(filepath.Join("openvpn_win",
-		"OpenVPN-2.5.6-I601-amd64.msi"))
-	if err != nil && !os.IsNotExist(err) {
-		panic(err)
-	}
-
-	err = os.Remove(filepath.Join("openvpn_win",
-		"OpenVPN-2.5.6-I601-amd64.msi.asc"))
-	if err != nil && !os.IsNotExist(err) {
-		panic(err)
-	}
-
-	err = os.Remove(filepath.Join("tuntap_win",
-		"tapinstall.exe"))
-	if err != nil && !os.IsNotExist(err) {
-		panic(err)
-	}
-
-	err = os.Remove(filepath.Join("tuntap_win",
-		"tuntap.go"))
-	if err != nil && !os.IsNotExist(err) {
-		panic(err)
-	}
-
-	err = os.Remove(filepath.Join("tuntap_win",
-		"tuntap.exe"))
-	if err != nil && !os.IsNotExist(err) {
-		panic(err)
-	}
-
-	err = os.RemoveAll("build")
+	err := os.RemoveAll("build")
 	if err != nil && !os.IsNotExist(err) {
 		panic(err)
 	}
