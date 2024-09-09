@@ -766,6 +766,56 @@ func GetRootDir() (pth string) {
 	return
 }
 
+func TunTapPath() string {
+	if runtime.GOARCH == "arm" || runtime.GOARCH == "arm64" {
+		pth := filepath.Join(GetRootDir(), "..",
+			"tuntap_win", "tuntap_arm64")
+
+		exists, _ := ExistsDir(pth)
+		if exists {
+			return pth
+		}
+
+		return filepath.Join(GetRootDir(), "tuntap_arm64")
+	} else {
+		pth := filepath.Join(GetRootDir(), "..",
+			"tuntap_win", "tuntap_amd64")
+
+		exists, _ := ExistsFile(pth)
+		if exists {
+			return pth
+		}
+
+		return filepath.Join(GetRootDir(), "tuntap_amd64")
+	}
+}
+
+func TapCtlPath() string {
+	if runtime.GOARCH == "arm" || runtime.GOARCH == "arm64" {
+		pth := filepath.Join(GetRootDir(), "..",
+			"openvpn_win", "openvpn_arm64", "tapctl.exe")
+
+		exists, _ := ExistsFile(pth)
+		if exists {
+			return pth
+		}
+
+		return filepath.Join(GetRootDir(), "openvpn_arm64",
+			"tapctl.exe")
+	} else {
+		pth := filepath.Join(GetRootDir(), "..",
+			"openvpn_win", "openvpn_amd64", "tapctl.exe")
+
+		exists, _ := ExistsFile(pth)
+		if exists {
+			return pth
+		}
+
+		return filepath.Join(GetRootDir(), "openvpn_amd64",
+			"tapctl.exe")
+	}
+}
+
 func GetWinDrive() string {
 	systemDrv := os.Getenv("SYSTEMDRIVE")
 	if systemDrv == "" {
