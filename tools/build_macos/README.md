@@ -21,8 +21,8 @@ cd ./libtool-2.4.7
 sh ../build_libtool.sh
 cd ../
 
-tar xf lz4-1.9.4.tar.gz
-cd ./lz4-1.9.4
+tar xf lz4-1.10.0.tar.gz
+cd ./lz4-1.10.0
 sh ../build_lz4.sh
 cd ../
 
@@ -31,8 +31,8 @@ cd ./lzo-2.10
 sh ../build_lzo.sh
 cd ../
 
-tar xf openssl-3.2.0.tar.gz
-cd ./openssl-3.2.0
+tar xf openssl-3.3.2.tar.gz
+cd ./openssl-3.3.2
 sh ../build_openssl.sh
 sh ../build_openssl_arm.sh
 cd ../
@@ -42,8 +42,8 @@ cd ./pkcs11-helper-1.30.0
 sh ../build_pkcs11h.sh
 cd ../
 
-tar xf openvpn-2.6.8.tar.gz
-cd ./openvpn-2.6.8
+tar xf openvpn-2.6.12.tar.gz
+cd ./openvpn-2.6.12
 sh ../build_openvpn.sh
 sh ../build_openvpn_arm.sh
 cd ../
