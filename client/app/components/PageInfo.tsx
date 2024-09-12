@@ -6,7 +6,7 @@ export interface Field {
 	valueClass?: string;
 	valueClasses?: string[];
 	label: string;
-	value: string | number | string[];
+	value: string | number | boolean | string[];
 	copy?: boolean;
 }
 
@@ -74,6 +74,20 @@ export default class PageInfo extends React.Component<Props, {}> {
 				if (field.copy) {
 					copyBtn = <CopyButton
 						value={field.value.toString()}
+					/>;
+				}
+			} else if (typeof field.value === 'boolean') {
+				value = field.value.toString();
+				if (field.copy) {
+					copyBtn = <CopyButton
+						value={field.value.toString()}
+					/>;
+				}
+			} else if (field.value === undefined || field.value === null) {
+				value = 'null'
+				if (field.copy) {
+					copyBtn = <CopyButton
+						value={value}
 					/>;
 				}
 			} else {
