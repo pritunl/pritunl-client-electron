@@ -24,10 +24,6 @@ h2 {
   font-size: 28px;
 }
 
-h5 {
-  font-size: 16px;
-}
-
 .no-select {
   user-select: none;
 }
@@ -193,6 +189,14 @@ body.bp5-dark {
   to {
     left: 100%;
   }
+}
+
+.bp5-card-header {
+  background-color: rgba(0, 0, 0, 0.06)
+}
+
+.bp5-dark .bp5-card-header {
+  background-color: rgba(0, 0, 0, 0.13)
 }
 
 .bp5-toast-container.bp5-toast-container-bottom {
