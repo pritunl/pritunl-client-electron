@@ -14102,6 +14102,7 @@ var node_modules_tar = __webpack_require__(8302);
 
 
 
+
 function MiscUtils_uuid() {
     return (+new Date() + Math.floor(Math.random() * 999999)).toString(36);
 }
@@ -14519,6 +14520,11 @@ function fileWrite(path, data) {
             resolve();
         });
     });
+}
+function uriFromPath(pth) {
+    const pathName = path.resolve(pth).replace(/\\/g, "/");
+    return encodeURI("file://" + (pathName.charAt(0) !== "/" ?
+        "/" + pathName : pathName));
 }
 function encryptAvailable() {
     return new Promise((resolve, reject) => {

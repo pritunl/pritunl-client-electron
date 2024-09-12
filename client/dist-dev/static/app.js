@@ -1115,7 +1115,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _Config__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Config */ "./app/Config.js");
 /* harmony import */ var _Constants__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Constants */ "./app/Constants.js");
-/* harmony import */ var _monaco_editor_loader__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @monaco-editor/loader */ "./node_modules/@monaco-editor/loader/lib/es/index.js");
+/* harmony import */ var _utils_MiscUtils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./utils/MiscUtils */ "./app/utils/MiscUtils.js");
+/* harmony import */ var _monaco_editor_loader__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @monaco-editor/loader */ "./node_modules/@monaco-editor/loader/lib/es/index.js");
+/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! path */ "path");
+/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(path__WEBPACK_IMPORTED_MODULE_4__);
+
+
 
 
 
@@ -1154,10 +1159,10 @@ function theme() {
 }
 function editorTheme() {
     if (_Config__WEBPACK_IMPORTED_MODULE_0__["default"].theme === "light") {
-        return "eclipse";
+        return "tomorrow";
     }
     else {
-        return "dracula";
+        return "tomorrow-night";
     }
 }
 function chartColor1() {
@@ -1329,7 +1334,12 @@ let tomorrow = {
         "editorWhitespace.foreground": "#D1D1D1"
     }
 };
-_monaco_editor_loader__WEBPACK_IMPORTED_MODULE_2__["default"].init().then((monaco) => {
+_monaco_editor_loader__WEBPACK_IMPORTED_MODULE_3__["default"].config({
+    paths: {
+        vs: _utils_MiscUtils__WEBPACK_IMPORTED_MODULE_2__.uriFromPath(path__WEBPACK_IMPORTED_MODULE_4___default().join(__dirname, "static", "vs")),
+    },
+});
+_monaco_editor_loader__WEBPACK_IMPORTED_MODULE_3__["default"].init().then((monaco) => {
     monaco.editor.defineTheme("tomorrow-night", tomorrowNight);
     monaco.editor.defineTheme("tomorrow", tomorrow);
 });
@@ -2376,7 +2386,7 @@ class ConfirmButton extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
             if (this.props.items) {
                 let items = [];
                 for (let item of this.props.items) {
-                    items.push(react__WEBPACK_IMPORTED_MODULE_0__.createElement("li", null, item));
+                    items.push(react__WEBPACK_IMPORTED_MODULE_0__.createElement("li", { key: item }, item));
                 }
                 itemsList = react__WEBPACK_IMPORTED_MODULE_0__.createElement("ul", null, items);
             }
@@ -2558,6 +2568,7 @@ const css = {
         margin: "11px 0 10px 0",
         borderRadius: "3px",
         overflow: "hidden",
+        width: "100%",
     },
 };
 class Editor extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
@@ -2568,21 +2579,22 @@ class Editor extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
     render() {
         return react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", { className: "layout horizontal flex", style: css.editorBox },
             react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", { style: css.editor },
-                react__WEBPACK_IMPORTED_MODULE_0__.createElement(_monaco_editor_react__WEBPACK_IMPORTED_MODULE_2__.Editor, { height: "800px", width: "100%", defaultLanguage: "markdown", theme: _Theme__WEBPACK_IMPORTED_MODULE_1__.editorTheme(), defaultValue: this.props.value, options: {
+                react__WEBPACK_IMPORTED_MODULE_0__.createElement(_monaco_editor_react__WEBPACK_IMPORTED_MODULE_2__.Editor, { height: this.props.height, width: this.props.width, defaultLanguage: "markdown", theme: _Theme__WEBPACK_IMPORTED_MODULE_1__.editorTheme(), value: this.props.value, options: {
                         folding: false,
                         fontSize: this.props.fontSize,
                         fontFamily: '"DejaVu Sans Mono", Monaco, Menlo, "Ubuntu Mono", Consolas, source-code-pro, monospace',
                         tabSize: 4,
                         detectIndentation: false,
                         readOnly: this.props.readOnly,
-                        rulers: [80],
                         scrollBeyondLastLine: false,
                         minimap: {
                             enabled: false,
                         },
                         wordWrap: "on",
                     }, onChange: (val) => {
-                        this.props.onChange(val);
+                        if (this.props.onChange) {
+                            this.props.onChange(val);
+                        }
                     } })));
     }
 }
@@ -2981,7 +2993,7 @@ class Logs extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
                         } }, viewsDom))),
             react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", { className: "layout horizontal flex" },
                 react__WEBPACK_IMPORTED_MODULE_0__.createElement("label", { className: "bp5-label flex", style: css.editor },
-                    react__WEBPACK_IMPORTED_MODULE_0__.createElement(_Editor__WEBPACK_IMPORTED_MODULE_5__["default"], { disabled: this.state.disabled, value: this.state.log, readOnly: true, mode: "text", fontSize: 10, height: "100%", width: "100%" }))));
+                    react__WEBPACK_IMPORTED_MODULE_0__.createElement(_Editor__WEBPACK_IMPORTED_MODULE_5__["default"], { disabled: this.state.disabled, value: this.state.log, readOnly: true, mode: "text", fontSize: 10, height: "500px", width: "100%" }))));
     }
 }
 
@@ -6719,6 +6731,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   objectIdNil: () => (/* binding */ objectIdNil),
 /* harmony export */   shuffle: () => (/* binding */ shuffle),
 /* harmony export */   tarRead: () => (/* binding */ tarRead),
+/* harmony export */   uriFromPath: () => (/* binding */ uriFromPath),
 /* harmony export */   uuid: () => (/* binding */ uuid),
 /* harmony export */   uuidRand: () => (/* binding */ uuidRand),
 /* harmony export */   zeroPad: () => (/* binding */ zeroPad)
@@ -6731,6 +6744,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var child_process__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(child_process__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var electron__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! electron */ "electron");
 /* harmony import */ var electron__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(electron__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! path */ "path");
+/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(path__WEBPACK_IMPORTED_MODULE_5__);
+
 
 
 
@@ -7153,6 +7169,11 @@ function fileWrite(path, data) {
             resolve();
         });
     });
+}
+function uriFromPath(pth) {
+    const pathName = path__WEBPACK_IMPORTED_MODULE_5___default().resolve(pth).replace(/\\/g, "/");
+    return encodeURI("file://" + (pathName.charAt(0) !== "/" ?
+        "/" + pathName : pathName));
 }
 function encryptAvailable() {
     return new Promise((resolve, reject) => {
@@ -75863,7 +75884,7 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 	
 /******/ 	/* webpack/runtime/publicPath */
 /******/ 	(() => {
-/******/ 		__webpack_require__.p = "";
+/******/ 		__webpack_require__.p = "./static/";
 /******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/jsonp chunk loading */
