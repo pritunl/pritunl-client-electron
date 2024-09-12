@@ -16,6 +16,30 @@
   src: url('fredoka-one.ttf') format('truetype');
 }
 
+body {
+  background-color: #f5f8fa;
+}
+
+h2 {
+  font-size: 28px;
+}
+
+.no-select {
+  user-select: none;
+}
+
+body.bp5-dark {
+  background-color: #293742;
+}
+
+.logo-dark {
+  display: none;
+}
+
+.hljs {
+  border-radius: 3px;
+}
+
 ::-webkit-scrollbar {
   width: 15px;
   background: #f5f8fa;
@@ -29,152 +53,123 @@
   background: #f5f8fa;
 }
 
-.bp3-dark ::-webkit-scrollbar {
+.bp5-dark ::-webkit-scrollbar {
   width: 15px;
   background: #293742;
 }
-.bp3-dark ::-webkit-scrollbar-thumb {
+.bp5-dark ::-webkit-scrollbar-thumb {
   border-radius: 3px;
   background: #30404d;
   border: 1px solid rgb(16 22 26 / 70%);
 }
-.bp3-dark ::-webkit-scrollbar-corner {
+.bp5-dark ::-webkit-scrollbar-corner {
   background: #293742;
 }
 
-.ace-eclipse.ace_editor {
-  border: 1px solid rgb(209, 209, 209);
+.bp5-dark .logo-light {
+  display: none;
 }
 
-.ace-dracula .ace_gutter {
-  background-color: #23242e !important;
-  border-right: 1px solid rgb(255 255 255 / 15%) !important;
+.bp5-dark .logo-dark {
+  display: block;
 }
 
-.bp3-card-header {
-  background-color: rgba(0, 0, 0, 0.06)
-}
-
-.bp3-dark .bp3-card-header {
-  background-color: rgba(0, 0, 0, 0.13)
-}
-
-body {
-  background-color: #f5f8fa;
-}
-
-h2 {
-  font-size: 28px;
-}
-
-h5 {
-  font-size: 16px;
-}
-
-.no-select {
-  user-select: none;
-}
-
-body.bp3-dark {
-  background-color: #293742;
-}
-
-.bp3-portal {
-  top: 37px !important;
-}
-
-.bp3-button:disabled, .bp3-button.bp3-disabled {
+.bp5-button:disabled, .bp5-button.bp5-disabled {
   cursor: default !important;
 }
 
-.bp3-input:disabled, .bp3-input.bp3-disabled {
+.bp5-input:disabled, .bp5-input.bp5-disabled {
   cursor: default !important;
 }
 
-.bp3-select select:disabled, .bp3-select select.bp3-disabled {
+.bp5-select select:disabled, .bp5-select select.bp5-disabled {
   cursor: default !important;
 }
 
-.bp3-text-intent-primary {
+.bp5-text-intent-primary {
   color: #106ba3;
 }
-.bp3-dark .bp3-text-intent-primary {
+.bp5-dark .bp5-text-intent-primary {
   color: #2b95d6;
 }
 
-.bp3-text-intent-success {
+.bp5-text-intent-success {
   color: #0d8050;
 }
-.bp3-dark .bp3-text-intent-success {
+.bp5-dark .bp5-text-intent-success {
   color: #15b371;
 }
 
-.bp3-text-intent-warning {
+.bp5-text-intent-warning {
   color: #bf7326;
 }
-.bp3-dark .bp3-text-intent-warning {
+.bp5-dark .bp5-text-intent-warning {
   color: #f29d49;
 }
 
-.bp3-text-intent-danger {
+.bp5-text-intent-danger {
   color: #c23030;
 }
-.bp3-dark .bp3-text-intent-danger {
+.bp5-dark .bp5-text-intent-danger {
   color: #f55656;
 }
 
-.bp3-border {
+.bp5-border {
   border-width: 1px;
   border-color: rgba(16, 22, 26, 0.15);
 }
 
-.bp3-dark .bp3-border {
+.bp5-dark .bp5-border {
   border-color: rgba(255, 255, 255, 0.15);
 }
 
-.bp3-button.bp3-button-empty[class*="bp3-icon-"] {
+.bp5-button.bp5-button-empty[class*="bp5-icon-"] {
   padding: 0;
 }
 
-.bp3-button.bp3-button-empty[class*="bp3-icon-"]::before {
+.bp5-button.bp5-button-empty[class*="bp5-icon-"]::before {
   margin-right: 0;
 }
 
-.bp3-row .bp3-cell {
+.bp5-row .bp5-cell span {
+  vertical-align: middle;
+}
+
+.bp5-row .bp5-cell {
   border-top: 1px solid rgba(16, 22, 26, 0.15);
   border-bottom: 1px solid rgba(16, 22, 26, 0.15);
 }
 
-.bp3-row .bp3-cell:first-child {
+.bp5-row .bp5-cell:first-child {
   border-top-left-radius: 3px;
   border-bottom-left-radius: 3px;
   border-left: 1px solid rgba(16, 22, 26, 0.15);
 }
 
-.bp3-row .bp3-cell:last-child {
+.bp5-row .bp5-cell:last-child {
   border-top-right-radius: 3px;
   border-bottom-right-radius: 3px;
   border-right: 1px solid rgba(16, 22, 26, 0.15);
 }
 
-.bp3-dark .bp3-row .bp3-cell {
+.bp5-dark .bp5-row .bp5-cell {
   border-top: 1px solid rgba(16, 22, 26, 0.5);
   border-bottom: 1px solid rgba(16, 22, 26, 0.5);
 }
 
-.bp3-dark .bp3-row .bp3-cell:first-child {
+.bp5-dark .bp5-row .bp5-cell:first-child {
   border-left: 1px solid rgba(16, 22, 26, 0.5);
 }
 
-.bp3-dark .bp3-row .bp3-cell:last-child {
+.bp5-dark .bp5-row .bp5-cell:last-child {
   border-right: 1px solid rgba(16, 22, 26, 0.5);
 }
 
-.bp3-progress-bar .bp3-loading-bar {
-  animation: bp3-loading-bar-frames 2s linear infinite;
+.bp5-progress-bar .bp5-loading-bar {
+  animation: bp5-loading-bar-frames 2s linear infinite;
 }
 
-@keyframes bp3-loading-bar-frames {
+@keyframes bp5-loading-bar-frames {
   from {
     left: -200px;
     width: 30%;
@@ -196,10 +191,18 @@ body.bp3-dark {
   }
 }
 
-.bp3-toast-container.bp3-toast-container-bottom {
+.bp5-card-header {
+  background-color: rgba(0, 0, 0, 0.06)
+}
+
+.bp5-dark .bp5-card-header {
+  background-color: rgba(0, 0, 0, 0.13)
+}
+
+.bp5-toast-container.bp5-toast-container-bottom {
   position: fixed !important;
 }
-.bp3-toast-container.bp3-toast-container-inline {
+.bp5-toast-container.bp5-toast-container-inline {
   position: fixed !important;
 }
 
@@ -217,6 +220,42 @@ body.bp3-dark {
 
 .close-button:hover::before {
   color: #ffffff !important;
+}
+
+#chartjs-tooltip {
+  background-color: #fcfcfc;
+}
+
+.bp5-dark #chartjs-tooltip {
+  background-color: #232f38;
+}
+
+#chartjs-tooltip {
+  padding: 0 3px 3px 3px;
+}
+
+#chartjs-tooltip th {
+  font-size: 12px;
+}
+
+#chartjs-tooltip td {
+  font-size: 10px;
+  padding: 4px 4px 2px 6px;
+  position: relative;
+}
+
+#chartjs-tooltip td.line-box {
+  padding: 4px 4px 2px 17px;
+}
+
+#chartjs-tooltip td span {
+  width: 10px;
+  height: 10px;
+  border-width: 2px;
+  border-style: solid;
+  top: 4px;
+  left: 3px;
+  position: absolute;
 }
 
 /*******************************
@@ -459,6 +498,644 @@ body.fullbleed {
 
 /* FIXES */
 
-label.bp3-label .bp3-button-group {
+label.bp5-label .bp5-button-group {
   margin-top: 5px;
 }
+
+/***********************************************************************
+highlight.js
+***********************************************************************/
+pre code.hljs {
+  display: block;
+  overflow-x: auto;
+  padding: 1em
+}
+code.hljs {
+  padding: 3px 5px
+}
+/*
+
+Atom One Light by Daniel Gamage
+Original One Light Syntax theme from https://github.com/atom/one-light-syntax
+
+base:    #fafafa
+mono-1:  #383a42
+mono-2:  #686b77
+mono-3:  #a0a1a7
+hue-1:   #0184bb
+hue-2:   #4078f2
+hue-3:   #a626a4
+hue-4:   #50a14f
+hue-5:   #e45649
+hue-5-2: #c91243
+hue-6:   #986801
+hue-6-2: #c18401
+
+*/
+.hljs {
+  color: #383a42;
+  background: #fafafa
+}
+.hljs-comment,
+.hljs-quote {
+  color: #a0a1a7;
+  font-style: italic
+}
+.hljs-doctag,
+.hljs-keyword,
+.hljs-formula {
+  color: #a626a4
+}
+.hljs-section,
+.hljs-name,
+.hljs-selector-tag,
+.hljs-deletion,
+.hljs-subst {
+  color: #e45649
+}
+.hljs-literal {
+  color: #0184bb
+}
+.hljs-string,
+.hljs-regexp,
+.hljs-addition,
+.hljs-attribute,
+.hljs-meta .hljs-string {
+  color: #50a14f
+}
+.hljs-attr,
+.hljs-variable,
+.hljs-template-variable,
+.hljs-type,
+.hljs-selector-class,
+.hljs-selector-attr,
+.hljs-selector-pseudo,
+.hljs-number {
+  color: #986801
+}
+.hljs-symbol,
+.hljs-bullet,
+.hljs-link,
+.hljs-meta,
+.hljs-selector-id,
+.hljs-title {
+  color: #4078f2
+}
+.hljs-built_in,
+.hljs-title.class_,
+.hljs-class .hljs-title {
+  color: #c18401
+}
+.hljs-emphasis {
+  font-style: italic
+}
+.hljs-strong {
+  font-weight: bold
+}
+.hljs-link {
+  text-decoration: underline
+}
+/*
+
+Atom One Dark by Daniel Gamage
+Original One Dark Syntax theme from https://github.com/atom/one-dark-syntax
+
+base:    #282c34
+mono-1:  #abb2bf
+mono-2:  #818896
+mono-3:  #5c6370
+hue-1:   #56b6c2
+hue-2:   #61aeee
+hue-3:   #c678dd
+hue-4:   #98c379
+hue-5:   #e06c75
+hue-5-2: #be5046
+hue-6:   #d19a66
+hue-6-2: #e6c07b
+
+*/
+.bp5-dark .hljs {
+  color: #abb2bf;
+  background: #282c34
+}
+.bp5-dark .hljs-comment,
+.bp5-dark .hljs-quote {
+  color: #5c6370;
+  font-style: italic
+}
+.bp5-dark .hljs-doctag,
+.bp5-dark .hljs-keyword,
+.bp5-dark .hljs-formula {
+  color: #c678dd
+}
+.bp5-dark .hljs-section,
+.bp5-dark .hljs-name,
+.bp5-dark .hljs-selector-tag,
+.bp5-dark .hljs-deletion,
+.bp5-dark .hljs-subst {
+  color: #e06c75
+}
+.bp5-dark .hljs-literal {
+  color: #56b6c2
+}
+.bp5-dark .hljs-string,
+.bp5-dark .hljs-regexp,
+.bp5-dark .hljs-addition,
+.bp5-dark .hljs-attribute,
+.bp5-dark .hljs-meta .hljs-string {
+  color: #98c379
+}
+.bp5-dark .hljs-attr,
+.bp5-dark .hljs-variable,
+.bp5-dark .hljs-template-variable,
+.bp5-dark .hljs-type,
+.bp5-dark .hljs-selector-class,
+.bp5-dark .hljs-selector-attr,
+.bp5-dark .hljs-selector-pseudo,
+.bp5-dark .hljs-number {
+  color: #d19a66
+}
+.bp5-dark .hljs-symbol,
+.bp5-dark .hljs-bullet,
+.bp5-dark .hljs-link,
+.bp5-dark .hljs-meta,
+.bp5-dark .hljs-selector-id,
+.bp5-dark .hljs-title {
+  color: #61aeee
+}
+.bp5-dark .hljs-built_in,
+.bp5-dark .hljs-title.class_,
+.bp5-dark .hljs-class .hljs-title {
+  color: #e6c07b
+}
+.bp5-dark .hljs-emphasis {
+  font-style: italic
+}
+.bp5-dark .hljs-strong {
+  font-weight: bold
+}
+.bp5-dark .hljs-link {
+  text-decoration: underline
+}
+
+/***********************************************************************
+bp5 datepicker
+***********************************************************************/
+.bp5-datepicker input[type=number]::-webkit-inner-spin-button,
+.bp5-datepicker input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.bp5-datepicker{
+  background:#ffffff;
+  border-radius:3px;
+  display:-webkit-box;
+  display:-ms-flexbox;
+  display:flex;
+  padding:5px;
+  position:relative;
+  -webkit-user-select:none;
+  -moz-user-select:none;
+  -ms-user-select:none;
+  user-select:none; }
+.bp5-datepicker .DayPicker{
+  display:inline-block;
+  min-width:210px;
+  position:relative;
+  vertical-align:top; }
+.bp5-datepicker .DayPicker:focus{
+  outline:none; }
+.bp5-datepicker .bp5-datepicker-day-wrapper{
+  border-radius:3px;
+  padding:7px; }
+.bp5-datepicker .DayPicker-Month{
+  border-collapse:collapse;
+  border-spacing:0;
+  display:inline-table;
+  margin:0 5px 5px;
+  -webkit-user-select:none;
+  -moz-user-select:none;
+  -ms-user-select:none;
+  user-select:none; }
+.bp5-datepicker .DayPicker-Month + .bp5-datepicker .DayPicker-Month{
+  margin-left:10px; }
+.bp5-datepicker .DayPicker-Caption{
+  display:table-caption; }
+.bp5-datepicker .DayPicker-Weekdays{
+  display:table-header-group; }
+.bp5-datepicker .DayPicker-WeekdaysRow{
+  display:table-row; }
+.bp5-datepicker .DayPicker-Weekday{
+  display:table-cell;
+  height:30px;
+  line-height:1;
+  text-align:center;
+  vertical-align:middle;
+  width:30px;
+  font-weight:600;
+  padding-top:5px; }
+.bp5-datepicker .DayPicker-Weekday abbr[title]{
+  text-decoration:none; }
+.bp5-datepicker .DayPicker-Body{
+  display:table-row-group; }
+.bp5-datepicker .DayPicker-Week{
+  display:table-row; }
+.bp5-datepicker .DayPicker-WeekNumber{
+  display:table-cell;
+  height:30px;
+  line-height:1;
+  text-align:center;
+  vertical-align:middle;
+  width:30px;
+  color:rgba(92, 112, 128, 0.6);
+  font-size:14px; }
+.bp5-datepicker .DayPicker-Day{
+  display:table-cell;
+  height:30px;
+  line-height:1;
+  text-align:center;
+  vertical-align:middle;
+  width:30px;
+  border-radius:3px;
+  cursor:pointer; }
+.bp5-datepicker .DayPicker-Day.DayPicker-Day--outside{
+  color:rgba(92, 112, 128, 0.6); }
+.bp5-datepicker .DayPicker-Day.DayPicker-Day--isToday .bp5-datepicker-day-wrapper{
+  border:1px solid rgba(16, 22, 26, 0.15); }
+.bp5-datepicker .DayPicker-Day:hover, .bp5-datepicker .DayPicker-Day:focus{
+  background:#d8e1e8;
+  color:#182026; }
+.bp5-datepicker .DayPicker-Day:active{
+  background:#ced9e0; }
+.bp5-datepicker .DayPicker-Day.DayPicker-Day--selected{
+  background-color:#137cbd;
+  border-radius:3px;
+  color:#ffffff; }
+.bp5-datepicker .DayPicker-Day.DayPicker-Day--selected:hover{
+  background-color:#106ba3; }
+.bp5-datepicker .DayPicker-Day.DayPicker-Day--disabled{
+  background:none;
+  color:rgba(92, 112, 128, 0.6);
+  cursor:not-allowed; }
+
+.bp5-datepicker-navbar{
+  -webkit-box-align:center;
+  -ms-flex-align:center;
+  align-items:center;
+  display:-webkit-box;
+  display:-ms-flexbox;
+  display:flex;
+  height:30px;
+  left:0;
+  position:absolute;
+  right:0;
+  top:0; }
+.bp5-datepicker-navbar > .DayPicker-NavButton--prev{
+  margin-right:auto; }
+.bp5-datepicker-navbar > .DayPicker-NavButton--next{
+  margin-left:auto; }
+
+.bp5-datepicker-caption{
+  display:-webkit-box;
+  display:-ms-flexbox;
+  display:flex;
+  -webkit-box-orient:horizontal;
+  -webkit-box-direction:normal;
+  -ms-flex-direction:row;
+  flex-direction:row;
+  -webkit-box-pack:justify;
+  -ms-flex-pack:justify;
+  justify-content:space-between;
+  margin:0 25px 5px; }
+.bp5-datepicker-caption > *{
+  -webkit-box-flex:0;
+  -ms-flex-positive:0;
+  flex-grow:0;
+  -ms-flex-negative:0;
+  flex-shrink:0; }
+.bp5-datepicker-caption > :first-child{
+  -webkit-box-flex:1;
+  -ms-flex-positive:1;
+  flex-grow:1;
+  -ms-flex-negative:1;
+  flex-shrink:1; }
+.bp5-datepicker-caption select{
+  font-weight:600;
+  padding-left:5px;
+  padding-right:16px; }
+.bp5-datepicker-caption select + .bp5-icon{
+  right:2px; }
+.bp5-datepicker-caption + .bp5-divider{
+  margin:0; }
+
+.bp5-datepicker-month-select{
+  -ms-flex-negative:1;
+  flex-shrink:1; }
+
+.bp5-datepicker-year-select{
+  -ms-flex-negative:1;
+  flex-shrink:1;
+  min-width:60px; }
+
+.bp5-datepicker-caption-measure{
+  font-weight:600;
+  padding-left:5px; }
+
+.bp5-datepicker-footer{
+  display:-webkit-box;
+  display:-ms-flexbox;
+  display:flex;
+  -webkit-box-pack:justify;
+  -ms-flex-pack:justify;
+  justify-content:space-between; }
+
+.bp5-dark .bp5-datepicker{
+  background:#30404d; }
+.bp5-dark .bp5-datepicker .DayPicker-WeekNumber{
+  color:rgba(167, 182, 194, 0.6); }
+.bp5-dark .bp5-datepicker .DayPicker-Day.DayPicker-Day--outside{
+  color:rgba(167, 182, 194, 0.6); }
+.bp5-dark .bp5-datepicker .DayPicker-Day.DayPicker-Day--isToday .bp5-datepicker-day-wrapper{
+  border:1px solid rgba(255, 255, 255, 0.15); }
+.bp5-dark .bp5-datepicker .DayPicker-Day:hover, .bp5-dark .bp5-datepicker .DayPicker-Day:focus{
+  background:#5c7080;
+  color:#ffffff; }
+.bp5-dark .bp5-datepicker .DayPicker-Day:active{
+  background:#738694; }
+.bp5-dark .bp5-datepicker .DayPicker-Day.DayPicker-Day--selected{
+  background-color:#137cbd; }
+.bp5-dark .bp5-datepicker .DayPicker-Day.DayPicker-Day--selected:hover{
+  background-color:#2b95d6; }
+.bp5-dark .bp5-datepicker .DayPicker-Day.DayPicker-Day--disabled{
+  background:none;
+  color:rgba(167, 182, 194, 0.6); }
+.bp5-dark .bp5-datepicker .bp5-datepicker-footer{
+  border-top-color:rgba(16, 22, 26, 0.4); }
+
+.bp5-datepicker-timepicker-wrapper{
+  -webkit-box-align:center;
+  -ms-flex-align:center;
+  align-items:center;
+  display:-webkit-box;
+  display:-ms-flexbox;
+  display:flex;
+  -webkit-box-orient:vertical;
+  -webkit-box-direction:normal;
+  -ms-flex-direction:column;
+  flex-direction:column; }
+.bp5-daterangepicker{
+  display:-webkit-box;
+  display:-ms-flexbox;
+  display:flex;
+  white-space:nowrap; }
+.bp5-daterangepicker .DayPicker-NavButton--interactionDisabled{
+  display:none; }
+.bp5-daterangepicker .bp5-daterangepicker-timepickers{
+  display:-webkit-box;
+  display:-ms-flexbox;
+  display:flex;
+  -ms-flex-pack:distribute;
+  justify-content:space-around; }
+.bp5-daterangepicker.bp5-daterangepicker-contiguous .DayPicker{
+  min-width:220px; }
+.bp5-daterangepicker.bp5-daterangepicker-single-month .DayPicker{
+  min-width:210px; }
+.bp5-daterangepicker .DayPicker-Day{ }
+.bp5-daterangepicker .DayPicker-Day--outside{
+  visibility:hidden; }
+.bp5-daterangepicker .DayPicker-Day--hovered-range{
+  border-radius:0; }
+.bp5-daterangepicker .DayPicker-Day--hovered-range:not(.DayPicker-Day--selected):not(.DayPicker-Day--selected-range):not(.DayPicker-Day--selected-range-start):not(.DayPicker-Day--selected-range-end){
+  background-color:#ebf1f5; }
+.bp5-daterangepicker .DayPicker-Day--selected-range{
+  background-color:#ebf1f5;
+  border-radius:0; }
+.bp5-daterangepicker .DayPicker-Day--selected-range:hover{
+  background-color:#ced9e0; }
+.bp5-daterangepicker .DayPicker-Day--selected-range-start:not(.DayPicker-Day--selected-range-end):not(.DayPicker-Day--hovered-range-end){
+  border-bottom-right-radius:0;
+  border-top-right-radius:0; }
+.bp5-daterangepicker .DayPicker-Day--selected-range-end:not(.DayPicker-Day--selected-range-start):not(.DayPicker-Day--hovered-range-start){
+  border-bottom-left-radius:0;
+  border-top-left-radius:0; }
+.bp5-daterangepicker .DayPicker-Day--hovered-range-start:not(.DayPicker-Day--hovered-range-end){
+  border-bottom-right-radius:0;
+  border-top-right-radius:0; }
+.bp5-daterangepicker .DayPicker-Day--hovered-range-end:not(.DayPicker-Day--hovered-range-start){
+  border-bottom-left-radius:0;
+  border-top-left-radius:0; }
+.bp5-dark .bp5-daterangepicker .DayPicker-Day--hovered-range{ }
+.bp5-dark .bp5-daterangepicker .DayPicker-Day--hovered-range:not(.DayPicker-Day--selected):not(.DayPicker-Day--selected-range):not(.DayPicker-Day--selected-range-start):not(.DayPicker-Day--selected-range-end){
+  background-color:#394b59; }
+.bp5-dark .bp5-daterangepicker .DayPicker-Day--selected-range{
+  background-color:#394b59; }
+.bp5-dark .bp5-daterangepicker .DayPicker-Day--selected-range:hover{
+  background-color:#5c7080; }
+
+.bp5-menu.bp5-daterangepicker-shortcuts{
+  min-width:120px;
+  padding:0; }
+.bp5-timepicker{
+  white-space:nowrap; }
+.bp5-timepicker .bp5-timepicker-arrow-row{
+  padding:0 1px; }
+.bp5-timepicker .bp5-timepicker-arrow-button{
+  color:#5c7080;
+  display:inline-block;
+  padding:4px 0;
+  text-align:center;
+  width:33px; }
+.bp5-timepicker .bp5-timepicker-arrow-button:hover{
+  color:#182026; }
+.bp5-dark .bp5-timepicker .bp5-timepicker-arrow-button{
+  color:#a7b6c2; }
+.bp5-dark .bp5-timepicker .bp5-timepicker-arrow-button:hover{
+  color:#f5f8fa; }
+.bp5-timepicker .bp5-timepicker-arrow-button + .bp5-timepicker-arrow-button{
+  margin-left:11px; }
+.bp5-timepicker .bp5-timepicker-arrow-button:hover{
+  cursor:pointer; }
+.bp5-timepicker .bp5-timepicker-input-row{
+  background:#ffffff;
+  border-radius:3px;
+  -webkit-box-shadow:inset 0 0 0 1px rgba(16, 22, 26, 0.15), inset 0 1px 1px rgba(16, 22, 26, 0.2);
+  box-shadow:inset 0 0 0 1px rgba(16, 22, 26, 0.15), inset 0 1px 1px rgba(16, 22, 26, 0.2);
+  display:inline-block;
+  height:30px;
+  line-height:28px;
+  padding:0 1px;
+  vertical-align:middle; }
+.bp5-timepicker .bp5-timepicker-divider-text{
+  color:#5c7080;
+  display:inline-block;
+  font-size:16px;
+  text-align:center;
+  width:11px; }
+.bp5-timepicker .bp5-timepicker-input{
+  background:transparent;
+  border:0;
+  border-radius:3px;
+  -webkit-box-shadow:0 0 0 0 rgba(19, 124, 189, 0), 0 0 0 0 rgba(19, 124, 189, 0);
+  box-shadow:0 0 0 0 rgba(19, 124, 189, 0), 0 0 0 0 rgba(19, 124, 189, 0);
+  color:#182026;
+  height:28px;
+  outline:0;
+  padding:0;
+  text-align:center;
+  -webkit-transition:-webkit-box-shadow 100ms cubic-bezier(0.4, 1, 0.75, 0.9);
+  transition:-webkit-box-shadow 100ms cubic-bezier(0.4, 1, 0.75, 0.9);
+  transition:box-shadow 100ms cubic-bezier(0.4, 1, 0.75, 0.9);
+  transition:box-shadow 100ms cubic-bezier(0.4, 1, 0.75, 0.9), -webkit-box-shadow 100ms cubic-bezier(0.4, 1, 0.75, 0.9);
+  width:33px; }
+.bp5-timepicker .bp5-timepicker-input:focus{
+  -webkit-box-shadow:0 0 0 1px #137cbd, 0 0 0 3px rgba(19, 124, 189, 0.3);
+  box-shadow:0 0 0 1px #137cbd, 0 0 0 3px rgba(19, 124, 189, 0.3); }
+.bp5-timepicker .bp5-timepicker-input.bp5-intent-primary{
+  -webkit-box-shadow:0 0 0 0 rgba(19, 124, 189, 0), 0 0 0 0 rgba(19, 124, 189, 0), inset 0 0 0 1px #137cbd, inset 0 0 0 1px rgba(16, 22, 26, 0.15), inset 0 1px 1px rgba(16, 22, 26, 0.2);
+  box-shadow:0 0 0 0 rgba(19, 124, 189, 0), 0 0 0 0 rgba(19, 124, 189, 0), inset 0 0 0 1px #137cbd, inset 0 0 0 1px rgba(16, 22, 26, 0.15), inset 0 1px 1px rgba(16, 22, 26, 0.2); }
+.bp5-timepicker .bp5-timepicker-input.bp5-intent-primary:focus{
+  -webkit-box-shadow:0 0 0 1px #137cbd, 0 0 0 3px rgba(19, 124, 189, 0.3), inset 0 1px 1px rgba(16, 22, 26, 0.2);
+  box-shadow:0 0 0 1px #137cbd, 0 0 0 3px rgba(19, 124, 189, 0.3), inset 0 1px 1px rgba(16, 22, 26, 0.2); }
+.bp5-timepicker .bp5-timepicker-input.bp5-intent-primary[readonly]{
+  -webkit-box-shadow:inset 0 0 0 1px #137cbd;
+  box-shadow:inset 0 0 0 1px #137cbd; }
+.bp5-timepicker .bp5-timepicker-input.bp5-intent-primary:disabled, .bp5-timepicker .bp5-timepicker-input.bp5-intent-primary.bp5-disabled{
+  -webkit-box-shadow:none;
+  box-shadow:none; }
+.bp5-dark .bp5-timepicker .bp5-timepicker-input.bp5-intent-primary{
+  -webkit-box-shadow:0 0 0 0 rgba(19, 124, 189, 0), 0 0 0 0 rgba(19, 124, 189, 0), 0 0 0 0 rgba(19, 124, 189, 0), inset 0 0 0 1px #137cbd, inset 0 0 0 1px rgba(16, 22, 26, 0.3), inset 0 1px 1px rgba(16, 22, 26, 0.4);
+  box-shadow:0 0 0 0 rgba(19, 124, 189, 0), 0 0 0 0 rgba(19, 124, 189, 0), 0 0 0 0 rgba(19, 124, 189, 0), inset 0 0 0 1px #137cbd, inset 0 0 0 1px rgba(16, 22, 26, 0.3), inset 0 1px 1px rgba(16, 22, 26, 0.4); }
+.bp5-dark .bp5-timepicker .bp5-timepicker-input.bp5-intent-primary:focus{
+  -webkit-box-shadow:0 0 0 1px #137cbd, 0 0 0 1px #137cbd, 0 0 0 3px rgba(19, 124, 189, 0.3), inset 0 0 0 1px rgba(16, 22, 26, 0.3), inset 0 1px 1px rgba(16, 22, 26, 0.4);
+  box-shadow:0 0 0 1px #137cbd, 0 0 0 1px #137cbd, 0 0 0 3px rgba(19, 124, 189, 0.3), inset 0 0 0 1px rgba(16, 22, 26, 0.3), inset 0 1px 1px rgba(16, 22, 26, 0.4); }
+.bp5-dark .bp5-timepicker .bp5-timepicker-input.bp5-intent-primary[readonly]{
+  -webkit-box-shadow:inset 0 0 0 1px #137cbd;
+  box-shadow:inset 0 0 0 1px #137cbd; }
+.bp5-dark .bp5-timepicker .bp5-timepicker-input.bp5-intent-primary:disabled, .bp5-dark .bp5-timepicker .bp5-timepicker-input.bp5-intent-primary.bp5-disabled{
+  -webkit-box-shadow:none;
+  box-shadow:none; }
+.bp5-timepicker .bp5-timepicker-input.bp5-intent-success{
+  -webkit-box-shadow:0 0 0 0 rgba(15, 153, 96, 0), 0 0 0 0 rgba(15, 153, 96, 0), inset 0 0 0 1px #0f9960, inset 0 0 0 1px rgba(16, 22, 26, 0.15), inset 0 1px 1px rgba(16, 22, 26, 0.2);
+  box-shadow:0 0 0 0 rgba(15, 153, 96, 0), 0 0 0 0 rgba(15, 153, 96, 0), inset 0 0 0 1px #0f9960, inset 0 0 0 1px rgba(16, 22, 26, 0.15), inset 0 1px 1px rgba(16, 22, 26, 0.2); }
+.bp5-timepicker .bp5-timepicker-input.bp5-intent-success:focus{
+  -webkit-box-shadow:0 0 0 1px #0f9960, 0 0 0 3px rgba(15, 153, 96, 0.3), inset 0 1px 1px rgba(16, 22, 26, 0.2);
+  box-shadow:0 0 0 1px #0f9960, 0 0 0 3px rgba(15, 153, 96, 0.3), inset 0 1px 1px rgba(16, 22, 26, 0.2); }
+.bp5-timepicker .bp5-timepicker-input.bp5-intent-success[readonly]{
+  -webkit-box-shadow:inset 0 0 0 1px #0f9960;
+  box-shadow:inset 0 0 0 1px #0f9960; }
+.bp5-timepicker .bp5-timepicker-input.bp5-intent-success:disabled, .bp5-timepicker .bp5-timepicker-input.bp5-intent-success.bp5-disabled{
+  -webkit-box-shadow:none;
+  box-shadow:none; }
+.bp5-dark .bp5-timepicker .bp5-timepicker-input.bp5-intent-success{
+  -webkit-box-shadow:0 0 0 0 rgba(15, 153, 96, 0), 0 0 0 0 rgba(15, 153, 96, 0), 0 0 0 0 rgba(15, 153, 96, 0), inset 0 0 0 1px #0f9960, inset 0 0 0 1px rgba(16, 22, 26, 0.3), inset 0 1px 1px rgba(16, 22, 26, 0.4);
+  box-shadow:0 0 0 0 rgba(15, 153, 96, 0), 0 0 0 0 rgba(15, 153, 96, 0), 0 0 0 0 rgba(15, 153, 96, 0), inset 0 0 0 1px #0f9960, inset 0 0 0 1px rgba(16, 22, 26, 0.3), inset 0 1px 1px rgba(16, 22, 26, 0.4); }
+.bp5-dark .bp5-timepicker .bp5-timepicker-input.bp5-intent-success:focus{
+  -webkit-box-shadow:0 0 0 1px #0f9960, 0 0 0 1px #0f9960, 0 0 0 3px rgba(15, 153, 96, 0.3), inset 0 0 0 1px rgba(16, 22, 26, 0.3), inset 0 1px 1px rgba(16, 22, 26, 0.4);
+  box-shadow:0 0 0 1px #0f9960, 0 0 0 1px #0f9960, 0 0 0 3px rgba(15, 153, 96, 0.3), inset 0 0 0 1px rgba(16, 22, 26, 0.3), inset 0 1px 1px rgba(16, 22, 26, 0.4); }
+.bp5-dark .bp5-timepicker .bp5-timepicker-input.bp5-intent-success[readonly]{
+  -webkit-box-shadow:inset 0 0 0 1px #0f9960;
+  box-shadow:inset 0 0 0 1px #0f9960; }
+.bp5-dark .bp5-timepicker .bp5-timepicker-input.bp5-intent-success:disabled, .bp5-dark .bp5-timepicker .bp5-timepicker-input.bp5-intent-success.bp5-disabled{
+  -webkit-box-shadow:none;
+  box-shadow:none; }
+.bp5-timepicker .bp5-timepicker-input.bp5-intent-warning{
+  -webkit-box-shadow:0 0 0 0 rgba(217, 130, 43, 0), 0 0 0 0 rgba(217, 130, 43, 0), inset 0 0 0 1px #d9822b, inset 0 0 0 1px rgba(16, 22, 26, 0.15), inset 0 1px 1px rgba(16, 22, 26, 0.2);
+  box-shadow:0 0 0 0 rgba(217, 130, 43, 0), 0 0 0 0 rgba(217, 130, 43, 0), inset 0 0 0 1px #d9822b, inset 0 0 0 1px rgba(16, 22, 26, 0.15), inset 0 1px 1px rgba(16, 22, 26, 0.2); }
+.bp5-timepicker .bp5-timepicker-input.bp5-intent-warning:focus{
+  -webkit-box-shadow:0 0 0 1px #d9822b, 0 0 0 3px rgba(217, 130, 43, 0.3), inset 0 1px 1px rgba(16, 22, 26, 0.2);
+  box-shadow:0 0 0 1px #d9822b, 0 0 0 3px rgba(217, 130, 43, 0.3), inset 0 1px 1px rgba(16, 22, 26, 0.2); }
+.bp5-timepicker .bp5-timepicker-input.bp5-intent-warning[readonly]{
+  -webkit-box-shadow:inset 0 0 0 1px #d9822b;
+  box-shadow:inset 0 0 0 1px #d9822b; }
+.bp5-timepicker .bp5-timepicker-input.bp5-intent-warning:disabled, .bp5-timepicker .bp5-timepicker-input.bp5-intent-warning.bp5-disabled{
+  -webkit-box-shadow:none;
+  box-shadow:none; }
+.bp5-dark .bp5-timepicker .bp5-timepicker-input.bp5-intent-warning{
+  -webkit-box-shadow:0 0 0 0 rgba(217, 130, 43, 0), 0 0 0 0 rgba(217, 130, 43, 0), 0 0 0 0 rgba(217, 130, 43, 0), inset 0 0 0 1px #d9822b, inset 0 0 0 1px rgba(16, 22, 26, 0.3), inset 0 1px 1px rgba(16, 22, 26, 0.4);
+  box-shadow:0 0 0 0 rgba(217, 130, 43, 0), 0 0 0 0 rgba(217, 130, 43, 0), 0 0 0 0 rgba(217, 130, 43, 0), inset 0 0 0 1px #d9822b, inset 0 0 0 1px rgba(16, 22, 26, 0.3), inset 0 1px 1px rgba(16, 22, 26, 0.4); }
+.bp5-dark .bp5-timepicker .bp5-timepicker-input.bp5-intent-warning:focus{
+  -webkit-box-shadow:0 0 0 1px #d9822b, 0 0 0 1px #d9822b, 0 0 0 3px rgba(217, 130, 43, 0.3), inset 0 0 0 1px rgba(16, 22, 26, 0.3), inset 0 1px 1px rgba(16, 22, 26, 0.4);
+  box-shadow:0 0 0 1px #d9822b, 0 0 0 1px #d9822b, 0 0 0 3px rgba(217, 130, 43, 0.3), inset 0 0 0 1px rgba(16, 22, 26, 0.3), inset 0 1px 1px rgba(16, 22, 26, 0.4); }
+.bp5-dark .bp5-timepicker .bp5-timepicker-input.bp5-intent-warning[readonly]{
+  -webkit-box-shadow:inset 0 0 0 1px #d9822b;
+  box-shadow:inset 0 0 0 1px #d9822b; }
+.bp5-dark .bp5-timepicker .bp5-timepicker-input.bp5-intent-warning:disabled, .bp5-dark .bp5-timepicker .bp5-timepicker-input.bp5-intent-warning.bp5-disabled{
+  -webkit-box-shadow:none;
+  box-shadow:none; }
+.bp5-timepicker .bp5-timepicker-input.bp5-intent-danger{
+  -webkit-box-shadow:0 0 0 0 rgba(219, 55, 55, 0), 0 0 0 0 rgba(219, 55, 55, 0), inset 0 0 0 1px #db3737, inset 0 0 0 1px rgba(16, 22, 26, 0.15), inset 0 1px 1px rgba(16, 22, 26, 0.2);
+  box-shadow:0 0 0 0 rgba(219, 55, 55, 0), 0 0 0 0 rgba(219, 55, 55, 0), inset 0 0 0 1px #db3737, inset 0 0 0 1px rgba(16, 22, 26, 0.15), inset 0 1px 1px rgba(16, 22, 26, 0.2); }
+.bp5-timepicker .bp5-timepicker-input.bp5-intent-danger:focus{
+  -webkit-box-shadow:0 0 0 1px #db3737, 0 0 0 3px rgba(219, 55, 55, 0.3), inset 0 1px 1px rgba(16, 22, 26, 0.2);
+  box-shadow:0 0 0 1px #db3737, 0 0 0 3px rgba(219, 55, 55, 0.3), inset 0 1px 1px rgba(16, 22, 26, 0.2); }
+.bp5-timepicker .bp5-timepicker-input.bp5-intent-danger[readonly]{
+  -webkit-box-shadow:inset 0 0 0 1px #db3737;
+  box-shadow:inset 0 0 0 1px #db3737; }
+.bp5-timepicker .bp5-timepicker-input.bp5-intent-danger:disabled, .bp5-timepicker .bp5-timepicker-input.bp5-intent-danger.bp5-disabled{
+  -webkit-box-shadow:none;
+  box-shadow:none; }
+.bp5-dark .bp5-timepicker .bp5-timepicker-input.bp5-intent-danger{
+  -webkit-box-shadow:0 0 0 0 rgba(219, 55, 55, 0), 0 0 0 0 rgba(219, 55, 55, 0), 0 0 0 0 rgba(219, 55, 55, 0), inset 0 0 0 1px #db3737, inset 0 0 0 1px rgba(16, 22, 26, 0.3), inset 0 1px 1px rgba(16, 22, 26, 0.4);
+  box-shadow:0 0 0 0 rgba(219, 55, 55, 0), 0 0 0 0 rgba(219, 55, 55, 0), 0 0 0 0 rgba(219, 55, 55, 0), inset 0 0 0 1px #db3737, inset 0 0 0 1px rgba(16, 22, 26, 0.3), inset 0 1px 1px rgba(16, 22, 26, 0.4); }
+.bp5-dark .bp5-timepicker .bp5-timepicker-input.bp5-intent-danger:focus{
+  -webkit-box-shadow:0 0 0 1px #db3737, 0 0 0 1px #db3737, 0 0 0 3px rgba(219, 55, 55, 0.3), inset 0 0 0 1px rgba(16, 22, 26, 0.3), inset 0 1px 1px rgba(16, 22, 26, 0.4);
+  box-shadow:0 0 0 1px #db3737, 0 0 0 1px #db3737, 0 0 0 3px rgba(219, 55, 55, 0.3), inset 0 0 0 1px rgba(16, 22, 26, 0.3), inset 0 1px 1px rgba(16, 22, 26, 0.4); }
+.bp5-dark .bp5-timepicker .bp5-timepicker-input.bp5-intent-danger[readonly]{
+  -webkit-box-shadow:inset 0 0 0 1px #db3737;
+  box-shadow:inset 0 0 0 1px #db3737; }
+.bp5-dark .bp5-timepicker .bp5-timepicker-input.bp5-intent-danger:disabled, .bp5-dark .bp5-timepicker .bp5-timepicker-input.bp5-intent-danger.bp5-disabled{
+  -webkit-box-shadow:none;
+  box-shadow:none; }
+.bp5-timepicker .bp5-timepicker-ampm-select{
+  margin-left:5px; }
+.bp5-timepicker.bp5-disabled .bp5-timepicker-input-row{
+  background:rgba(206, 217, 224, 0.5);
+  -webkit-box-shadow:none;
+  box-shadow:none;
+  color:rgba(92, 112, 128, 0.6);
+  cursor:not-allowed;
+  resize:none; }
+.bp5-timepicker.bp5-disabled .bp5-timepicker-input,
+.bp5-timepicker.bp5-disabled .bp5-timepicker-divider-text{
+  color:rgba(92, 112, 128, 0.6);
+  cursor:not-allowed; }
+.bp5-timepicker.bp5-disabled .bp5-timepicker-arrow-button,
+.bp5-timepicker.bp5-disabled .bp5-timepicker-arrow-button:hover{
+  color:rgba(92, 112, 128, 0.6);
+  cursor:not-allowed; }
+
+.bp5-dark .bp5-timepicker .bp5-timepicker-input-row{
+  background:rgba(16, 22, 26, 0.3);
+  -webkit-box-shadow:inset 0 0 0 1px rgba(16, 22, 26, 0.3), inset 0 1px 1px rgba(16, 22, 26, 0.4);
+  box-shadow:inset 0 0 0 1px rgba(16, 22, 26, 0.3), inset 0 1px 1px rgba(16, 22, 26, 0.4); }
+
+.bp5-dark .bp5-timepicker .bp5-timepicker-divider-text{
+  color:#a7b6c2; }
+
+.bp5-dark .bp5-timepicker .bp5-timepicker-input{
+  color:#f5f8fa; }
+
+.bp5-datepicker .bp5-timepicker{
+  margin-bottom:10px;
+  margin-top:5px; }
+.bp5-datepicker .bp5-timepicker:last-child{
+  margin-bottom:5px; }
+.bp5-datetimepicker{
+  background-color:#ffffff;
+  border-radius:3px;
+  padding:10px;
+  text-align:center; }
+.bp5-dark .bp5-datetimepicker{
+  background:#30404d; }
+.bp5-dark .bp5-datetimepicker .bp5-datepicker{
+  border-bottom:1px solid rgba(16, 22, 26, 0.4); }
+.bp5-datetimepicker .bp5-datepicker{
+  border-bottom:1px solid rgba(16, 22, 26, 0.15);
+  padding:0 0 10px; }
+.bp5-datetimepicker .bp5-timepicker{
+  margin-top:10px; }
+
+.bp5-dateinput-popover{
+  padding:0; }
+/*# sourceMappingURL=blueprint-datetime.css.map */
