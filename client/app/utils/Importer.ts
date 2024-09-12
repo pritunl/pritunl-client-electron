@@ -177,6 +177,10 @@ export class Importer {
 			await prfl.writeData(ovpnData)
 		}
 
+		if (prfl.force_connect && !prfl.system) {
+			await prfl.convertSystem()
+		}
+
 		await ProfileActions.sync()
 	}
 
