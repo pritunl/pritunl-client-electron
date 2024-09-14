@@ -4,6 +4,7 @@ import fs from "fs";
 import tar from "tar";
 import childProcess from "child_process";
 import electron from "electron";
+import path from "path";
 
 export function uuid(): string {
 	return (+new Date() + Math.floor(Math.random() * 999999)).toString(36);
@@ -485,6 +486,12 @@ export function fileWrite(path: string, data: string): Promise<void> {
 			},
 		)
 	})
+}
+
+export function uriFromPath(pth: string): string {
+	const pathName = path.resolve(pth).replace(/\\/g, "/")
+	return encodeURI("file://" + (pathName.charAt(0) !== "/" ?
+		"/" + pathName : pathName))
 }
 
 export function encryptAvailable(): Promise<boolean> {
