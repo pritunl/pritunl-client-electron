@@ -110,7 +110,7 @@ export default class ProfileImport extends React.Component<Props, State> {
 	render(): JSX.Element {
 		return <div style={css.box}>
 			<button
-				className="bp3-button bp3-minimal bp3-icon-import"
+				className="bp5-button bp5-minimal bp5-icon-import"
 				style={this.props.style}
 				type="button"
 				disabled={this.state.disabled}
@@ -126,7 +126,7 @@ export default class ProfileImport extends React.Component<Props, State> {
 				portalContainer={document.body}
 				onClose={this.closeDialog}
 			>
-				<div className="bp3-dialog-body">
+				<div className="bp5-dialog-body">
 					<PageInput
 						disabled={this.state.disabled}
 						label="Profile URI"
@@ -161,16 +161,16 @@ export default class ProfileImport extends React.Component<Props, State> {
 						}}
 					/>
 				</div>
-				<div className="bp3-dialog-footer">
-					<div className="bp3-dialog-footer-actions">
+				<div className="bp5-dialog-footer">
+					<div className="bp5-dialog-footer-actions">
 						<button
-							className="bp3-button bp3-intent-danger bp3-icon-cross"
+							className="bp5-button bp5-intent-danger bp5-icon-cross"
 							type="button"
 							disabled={this.state.disabled}
 							onClick={this.closeDialog}
 						>Cancel</button>
 						<button
-							className="bp3-button bp3-intent-success bp3-icon-tick"
+							className="bp5-button bp5-intent-success bp5-icon-tick"
 							type="button"
 							disabled={this.state.disabled || !this.state.changed}
 							onClick={this.onImport}

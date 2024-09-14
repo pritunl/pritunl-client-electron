@@ -58,7 +58,7 @@ export default class PageInputButton extends React.Component<Props, {}> {
 	}
 
 	render(): JSX.Element {
-		let buttonClass = 'bp3-button';
+		let buttonClass = 'bp5-button';
 		if (this.props.buttonClass) {
 			buttonClass += ' ' + this.props.buttonClass;
 		}
@@ -76,7 +76,7 @@ export default class PageInputButton extends React.Component<Props, {}> {
 			button = <ConfirmButton
 				className={buttonClass}
 				style={buttonStyle}
-				progressClassName="bp3-intent-danger"
+				progressClassName="bp5-intent-danger"
 				disabled={this.props.disabled || this.props.buttonDisabled}
 				grouped={true}
 				onConfirm={this.props.onSubmit}
@@ -93,7 +93,7 @@ export default class PageInputButton extends React.Component<Props, {}> {
 
 		if (this.props.labelTop) {
 			return <label
-				className="bp3-label"
+				className="bp5-label"
 				style={css.label}
 				hidden={this.props.hidden}
 			>
@@ -103,13 +103,13 @@ export default class PageInputButton extends React.Component<Props, {}> {
 					content={this.props.help}
 				/>
 				<div
-					className="bp3-control-group"
+					className="bp5-control-group"
 					style={css.groupTop}
 					hidden={this.props.hidden}
 				>
 					<div style={css.inputBox}>
 						<input
-							className="bp3-input"
+							className="bp5-input"
 							style={css.input}
 							type={this.props.type}
 							disabled={this.props.disabled}
@@ -138,13 +138,13 @@ export default class PageInputButton extends React.Component<Props, {}> {
 			</label>;
 		} else {
 			return <div
-				className="bp3-control-group"
+				className="bp5-control-group"
 				style={this.props.listStyle ? css.groupList : css.group}
 				hidden={this.props.hidden}
 			>
 				<div style={css.inputBox}>
 					<input
-						className="bp3-input"
+						className="bp5-input"
 						style={css.input}
 						type={this.props.type}
 						disabled={this.props.disabled}

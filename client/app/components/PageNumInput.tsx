@@ -27,7 +27,7 @@ const css = {
 export default class PageNumInput extends React.Component<Props, {}> {
 	render(): JSX.Element {
 		return <div hidden={this.props.hidden}>
-			<label className="bp3-label" style={css.label}>
+			<label className="bp5-label" style={css.label}>
 				{this.props.label}
 				<Help
 					title={this.props.label}

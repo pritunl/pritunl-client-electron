@@ -52,14 +52,14 @@ export default class LoadingBar extends React.Component<Props, State> {
 		if (!this.state.loading) {
 			progress = <div style={css.progress}/>;
 		} else {
-			let className = 'bp3-progress-bar bp3-no-stripes bp3-no-animation ';
+			let className = 'bp5-progress-bar bp5-no-stripes bp5-no-animation ';
 			if (this.props.intent) {
-				className += ' bp3-intent-' + this.props.intent;
+				className += ' bp5-intent-' + this.props.intent;
 			}
 
 			progress = <div className={className} style={css.progress}>
 				<div
-					className="bp3-progress-meter bp3-loading-bar"
+					className="bp5-progress-meter bp5-loading-bar"
 					style={css.progressBar}
 				/>
 			</div>;

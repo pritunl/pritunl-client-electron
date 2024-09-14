@@ -379,10 +379,10 @@ export default class ProfileConnect extends React.Component<Props, State> {
 		let buttonClass = ""
 		let buttonLabel = ""
 		if (connected) {
-			buttonClass = "bp3-intent-danger bp3-icon-delete"
+			buttonClass = "bp5-intent-danger bp5-icon-delete"
 			buttonLabel = "Disconnect"
 		} else {
-			buttonClass = "bp3-intent-success bp3-icon-link"
+			buttonClass = "bp5-intent-success bp5-icon-link"
 			buttonLabel = "Connect"
 		}
 
@@ -390,12 +390,12 @@ export default class ProfileConnect extends React.Component<Props, State> {
 		let minimalButton = ""
 		if (this.props.minimal) {
 			cssButton = css.buttonMinimal
-			minimalButton = " bp3-minimal"
+			minimalButton = " bp5-minimal"
 		}
 
 		return <div style={css.box} hidden={this.props.hidden}>
 			<button
-				className={"bp3-button " + buttonClass + minimalButton}
+				className={"bp5-button " + buttonClass + minimalButton}
 				style={cssButton}
 				type="button"
 				hidden={hasWg && !connected}
@@ -407,7 +407,7 @@ export default class ProfileConnect extends React.Component<Props, State> {
 				{buttonLabel}
 			</button>
 			<button
-				className={"bp3-button bp3-intent-success bp3-icon-link" + minimalButton}
+				className={"bp5-button bp5-intent-success bp5-icon-link" + minimalButton}
 				style={cssButton}
 				type="button"
 				hidden={!hasWg || connected}
@@ -419,7 +419,7 @@ export default class ProfileConnect extends React.Component<Props, State> {
 				{this.props.minimal ? "OVPN" : "OpenVPN"}
 			</button>
 			<button
-				className={"bp3-button bp3-intent-primary bp3-icon-link" + minimalButton}
+				className={"bp5-button bp5-intent-primary bp5-icon-link" + minimalButton}
 				style={cssButton}
 				type="button"
 				hidden={!hasWg || connected}
@@ -438,7 +438,7 @@ export default class ProfileConnect extends React.Component<Props, State> {
 				portalContainer={document.body}
 				onClose={this.closeDialog}
 			>
-				<div className="bp3-dialog-body">
+				<div className="bp5-dialog-body">
 					<h3 style={css.header}>
 						Connecting to {this.props.profile.formattedName()}
 					</h3>
@@ -619,15 +619,15 @@ export default class ProfileConnect extends React.Component<Props, State> {
 						}}
 					/>
 				</div>
-				<div className="bp3-dialog-footer">
-					<div className="bp3-dialog-footer-actions">
+				<div className="bp5-dialog-footer">
+					<div className="bp5-dialog-footer-actions">
 						<button
-							className="bp3-button bp3-intent-danger bp3-icon-cross"
+							className="bp5-button bp5-intent-danger bp5-icon-cross"
 							type="button"
 							onClick={this.closeDialog}
 						>Cancel</button>
 						<button
-							className="bp3-button bp3-intent-success bp3-icon-link"
+							className="bp5-button bp5-intent-success bp5-icon-link"
 							type="button"
 							disabled={this.state.disabled || (!this.state.changed &&
 								!this.state.preConnMsgOnly)}

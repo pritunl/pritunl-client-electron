@@ -341,7 +341,7 @@ export default class ProfileSettings extends React.Component<Props, State> {
 
 		return <div style={css.box}>
 			<button
-				className="bp3-button bp3-icon-cog"
+				className="bp5-button bp5-icon-cog"
 				style={css.button}
 				type="button"
 				disabled={this.state.disabled}
@@ -357,7 +357,7 @@ export default class ProfileSettings extends React.Component<Props, State> {
 				portalContainer={document.body}
 				onClose={this.closeDialog}
 			>
-				<div className="bp3-dialog-body">
+				<div className="bp5-dialog-body">
 					<PageInput
 						disabled={this.state.disabled}
 						label="Name"
@@ -469,24 +469,24 @@ export default class ProfileSettings extends React.Component<Props, State> {
 					/>
 					{dataInfo}
 				</div>
-				<div className="bp3-dialog-footer">
-					<div className="bp3-dialog-footer-actions">
+				<div className="bp5-dialog-footer">
+					<div className="bp5-dialog-footer-actions">
 						<button
-							className="bp3-button bp3-icon-console"
+							className="bp5-button bp5-icon-console"
 							type="button"
 							style={css.toggleDataBtn}
 							disabled={this.state.disabled}
 							onClick={this.toggleData}
 						>Debugging</button>
 						<button
-							className="bp3-button bp3-intent-danger bp3-icon-cross"
+							className="bp5-button bp5-intent-danger bp5-icon-cross"
 							type="button"
 							disabled={this.state.disabled}
 							onClick={this.closeDialog}
 						>Cancel
 						</button>
 						<button
-							className="bp3-button bp3-intent-success bp3-icon-tick"
+							className="bp5-button bp5-intent-success bp5-icon-tick"
 							type="button"
 							disabled={this.state.disabled || !this.state.changed}
 							onClick={this.onSave}

@@ -107,7 +107,7 @@ export default class PageInfo extends React.Component<Props, {}> {
 							className={
 								field.valueClasses ?
 								field.valueClasses[i] :
-								(field.valueClass || 'bp3-text-muted')
+								(field.valueClass || 'bp5-text-muted')
 							}
 						>
 							{field.value[i]}{copyItemBtn}
@@ -120,7 +120,7 @@ export default class PageInfo extends React.Component<Props, {}> {
 				<div key={field.label} style={css.item}>
 					{field.label}
 					<div
-						className={field.valueClass || 'bp3-text-muted'}
+						className={field.valueClass || 'bp5-text-muted'}
 						style={css.value}
 					>
 						{value}{copyBtn}
@@ -142,10 +142,10 @@ export default class PageInfo extends React.Component<Props, {}> {
 				<div key={bar.label} style={css.item}>
 					{bar.label}
 					<div
-						className={'bp3-progress-bar ' + (bar.progressClass || '')}
+						className={'bp5-progress-bar ' + (bar.progressClass || '')}
 						style={css.bar}
 					>
-						<div className="bp3-progress-meter" style={style}/>
+						<div className="bp5-progress-meter" style={style}/>
 					</div>
 				</div>,
 			);
@@ -162,7 +162,7 @@ export default class PageInfo extends React.Component<Props, {}> {
 		}
 
 		return <label
-			className="bp3-label"
+			className="bp5-label"
 			style={labelStyle}
 			hidden={this.props.hidden}
 		>

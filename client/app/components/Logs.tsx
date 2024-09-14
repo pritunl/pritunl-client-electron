@@ -208,14 +208,14 @@ export default class Logs extends React.Component<{}, State> {
 			>{prfl.formattedName() + " logs"}</option>)
 		})
 
-		return <div className="bp3-card layout vertical flex" style={css.card}>
+		return <div className="bp5-card layout vertical flex" style={css.card}>
 			<div style={css.deleteButtonBox}>
 				<ConfirmButton
-					className="bp3-minimal bp3-intent-danger bp3-icon-trash"
+					className="bp5-minimal bp5-intent-danger bp5-icon-trash"
 					style={css.deleteButton}
 					safe={true}
-					progressClassName="bp3-intent-danger"
-					dialogClassName="bp3-intent-danger bp3-icon-delete"
+					progressClassName="bp5-intent-danger"
+					dialogClassName="bp5-intent-danger bp5-icon-delete"
 					dialogLabel="Clear Logs"
 					confirmMsg={"Confirm clearing " + label + " logs"}
 					disabled={this.state.disabled}
@@ -226,7 +226,7 @@ export default class Logs extends React.Component<{}, State> {
 				<h3 style={css.header}>Log Viewer</h3>
 			</div>
 			<div className="layout horizontal">
-				<div className="bp3-select">
+				<div className="bp5-select">
 					<select
 						disabled={this.state.disabled}
 						value={this.state.view}
@@ -240,7 +240,7 @@ export default class Logs extends React.Component<{}, State> {
 			</div>
 			<div className="layout horizontal flex">
 				<label
-					className="bp3-label flex"
+					className="bp5-label flex"
 					style={css.editor}
 				>
 					<AceEditor

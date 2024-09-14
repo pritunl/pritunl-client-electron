@@ -67,13 +67,13 @@ export default class Help extends React.Component<Props, State> {
 						});
 					}}
 				>
-					<div className="bp3-dialog-body">
+					<div className="bp5-dialog-body">
 						{this.props.content}
 					</div>
-					<div className="bp3-dialog-footer">
-						<div className="bp3-dialog-footer-actions">
+					<div className="bp5-dialog-footer">
+						<div className="bp5-dialog-footer-actions">
 							<button
-								className="bp3-button"
+								className="bp5-button"
 								type="button"
 								onClick={(): void => {
 									this.setState({
@@ -87,31 +87,31 @@ export default class Help extends React.Component<Props, State> {
 				</Blueprint.Dialog>;
 			} else {
 				helpElm = <span
-					className="bp3-popover-target"
+					className="bp5-popover-target"
 					style={css.popoverTarget}
 				>
-				<span className="bp3-overlay bp3-overlay-inline">
+				<span className="bp5-overlay bp5-overlay-inline">
 					<span>
 						<div
-							className={'bp3-transition-container ' +
-							'bp3-tether-element-attached-middle ' +
-							'bp3-tether-element-attached-left ' +
-							'bp3-tether-target-attached-middle ' +
-							'bp3-tether-target-attached-right bp3-overlay-content'}
+							className={'bp5-transition-container ' +
+							'bp5-tether-element-attached-middle ' +
+							'bp5-tether-element-attached-left ' +
+							'bp5-tether-target-attached-middle ' +
+							'bp5-tether-target-attached-right bp5-overlay-content'}
 							style={css.popover}
 						>
-							<div className="bp3-popover">
-								<div className="bp3-popover-arrow">
+							<div className="bp5-popover">
+								<div className="bp5-popover-arrow">
 									<svg viewBox="0 0 30 30">
 										<path
-											className="bp3-popover-arrow-border"
+											className="bp5-popover-arrow-border"
 											d={'M8.11 6.302c1.015-.936 1.887-2.922 ' +
 											'1.887-4.297v26c0-1.378-' +
 											'.868-3.357-1.888-4.297L.925 ' +
 											'17.09c-1.237-1.14-1.233-3.034 0-4.17L8.11 6.302z'}
 										/>
 										<path
-											className="bp3-popover-arrow-fill"
+											className="bp5-popover-arrow-fill"
 											d={'M8.787 7.036c1.22-1.125 2.21-3.376 ' +
 											'2.21-5.03V0v30-2.005c0-1.654-' +
 											'.983-3.9-2.21-5.03l-7.183-6.616c-' +
@@ -120,7 +120,7 @@ export default class Help extends React.Component<Props, State> {
 									</svg>
 								</div>
 								<div
-									className="bp3-popover-content"
+									className="bp5-popover-content"
 									style={css.content}
 								>
 									<h5>{this.props.title}</h5>
@@ -136,7 +136,7 @@ export default class Help extends React.Component<Props, State> {
 
 		return <div style={css.box}>
 			<div
-				className="bp3-button bp3-minimal bp3-icon-help"
+				className="bp5-button bp5-minimal bp5-icon-help"
 				style={css.button}
 				onClick={(): void => {
 					this.setState({

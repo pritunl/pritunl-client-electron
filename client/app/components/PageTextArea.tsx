@@ -30,7 +30,7 @@ const css = {
 export default class PageTextArea extends React.Component<Props, {}> {
 	render(): JSX.Element {
 		return <label
-			className="bp3-label"
+			className="bp5-label"
 			style={css.label}
 			hidden={this.props.hidden}
 		>
@@ -40,7 +40,7 @@ export default class PageTextArea extends React.Component<Props, {}> {
 				content={this.props.help}
 			/>
 			<textarea
-				className="bp3-input"
+				className="bp5-input"
 				style={css.textarea}
 				disabled={this.props.disabled}
 				readOnly={this.props.readOnly}

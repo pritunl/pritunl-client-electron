@@ -110,7 +110,7 @@ export default class ConfigView extends React.Component<{}, State> {
 			safeStorage = Config.safe_storage
 		}
 
-		return <div className="bp3-card layout vertical flex" style={css.card}>
+		return <div className="bp5-card layout vertical flex" style={css.card}>
 			<div className="layout horizontal">
 				<h3 style={css.header}>Advanced Settings</h3>
 			</div>
@@ -205,16 +205,16 @@ export default class ConfigView extends React.Component<{}, State> {
 				/>
 			</div>
 			<div className="layout horizontal flex"/>
-			<div className="bp3-dialog-footer" style={css.footer}>
-				<div className="bp3-dialog-footer-actions">
+			<div className="bp5-dialog-footer" style={css.footer}>
+				<div className="bp5-dialog-footer-actions">
 					<button
-						className="bp3-button bp3-intent-danger bp3-icon-cross"
+						className="bp5-button bp5-intent-danger bp5-icon-cross"
 						type="button"
 						disabled={this.state.disabled || !this.state.changed}
 						onClick={this.onCancel}
 					>Cancel</button>
 					<button
-						className="bp3-button bp3-intent-success bp3-icon-tick"
+						className="bp5-button bp5-intent-success bp5-icon-tick"
 						type="button"
 						disabled={this.state.disabled || !this.state.changed}
 						onClick={this.onSave}

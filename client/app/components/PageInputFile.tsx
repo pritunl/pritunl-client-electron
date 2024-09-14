@@ -34,7 +34,7 @@ export default class PageInputFile extends React.Component<Props, {}> {
 
 		return <div>
 			<label
-				className="bp3-label"
+				className="bp5-label"
 				style={css.label}
 				hidden={this.props.hidden}
 			>
@@ -45,7 +45,7 @@ export default class PageInputFile extends React.Component<Props, {}> {
 				/>
 			</label>
 			<label
-				className="bp3-file-input"
+				className="bp5-file-input"
 				style={css.inputBox}
 			>
 				<input
@@ -64,7 +64,7 @@ export default class PageInputFile extends React.Component<Props, {}> {
 						}
 					}}
 				/>
-				<span className="bp3-file-upload-input">{label}</span>
+				<span className="bp5-file-upload-input">{label}</span>
 			</label>
 		</div>;
 	}

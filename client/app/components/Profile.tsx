@@ -249,7 +249,7 @@ export default class Profile extends React.Component<Props, State> {
 		let header: JSX.Element;
 		if (this.props.minimal) {
 			header = <button
-				className={(this.state.open ? "bp3-card-header " : "") +
+				className={(this.state.open ? "bp5-card-header " : "") +
 					"layout horizontal tab-toggle"}
 				style={this.state.open ? css.headerOpen : css.headerClosed}
 				onClick={(evt): void => {
@@ -281,11 +281,11 @@ export default class Profile extends React.Component<Props, State> {
 					hidden={this.props.minimal && !this.state.open}
 				>
 					<ConfirmButton
-						className="bp3-minimal bp3-intent-danger bp3-icon-trash"
+						className="bp5-minimal bp5-intent-danger bp5-icon-trash"
 						style={css.deleteButton}
 						safe={true}
-						progressClassName="bp3-intent-danger"
-						dialogClassName="bp3-intent-danger bp3-icon-delete"
+						progressClassName="bp5-intent-danger"
+						dialogClassName="bp5-intent-danger bp5-icon-delete"
 						dialogLabel="Delete Profile"
 						confirmMsg="Permanently delete this profile"
 						items={[profile.formattedName()]}
@@ -296,7 +296,7 @@ export default class Profile extends React.Component<Props, State> {
 			</button>
 		} else {
 			header = <div
-				className="bp3-card-header layout horizontal tab-toggle"
+				className="bp5-card-header layout horizontal tab-toggle"
 				style={css.header}
 			>
 				<h3
@@ -309,11 +309,11 @@ export default class Profile extends React.Component<Props, State> {
 					hidden={this.props.minimal && !this.state.open}
 				>
 					<ConfirmButton
-						className="bp3-minimal bp3-intent-danger bp3-icon-trash"
+						className="bp5-minimal bp5-intent-danger bp5-icon-trash"
 						style={css.deleteButton}
 						safe={true}
-						progressClassName="bp3-intent-danger"
-						dialogClassName="bp3-intent-danger bp3-icon-delete"
+						progressClassName="bp5-intent-danger"
+						dialogClassName="bp5-intent-danger bp5-icon-delete"
 						dialogLabel="Delete Profile"
 						confirmMsg="Permanently delete this profile"
 						items={[profile.formattedName()]}
@@ -324,7 +324,7 @@ export default class Profile extends React.Component<Props, State> {
 			</div>
 		}
 
-		return <div className="bp3-card layout vertical" style={css.card}>
+		return <div className="bp5-card layout vertical" style={css.card}>
 			{header}
 			<div hidden={this.props.minimal && !this.state.open}>
 				<div
@@ -332,18 +332,18 @@ export default class Profile extends React.Component<Props, State> {
 					style={css.regBox}
 					hidden={!profile.registration_key}
 				>
-					<div className="bp3-card layout vertical" style={css.reg}>
+					<div className="bp5-card layout vertical" style={css.reg}>
 						<h3
-							className="bp3-text-intent-danger"
+							className="bp5-text-intent-danger"
 							style={css.regTitle}
 						>Device Registration Required</h3>
 						Contact Server Administrator with Code:
 						<h3
-							className="bp3-text-intent-primary"
+							className="bp5-text-intent-primary"
 							style={css.regName}
 						>{Constants.hostname}</h3>
 						<h1
-							className="bp3-text-intent-primary"
+							className="bp5-text-intent-primary"
 							style={css.regKey}
 						>{profile.registration_key}</h1>
 					</div>

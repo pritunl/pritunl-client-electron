@@ -211,7 +211,7 @@ export default class Main extends React.Component<{}, State> {
 			let updateElm: JSX.Element = <div>
 				<div>Update available, download the latest release below</div>
 				<button
-					className="bp3-button bp3-intent-primary bp3-icon-download"
+					className="bp5-button bp5-intent-primary bp5-icon-download"
 					type="button"
 					style={css.updateButton}
 					onClick={(): void => {
@@ -273,9 +273,9 @@ export default class Main extends React.Component<{}, State> {
 
 		let menu: JSX.Element = <Blueprint.Menu>
 			<li
-				className="bp3-menu-header"
+				className="bp5-menu-header"
 				style={css.menuLabel}
-			>{"Pritunl Client" + version}</li>
+			><h5 className="bp5-heading">{"Pritunl Client" + version}</h5></li>
 			<Blueprint.MenuDivider/>
 			<Blueprint.MenuItem
 				text={themeLabel}
@@ -408,32 +408,27 @@ export default class Main extends React.Component<{}, State> {
 			/>
 		</Blueprint.Menu>
 
-		let menuToggle: JSX.Element = <Blueprint.Button
-			minimal={true}
-			icon="menu"
-		/>
-
 		return <div style={css.container} className="layout vertical">
 			<LoadingBar intent="primary" style={css.loading}/>
 			<nav
-				className="bp3-navbar layout horizontal"
+				className="bp5-navbar layout horizontal"
 				style={css.nav}
 			>
 				<div
-					className="bp3-navbar-group bp3-align-left flex webkit-drag"
+					className="bp5-navbar-group bp5-align-left flex webkit-drag"
 					style={css.navTitle}
 				>
 					<div
-						className="bp3-navbar-heading"
+						className="bp5-navbar-heading"
 						style={css.heading}
 					>pritunl</div>
 				</div>
 				<div
-					className="bp3-navbar-group bp3-align-right"
+					className="bp5-navbar-group bp5-align-right"
 					style={css.navGroup}
 				>
 					<button
-						className="bp3-button bp3-minimal bp3-intent-danger bp3-icon-error"
+						className="bp5-button bp5-minimal bp5-intent-danger bp5-icon-error"
 						style={css.link}
 						hidden={!this.state.showErrors}
 						onClick={() => {
@@ -447,7 +442,7 @@ export default class Main extends React.Component<{}, State> {
 						}}
 					/>
 					<button
-						className="bp3-button bp3-minimal bp3-icon-people"
+						className="bp5-button bp5-minimal bp5-icon-people"
 						style={css.link}
 						hidden={profilesHidden}
 						onClick={() => {
@@ -463,7 +458,7 @@ export default class Main extends React.Component<{}, State> {
 						style={css.link}
 					/>
 					<button
-						className="bp3-button bp3-minimal bp3-icon-history"
+						className="bp5-button bp5-minimal bp5-icon-history"
 						hidden={true}
 						style={css.link}
 						onClick={() => {
@@ -477,15 +472,23 @@ export default class Main extends React.Component<{}, State> {
 					</button>
 					<div>
 						<Blueprint.Popover
-							position={Blueprint.Position.BOTTOM}
+							interactionKind="click"
+							placement={Blueprint.Position.BOTTOM}
 							content={menu}
-							target={menuToggle}
+							defaultIsOpen={false}
+							renderTarget={({isOpen, ...targetProps}) => (
+								<Blueprint.Button
+									{...targetProps}
+									minimal={true}
+									icon="menu"
+								/>
+							)}
 							usePortal={true}
 							minimal={true}
 						/>
 					</div>
 					<button
-						className="bp3-button bp3-minimal bp3-icon-minus"
+						className="bp5-button bp5-minimal bp5-icon-minus"
 						type="button"
 						hidden={!Constants.frameless}
 						onClick={(): void => {
@@ -493,7 +496,7 @@ export default class Main extends React.Component<{}, State> {
 						}}
 					/>
 					<button
-						className="bp3-button bp3-minimal bp3-icon-cross close-button"
+						className="bp5-button bp5-minimal bp5-icon-cross close-button"
 						type="button"
 						hidden={!Constants.frameless}
 						onClick={(): void => {

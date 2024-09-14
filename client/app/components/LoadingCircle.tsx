@@ -60,7 +60,7 @@ export default class LoadingCircle extends React.Component<Props, State> {
 		} else {
 			let className = '';
 			if (this.props.size) {
-				className = 'bp3-' + this.props.size;
+				className = 'bp5-' + this.props.size;
 			}
 
 			spinner = <Blueprint.Spinner

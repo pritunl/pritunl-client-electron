@@ -172,24 +172,24 @@ export default class ConfirmButton extends React.Component<Props, State> {
 
 		let className = this.props.className || '';
 		if (!this.props.label) {
-			className += ' bp3-button-empty';
+			className += ' bp5-button-empty';
 		}
 
 		let dialogClassName = this.props.dialogClassName ||
 			this.props.className || '';
 		if (!this.props.label && !this.props.dialogLabel) {
-			dialogClassName += ' bp3-button-empty';
+			dialogClassName += ' bp5-button-empty';
 		}
 
 		let confirmInput: JSX.Element;
 		if (this.props.confirmInput) {
 			confirmInput = <label
-				className="bp3-label"
+				className="bp5-label"
 				style={css.label}
 			>
 				Enter "delete" to confirm:
 				<input
-					className="bp3-input"
+					className="bp5-input"
 					style={css.input}
 					disabled={this.props.disabled}
 					autoCapitalize="off"
@@ -213,14 +213,14 @@ export default class ConfirmButton extends React.Component<Props, State> {
 			if (this.props.items) {
 				let items: JSX.Element[] = [];
 				for (let item of this.props.items) {
-					items.push(<li>{item}</li>);
+					items.push(<li key={item}>{item}</li>);
 				}
 				itemsList = <ul>{items}</ul>;
 			}
 
 			return <div style={css.box}>
 				<button
-					className={'bp3-button ' + className}
+					className={'bp5-button ' + className}
 					style={style}
 					type="button"
 					hidden={this.props.hidden}
@@ -240,20 +240,20 @@ export default class ConfirmButton extends React.Component<Props, State> {
 					portalContainer={document.body}
 					onClose={this.closeDialog}
 				>
-					<div className="bp3-dialog-body">
+					<div className="bp5-dialog-body">
 						{confirmMsg}
 						{itemsList}
 						{confirmInput}
 					</div>
-					<div className="bp3-dialog-footer">
-						<div className="bp3-dialog-footer-actions">
+					<div className="bp5-dialog-footer">
+						<div className="bp5-dialog-footer-actions">
 							<button
-								className="bp3-button"
+								className="bp5-button"
 								type="button"
 								onClick={this.closeDialog}
 							>Cancel</button>
 							<button
-								className={'bp3-button ' + dialogClassName}
+								className={'bp5-button ' + dialogClassName}
 								type="button"
 								disabled={this.props.confirmInput &&
 									this.state.input !== 'delete'}
@@ -282,16 +282,16 @@ export default class ConfirmButton extends React.Component<Props, State> {
 				}
 
 				confirmElem = <div
-					className={'bp3-progress-bar bp3-no-stripes ' + (
+					className={'bp5-progress-bar bp5-no-stripes ' + (
 						this.props.progressClassName || '')}
 					style={progressStyle}
 				>
-					<div className="bp3-progress-meter" style={confirmStyle}/>
+					<div className="bp5-progress-meter" style={confirmStyle}/>
 				</div>;
 			}
 
 			return <button
-				className={'bp3-button ' + className}
+				className={'bp5-button ' + className}
 				style={style}
 				type="button"
 				hidden={this.props.hidden}
