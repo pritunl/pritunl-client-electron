@@ -10,11 +10,6 @@ interface Colors {
 	blue3: string;
 	blue4: string;
 	blue5: string;
-	cobalt1: string;
-	cobalt2: string;
-	cobalt3: string;
-	cobalt4: string;
-	cobalt5: string;
 	darkGray1: string;
 	darkGray2: string;
 	darkGray3: string;
@@ -104,11 +99,6 @@ const colors = {
 	blue3: Blueprint.Colors.BLUE3,
 	blue4: Blueprint.Colors.BLUE4,
 	blue5: Blueprint.Colors.BLUE5,
-	cobalt1: Blueprint.Colors.COBALT1,
-	cobalt2: Blueprint.Colors.COBALT2,
-	cobalt3: Blueprint.Colors.COBALT3,
-	cobalt4: Blueprint.Colors.COBALT4,
-	cobalt5: Blueprint.Colors.COBALT5,
 	darkGray1: Blueprint.Colors.DARK_GRAY1,
 	darkGray2: Blueprint.Colors.DARK_GRAY2,
 	darkGray3: Blueprint.Colors.DARK_GRAY3,
