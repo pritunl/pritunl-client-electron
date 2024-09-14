@@ -7,14 +7,6 @@ npm install
 #### locked packages
 
 ```
-@blueprintjs/core
-@blueprintjs/datetime
-@blueprintjs/icons
-@types/react
-@types/react-dom
-ace-builds
-react
-react-dom
 utf-8-validate
 ws
 webpack
