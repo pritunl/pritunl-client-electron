@@ -1,11 +1,11 @@
 /// <reference path="./References.d.ts"/>
-import * as React from "react";
-import * as Blueprint from "@blueprintjs/core";
+import * as React from "react"
+import * as Blueprint from "@blueprintjs/core"
 
 const maxToasts = 3
 
-let toaster: Blueprint.IToaster;
-let toaster2: Blueprint.IToaster;
+let toaster: Blueprint.Toaster;
+let toaster2: Blueprint.Toaster;
 
 export interface Callback {
 	(toasts: number): void;
