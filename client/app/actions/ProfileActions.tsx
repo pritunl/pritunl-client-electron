@@ -431,13 +431,13 @@ EventDispatcher.register((action: ProfileTypes.ProfileDispatch) => {
 			let ssoAuthElm: JSX.Element = <div>
 				<div>{ssoAuthMsg}</div>
 				<button
-					className="bp3-button bp3-intent-primary bp3-icon-link"
+					className="bp5-button bp5-intent-primary bp5-icon-link"
 					type="button"
 					style={css.updateButton}
 					onClick={(evt): void => {
 						Electron.clipboard.writeText(action.data.url)
-						evt.currentTarget.className = "bp3-button bp3-intent-success " +
-							"bp3-icon-link"
+						evt.currentTarget.className = "bp5-button bp5-intent-success " +
+							"bp5-icon-link"
 						evt.currentTarget.innerText = "Link Copied"
 					}}
 				>Copy Single Sign-On Link</button>
