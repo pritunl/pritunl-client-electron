@@ -70,7 +70,6 @@ const css = {
 		overflowY: 'auto',
 	} as React.CSSProperties,
 	menuLabel: {
-		fontWeight: "bold",
 	} as React.CSSProperties,
 	updateButton: {
 		marginTop: "7px",
