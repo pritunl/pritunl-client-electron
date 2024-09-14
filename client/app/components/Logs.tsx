@@ -3,16 +3,10 @@ import * as React from 'react'
 import ProfilesStore from '../stores/ProfilesStore'
 import * as ProfileTypes from '../types/ProfileTypes'
 import * as ProfileActions from '../actions/ProfileActions'
-import * as Theme from "../Theme";
 import * as Constants from "../Constants"
 import * as LogUtils from "../utils/LogUtils"
+import Editor from "./Editor"
 import ConfirmButton from "./ConfirmButton"
-
-import AceEditor from "react-ace"
-import "ace-builds/src-noconflict/mode-text"
-import "ace-builds/src-noconflict/theme-dracula"
-import "ace-builds/src-noconflict/theme-eclipse"
-import {Ace} from "ace-builds"
 
 interface State {
 	profiles: ProfileTypes.ProfilesRo
@@ -67,8 +61,6 @@ const css = {
 };
 
 export default class Logs extends React.Component<{}, State> {
-	editor: Ace.Editor
-
 	constructor(props: any, context: any) {
 		super(props, context);
 		this.state = {
@@ -243,29 +235,14 @@ export default class Logs extends React.Component<{}, State> {
 					className="bp5-label flex"
 					style={css.editor}
 				>
-					<AceEditor
-						name="log-view"
-						theme={Theme.editorTheme()}
-						height="100%"
-						width="100%"
-						mode="text"
-						fontSize="10px"
-						wrapEnabled={true}
-						showPrintMargin={false}
-						showGutter={true}
-						readOnly={true}
+					<Editor
+						disabled={this.state.disabled}
 						value={this.state.log}
-						editorProps={{
-							$blockScrolling: true,
-						}}
-						setOptions={{
-							showFoldWidgets: false,
-						}}
-						onLoad={(editor: Ace.Editor): void => {
-							this.editor = editor
-							this.editor.scrollToLine(Number.POSITIVE_INFINITY,
-								false, false, null)
-						}}
+						readOnly={true}
+						mode="text"
+						fontSize={10}
+						height="500px"
+						width="100%"
 					/>
 				</label>
 			</div>
