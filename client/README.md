@@ -51,9 +51,6 @@ cd /home/cloud/pritunl-cloud-www/
 rm package-lock.json
 rm -rf node_modules
 npm install
-cd ./node_modules/@github/webauthn-json/dist/
-ln -sf ./esm/* ./
-cd ../../../../
 
 # desktop
 scp $NPM_SERVER:/home/cloud/pritunl-client-www/package.json /home/cloud/go/src/github.com/pritunl/pritunl-client-electron/client/package.json
