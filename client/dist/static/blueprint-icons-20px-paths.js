@@ -1,7 +1,7 @@
 "use strict";
 (global["webpackChunkpritunl"] = global["webpackChunkpritunl"] || []).push([[783],{
 
-/***/ 2135:
+/***/ 6510:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 // ESM COMPAT FLAG
@@ -132,6 +132,7 @@ __webpack_require__.d(__webpack_exports__, {
   Cross: () => (/* reexport */ cross),
   CrossCircle: () => (/* reexport */ cross_circle),
   Crown: () => (/* reexport */ crown),
+  CssStyle: () => (/* reexport */ css_style),
   Cube: () => (/* reexport */ cube),
   CubeAdd: () => (/* reexport */ cube_add),
   CubeRemove: () => (/* reexport */ cube_remove),
@@ -142,6 +143,8 @@ __webpack_require__.d(__webpack_exports__, {
   Dashboard: () => (/* reexport */ dashboard),
   DataConnection: () => (/* reexport */ data_connection),
   DataLineage: () => (/* reexport */ data_lineage),
+  DataSearch: () => (/* reexport */ data_search),
+  DataSync: () => (/* reexport */ data_sync),
   Database: () => (/* reexport */ database),
   Delete: () => (/* reexport */ paths_delete),
   Delta: () => (/* reexport */ delta),
@@ -186,6 +189,7 @@ __webpack_require__.d(__webpack_exports__, {
   Eraser: () => (/* reexport */ eraser),
   Error: () => (/* reexport */ error),
   Euro: () => (/* reexport */ euro),
+  Excavator: () => (/* reexport */ excavator),
   Exchange: () => (/* reexport */ exchange),
   ExcludeRow: () => (/* reexport */ exclude_row),
   ExpandAll: () => (/* reexport */ expand_all),
@@ -327,13 +331,25 @@ __webpack_require__.d(__webpack_exports__, {
   Layout: () => (/* reexport */ layout),
   LayoutAuto: () => (/* reexport */ layout_auto),
   LayoutBalloon: () => (/* reexport */ layout_balloon),
+  LayoutBottomRowThreeTiles: () => (/* reexport */ layout_bottom_row_three_tiles),
+  LayoutBottomRowTwoTiles: () => (/* reexport */ layout_bottom_row_two_tiles),
   LayoutCircle: () => (/* reexport */ layout_circle),
   LayoutGrid: () => (/* reexport */ layout_grid),
   LayoutGroupBy: () => (/* reexport */ layout_group_by),
   LayoutHierarchy: () => (/* reexport */ layout_hierarchy),
+  LayoutLeftColumnThreeTiles: () => (/* reexport */ layout_left_column_three_tiles),
+  LayoutLeftColumnTwoTiles: () => (/* reexport */ layout_left_column_two_tiles),
   LayoutLinear: () => (/* reexport */ layout_linear),
+  LayoutRightColumnThreeTiles: () => (/* reexport */ layout_right_column_three_tiles),
+  LayoutRightColumnTwoTiles: () => (/* reexport */ layout_right_column_two_tiles),
   LayoutSkewGrid: () => (/* reexport */ layout_skew_grid),
   LayoutSortedClusters: () => (/* reexport */ layout_sorted_clusters),
+  LayoutThreeColumns: () => (/* reexport */ layout_three_columns),
+  LayoutThreeRows: () => (/* reexport */ layout_three_rows),
+  LayoutTopRowThreeTiles: () => (/* reexport */ layout_top_row_three_tiles),
+  LayoutTopRowTwoTiles: () => (/* reexport */ layout_top_row_two_tiles),
+  LayoutTwoColumns: () => (/* reexport */ layout_two_columns),
+  LayoutTwoRows: () => (/* reexport */ layout_two_rows),
   Learning: () => (/* reexport */ learning),
   LeftJoin: () => (/* reexport */ left_join),
   LengthenText: () => (/* reexport */ lengthen_text),
@@ -407,6 +423,7 @@ __webpack_require__.d(__webpack_exports__, {
   OneToOne: () => (/* reexport */ one_to_one),
   OpenApplication: () => (/* reexport */ open_application),
   Outdated: () => (/* reexport */ outdated),
+  Output: () => (/* reexport */ output),
   PageLayout: () => (/* reexport */ page_layout),
   PanelStats: () => (/* reexport */ panel_stats),
   PanelTable: () => (/* reexport */ panel_table),
@@ -442,6 +459,7 @@ __webpack_require__.d(__webpack_exports__, {
   Pulse: () => (/* reexport */ pulse),
   Rain: () => (/* reexport */ rain),
   Random: () => (/* reexport */ random),
+  RangeRing: () => (/* reexport */ range_ring),
   Record: () => (/* reexport */ record),
   RectHeight: () => (/* reexport */ rect_height),
   RectWidth: () => (/* reexport */ rect_width),
@@ -544,6 +562,7 @@ __webpack_require__.d(__webpack_exports__, {
   SymbolTriangleDown: () => (/* reexport */ symbol_triangle_down),
   SymbolTriangleUp: () => (/* reexport */ symbol_triangle_up),
   Syringe: () => (/* reexport */ syringe),
+  TableSync: () => (/* reexport */ table_sync),
   Tag: () => (/* reexport */ tag),
   TakeAction: () => (/* reexport */ take_action),
   Tank: () => (/* reexport */ tank),
@@ -592,6 +611,7 @@ __webpack_require__.d(__webpack_exports__, {
   Upload: () => (/* reexport */ upload),
   User: () => (/* reexport */ user),
   Variable: () => (/* reexport */ variable),
+  Vector: () => (/* reexport */ vector),
   VerticalBarChartAsc: () => (/* reexport */ vertical_bar_chart_asc),
   VerticalBarChartDesc: () => (/* reexport */ vertical_bar_chart_desc),
   VerticalDistribution: () => (/* reexport */ vertical_distribution),
@@ -986,6 +1006,9 @@ var p = [];
 ;// CONCATENATED MODULE: ./node_modules/@blueprintjs/icons/lib/esm/generated/20px/paths/crown.js
 /* harmony default export */ const crown = (["M2 8l4 2 4-5 4 5 4-2-1 7H3L2 8zm8-6a1 1 0 110 2 1 1 0 010-2zM1 5a1 1 0 110 2 1 1 0 010-2zm18 0a1 1 0 110 2 1 1 0 010-2zM3 16h14v2H3v-2z"]);
 
+;// CONCATENATED MODULE: ./node_modules/@blueprintjs/icons/lib/esm/generated/20px/paths/css-style.js
+/* harmony default export */ const css_style = (["M3 1a1 1 0 011-1h9l6 6v13a1 1 0 01-1 1h-3.708c.4-.44.708-1.042.708-1.75 0-.086-.004-.17-.012-.25H17V7h-5V2H5v11.72a2.942 2.942 0 00-.498.531 2.703 2.703 0 00-.546-.604A2.77 2.77 0 003 13.142V1z", "M2 14c-.518 0-.982.158-1.34.463A1.929 1.929 0 000 15.75v2.5c0 .492.26.933.613 1.238C.97 19.797 1.46 20 2 20c1.015 0 2-.702 2-1.75a.5.5 0 00-1 0c0 .333-.358.75-1 .75a1.13 1.13 0 01-.734-.27c-.19-.163-.266-.347-.266-.48v-2.5c.047-.254.16-.4.308-.526C1.463 15.092 1.69 15 2 15c.334 0 .55.081.69.196.139.113.26.304.317.638a.5.5 0 00.986-.168c-.086-.51-.3-.943-.67-1.244C2.957 14.122 2.494 14 2 14zM5.613 14.512A2.13 2.13 0 017 14c1.015 0 2 .702 2 1.75a.5.5 0 01-1 0c0-.333-.358-.75-1-.75-.289 0-.549.11-.734.27-.19.163-.266.347-.266.48 0 .121.049.229.25.366.221.15.533.27.925.416l.03.01c.353.132.776.29 1.107.516.362.245.688.623.688 1.192 0 .492-.26.933-.613 1.238A2.13 2.13 0 017 20c-1.015 0-2-.702-2-1.75a.5.5 0 011 0c0 .333.358.75 1 .75.289 0 .549-.11.734-.27.19-.163.266-.347.266-.48 0-.121-.049-.229-.25-.366-.288-.195-.632-.306-.955-.427-.353-.131-.776-.289-1.107-.515C5.326 16.697 5 16.32 5 15.75c0-.492.26-.933.613-1.238zM12 14c-.54 0-1.03.203-1.387.512-.353.305-.613.746-.613 1.238 0 .57.326.947.688 1.192.331.226.754.384 1.107.515.323.12.667.232.955.427.201.137.25.245.25.366 0 .133-.076.317-.266.48A1.13 1.13 0 0112 19c-.642 0-1-.417-1-.75a.5.5 0 00-1 0c0 1.048.985 1.75 2 1.75.54 0 1.03-.203 1.387-.512.353-.305.613-.746.613-1.238 0-.57-.326-.947-.688-1.192-.331-.226-.754-.384-1.107-.515l-.03-.011c-.392-.146-.704-.266-.925-.416-.201-.137-.25-.245-.25-.366 0-.133.076-.317.266-.48.185-.16.445-.27.734-.27.642 0 1 .417 1 .75a.5.5 0 001 0c0-1.048-.985-1.75-2-1.75z"]);
+
 ;// CONCATENATED MODULE: ./node_modules/@blueprintjs/icons/lib/esm/generated/20px/paths/cube.js
 /* harmony default export */ const cube = (["M1.953 4.481l7.41-4.02c.394-.215.88-.215 1.275 0l7.409 4.02L10 9.22 1.953 4.48zm-.817.68L9.5 10.085v9.281a1.316 1.316 0 01-.138-.064l-7.714-4.186A1.211 1.211 0 011 14.057v-8.35c0-.193.048-.38.136-.547zm17.728 0c.088.166.136.353.136.546v8.35c0 .438-.247.842-.648 1.06l-7.714 4.186c-.045.024-.091.046-.138.064v-9.281l8.364-4.926z"]);
 
@@ -1015,6 +1038,12 @@ var p = [];
 
 ;// CONCATENATED MODULE: ./node_modules/@blueprintjs/icons/lib/esm/generated/20px/paths/data-lineage.js
 /* harmony default export */ const data_lineage = (["M1.053 0C.47 0 0 .471 0 1.053V4.21c0 .58.471 1.052 1.053 1.052h3.275a6.332 6.332 0 003.728 4.738 6.33 6.33 0 00-3.728 4.737l-3.275-.001C.47 14.737 0 15.208 0 15.789v3.158C0 19.53.471 20 1.053 20h7.435c.581 0 1.053-.471 1.053-1.053V15.79c0-.58-.472-1.052-1.053-1.052H5.406a5.293 5.293 0 015.195-4.21v2.105c0 .58.471 1.052 1.052 1.052h7.294c.582 0 1.053-.471 1.053-1.052V7.368c0-.58-.471-1.052-1.053-1.052h-7.294c-.581 0-1.052.471-1.052 1.052v2.106a5.293 5.293 0 01-5.194-4.21h3.081c.581 0 1.053-.472 1.053-1.053V1.053C9.54.47 9.069 0 8.488 0H1.053z"]);
+
+;// CONCATENATED MODULE: ./node_modules/@blueprintjs/icons/lib/esm/generated/20px/paths/data-search.js
+/* harmony default export */ const data_search = (["M2 9.5V4.1C3.5 5.23 6.52 6 10 6c3.49 0 6.51-.77 8-1.9v5.4a.809.809 0 01-.016.159 6.002 6.002 0 00-10.87 2.173C4.12 11.47 2 10.562 2 9.5zM7 12.906l.003-.105C4.835 12.502 3.047 11.889 2 11.1v5.4c0 1.38 3.58 2.5 8 2.5.697 0 1.373-.028 2.017-.08A6.005 6.005 0 017 13v-.094z", "M18 2.5C18 3.88 14.42 5 10 5 5.59 5 2 3.88 2 2.5S5.58 0 10 0s8 1.12 8 2.5z", "M15.757 17.172l2.534 2.534a1 1 0 101.415-1.415l-2.534-2.534c.523-.79.828-1.738.828-2.757a5.041 5.041 0 00-.33-1.788A5.002 5.002 0 008 12.922V13a5.002 5.002 0 007.757 4.172zM13 16a3 3 0 100-6 3 3 0 000 6z"]);
+
+;// CONCATENATED MODULE: ./node_modules/@blueprintjs/icons/lib/esm/generated/20px/paths/data-sync.js
+/* harmony default export */ const data_sync = (["M1 4.1v5.4c0 1.293 3.145 2.358 7.179 2.487l.404-.404A1.997 1.997 0 0110 11c.548 0 1.052.217 1.417.583l.272.272c.107-.012.213-.024.318-.038.037-.462.218-.906.56-1.25.389-.387.906-.567 1.433-.567a4.96 4.96 0 012.268.546c.47-.318.732-.672.732-1.046V4.1C15.51 5.23 12.49 6 9 6c-3.48 0-6.5-.77-8-1.9zM1 11.1c1.24.934 3.516 1.622 6.233 1.832l-.65.65A2.003 2.003 0 008.1 16.998c.15.74.465 1.42.904 2.003H9c-4.42 0-8-1.12-8-2.5v-5.4z", "M9 5c4.42 0 8-1.12 8-2.5S13.42 0 9 0 1 1.12 1 2.5 4.59 5 9 5zM14 11c2.2 0 4 1.8 4 4v.59l.29-.29c.18-.19.43-.3.71-.3a1.003 1.003 0 01.71 1.71l-2 2c-.18.18-.43.29-.71.29-.28 0-.53-.11-.71-.29l-2-2a1.003 1.003 0 011.42-1.42l.29.3V15c0-1.1-.9-2-2-2-.6 0-1-.4-1-1s.4-1 1-1zM8 16c.28 0 .53-.11.71-.29l.29-.3V16c0 2.2 1.8 4 4 4 .6 0 1-.4 1-1s-.4-1-1-1c-1.1 0-2-.9-2-2v-.59l.29.29c.18.19.43.3.71.3a1.003 1.003 0 00.71-1.71l-2-2A.997.997 0 0010 12c-.28 0-.53.11-.71.29l-2 2A1.003 1.003 0 008 16z"]);
 
 ;// CONCATENATED MODULE: ./node_modules/@blueprintjs/icons/lib/esm/generated/20px/paths/database.js
 /* harmony default export */ const database = (["M2.01 5.1v5.4c0 1.38 3.58 2.5 8 2.5s8-1.12 8-2.5V5.1c-1.49 1.13-4.51 1.9-8 1.9-3.48 0-6.5-.77-8-1.9zm8 .9c4.42 0 8-1.12 8-2.5s-3.58-2.5-8-2.5-8 1.12-8 2.5S5.6 6 10.01 6zm-8 6.1v5.4c0 1.38 3.58 2.5 8 2.5s8-1.12 8-2.5v-5.4c-1.49 1.13-4.51 1.9-8 1.9-3.48 0-6.5-.77-8-1.9z"]);
@@ -1147,6 +1176,9 @@ var p = [];
 
 ;// CONCATENATED MODULE: ./node_modules/@blueprintjs/icons/lib/esm/generated/20px/paths/euro.js
 /* harmony default export */ const euro = (["M8.89 4.47c.56-.31 1.23-.47 2.03-.47.44 0 .85.07 1.25.22.4.14.76.35 1.07.6.17.14.33.3.47.47l2.32-2.32c-.16-.15-.3-.32-.47-.46-.62-.49-1.33-.87-2.12-1.13-.8-.25-1.64-.38-2.52-.38-1.24 0-2.35.22-3.33.66-.99.44-1.82 1.05-2.49 1.82-.68.78-1.2 1.68-1.56 2.72-.09.26-.13.54-.2.8H2c-.55 0-1 .45-1 1s.45 1 1 1h1.04c-.01.2-.04.38-.04.58 0 .15.03.28.03.42H2c-.55 0-1 .45-1 1s.45 1 1 1h1.31c.07.3.13.6.23.89.36 1.02.88 1.92 1.56 2.67.68.76 1.51 1.35 2.49 1.79.98.43 2.09.65 3.33.65.99 0 1.9-.15 2.73-.46.83-.3 1.55-.74 2.17-1.32.03-.03.05-.06.08-.09l-2.41-2.15c-.01.01-.02.02-.02.03-.61.67-1.46 1-2.54 1-.8 0-1.47-.16-2.03-.47-.56-.31-1.01-.72-1.35-1.24-.28-.38-.47-.83-.63-1.3H12c.55 0 1-.45 1-1s-.45-1-1-1H6.56c0-.14-.02-.28-.02-.42 0-.2.02-.39.03-.58H13c.55 0 1-.45 1-1s-.45-1-1-1H6.94c.15-.46.34-.9.59-1.28.35-.52.8-.94 1.36-1.25zM18 11.38v0z"]);
+
+;// CONCATENATED MODULE: ./node_modules/@blueprintjs/icons/lib/esm/generated/20px/paths/excavator.js
+/* harmony default export */ const excavator = (["M19.16 9.804A1 1 0 0018.18 9H16V5a1 1 0 00-1-1h-3.5a1 1 0 00-.8.4L9.76 6 8.139 8.766A1 1 0 008 9.272V12a1 1 0 001 1h9.78a1 1 0 00.98-1.196l-.6-2zM10 9l1.76-3H14v3h-4z", "M4.25.5c-.555-.278-1.413.044-1.592.639L0 10c0 1.94.952 2.595 2.501 2.912a.95.95 0 00.857-.27L6 10H2l2-7.006L9 5l.372-.557a.998.998 0 00-.383-1.449L4.25.5z", "M3 17a3 3 0 013-3h11a3 3 0 110 6H6a3 3 0 01-3-3zm2 0a1 1 0 011-1h11a1 1 0 110 2H6a1 1 0 01-1-1z"]);
 
 ;// CONCATENATED MODULE: ./node_modules/@blueprintjs/icons/lib/esm/generated/20px/paths/exchange.js
 /* harmony default export */ const exchange = (["M2.5 8a2.5 2.5 0 000 5 2.5 2.5 0 000-5zm10.35 3.15a.495.495 0 10-.7.7L13.3 13H5.5c-.28 0-.5.22-.5.5s.22.5.5.5h7.79l-1.15 1.15c-.08.09-.14.21-.14.35a.495.495 0 00.85.35l2-2c.09-.09.15-.21.15-.35s-.06-.26-.15-.35l-2-2zM17.5 8a2.5 2.5 0 000 5 2.5 2.5 0 000-5zM7.15 9.85a.495.495 0 10.7-.7L6.71 8h7.79c.28 0 .5-.22.5-.5s-.22-.5-.5-.5H6.71l1.15-1.15c.08-.09.14-.21.14-.35a.495.495 0 00-.85-.35l-2 2c-.09.09-.15.21-.15.35s.06.26.15.35l2 2z"]);
@@ -1485,7 +1517,7 @@ var p = [];
 /* harmony default export */ const inner_join = (["M8.7 4.7C7.4 6 6.5 7.9 6.5 10s.8 4 2.2 5.3c-.8.5-1.7.7-2.7.7-3.3 0-6-2.7-6-6s2.7-6 6-6c1 0 1.9.2 2.7.7zm-3.34 9.25c-.55-1.2-.86-2.54-.86-3.95s.31-2.75.86-3.95a4.001 4.001 0 000 7.9zM14 4c3.3 0 6 2.7 6 6s-2.7 6-6 6c-1 0-1.9-.2-2.7-.7 1.3-1.3 2.2-3.2 2.2-5.3s-.8-3.9-2.2-5.3C12.1 4.2 13 4 14 4zm.6 2.05c.55 1.2.86 2.54.86 3.95s-.31 2.75-.86 3.95c1.9-.31 3.36-1.96 3.36-3.95S16.5 6.36 14.6 6.05zM10 5.5C8.8 6.7 8 8.2 8 10s.8 3.3 2 4.4c1.2-1.1 2-2.7 2-4.5s-.8-3.3-2-4.4z"]);
 
 ;// CONCATENATED MODULE: ./node_modules/@blueprintjs/icons/lib/esm/generated/20px/paths/input.js
-/* harmony default export */ const input = (["M10 17a7 7 0 10-6.666-9.143.204.204 0 01-.193.143H1.474a.196.196 0 01-.192-.244A9 9 0 1110 19a9.004 9.004 0 01-8.718-6.756.196.196 0 01.192-.244H3.14c.088 0 .166.058.193.143A7.003 7.003 0 0010 17z", "M14 9.994a.961.961 0 00-.292-.684A532.147 532.147 0 0110.7 6.294.949.949 0 0010.006 6c-.537 0-.99.45-.99.989 0 .273.121.528.292.705.114.117.619.552 1.514 1.304H.976c-.536 0-.975.459-.975.996 0 .538.439 1.008.975 1.008h9.848c-.89.742-1.395 1.172-1.515 1.292-.18.18-.292.447-.292.72 0 .539.446.986.998.986.273 0 .514-.12.692-.284.12-.109 1.123-1.118 3.012-3.027A.976.976 0 0014 9.994z"]);
+/* harmony default export */ const input = (["M20 10c0 5.51-4.49 10-10 10-1.17 0-2.32-.2-3.42-.6a.998.998 0 01-.6-1.28c.19-.52.76-.79 1.28-.6.88.32 1.8.48 2.74.48 4.41 0 8-3.59 8-8s-3.59-8-8-8c-.94 0-1.86.16-2.74.48a.998.998 0 01-1.28-.6.998.998 0 01.6-1.28C7.68.2 8.83 0 10 0c5.51 0 10 4.49 10 10z", "M15.71 9.29l-4-4a1.003 1.003 0 00-1.42 1.42L12.59 9H1a1 1 0 000 2h11.59l-2.29 2.29c-.19.18-.3.43-.3.71a1.003 1.003 0 001.71.71l4-4c.18-.18.29-.43.29-.71 0-.28-.11-.53-.29-.71z"]);
 
 ;// CONCATENATED MODULE: ./node_modules/@blueprintjs/icons/lib/esm/generated/20px/paths/insert.js
 /* harmony default export */ const insert = (["M19 0H1C.4 0 0 .4 0 1v18c0 .5.4 1 1 1h18c.5 0 1-.5 1-1V1c0-.6-.5-1-1-1zm-1 18H2V2h16v16zM5 11h4v4c0 .6.4 1 1 1s1-.4 1-1v-4h4c.6 0 1-.4 1-1s-.4-1-1-1h-4V5c0-.6-.4-1-1-1s-1 .4-1 1v4H5c-.6 0-1 .4-1 1s.4 1 1 1z"]);
@@ -1571,6 +1603,12 @@ var p = [];
 ;// CONCATENATED MODULE: ./node_modules/@blueprintjs/icons/lib/esm/generated/20px/paths/layout-balloon.js
 /* harmony default export */ const layout_balloon = (["M18 16c-.14 0-.28.02-.42.05l-1.73-3.45c.69-.45 1.14-1.22 1.14-2.1s-.46-1.65-1.14-2.1l1.73-3.45c.14.03.28.05.42.05 1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2c0 .6.27 1.13.69 1.5l-1.77 3.54c-.14-.02-.28-.04-.42-.04a2.5 2.5 0 00-2.45 2h-4.1A2.5 2.5 0 005.5 8c-.14 0-.28.02-.42.04L3.31 4.5C3.73 4.13 4 3.6 4 3c0-1.1-.9-2-2-2s-2 .9-2 2 .9 2 2 2c.14 0 .28-.02.42-.05L4.14 8.4C3.46 8.85 3 9.62 3 10.5s.46 1.65 1.14 2.1l-1.73 3.45A1.84 1.84 0 002 16c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2c0-.6-.27-1.13-.69-1.5l1.77-3.54c.14.02.28.04.42.04a2.5 2.5 0 002.45-2h4.1a2.5 2.5 0 002.45 2c.14 0 .28-.02.42-.04l1.77 3.54c-.42.37-.69.9-.69 1.5 0 1.1.9 2 2 2s2-.9 2-2-.9-2-2-2z"]);
 
+;// CONCATENATED MODULE: ./node_modules/@blueprintjs/icons/lib/esm/generated/20px/paths/layout-bottom-row-three-tiles.js
+/* harmony default export */ const layout_bottom_row_three_tiles = (["M0 1a1 1 0 011-1h18a1 1 0 011 1v7a1 1 0 01-1 1H1a1 1 0 01-1-1V1zM0 12a1 1 0 011-1h3a1 1 0 011 1v7a1 1 0 01-1 1H1a1 1 0 01-1-1v-7zM7 12a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1H8a1 1 0 01-1-1v-7zM15 12a1 1 0 011-1h3a1 1 0 011 1v7a1 1 0 01-1 1h-3a1 1 0 01-1-1v-7z"]);
+
+;// CONCATENATED MODULE: ./node_modules/@blueprintjs/icons/lib/esm/generated/20px/paths/layout-bottom-row-two-tiles.js
+/* harmony default export */ const layout_bottom_row_two_tiles = (["M0 12a1 1 0 011-1h7a1 1 0 011 1v7a1 1 0 01-1 1H1a1 1 0 01-1-1v-7zM11 12a1 1 0 011-1h7a1 1 0 011 1v7a1 1 0 01-1 1h-7a1 1 0 01-1-1v-7zM0 1a1 1 0 011-1h18a1 1 0 011 1v7a1 1 0 01-1 1H1a1 1 0 01-1-1V1z"]);
+
 ;// CONCATENATED MODULE: ./node_modules/@blueprintjs/icons/lib/esm/generated/20px/paths/layout-circle.js
 /* harmony default export */ const layout_circle = (["M18.3 8c-.2-.9-.6-1.7-1.1-2.5.2-.3.3-.7.3-1 0-1.1-.9-2-2-2-.4 0-.7.1-1 .3-.8-.5-1.6-.8-2.5-1.1-.1-1-1-1.7-2-1.7S8.2.8 8 1.7c-.9.3-1.7.6-2.5 1.1-.3-.2-.7-.3-1-.3-1.1 0-2 .9-2 2 0 .4.1.7.3 1-.5.8-.8 1.6-1.1 2.5C.8 8.2 0 9 0 10s.8 1.8 1.7 2c.2.9.6 1.7 1.1 2.5-.2.3-.3.7-.3 1 0 1.1.9 2 2 2 .4 0 .7-.1 1-.3.8.5 1.6.8 2.5 1.1.1 1 1 1.7 2 1.7s1.8-.8 2-1.7c.9-.2 1.7-.6 2.5-1.1.3.2.7.3 1 .3 1.1 0 2-.9 2-2 0-.4-.1-.7-.3-1 .5-.8.8-1.6 1.1-2.5 1-.1 1.7-1 1.7-2s-.8-1.8-1.7-2zm-1.8 5.8c-.3-.2-.6-.3-1-.3-1.1 0-2 .9-2 2 0 .4.1.7.3 1-.6.3-1.2.6-1.9.8-.3-.7-1-1.3-1.9-1.3-.8 0-1.6.5-1.9 1.3-.7-.2-1.3-.4-1.9-.8.2-.3.3-.6.3-1 0-1.1-.9-2-2-2-.4 0-.7.1-1 .3-.3-.6-.6-1.2-.8-1.9.8-.3 1.3-1.1 1.3-1.9s-.5-1.6-1.2-1.8c.2-.7.4-1.3.8-1.9.3.2.6.3 1 .3 1.1 0 2-.9 2-2 0-.4-.1-.7-.3-1 .6-.3 1.2-.6 1.9-.8.2.7 1 1.2 1.8 1.2s1.6-.5 1.9-1.3c.7.2 1.3.4 1.9.8-.2.3-.3.6-.3 1 0 1.1.9 2 2 2 .4 0 .7-.1 1-.3.3.6.6 1.2.8 1.9-.8.3-1.3 1.1-1.3 1.9s.5 1.6 1.2 1.8c-.1.7-.4 1.4-.7 2z"]);
 
@@ -1583,14 +1621,44 @@ var p = [];
 ;// CONCATENATED MODULE: ./node_modules/@blueprintjs/icons/lib/esm/generated/20px/paths/layout-hierarchy.js
 /* harmony default export */ const layout_hierarchy = (["M18.5 16.07v-4.14c.86-.22 1.5-1 1.5-1.93 0-1.1-.9-2-2-2-.93 0-1.71.64-1.93 1.5h-4.14c-.18-.7-.73-1.25-1.43-1.43V3.93c.86-.22 1.5-1 1.5-1.93 0-1.1-.9-2-2-2S8 .9 8 2c0 .93.64 1.71 1.5 1.93v4.14c-.7.18-1.25.73-1.43 1.43H3.93C3.71 8.64 2.93 8 2 8c-1.1 0-2 .9-2 2 0 .93.64 1.71 1.5 1.93v4.14c-.86.22-1.5 1-1.5 1.93 0 1.1.9 2 2 2s2-.9 2-2c0-.93-.64-1.71-1.5-1.93v-4.14c.7-.18 1.25-.73 1.43-1.43h4.14c.18.7.73 1.25 1.43 1.43v4.14c-.86.22-1.5 1-1.5 1.93 0 1.1.9 2 2 2s2-.9 2-2c0-.93-.64-1.71-1.5-1.93v-4.14c.7-.18 1.25-.73 1.43-1.43h4.14c.18.7.73 1.25 1.43 1.43v4.14c-.86.22-1.5 1-1.5 1.93 0 1.1.9 2 2 2s2-.9 2-2c0-.93-.64-1.71-1.5-1.93z"]);
 
+;// CONCATENATED MODULE: ./node_modules/@blueprintjs/icons/lib/esm/generated/20px/paths/layout-left-column-three-tiles.js
+/* harmony default export */ const layout_left_column_three_tiles = (["M11 1a1 1 0 011-1h7a1 1 0 011 1v18a1 1 0 01-1 1h-7a1 1 0 01-1-1V1zM0 1a1 1 0 011-1h7a1 1 0 011 1v3a1 1 0 01-1 1H1a1 1 0 01-1-1V1zM0 8a1 1 0 011-1h7a1 1 0 011 1v4a1 1 0 01-1 1H1a1 1 0 01-1-1V8zM0 16a1 1 0 011-1h7a1 1 0 011 1v3a1 1 0 01-1 1H1a1 1 0 01-1-1v-3z"]);
+
+;// CONCATENATED MODULE: ./node_modules/@blueprintjs/icons/lib/esm/generated/20px/paths/layout-left-column-two-tiles.js
+/* harmony default export */ const layout_left_column_two_tiles = (["M0 1a1 1 0 011-1h7a1 1 0 011 1v7a1 1 0 01-1 1H1a1 1 0 01-1-1V1zM0 12a1 1 0 011-1h7a1 1 0 011 1v7a1 1 0 01-1 1H1a1 1 0 01-1-1v-7zM11 1a1 1 0 011-1h7a1 1 0 011 1v18a1 1 0 01-1 1h-7a1 1 0 01-1-1V1z"]);
+
 ;// CONCATENATED MODULE: ./node_modules/@blueprintjs/icons/lib/esm/generated/20px/paths/layout-linear.js
 /* harmony default export */ const layout_linear = (["M16.5 7a2.5 2.5 0 00-2.45 2h-2.1a2.5 2.5 0 00-4.9 0h-2.1a2.5 2.5 0 100 1h2.1a2.5 2.5 0 004.9 0h2.1a2.5 2.5 0 102.45-3z"]);
+
+;// CONCATENATED MODULE: ./node_modules/@blueprintjs/icons/lib/esm/generated/20px/paths/layout-right-column-three-tiles.js
+/* harmony default export */ const layout_right_column_three_tiles = (["M0 1a1 1 0 011-1h7a1 1 0 011 1v18a1 1 0 01-1 1H1a1 1 0 01-1-1V1zM11 1a1 1 0 011-1h7a1 1 0 011 1v3a1 1 0 01-1 1h-7a1 1 0 01-1-1V1zM11 8a1 1 0 011-1h7a1 1 0 011 1v4a1 1 0 01-1 1h-7a1 1 0 01-1-1V8zM11 16a1 1 0 011-1h7a1 1 0 011 1v3a1 1 0 01-1 1h-7a1 1 0 01-1-1v-3z"]);
+
+;// CONCATENATED MODULE: ./node_modules/@blueprintjs/icons/lib/esm/generated/20px/paths/layout-right-column-two-tiles.js
+/* harmony default export */ const layout_right_column_two_tiles = (["M11 1a1 1 0 011-1h7a1 1 0 011 1v7a1 1 0 01-1 1h-7a1 1 0 01-1-1V1zM11 12a1 1 0 011-1h7a1 1 0 011 1v7a1 1 0 01-1 1h-7a1 1 0 01-1-1v-7zM0 1a1 1 0 011-1h7a1 1 0 011 1v18a1 1 0 01-1 1H1a1 1 0 01-1-1V1z"]);
 
 ;// CONCATENATED MODULE: ./node_modules/@blueprintjs/icons/lib/esm/generated/20px/paths/layout-skew-grid.js
 /* harmony default export */ const layout_skew_grid = (["M2 0a2 2 0 100 4 2 2 0 100-4zM18 0a2 2 0 100 4 2 2 0 100-4zM18 8a2 2 0 100 4 2 2 0 100-4zM18 16a2 2 0 100 4 2 2 0 100-4zM2 16a2 2 0 100 4 2 2 0 100-4zM2 8a2 2 0 100 4 2 2 0 100-4zM10 12a2 2 0 100 4 2 2 0 100-4zM10 4a2 2 0 100 4 2 2 0 100-4z"]);
 
 ;// CONCATENATED MODULE: ./node_modules/@blueprintjs/icons/lib/esm/generated/20px/paths/layout-sorted-clusters.js
 /* harmony default export */ const layout_sorted_clusters = (["M2 8c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 8c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM2 0C.9 0 0 .9 0 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm16 8c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-8 4c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-8c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"]);
+
+;// CONCATENATED MODULE: ./node_modules/@blueprintjs/icons/lib/esm/generated/20px/paths/layout-three-columns.js
+/* harmony default export */ const layout_three_columns = (["M0 1a1 1 0 011-1h3a1 1 0 011 1v18a1 1 0 01-1 1H1a1 1 0 01-1-1V1zM7 1a1 1 0 011-1h4a1 1 0 011 1v18a1 1 0 01-1 1H8a1 1 0 01-1-1V1zM15 1a1 1 0 011-1h3a1 1 0 011 1v18a1 1 0 01-1 1h-3a1 1 0 01-1-1V1z"]);
+
+;// CONCATENATED MODULE: ./node_modules/@blueprintjs/icons/lib/esm/generated/20px/paths/layout-three-rows.js
+/* harmony default export */ const layout_three_rows = (["M0 1a1 1 0 011-1h18a1 1 0 011 1v3a1 1 0 01-1 1H1a1 1 0 01-1-1V1zM0 8a1 1 0 011-1h18a1 1 0 011 1v4a1 1 0 01-1 1H1a1 1 0 01-1-1V8zM0 16a1 1 0 011-1h18a1 1 0 011 1v3a1 1 0 01-1 1H1a1 1 0 01-1-1v-3z"]);
+
+;// CONCATENATED MODULE: ./node_modules/@blueprintjs/icons/lib/esm/generated/20px/paths/layout-top-row-three-tiles.js
+/* harmony default export */ const layout_top_row_three_tiles = (["M0 12a1 1 0 011-1h18a1 1 0 011 1v7a1 1 0 01-1 1H1a1 1 0 01-1-1v-7zM0 1a1 1 0 011-1h3a1 1 0 011 1v7a1 1 0 01-1 1H1a1 1 0 01-1-1V1zM7 1a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1H8a1 1 0 01-1-1V1zM15 1a1 1 0 011-1h3a1 1 0 011 1v7a1 1 0 01-1 1h-3a1 1 0 01-1-1V1z"]);
+
+;// CONCATENATED MODULE: ./node_modules/@blueprintjs/icons/lib/esm/generated/20px/paths/layout-top-row-two-tiles.js
+/* harmony default export */ const layout_top_row_two_tiles = (["M0 1a1 1 0 011-1h7a1 1 0 011 1v7a1 1 0 01-1 1H1a1 1 0 01-1-1V1zM11 1a1 1 0 011-1h7a1 1 0 011 1v7a1 1 0 01-1 1h-7a1 1 0 01-1-1V1zM0 12a1 1 0 011-1h18a1 1 0 011 1v7a1 1 0 01-1 1H1a1 1 0 01-1-1v-7z"]);
+
+;// CONCATENATED MODULE: ./node_modules/@blueprintjs/icons/lib/esm/generated/20px/paths/layout-two-columns.js
+/* harmony default export */ const layout_two_columns = (["M0 1a1 1 0 011-1h7a1 1 0 011 1v18a1 1 0 01-1 1H1a1 1 0 01-1-1V1zM11 1a1 1 0 011-1h7a1 1 0 011 1v18a1 1 0 01-1 1h-7a1 1 0 01-1-1V1z"]);
+
+;// CONCATENATED MODULE: ./node_modules/@blueprintjs/icons/lib/esm/generated/20px/paths/layout-two-rows.js
+/* harmony default export */ const layout_two_rows = (["M0 1a1 1 0 011-1h18a1 1 0 011 1v7a1 1 0 01-1 1H1a1 1 0 01-1-1V1zM0 12a1 1 0 011-1h18a1 1 0 011 1v7a1 1 0 01-1 1H1a1 1 0 01-1-1v-7z"]);
 
 ;// CONCATENATED MODULE: ./node_modules/@blueprintjs/icons/lib/esm/generated/20px/paths/learning.js
 /* harmony default export */ const learning = (["M10.551 1.127a1.256 1.256 0 00-1.102 0L.456 5.89c-.608.309-.608.913 0 1.222l8.993 4.762c.334.17.767.17 1.102 0l8.992-4.762c.61-.309.61-.913 0-1.222l-8.992-4.762z", "M18 6.5l.016 4.514c.002.548.447.99.994.99a.99.99 0 00.99-.99V6.5h-2zM3.366 10.033l6.401 3.358a.5.5 0 00.465 0l6.406-3.358a.25.25 0 01.366.221v5.109a.25.25 0 01-.139.224l-6.64 3.302a.5.5 0 01-.446 0l-6.64-3.302A.25.25 0 013 15.363v-5.108a.25.25 0 01.366-.222z"]);
@@ -1811,6 +1879,9 @@ var p = [];
 ;// CONCATENATED MODULE: ./node_modules/@blueprintjs/icons/lib/esm/generated/20px/paths/outdated.js
 /* harmony default export */ const outdated = (["M10 0c5.52 0 10 4.48 10 10s-4.48 10-10 10S0 15.52 0 10c0-.55.45-1 1-1s1 .45 1 1c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8C7.47 2 5.22 3.17 3.76 5H5c.55 0 1 .45 1 1s-.45 1-1 1H1c-.55 0-1-.45-1-1V2c0-.55.45-1 1-1s1 .45 1 1v2.05C3.82 1.6 6.71 0 10 0zm1 16H9v-2h2v2zm0-3H9V4h2v9z"]);
 
+;// CONCATENATED MODULE: ./node_modules/@blueprintjs/icons/lib/esm/generated/20px/paths/output.js
+/* harmony default export */ const output = (["M0 10c0 5.51 4.49 10 10 10 1.17 0 2.32-.2 3.42-.6.52-.19.79-.76.6-1.28a.998.998 0 00-1.28-.6c-.88.32-1.8.48-2.74.48-4.41 0-8-3.59-8-8s3.59-8 8-8c.94 0 1.86.16 2.74.48a.998.998 0 001.28-.6.998.998 0 00-.6-1.28C12.32.2 11.17 0 10 0 4.49 0 0 4.49 0 10z", "M19.71 9.29l-4-4a1.003 1.003 0 00-1.42 1.42L16.59 9H5a1 1 0 000 2h11.59l-2.29 2.29c-.19.18-.3.43-.3.71a1.003 1.003 0 001.71.71l4-4c.18-.18.29-.43.29-.71 0-.28-.11-.53-.29-.71z"]);
+
 ;// CONCATENATED MODULE: ./node_modules/@blueprintjs/icons/lib/esm/generated/20px/paths/page-layout.js
 /* harmony default export */ const page_layout = (["M19 1H1c-.55 0-1 .45-1 1v16c0 .55.45 1 1 1h18c.55 0 1-.45 1-1V2c0-.55-.45-1-1-1zM7 17H2V8h5v9zm11 0H8V8h10v9zm0-10H2V3h16v4z"]);
 
@@ -1916,6 +1987,9 @@ var p = [];
 ;// CONCATENATED MODULE: ./node_modules/@blueprintjs/icons/lib/esm/generated/20px/paths/random.js
 /* harmony default export */ const random = (["M14.47 5h2.12L15.3 6.29c-.19.18-.3.43-.3.71a1.003 1.003 0 001.71.71l3-3c.18-.18.29-.43.29-.71 0-.28-.11-.53-.29-.71l-3-3a1.003 1.003 0 00-1.42 1.42L16.59 3H14c-.31 0-.57.15-.76.37l-.01-.01-2.93 3.52 1.3 1.56L14.47 5zm2.24 7.29a1.003 1.003 0 00-1.42 1.42l1.3 1.29h-2.12L4.77 3.36l-.01.01A.998.998 0 004 3H1c-.55 0-1 .45-1 1s.45 1 1 1h2.53l9.7 11.64.01-.01c.19.22.45.37.76.37h2.59l-1.29 1.29c-.19.18-.3.43-.3.71a1.003 1.003 0 001.71.71l3-3c.18-.18.29-.43.29-.71 0-.28-.11-.53-.29-.71l-3-3zM3.53 15H1c-.55 0-1 .45-1 1s.45 1 1 1h3c.31 0 .57-.15.76-.37l.01.01 2.93-3.52-1.3-1.56L3.53 15z"]);
 
+;// CONCATENATED MODULE: ./node_modules/@blueprintjs/icons/lib/esm/generated/20px/paths/range-ring.js
+/* harmony default export */ const range_ring = (["M10 0c-.442 0-.877.029-1.305.084a1 1 0 00.259 1.984 8.086 8.086 0 012.092 0 1 1 0 00.259-1.984A10.084 10.084 0 0010 0zM5.13 3.652a1 1 0 10-1.218-1.586 10.052 10.052 0 00-1.846 1.846A1 1 0 103.652 5.13 8.054 8.054 0 015.13 3.652zm10.958-1.586a1 1 0 00-1.218 1.586 8.054 8.054 0 011.478 1.478 1 1 0 101.585-1.218 10.053 10.053 0 00-1.845-1.846zM2.068 8.954a1 1 0 10-1.984-.259 10.085 10.085 0 000 2.61 1 1 0 101.984-.259 8.085 8.085 0 010-2.092zm17.848-.259a1 1 0 10-1.984.259 8.086 8.086 0 010 2.092 1 1 0 001.984.259 10.077 10.077 0 000-2.61zM3.652 14.87a1 1 0 00-1.586 1.218 10.053 10.053 0 001.846 1.845 1 1 0 001.218-1.585 8.054 8.054 0 01-1.478-1.478zm14.281 1.218a1 1 0 00-1.585-1.218 8.054 8.054 0 01-1.478 1.478 1 1 0 101.218 1.585 10.054 10.054 0 001.845-1.845zm-8.98 1.844a1 1 0 00-.258 1.984 10.078 10.078 0 002.61 0 1 1 0 10-.259-1.984 8.085 8.085 0 01-2.092 0zM10 7a3 3 0 110 6 3 3 0 010-6zm5 3a5 5 0 10-10 0 5 5 0 0010 0z"]);
+
 ;// CONCATENATED MODULE: ./node_modules/@blueprintjs/icons/lib/esm/generated/20px/paths/record.js
 /* harmony default export */ const record = (["M10 3a7 7 0 100 14 7 7 0 100-14z"]);
 
@@ -1932,7 +2006,7 @@ var p = [];
 /* harmony default export */ const redo = (["M19.71 5.29l-4-4a1.003 1.003 0 00-1.42 1.42L16.59 5H6c-3.31 0-6 2.69-6 6s2.69 6 6 6h5v-2H6c-2.21 0-4-1.79-4-4s1.79-4 4-4h10.59L14.3 9.29c-.19.18-.3.43-.3.71a1.003 1.003 0 001.71.71l4-4c.18-.18.29-.43.29-.71 0-.28-.11-.53-.29-.71zM15 14c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"]);
 
 ;// CONCATENATED MODULE: ./node_modules/@blueprintjs/icons/lib/esm/generated/20px/paths/refresh.js
-/* harmony default export */ const refresh = (["M19 1c-.55 0-1 .45-1 1v2.06C16.18 1.61 13.29 0 10 0 4.48 0 0 4.48 0 10c0 .55.45 1 1 1s1-.45 1-1c0-4.42 3.58-8 8-8 2.52 0 4.76 1.18 6.22 3H15c-.55 0-1 .45-1 1s.45 1 1 1h4c.55 0 1-.45 1-1V2c0-.55-.45-1-1-1zm0 8c-.55 0-1 .45-1 1 0 4.42-3.58 8-8 8-2.52 0-4.76-1.18-6.22-3H5c.55 0 1-.45 1-1s-.45-1-1-1H1c-.55 0-1 .45-1 1v4c0 .55.45 1 1 1s1-.45 1-1v-2.06C3.82 18.39 6.71 20 10 20c5.52 0 10-4.48 10-10 0-.55-.45-1-1-1z"]);
+/* harmony default export */ const refresh = (["M3.636 3.636A9 9 0 0110 1c2.439 0 5.182.717 7 2.471V2a1 1 0 112 0v4a1 1 0 01-1 1h-4a1 1 0 110-2h1.7c-1.304-1.32-3.483-2-5.7-2a7 7 0 00-7 7 1 1 0 11-2 0 9 9 0 012.636-6.364zM16.364 16.364A9 9 0 0110 19c-2.439 0-5.182-.717-7-2.471V18a1 1 0 11-2 0v-4a1 1 0 011-1h4a1 1 0 110 2H4.3c1.304 1.32 3.483 2 5.7 2a7 7 0 007-7 1 1 0 112 0 9 9 0 01-2.636 6.364z"]);
 
 ;// CONCATENATED MODULE: ./node_modules/@blueprintjs/icons/lib/esm/generated/20px/paths/regex.js
 /* harmony default export */ const regex = (["M0 17.5a2.5 2.5 0 115 0 2.5 2.5 0 01-5 0zM14 0a1 1 0 00-1 1v3.768L9.737 2.884a1 1 0 10-1 1.732L12 6.5 8.737 8.384a1 1 0 001 1.732L13 8.232V12a1 1 0 102 0V8.232l3.263 1.884a1 1 0 001-1.732L16 6.5l3.263-1.884a1 1 0 10-1-1.732L15 4.768V1a1 1 0 00-1-1z"]);
@@ -2222,6 +2296,9 @@ var p = [];
 ;// CONCATENATED MODULE: ./node_modules/@blueprintjs/icons/lib/esm/generated/20px/paths/syringe.js
 /* harmony default export */ const syringe = (["M15.146.854a.5.5 0 01.708-.708l4 4a.5.5 0 01-.708.708l-.646-.647L17.207 5.5l1.647 1.646a.5.5 0 01-.708.708l-.646-.647-1.146 1.146-7.5 7.5a.5.5 0 01-.708 0l-.646-.646-2.646 2.647a.5.5 0 01-.708 0l-.646-.647-2.646 2.647a.5.5 0 01-.708-.708L2.793 16.5l-.647-.646a.5.5 0 010-.708L4.793 12.5l-.647-.646a.5.5 0 010-.708l7.5-7.5L12.794 2.5l-.647-.646a.5.5 0 01.708-.708L14.5 2.793 15.793 1.5l-.647-.646zM12.707 4l.793-.793L16.793 6.5 16 7.293 12.707 4zm2.586 4l-.793.793-1.646-1.647a.5.5 0 00-.708.708L13.793 9.5 12.5 10.793l-1.646-1.647a.5.5 0 00-.708.708l1.647 1.646-1.293 1.293-1.646-1.647a.5.5 0 00-.708.708L9.793 13.5 8.5 14.793 5.207 11.5 12 4.707 15.293 8zM3.207 15.5L5.5 13.207 6.793 14.5 4.5 16.793 3.207 15.5zM16.5 2.207L17.793 3.5 16.5 4.793 15.207 3.5 16.5 2.207z"]);
 
+;// CONCATENATED MODULE: ./node_modules/@blueprintjs/icons/lib/esm/generated/20px/paths/table-sync.js
+/* harmony default export */ const table_sync = (["M19 1H1c-.6 0-1 .5-1 1v16c0 .5.4 1 1 1h8a4.976 4.976 0 01-.9-2H8v-1c-.364 0-.706-.098-1-.269V17H2v-3h4c0-.362.095-.704.264-1H2v-3h5v2.166l1-1V10h4v1.166l.129.128c.164-.433.475-.795.871-1.025V10h5v1.999c.628.836 1 1.875 1 3.001.364 0 .706.098 1 .269V2c0-.5-.5-1-1-1zM7 9H2V6h5v3zm5 0H8V6h4v3zm6 0h-5V6h5v3z", "M18 16.59V15c0-2.21-1.79-4-4-4-.55 0-1 .45-1 1s.45 1 1 1c1.1 0 2 .9 2 2v1.59l-.29-.3a1.003 1.003 0 00-1.42 1.42l2 2c.18.18.43.29.71.29.28 0 .53-.11.71-.29l2-2A1.003 1.003 0 0019 16c-.28 0-.53.11-.71.3l-.29.29zm-9-2.18V16c0 2.21 1.79 4 4 4 .55 0 1-.45 1-1s-.45-1-1-1c-1.1 0-2-.9-2-2v-1.59l.29.3a1.003 1.003 0 001.42-1.42l-2-2A.997.997 0 0010 11c-.28 0-.53.11-.71.29l-2 2A1.003 1.003 0 008 15c.28 0 .53-.11.71-.3l.29-.29z"]);
+
 ;// CONCATENATED MODULE: ./node_modules/@blueprintjs/icons/lib/esm/generated/20px/paths/tag.js
 /* harmony default export */ const tag = (["M2 4a2 2 0 012-2h4.588a2 2 0 011.414.586l7.41 7.41a2 2 0 010 2.828l-4.588 4.588a2 2 0 01-2.829 0l-7.41-7.41A2 2 0 012 8.588V4zm3.489-.006a1.495 1.495 0 100 2.99 1.495 1.495 0 000-2.99z"]);
 
@@ -2366,6 +2443,9 @@ var p = [];
 ;// CONCATENATED MODULE: ./node_modules/@blueprintjs/icons/lib/esm/generated/20px/paths/variable.js
 /* harmony default export */ const variable = (["M4.93 3.79a9.1 9.1 0 012.2-2.27L7.29 1c-1.38.59-2.57 1.33-3.55 2.22C2.46 4.39 1.49 5.72.83 7.23.28 8.51 0 9.81 0 11.12c0 2.28.83 4.57 2.49 6.86l.16-.55c-.49-1.23-.73-2.38-.73-3.44 0-1.67.28-3.46.84-5.36.55-1.9 1.28-3.51 2.17-4.84zm9.38 8.39l-.33-.2c-.37.54-.65.87-.82 1a.74.74 0 01-.42.12c-.19 0-.38-.12-.57-.37-.31-.42-.73-1.59-1.26-3.5.47-.85.86-1.41 1.19-1.67.23-.19.48-.29.74-.29.1 0 .28.04.53.11.26.07.48.11.68.11.27 0 .5-.1.68-.29.18-.19.27-.44.27-.75 0-.33-.09-.58-.27-.77-.18-.19-.44-.29-.78-.29-.3 0-.59.07-.86.22s-.61.47-1.02.97c-.31.37-.77 1.02-1.37 1.94a9.683 9.683 0 00-1.24-3.14l-3.24.59-.06.36c.24-.05.44-.07.61-.07.32 0 .59.14.8.43.33.45.8 1.8 1.39 4.07-.47.64-.78 1.06-.96 1.26-.28.32-.52.53-.7.62-.14.08-.3.11-.48.11-.14 0-.36-.08-.67-.23-.21-.1-.4-.15-.57-.15-.31 0-.57.11-.78.32s-.31.48-.31.8c0 .31.09.55.28.75.19.19.44.29.76.29.31 0 .6-.07.87-.2s.61-.42 1.02-.86c.41-.44.98-1.13 1.7-2.08.28.9.52 1.56.72 1.97.2.41.44.71.7.89.26.18.59.27.99.27.38 0 .77-.14 1.17-.43.54-.36 1.07-1 1.61-1.91zM17.51 1l-.15.54c.49 1.24.73 2.39.73 3.45 0 1.43-.21 2.96-.63 4.6-.33 1.26-.75 2.45-1.27 3.55-.52 1.11-1.02 1.97-1.51 2.6-.49.62-1.09 1.2-1.8 1.72l-.17.53c1.38-.59 2.57-1.34 3.55-2.23 1.29-1.17 2.26-2.5 2.91-4 .55-1.28.83-2.59.83-3.91 0-2.27-.83-4.56-2.49-6.85z"]);
 
+;// CONCATENATED MODULE: ./node_modules/@blueprintjs/icons/lib/esm/generated/20px/paths/vector.js
+/* harmony default export */ const vector = (["M11.286 1.7a.996.996 0 01-.29-.71c0-.55.45-1 1-.99.28 0 .531.11.711.29l3.003 3a1.013 1.013 0 010 1.419l-3.003 2.999a1.003 1.003 0 01-1.712-.71c0-.28.12-.53.3-.71l1.292-1.29H5.001C4.45 4.999 4 4.549 4 4c0-.55.45-1 1-1h7.587l-1.301-1.3zM5.553 10.105a1 1 0 011.341.448L10 16.763l3.106-6.21a1 1 0 011.789.894l-4 8a1 1 0 01-1.79 0l-4-8a1 1 0 01.448-1.341z"]);
+
 ;// CONCATENATED MODULE: ./node_modules/@blueprintjs/icons/lib/esm/generated/20px/paths/vertical-bar-chart-asc.js
 /* harmony default export */ const vertical_bar_chart_asc = (["M8 7H7c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h1c.55 0 1-.45 1-1V8c0-.55-.45-1-1-1zM3 9H2c-.55 0-1 .45-1 1v9c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-9c0-.55-.45-1-1-1zm10-5h-1c-.55 0-1 .45-1 1v14c0 .55.45 1 1 1h1c.55 0 1-.45 1-1V5c0-.55-.45-1-1-1zm5-4h-1c-.55 0-1 .45-1 1v18c0 .55.45 1 1 1h1c.55 0 1-.45 1-1V1c0-.55-.45-1-1-1z"]);
 
@@ -2433,6 +2513,26 @@ var p = [];
 /* harmony default export */ const zoom_to_fit = (["M1 7c.55 0 1-.45 1-1V2h4c.55 0 1-.45 1-1s-.45-1-1-1H1C.45 0 0 .45 0 1v5c0 .55.45 1 1 1zm5 1a1.003 1.003 0 00-1.71-.71l-2 2c-.18.18-.29.43-.29.71 0 .28.11.53.29.71l2 2a1.003 1.003 0 001.42-1.42L4.41 10 5.7 8.71c.19-.18.3-.43.3-.71zm2-2c.28 0 .53-.11.71-.29L10 4.41l1.29 1.29c.18.19.43.3.71.3a1.003 1.003 0 00.71-1.71l-2-2C10.53 2.11 10.28 2 10 2s-.53.11-.71.29l-2 2A1.003 1.003 0 008 6zM6 18H2v-4c0-.55-.45-1-1-1s-1 .45-1 1v5c0 .55.45 1 1 1h5c.55 0 1-.45 1-1s-.45-1-1-1zm8-6a1.003 1.003 0 001.71.71l2-2c.18-.18.29-.43.29-.71 0-.28-.11-.53-.29-.71l-2-2a1.003 1.003 0 00-1.42 1.42l1.3 1.29-1.29 1.29c-.19.18-.3.43-.3.71zm5-12h-5c-.55 0-1 .45-1 1s.45 1 1 1h4v4c0 .55.45 1 1 1s1-.45 1-1V1c0-.55-.45-1-1-1zm-7 14c-.28 0-.53.11-.71.29L10 15.59 8.71 14.3A.965.965 0 008 14a1.003 1.003 0 00-.71 1.71l2 2c.18.18.43.29.71.29s.53-.11.71-.29l2-2A1.003 1.003 0 0012 14zm7-1c-.55 0-1 .45-1 1v4h-4c-.55 0-1 .45-1 1s.45 1 1 1h5c.55 0 1-.45 1-1v-5c0-.55-.45-1-1-1z"]);
 
 ;// CONCATENATED MODULE: ./node_modules/@blueprintjs/icons/lib/esm/generated/20px/paths/index.js
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
