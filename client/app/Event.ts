@@ -1,5 +1,6 @@
 /// <reference path="./References.d.ts"/>
 import WebSocket from 'ws';
+import * as Electron from "electron";
 import EventDispatcher from './dispatcher/EventDispatcher';
 import * as Auth from './Auth';
 import * as Alert from './Alert';
@@ -19,18 +20,6 @@ function connect(): void {
 	}
 
 	let reconnected = false;
-	let wsHost = '';
-	let headers = {
-		'User-Agent': 'pritunl',
-		'Auth-Token': Auth.token,
-	} as any;
-
-	if (Constants.unix) {
-		wsHost = Constants.unixWsHost;
-		headers['Host'] = 'unix';
-	} else {
-		wsHost = Constants.webWsHost;
-	}
 
 	let reconnect = (): void => {
 		setTimeout(() => {
@@ -42,11 +31,9 @@ function connect(): void {
 		}, 3500);
 	};
 
-	let socket = new WebSocket(wsHost + '/events', {
-		headers: headers,
-	});
+	Electron.ipcRenderer.send("websocket.connect")
 
-	socket.on('open', (): void => {
+	Electron.ipcRenderer.on('websocket.open', (): void => {
 		if (showConnect) {
 			showConnect = false;
 			Alert.success('Events: Service reconnected');
@@ -54,7 +41,8 @@ function connect(): void {
 		}
 	});
 
-	socket.on('error', (err: Error) => {
+	Electron.ipcRenderer.on('websocket.error', (evt, errStr: string) => {
+		let err = new Error(errStr)
 		err = new Errors.RequestError(
 			err, "Failed to connect to background service, retrying");
 		Logger.errorAlert2(err, 3);
@@ -63,22 +51,13 @@ function connect(): void {
 		reconnect();
 	});
 
-	socket.on('onerror', (err) => {
-		err = new Errors.RequestError(
-			err, "Failed to connect to background service, retrying");
-		Logger.errorAlert2(err, 3);
-
+	Electron.ipcRenderer.on('websocket.close', () => {
 		showConnect = true;
 		reconnect();
 	});
 
-	socket.on('close', () => {
-		showConnect = true;
-		reconnect();
-	});
-
-	socket.on('message', (dataBuf: Buffer): void => {
-		let data = JSON.parse(dataBuf.toString());
+	Electron.ipcRenderer.on('websocket.message', (evt, dataStr: string): void => {
+		let data = JSON.parse(dataStr);
 		EventDispatcher.dispatch(data);
 	});
 }
