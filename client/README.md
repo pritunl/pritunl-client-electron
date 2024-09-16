@@ -48,7 +48,6 @@ rsync --human-readable --archive --xattrs --progress --delete --exclude "/node_m
 
 # npm-server
 cd /home/cloud/pritunl-cloud-www/
-rm package-lock.json
 rm -rf node_modules
 npm install
 
