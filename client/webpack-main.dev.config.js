@@ -11,6 +11,10 @@ module.exports = {
       import: './main/Main.js',
     },
   },
+  externals: {
+    "bufferutil": "bufferutil",
+    "utf-8-validate": "utf-8-validate",
+  },
   output: {
     path: path.resolve(__dirname, 'dist-dev', 'static'),
     publicPath: './static/',

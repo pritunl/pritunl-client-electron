@@ -6,6 +6,10 @@ module.exports = {
   mode: 'production',
   target: 'electron-main',
   devtool: 'source-map',
+  externals: {
+    "bufferutil": "bufferutil",
+    "utf-8-validate": "utf-8-validate",
+  },
   entry: {
     main: {
       import: './main/Main.js',
