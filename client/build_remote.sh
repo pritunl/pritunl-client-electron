@@ -7,10 +7,6 @@ ssh cloud@$NPM_SERVER "
 cd /home/cloud/pritunl-client-www/
 rm -rf node_modules
 npm install
-npm update
-cd ./node_modules/@github/webauthn-json/dist/
-ln -sf ./esm/* ./
-cd ../../../../
 "
 
 scp $NPM_SERVER:/home/cloud/pritunl-client-www/package.json /home/cloud/go/src/github.com/pritunl/pritunl-client-electron/client/package.json
