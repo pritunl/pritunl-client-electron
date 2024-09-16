@@ -6,6 +6,7 @@ import electron from "electron"
 import * as Utils from "./Utils";
 import * as Service from "./Service"
 import Config from "./Config"
+import * as WebSocket from "./WebSocket"
 import * as Errors from "../app/Errors";
 import * as Tpm from "./Tpm"
 
@@ -124,6 +125,8 @@ electron.ipcMain.on(
 		}
 	},
 )
+
+WebSocket.bind()
 
 Service.wakeup().then((awake: boolean) => {
 	awaken = awake
