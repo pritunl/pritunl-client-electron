@@ -7,8 +7,6 @@ npm install
 #### locked packages
 
 ```
-utf-8-validate
-ws
 webpack
 ```
 
