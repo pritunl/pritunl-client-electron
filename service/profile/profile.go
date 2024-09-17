@@ -767,7 +767,8 @@ func (p *Profile) writeConfWgQuick(data *WgConf) (pth, pth2 string,
 			}
 
 			if route.NetGateway {
-				allowedIps = append(allowedIps, "!"+route.Network)
+				// TODO wireguard exclude
+				//allowedIps = append(allowedIps, "!"+route.Network)
 			} else {
 				allowedIps = append(allowedIps, route.Network)
 			}
@@ -780,7 +781,8 @@ func (p *Profile) writeConfWgQuick(data *WgConf) (pth, pth2 string,
 			}
 
 			if route.NetGateway {
-				allowedIps = append(allowedIps, "!"+route.Network)
+				// TODO wireguard exclude
+				//allowedIps = append(allowedIps, "!"+route.Network)
 			} else {
 				allowedIps = append(allowedIps, route.Network)
 			}
@@ -3380,7 +3382,8 @@ func (p *Profile) confWgLinux(data *WgConf) (err error) {
 	if data.Routes != nil {
 		for _, route := range data.Routes {
 			if route.NetGateway {
-				allowedIps = append(allowedIps, "!"+route.Network)
+				// TODO wireguard exclude
+				//allowedIps = append(allowedIps, "!"+route.Network)
 			} else {
 				allowedIps = append(allowedIps, route.Network)
 			}
@@ -3389,7 +3392,8 @@ func (p *Profile) confWgLinux(data *WgConf) (err error) {
 	if data.Routes6 != nil {
 		for _, route := range data.Routes6 {
 			if route.NetGateway {
-				allowedIps = append(allowedIps, "!"+route.Network)
+				// TODO wireguard exclude
+				//allowedIps = append(allowedIps, "!"+route.Network)
 			} else {
 				allowedIps = append(allowedIps, route.Network)
 			}
