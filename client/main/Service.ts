@@ -1,11 +1,10 @@
 import WebSocket from "ws"
-import fs from "fs"
-import path from "path"
 import process from "process"
 import * as Request from "./Request"
 import * as RequestUtils from './RequestUtils';
 import * as Auth from "./Auth"
 import * as Logger from "./Logger"
+import * as Constants from "./Constants"
 import electron from "electron";
 import * as MiscUtils from "../app/utils/MiscUtils";
 
@@ -16,13 +15,6 @@ export interface Event {
 }
 
 export type Callback = (event: Event) => void
-
-let unix = false
-const unixPath = "/var/run/pritunl.sock"
-const webHost = "http://127.0.0.1:9770"
-const unixWsHost = "ws+unix://" + path.join(
-	path.sep, "var", "run", "pritunl.sock") + ":"
-const webWsHost = "ws://127.0.0.1:9770"
 
 let showConnect = false
 let socket: WebSocket.WebSocket
@@ -149,11 +141,11 @@ export function connect(): Promise<void> {
 			"Auth-Token": Auth.token,
 		} as any
 
-		if (unix) {
-			wsHost = unixWsHost
+		if (Constants.unix) {
+			wsHost = Constants.unixWsHost
 			headers["Host"] = "unix"
 		} else {
-			wsHost = webWsHost
+			wsHost = Constants.webWsHost
 		}
 
 		let reconnect = (): void => {
@@ -203,12 +195,19 @@ export function connect(): Promise<void> {
 			if (showConnect) {
 				showConnect = false
 				console.log("Events: Service reconnected")
+				if (Constants.mainWindow && !Constants.mainWindow.isDestroyed()) {
+					Constants.mainWindow.webContents.send("event.reconnected")
+				}
 			}
 		})
 
 		socket.on("error", (err: Error) => {
 			if (socketId !== curSocket) {
 				return
+			}
+
+			if (Constants.mainWindow && !Constants.mainWindow.isDestroyed()) {
+				Constants.mainWindow.webContents.send("event.error", err.toString())
 			}
 
 			console.error("Events: Socket error " + err)
@@ -231,6 +230,10 @@ export function connect(): Promise<void> {
 				return
 			}
 
+			if (Constants.mainWindow && !Constants.mainWindow.isDestroyed()) {
+				Constants.mainWindow.webContents.send("event.closed")
+			}
+
 			showConnect = true
 			reconnect()
 		})
@@ -240,7 +243,13 @@ export function connect(): Promise<void> {
 				return
 			}
 
-			let data = JSON.parse(dataBuf.toString())
+			let dataStr = dataBuf.toString()
+
+			if (Constants.mainWindow && !Constants.mainWindow.isDestroyed()) {
+				Constants.mainWindow.webContents.send("event", dataStr)
+			}
+
+			let data = JSON.parse(dataStr)
 			for (let callback of callbacks) {
 				callback(data as Event)
 			}
