@@ -34,16 +34,12 @@ if (systemDrv) {
 	winDrive = systemDrv + '\\';
 }
 
-if (process.platform === "linux" || process.platform === "darwin") {
-	unix = true
-}
-
 export function sync(): Promise<boolean> {
 	return new Promise<boolean>(async (resolve) => {
 		try {
 			await Auth.load()
 		} catch(err) {
-			Logger.error(err.message || err)
+			Logger.error(err)
 			resolve(false)
 			return
 		}
@@ -65,7 +61,7 @@ export function sync(): Promise<boolean> {
 					resolve(false)
 				}
 			}, (err) => {
-				Logger.error(err.message)
+				Logger.error(err)
 				resolve(false)
 			})
 	})
@@ -76,7 +72,7 @@ export function wakeup(): Promise<boolean> {
 		try {
 			await Auth.load()
 		} catch(err) {
-			Logger.error(err.message || err)
+			Logger.error(err)
 			resolve(false)
 			return
 		}
@@ -93,7 +89,7 @@ export function wakeup(): Promise<boolean> {
 					resolve(false)
 				}
 			}, (err) => {
-				Logger.error(err.message)
+				Logger.error(err)
 				resolve(false)
 			})
 	})

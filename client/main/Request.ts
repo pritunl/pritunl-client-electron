@@ -207,13 +207,13 @@ export class Request {
 				req.on("timeout", () => {
 					let err = this.parseError(null, "Request: Timeout error")
 					req.destroy(err)
-					Logger.error(err.message)
+					Logger.error(err)
 					reject(err)
 				})
 
 				req.on("error", (err) => {
 					err = this.parseError(err, "Request:  Client error")
-					Logger.error(err.message)
+					Logger.error(err)
 					reject(err)
 				})
 
@@ -224,7 +224,7 @@ export class Request {
 				req.end()
 			} catch (err) {
 				err = this.parseError(err, "Request: Exception")
-				Logger.error(err.message)
+				Logger.error(err)
 				reject(err)
 			}
 		})

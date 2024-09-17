@@ -29,7 +29,7 @@ export function open(callerId: string, privKey64: string): void {
 					caller_id: callerId,
 				},
 			)
-			Logger.error(err.message)
+			Logger.error(err)
 		}
 		proc.kill("SIGINT")
 	}, 10000)
@@ -42,7 +42,7 @@ export function open(callerId: string, privKey64: string): void {
 				caller_id: callerId,
 			},
 		)
-		Logger.error(err.message)
+		Logger.error(err)
 
 		RequestUtils
 			.post("/tpm/callback")
@@ -64,7 +64,7 @@ export function open(callerId: string, privKey64: string): void {
 							data: resp.data,
 						},
 					)
-					Logger.error(err.message)
+					Logger.error(err)
 				}
 			}, (err) => {
 				err = new Errors.RequestError(
@@ -74,7 +74,7 @@ export function open(callerId: string, privKey64: string): void {
 						caller_id: callerId,
 					},
 				)
-				Logger.error(err.message)
+				Logger.error(err)
 			})
 	})
 
@@ -91,7 +91,7 @@ export function open(callerId: string, privKey64: string): void {
 					output: stderr,
 				},
 			)
-			Logger.error(err.message)
+			Logger.error(err)
 
 			RequestUtils
 				.post("/tpm/callback")
@@ -113,7 +113,7 @@ export function open(callerId: string, privKey64: string): void {
 								data: resp.data,
 							},
 						)
-						Logger.error(err.message)
+						Logger.error(err)
 					}
 				}, (err) => {
 					err = new Errors.RequestError(
@@ -123,7 +123,7 @@ export function open(callerId: string, privKey64: string): void {
 							caller_id: callerId,
 						},
 					)
-					Logger.error(err.message)
+					Logger.error(err)
 				})
 		}
 	})
@@ -150,7 +150,7 @@ export function open(callerId: string, privKey64: string): void {
 					line: data,
 				},
 			)
-			Logger.error(err.message)
+			Logger.error(err)
 			return
 		}
 
@@ -176,7 +176,7 @@ export function open(callerId: string, privKey64: string): void {
 							data: resp.data,
 						},
 					)
-					Logger.error(err.message)
+					Logger.error(err)
 				}
 			}, (err) => {
 				err = new Errors.RequestError(
@@ -186,7 +186,7 @@ export function open(callerId: string, privKey64: string): void {
 						caller_id: callerId,
 					},
 				)
-				Logger.error(err.message)
+				Logger.error(err)
 			})
 	})
 
