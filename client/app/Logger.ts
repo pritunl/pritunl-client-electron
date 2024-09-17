@@ -23,7 +23,7 @@ function push(level: string, err: any): void {
 	fs.stat(pth, (err: Error, stat) => {
 		if (stat && stat.size > 200000) {
 			fs.unlink(pth, () => {
-				fs.appendFile(Paths.log(), msg + "\n", (err: Error): void => {
+				fs.appendFile(pth, msg + "\n", (err: Error): void => {
 					if (err) {
 						err = new Errors.WriteError(err, "Logger: Failed to write log",
 							{log_path: pth})
@@ -32,7 +32,7 @@ function push(level: string, err: any): void {
 				})
 			})
 		} else {
-			fs.appendFile(Paths.log(), msg + "\n", (err: Error): void => {
+			fs.appendFile(pth, msg + "\n", (err: Error): void => {
 				if (err) {
 					err = new Errors.WriteError(err, "Logger: Failed to write log",
 						{log_path: pth})
