@@ -597,65 +597,41 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var electron__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! electron */ "electron");
 /* harmony import */ var electron__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(electron__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _dispatcher_EventDispatcher__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./dispatcher/EventDispatcher */ "./app/dispatcher/EventDispatcher.js");
-/* harmony import */ var _Auth__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Auth */ "./app/Auth.js");
-/* harmony import */ var _Alert__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Alert */ "./app/Alert.js");
-/* harmony import */ var _Errors__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./Errors */ "./app/Errors.js");
-/* harmony import */ var _Logger__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Logger */ "./app/Logger.js");
+/* harmony import */ var _Alert__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Alert */ "./app/Alert.js");
+/* harmony import */ var _Errors__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Errors */ "./app/Errors.js");
+/* harmony import */ var _Logger__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./Logger */ "./app/Logger.js");
 
 
 
 
 
-
-let connected = false;
-let showConnect = false;
-function connect() {
-    if (_Auth__WEBPACK_IMPORTED_MODULE_2__.token === '') {
-        setTimeout(() => {
-            connect();
-        }, 100);
+let connectionLost = false;
+let registered = false;
+function init() {
+    if (registered) {
         return;
     }
-    let reconnected = false;
-    let reconnect = () => {
-        setTimeout(() => {
-            if (reconnected) {
-                return;
-            }
-            reconnected = true;
-            connect();
-        }, 3500);
-    };
-    electron__WEBPACK_IMPORTED_MODULE_0__.ipcRenderer.send("websocket.connect");
-    electron__WEBPACK_IMPORTED_MODULE_0__.ipcRenderer.on('websocket.open', () => {
-        if (showConnect) {
-            showConnect = false;
-            _Alert__WEBPACK_IMPORTED_MODULE_3__.success('Events: Service reconnected');
-            _Alert__WEBPACK_IMPORTED_MODULE_3__.clearAlert2();
+    registered = true;
+    electron__WEBPACK_IMPORTED_MODULE_0__.ipcRenderer.on("event.reconnected", () => {
+        connectionLost = false;
+        _Alert__WEBPACK_IMPORTED_MODULE_2__.success("Events: Service connection restored");
+        _Alert__WEBPACK_IMPORTED_MODULE_2__.clearAlert2();
+    });
+    electron__WEBPACK_IMPORTED_MODULE_0__.ipcRenderer.on("event.closed", (evt, errStr) => {
+        if (!connectionLost) {
+            connectionLost = true;
+            _Alert__WEBPACK_IMPORTED_MODULE_2__.error("Events: Service connection lost");
         }
     });
-    electron__WEBPACK_IMPORTED_MODULE_0__.ipcRenderer.on('websocket.error', (evt, errStr) => {
+    electron__WEBPACK_IMPORTED_MODULE_0__.ipcRenderer.on("event.error", (evt, errStr) => {
         let err = new Error(errStr);
-        err = new _Errors__WEBPACK_IMPORTED_MODULE_4__.RequestError(err, "Failed to connect to background service, retrying");
-        _Logger__WEBPACK_IMPORTED_MODULE_5__.errorAlert2(err, 3);
-        showConnect = true;
-        reconnect();
+        err = new _Errors__WEBPACK_IMPORTED_MODULE_3__.RequestError(err, "Failed to connect to background service, retrying");
+        _Logger__WEBPACK_IMPORTED_MODULE_4__.errorAlert2(err, 3);
     });
-    electron__WEBPACK_IMPORTED_MODULE_0__.ipcRenderer.on('websocket.close', () => {
-        showConnect = true;
-        reconnect();
-    });
-    electron__WEBPACK_IMPORTED_MODULE_0__.ipcRenderer.on('websocket.message', (evt, dataStr) => {
+    electron__WEBPACK_IMPORTED_MODULE_0__.ipcRenderer.on("event", (evt, dataStr) => {
         let data = JSON.parse(dataStr);
         _dispatcher_EventDispatcher__WEBPACK_IMPORTED_MODULE_1__["default"].dispatch(data);
     });
-}
-function init() {
-    if (connected) {
-        return;
-    }
-    connected = true;
-    connect();
 }
 
 
@@ -768,7 +744,7 @@ function push(level, err) {
     fs__WEBPACK_IMPORTED_MODULE_3___default().stat(pth, (err, stat) => {
         if (stat && stat.size > 200000) {
             fs__WEBPACK_IMPORTED_MODULE_3___default().unlink(pth, () => {
-                fs__WEBPACK_IMPORTED_MODULE_3___default().appendFile(_Paths__WEBPACK_IMPORTED_MODULE_2__.log(), msg + "\n", (err) => {
+                fs__WEBPACK_IMPORTED_MODULE_3___default().appendFile(pth, msg + "\n", (err) => {
                     if (err) {
                         err = new _Errors__WEBPACK_IMPORTED_MODULE_1__.WriteError(err, "Logger: Failed to write log", { log_path: pth });
                         _Alert__WEBPACK_IMPORTED_MODULE_0__.error2(err.message, 10);
@@ -777,7 +753,7 @@ function push(level, err) {
             });
         }
         else {
-            fs__WEBPACK_IMPORTED_MODULE_3___default().appendFile(_Paths__WEBPACK_IMPORTED_MODULE_2__.log(), msg + "\n", (err) => {
+            fs__WEBPACK_IMPORTED_MODULE_3___default().appendFile(pth, msg + "\n", (err) => {
                 if (err) {
                     err = new _Errors__WEBPACK_IMPORTED_MODULE_1__.WriteError(err, "Logger: Failed to write log", { log_path: pth });
                     _Alert__WEBPACK_IMPORTED_MODULE_0__.error2(err.message, 10);

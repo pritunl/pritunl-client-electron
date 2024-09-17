@@ -13665,7 +13665,7 @@ if ((external_process_default()).platform === "linux" || (external_process_defau
 }
 function getAuthPath() {
     if ((external_process_default()).platform === "win32") {
-        return external_path_default().join(winDrive, "ProgramData", "Pritunl", "auth");
+        return external_path_default().join(Service_winDrive, "ProgramData", "Pritunl", "auth");
     }
     else {
         return external_path_default().join((external_path_default()).sep, "var", "run", "pritunl.auth");
@@ -13750,33 +13750,81 @@ class ProcessError extends BaseError {
     }
 }
 
+;// CONCATENATED MODULE: external "os"
+const external_os_namespaceObject = require("os");
+var external_os_default = /*#__PURE__*/__webpack_require__.n(external_os_namespaceObject);
+;// CONCATENATED MODULE: ./main/Constants.js
+
+
+
+
+let Constants_unix = false;
+const Constants_unixPath = "/var/run/pritunl.sock";
+const Constants_webHost = "http://127.0.0.1:9770";
+const unixWsHost = "ws+unix://" + external_path_default().join((external_path_default()).sep, "var", "run", "pritunl.sock") + ":";
+const webWsHost = "ws://127.0.0.1:9770";
+const platform = external_os_default().platform();
+const hostname = external_os_default().hostname();
+const logPath = external_path_default().join(external_electron_default().app.getPath("userData"), "pritunl.log");
+let mainWindow;
+let production = (external_process_default().argv.indexOf("--dev") === -1);
+let devTools = (external_process_default().argv.indexOf("--dev-tools") !== -1);
+let winDrive = "C:\\";
+let systemDrv = (external_process_default()).env.SYSTEMDRIVE;
+if (systemDrv) {
+    winDrive = systemDrv + "\\";
+}
+if ((external_process_default()).platform === "linux" || (external_process_default()).platform === "darwin") {
+    Constants_unix = true;
+}
+function setMainWindow(mainWin) {
+    mainWindow = mainWin;
+}
+
 ;// CONCATENATED MODULE: ./main/Logger.js
 
 
 
-
-function push(level, msg) {
+function push(level, err) {
+    if (!err) {
+        err = "Undefined error";
+    }
     let time = new Date();
+    let msg = err.message || err;
     msg = "[" + time.getFullYear() + "-" + (time.getMonth() + 1) + "-" +
         time.getDate() + " " + time.getHours() + ":" + time.getMinutes() + ":" +
-        time.getSeconds() + "][" + level + "] " + msg + "\n";
-    console.error(msg);
-    let logPath = external_path_default().join(external_electron_default().app.getPath("userData"), "pritunl.log");
-    external_fs_default().appendFile(logPath, msg, (err) => {
-        if (err) {
-            err = new WriteError(err, "Logger: Failed to write log");
-            console.error(err);
+        time.getSeconds() + "][" + level + "] " + msg + "\n" + (err.stack || "");
+    msg = msg.trim();
+    let pth = logPath;
+    external_fs_default().stat(pth, (err, stat) => {
+        if (stat && stat.size > 200000) {
+            external_fs_default().unlink(pth, () => {
+                external_fs_default().appendFile(pth, msg + "\n", (err) => {
+                    if (err) {
+                        err = new WriteError(err, "Logger: Failed to write log", { log_path: pth });
+                        console.error(err);
+                    }
+                });
+            });
+        }
+        else {
+            external_fs_default().appendFile(pth, msg + "\n", (err) => {
+                if (err) {
+                    err = new WriteError(err, "Logger: Failed to write log", { log_path: pth });
+                    console.error(err);
+                }
+            });
         }
     });
 }
-function info(msg) {
-    push("INFO", msg);
+function info(err) {
+    push("INFO", err);
 }
-function warning(msg) {
-    push("WARN", msg);
+function warning(err) {
+    push("WARN", err);
 }
-function error(msg) {
-    push("ERROR", msg);
+function error(err) {
+    push("ERROR", err);
 }
 
 ;// CONCATENATED MODULE: ./main/Request.js
@@ -13941,12 +13989,12 @@ class Request_Request {
                 req.on("timeout", () => {
                     let err = this.parseError(null, "Request: Timeout error");
                     req.destroy(err);
-                    error(err.message);
+                    error(err);
                     reject(err);
                 });
                 req.on("error", (err) => {
                     err = this.parseError(err, "Request:  Client error");
-                    error(err.message);
+                    error(err);
                     reject(err);
                 });
                 if (this.data) {
@@ -13956,7 +14004,7 @@ class Request_Request {
             }
             catch (err) {
                 err = this.parseError(err, "Request: Exception");
-                error(err.message);
+                error(err);
                 reject(err);
             }
         });
@@ -14630,21 +14678,13 @@ function tarRead(path) {
 
 
 
-let Service_unix = false;
-const Service_unixPath = "/var/run/pritunl.sock";
-const Service_webHost = "http://127.0.0.1:9770";
-const unixWsHost = "ws+unix://" + external_path_default().join((external_path_default()).sep, "var", "run", "pritunl.sock") + ":";
-const webWsHost = "ws://127.0.0.1:9770";
 let showConnect = false;
 let socket;
 let callbacks = [];
-let winDrive = 'C:\\';
-let systemDrv = (external_process_default()).env.SYSTEMDRIVE;
-if (systemDrv) {
-    winDrive = systemDrv + '\\';
-}
-if ((external_process_default()).platform === "linux" || (external_process_default()).platform === "darwin") {
-    Service_unix = true;
+let Service_winDrive = 'C:\\';
+let Service_systemDrv = (external_process_default()).env.SYSTEMDRIVE;
+if (Service_systemDrv) {
+    Service_winDrive = Service_systemDrv + '\\';
 }
 function sync() {
     return new Promise(async (resolve) => {
@@ -14652,7 +14692,7 @@ function sync() {
             await load();
         }
         catch (err) {
-            error(err.message || err);
+            error(err);
             resolve(false);
             return;
         }
@@ -14674,7 +14714,7 @@ function sync() {
                 resolve(false);
             }
         }, (err) => {
-            error(err.message);
+            error(err);
             resolve(false);
         });
     });
@@ -14685,7 +14725,7 @@ function wakeup() {
             await load();
         }
         catch (err) {
-            error(err.message || err);
+            error(err);
             resolve(false);
             return;
         }
@@ -14701,7 +14741,7 @@ function wakeup() {
                 resolve(false);
             }
         }, (err) => {
-            error(err.message);
+            error(err);
             resolve(false);
         });
     });
@@ -14757,7 +14797,7 @@ function connect() {
             "User-Agent": "pritunl",
             "Auth-Token": token,
         };
-        if (Service_unix) {
+        if (Constants_unix) {
             wsHost = unixWsHost;
             headers["Host"] = "unix";
         }
@@ -14809,11 +14849,17 @@ function connect() {
             if (showConnect) {
                 showConnect = false;
                 console.log("Events: Service reconnected");
+                if (mainWindow && !mainWindow.isDestroyed()) {
+                    mainWindow.webContents.send("event.reconnected");
+                }
             }
         });
         socket.on("error", (err) => {
             if (socketId !== curSocket) {
                 return;
+            }
+            if (mainWindow && !mainWindow.isDestroyed()) {
+                mainWindow.webContents.send("event.error", err.toString());
             }
             console.error("Events: Socket error " + err);
             showConnect = true;
@@ -14831,6 +14877,9 @@ function connect() {
             if (socketId !== curSocket) {
                 return;
             }
+            if (mainWindow && !mainWindow.isDestroyed()) {
+                mainWindow.webContents.send("event.closed");
+            }
             showConnect = true;
             reconnect();
         });
@@ -14838,7 +14887,11 @@ function connect() {
             if (socketId !== curSocket) {
                 return;
             }
-            let data = JSON.parse(dataBuf.toString());
+            let dataStr = dataBuf.toString();
+            if (mainWindow && !mainWindow.isDestroyed()) {
+                mainWindow.webContents.send("event", dataStr);
+            }
+            let data = JSON.parse(dataStr);
             for (let callback of callbacks) {
                 callback(data);
             }
@@ -14898,7 +14951,7 @@ class ConfigData {
                 if (err) {
                     if (err.code !== "ENOENT") {
                         err = new ReadError(err, "Config: Read error");
-                        error(err.message);
+                        error(err);
                     }
                     resolve();
                     return;
@@ -14910,7 +14963,7 @@ class ConfigData {
                     }
                     catch (err) {
                         err = new ReadError(err, "Config: Parse error");
-                        error(err.message);
+                        error(err);
                         configData = {};
                     }
                 }
@@ -14949,7 +15002,7 @@ class ConfigData {
                 external_fs_default().writeFile(this.path(), JSON.stringify(data), (err) => {
                     if (err) {
                         err = new ReadError(err, "Config: Write error");
-                        error(err.message);
+                        error(err);
                     }
                     resolve();
                 });
@@ -14959,47 +15012,6 @@ class ConfigData {
 }
 const Config = new ConfigData();
 /* harmony default export */ const main_Config = (Config);
-
-;// CONCATENATED MODULE: ./main/WebSocket.js
-
-
-
-
-
-function bind() {
-    external_electron_default().ipcMain.on("websocket.connect", (evt) => {
-        let wsHost = '';
-        let headers = {
-            'User-Agent': 'pritunl',
-            'Auth-Token': token,
-        };
-        if ((external_process_default()).platform === "linux" || (external_process_default()).platform === "darwin") {
-            wsHost = "ws+unix://" + external_path_default().join((external_path_default()).sep, "var", "run", "pritunl.sock") + ":";
-            headers['Host'] = 'unix';
-        }
-        else {
-            wsHost = "ws://127.0.0.1:9770";
-        }
-        let socket = new wrapper(wsHost + '/events', {
-            headers: headers,
-        });
-        socket.on('open', () => {
-            evt.sender.send('websocket.open');
-        });
-        socket.on('error', (err) => {
-            evt.sender.send('websocket.error', err.toString());
-        });
-        socket.on('onerror', (err) => {
-            evt.sender.send('websocket.error', err.toString());
-        });
-        socket.on('close', () => {
-            evt.sender.send('websocket.close');
-        });
-        socket.on('message', (dataBuf) => {
-            evt.sender.send('websocket.message', dataBuf.toString());
-        });
-    });
-}
 
 ;// CONCATENATED MODULE: ./main/Tpm.js
 
@@ -15022,7 +15034,7 @@ function Tpm_open(callerId, privKey64) {
             let err = new ProcessError(null, "Tpm: Secure enclave process timed out", {
                 caller_id: callerId,
             });
-            error(err.message);
+            error(err);
         }
         proc.kill("SIGINT");
     }, 10000);
@@ -15030,7 +15042,7 @@ function Tpm_open(callerId, privKey64) {
         err = new ProcessError(err, "Tpm: Secure enclave exec error", {
             caller_id: callerId,
         });
-        error(err.message);
+        error(err);
         post("/tpm/callback")
             .set("Auth-Token", token)
             .set("User-Agent", "pritunl")
@@ -15046,13 +15058,13 @@ function Tpm_open(callerId, privKey64) {
                     reponse_status: resp.status,
                     data: resp.data,
                 });
-                error(err.message);
+                error(err);
             }
         }, (err) => {
             err = new RequestError(err, "Tpm: Callback request error", {
                 caller_id: callerId,
             });
-            error(err.message);
+            error(err);
         });
     });
     proc.on("exit", (code, signal) => {
@@ -15063,7 +15075,7 @@ function Tpm_open(callerId, privKey64) {
                 exit_code: code,
                 output: stderr,
             });
-            error(err.message);
+            error(err);
             post("/tpm/callback")
                 .set("Auth-Token", token)
                 .set("User-Agent", "pritunl")
@@ -15079,13 +15091,13 @@ function Tpm_open(callerId, privKey64) {
                         reponse_status: resp.status,
                         data: resp.data,
                     });
-                    error(err.message);
+                    error(err);
                 }
             }, (err) => {
                 err = new RequestError(err, "Tpm: Callback request error", {
                     caller_id: callerId,
                 });
-                error(err.message);
+                error(err);
             });
         }
     });
@@ -15107,7 +15119,7 @@ function Tpm_open(callerId, privKey64) {
                 caller_id: callerId,
                 line: data,
             });
-            error(err.message);
+            error(err);
             return;
         }
         post("/tpm/callback")
@@ -15127,13 +15139,13 @@ function Tpm_open(callerId, privKey64) {
                     reponse_status: resp.status,
                     data: resp.data,
                 });
-                error(err.message);
+                error(err);
             }
         }, (err) => {
             err = new RequestError(err, "Tpm: Callback request error", {
                 caller_id: callerId,
             });
-            error(err.message);
+            error(err);
         });
     });
     proc.stderr.on("data", (data) => {
@@ -15173,7 +15185,6 @@ function Tpm_close(callerId) {
 
 
 let tray;
-let trayCurIcon;
 let awaken;
 let ready;
 let readyError;
@@ -15278,7 +15289,6 @@ external_electron_default().ipcMain.on("control", (evt, msg, data) => {
         openLink("https://client.pritunl.com/#install");
     }
 });
-bind();
 wakeup().then((awake) => {
     awaken = awake;
     if (ready) {
@@ -15350,6 +15360,7 @@ class Main {
                 contextIsolation: false,
             }
         });
+        setMainWindow(this.window);
         this.window.webContents.setUserAgent("pritunl");
         this.window.on("close", () => {
             try {
@@ -15367,7 +15378,7 @@ class Main {
             }
             shown = true;
             this.window.show();
-            if (external_process_default().argv.indexOf("--dev-tools") !== -1) {
+            if (devTools) {
                 this.window.webContents.openDevTools({
                     "mode": "undocked",
                 });
@@ -15379,15 +15390,14 @@ class Main {
             }
             shown = true;
             this.window.show();
-            if (external_process_default().argv.indexOf("--dev-tools") !== -1) {
+            if (devTools) {
                 this.window.webContents.openDevTools({
                     "mode": "undocked",
                 });
             }
         }, 800);
         let indexUrl = "file://" + external_path_default().join(__dirname, "..", "index.html");
-        indexUrl += "?dev=" + (external_process_default().argv.indexOf("--dev") !== -1 ?
-            "true" : "false");
+        indexUrl += "?dev=" + (!production ? "true" : "false");
         indexUrl += "&dataPath=" + encodeURIComponent(external_electron_default().app.getPath("userData"));
         indexUrl += "&frameless=" + (framelessClient ? "true" : "false");
         this.window.loadURL(indexUrl, {

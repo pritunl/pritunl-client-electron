@@ -20607,7 +20607,7 @@ function push(level, err) {
     external_fs_default().stat(pth, (err, stat) => {
         if (stat && stat.size > 200000) {
             external_fs_default().unlink(pth, () => {
-                external_fs_default().appendFile(log(), msg + "\n", (err) => {
+                external_fs_default().appendFile(pth, msg + "\n", (err) => {
                     if (err) {
                         err = new WriteError(err, "Logger: Failed to write log", { log_path: pth });
                         error2(err.message, 10);
@@ -20616,7 +20616,7 @@ function push(level, err) {
             });
         }
         else {
-            external_fs_default().appendFile(log(), msg + "\n", (err) => {
+            external_fs_default().appendFile(pth, msg + "\n", (err) => {
                 if (err) {
                     err = new WriteError(err, "Logger: Failed to write log", { log_path: pth });
                     error2(err.message, 10);
@@ -31069,56 +31069,33 @@ class Main extends react.Component {
 
 
 
-
-let connected = false;
-let showConnect = false;
-function Event_connect() {
-    if (token === '') {
-        setTimeout(() => {
-            Event_connect();
-        }, 100);
+let connectionLost = false;
+let registered = false;
+function Event_init() {
+    if (registered) {
         return;
     }
-    let reconnected = false;
-    let reconnect = () => {
-        setTimeout(() => {
-            if (reconnected) {
-                return;
-            }
-            reconnected = true;
-            Event_connect();
-        }, 3500);
-    };
-    external_electron_namespaceObject.ipcRenderer.send("websocket.connect");
-    external_electron_namespaceObject.ipcRenderer.on('websocket.open', () => {
-        if (showConnect) {
-            showConnect = false;
-            success('Events: Service reconnected');
-            clearAlert2();
+    registered = true;
+    external_electron_namespaceObject.ipcRenderer.on("event.reconnected", () => {
+        connectionLost = false;
+        success("Events: Service connection restored");
+        clearAlert2();
+    });
+    external_electron_namespaceObject.ipcRenderer.on("event.closed", (evt, errStr) => {
+        if (!connectionLost) {
+            connectionLost = true;
+            error("Events: Service connection lost");
         }
     });
-    external_electron_namespaceObject.ipcRenderer.on('websocket.error', (evt, errStr) => {
+    external_electron_namespaceObject.ipcRenderer.on("event.error", (evt, errStr) => {
         let err = new Error(errStr);
         err = new RequestError(err, "Failed to connect to background service, retrying");
         errorAlert2(err, 3);
-        showConnect = true;
-        reconnect();
     });
-    external_electron_namespaceObject.ipcRenderer.on('websocket.close', () => {
-        showConnect = true;
-        reconnect();
-    });
-    external_electron_namespaceObject.ipcRenderer.on('websocket.message', (evt, dataStr) => {
+    external_electron_namespaceObject.ipcRenderer.on("event", (evt, dataStr) => {
         let data = JSON.parse(dataStr);
         dispatcher_EventDispatcher.dispatch(data);
     });
-}
-function Event_init() {
-    if (connected) {
-        return;
-    }
-    connected = true;
-    Event_connect();
 }
 
 ;// CONCATENATED MODULE: ./app/App.js
