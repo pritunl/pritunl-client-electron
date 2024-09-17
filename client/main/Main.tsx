@@ -1,17 +1,15 @@
 import process from "process"
 import path from "path"
 import fs from "fs"
-import childprocess from "child_process"
 import electron from "electron"
 import * as Utils from "./Utils";
 import * as Service from "./Service"
+import * as Constants from "./Constants"
 import Config from "./Config"
-import * as WebSocket from "./WebSocket"
 import * as Errors from "../app/Errors";
 import * as Tpm from "./Tpm"
 
 let tray: electron.Tray
-let trayCurIcon: boolean
 let awaken: boolean
 let ready: boolean
 let readyError: string
@@ -126,8 +124,6 @@ electron.ipcMain.on(
 	},
 )
 
-WebSocket.bind()
-
 Service.wakeup().then((awake: boolean) => {
 	awaken = awake
 	if (ready) {
@@ -209,6 +205,10 @@ class Main {
 			}
 		})
 
+		Constants.setMainWindow(this.window)
+
+		this.window.webContents.setUserAgent("pritunl")
+
 		this.window.on("close", (): void => {
 			try {
 				windowSize = this.window.getSize()
@@ -227,7 +227,7 @@ class Main {
 			shown = true
 			this.window.show()
 
-			if (process.argv.indexOf("--dev-tools") !== -1) {
+			if (Constants.devTools) {
 				this.window.webContents.openDevTools({
 					"mode": "undocked",
 				})
@@ -240,7 +240,7 @@ class Main {
 			shown = true
 			this.window.show()
 
-			if (process.argv.indexOf("--dev-tools") !== -1) {
+			if (Constants.devTools) {
 				this.window.webContents.openDevTools({
 					"mode": "undocked",
 				})
@@ -248,8 +248,7 @@ class Main {
 		}, 800)
 
 		let indexUrl = "file://" + path.join(__dirname, "..", "index.html")
-		indexUrl += "?dev=" + (process.argv.indexOf("--dev") !== -1 ?
-			"true" : "false")
+		indexUrl += "?dev=" + (!Constants.production ? "true" : "false")
 		indexUrl += "&dataPath=" + encodeURIComponent(
 			electron.app.getPath("userData"))
 		indexUrl += "&frameless=" + (framelessClient ? "true" : "false")
