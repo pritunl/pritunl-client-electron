@@ -149,7 +149,7 @@ func SortRemotes(addr4, addr6 string, remotes []string, license string) (
 		if err != nil {
 			logrus.WithFields(logrus.Fields{
 				"error": err,
-			}).Info("profile: Failed to get public IPv4 address")
+			}).Info("geosort: Failed to get public IPv4 address")
 			err = nil
 		}
 	}
@@ -159,7 +159,7 @@ func SortRemotes(addr4, addr6 string, remotes []string, license string) (
 		if err != nil {
 			//logrus.WithFields(logrus.Fields{
 			//	"error": err,
-			//}).Info("profile: Failed to get public IPv6 address")
+			//}).Info("geosort: Failed to get public IPv6 address")
 			err = nil
 		}
 	}
@@ -236,12 +236,18 @@ func SortRemotes(addr4, addr6 string, remotes []string, license string) (
 		logrus.WithFields(logrus.Fields{
 			"remotes": remotes,
 			"error":   err,
-		}).Error("profile: Geo sort failed")
+		}).Error("geosort: Geo sort failed")
 		err = nil
 	}
 
 	newRemotes = geo.DestinationAddresses
 	newRemotes = append(newRemotes, geo.DestinationAddresses6...)
+
+	logrus.WithFields(logrus.Fields{
+		"public_address":  newAddr4,
+		"public_address6": newAddr6,
+		"remotes":         newRemotes,
+	}).Info("geosort: Sorted remotes")
 
 	return
 }
