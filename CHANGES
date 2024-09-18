@@ -1,8 +1,7 @@
 Pritunl Client Changelog
 ========================
 
-Version 1.2.4024.38 2024-09-18
-------------------------------
+<%= version %>
 
 Improve cli password prompt
 Add sso auth support to cli
