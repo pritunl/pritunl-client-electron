@@ -1,32 +1,33 @@
 /// <reference path="../References.d.ts"/>
-import * as React from 'react';
-import Help from './Help';
+import * as React from "react"
+import Help from "./Help"
+import electron from "electron"
 
 interface Props {
-	hidden?: boolean;
-	disabled?: boolean;
-	label: string;
-	help: string;
-	accept?: string;
-	value: string;
-	onChange?: (val: string) => void;
+	hidden?: boolean
+	disabled?: boolean
+	label: string
+	help: string
+	accept?: string
+	value: string
+	onChange?: (val: string) => void
 }
 
 const css = {
 	label: {
-		width: '100%',
-		maxWidth: '280px',
-		marginBottom: '5px',
+		width: "100%",
+		maxWidth: "280px",
+		marginBottom: "5px",
 	} as React.CSSProperties,
 	input: {
-		width: '100%',
+		width: "100%",
 	} as React.CSSProperties,
 	inputBox: {
 		display: "block",
-		maxWidth: '280px',
-		width: '100%',
+		maxWidth: "280px",
+		width: "100%",
 	} as React.CSSProperties,
-};
+}
 
 export default class PageInputFile extends React.Component<Props, {}> {
 	render(): JSX.Element {
@@ -54,18 +55,22 @@ export default class PageInputFile extends React.Component<Props, {}> {
 					accept={this.props.accept}
 					disabled={this.props.disabled}
 					onChange={(evt): void => {
-						let pth = ""
-						if (evt.currentTarget.files && evt.currentTarget.files.length) {
-							pth = evt.currentTarget.files[0].path
+						let file: File
+						if (evt.target.files && evt.target.files.length) {
+							file = evt.target.files[0]
+						} else if (evt.currentTarget.files &&
+								evt.currentTarget.files.length) {
+							file = evt.currentTarget.files[0]
 						}
+						let pth = electron.webUtils.getPathForFile(file)
 
 						if (this.props.onChange) {
-							this.props.onChange(pth);
+							this.props.onChange(pth)
 						}
 					}}
 				/>
 				<span className="bp5-file-upload-input">{label}</span>
 			</label>
-		</div>;
+		</div>
 	}
 }
