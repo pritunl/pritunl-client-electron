@@ -5,6 +5,7 @@ Pritunl Client Changelog
 
 Improve cli password prompt
 Add sso auth support to cli
+Add geo location host selection
 Fix search domain on macos
 Fix issue with IPv6 connections
 
