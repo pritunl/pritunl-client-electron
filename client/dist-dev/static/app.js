@@ -3548,21 +3548,24 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _Help__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Help */ "./app/components/Help.js");
+/* harmony import */ var electron__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! electron */ "electron");
+/* harmony import */ var electron__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(electron__WEBPACK_IMPORTED_MODULE_2__);
+
 
 
 const css = {
     label: {
-        width: '100%',
-        maxWidth: '280px',
-        marginBottom: '5px',
+        width: "100%",
+        maxWidth: "280px",
+        marginBottom: "5px",
     },
     input: {
-        width: '100%',
+        width: "100%",
     },
     inputBox: {
         display: "block",
-        maxWidth: '280px',
-        width: '100%',
+        maxWidth: "280px",
+        width: "100%",
     },
 };
 class PageInputFile extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
@@ -3574,10 +3577,15 @@ class PageInputFile extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
                 react__WEBPACK_IMPORTED_MODULE_0__.createElement(_Help__WEBPACK_IMPORTED_MODULE_1__["default"], { title: this.props.label, content: this.props.help })),
             react__WEBPACK_IMPORTED_MODULE_0__.createElement("label", { className: "bp5-file-input", style: css.inputBox },
                 react__WEBPACK_IMPORTED_MODULE_0__.createElement("input", { style: css.input, type: "file", accept: this.props.accept, disabled: this.props.disabled, onChange: (evt) => {
-                        let pth = "";
-                        if (evt.currentTarget.files && evt.currentTarget.files.length) {
-                            pth = evt.currentTarget.files[0].path;
+                        let file;
+                        if (evt.target.files && evt.target.files.length) {
+                            file = evt.target.files[0];
                         }
+                        else if (evt.currentTarget.files &&
+                            evt.currentTarget.files.length) {
+                            file = evt.currentTarget.files[0];
+                        }
+                        let pth = electron__WEBPACK_IMPORTED_MODULE_2___default().webUtils.getPathForFile(file);
                         if (this.props.onChange) {
                             this.props.onChange(pth);
                         }
@@ -4547,12 +4555,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _actions_ProfileActions__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../actions/ProfileActions */ "./app/actions/ProfileActions.js");
-/* harmony import */ var _blueprintjs_core__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/components/dialog/dialog.js");
+/* harmony import */ var _blueprintjs_core__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/components/dialog/dialog.js");
 /* harmony import */ var _PageInfo__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./PageInfo */ "./app/components/PageInfo.js");
 /* harmony import */ var _PageInput__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./PageInput */ "./app/components/PageInput.js");
 /* harmony import */ var _PageSwitch__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./PageSwitch */ "./app/components/PageSwitch.js");
 /* harmony import */ var _utils_MiscUtils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../utils/MiscUtils */ "./app/utils/MiscUtils.js");
 /* harmony import */ var _Constants__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../Constants */ "./app/Constants.js");
+/* harmony import */ var _Errors__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../Errors */ "./app/Errors.js");
+/* harmony import */ var _Logger__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../Logger */ "./app/Logger.js");
+
+
 
 
 
@@ -4603,6 +4615,16 @@ class ProfileSettings extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
             if (prfl) {
                 if (this.state.setAutoStart !== null) {
                     prfl.disabled = !this.state.setAutoStart;
+                }
+                if (prfl.force_connect && prfl.disabled) {
+                    let err = new _Errors__WEBPACK_IMPORTED_MODULE_7__.WriteError(null, "Profiles: Profile autostart enforced by server", { profile_id: prfl.id });
+                    _Logger__WEBPACK_IMPORTED_MODULE_8__.errorAlert(err, 10);
+                    prfl.disabled = false;
+                    this.setState({
+                        ...this.state,
+                        setAutoStart: null,
+                    });
+                    return;
                 }
                 _actions_ProfileActions__WEBPACK_IMPORTED_MODULE_1__.commit(prfl).then(() => {
                     if (this.state.setSystem !== null) {
@@ -4860,7 +4882,7 @@ class ProfileSettings extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
         }
         return react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", { style: css.box },
             react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", { className: "bp5-button bp5-icon-cog", style: css.button, type: "button", disabled: this.state.disabled, onClick: this.openDialog }, "Settings"),
-            react__WEBPACK_IMPORTED_MODULE_0__.createElement(_blueprintjs_core__WEBPACK_IMPORTED_MODULE_7__.Dialog, { title: "Profile Settings", style: css.dialog, isOpen: this.state.dialog, usePortal: true, portalContainer: document.body, onClose: this.closeDialog },
+            react__WEBPACK_IMPORTED_MODULE_0__.createElement(_blueprintjs_core__WEBPACK_IMPORTED_MODULE_9__.Dialog, { title: "Profile Settings", style: css.dialog, isOpen: this.state.dialog, usePortal: true, portalContainer: document.body, onClose: this.closeDialog },
                 react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", { className: "bp5-dialog-body" },
                     react__WEBPACK_IMPORTED_MODULE_0__.createElement(_PageInput__WEBPACK_IMPORTED_MODULE_3__["default"], { disabled: this.state.disabled, label: "Name", help: "Profile name.", type: "text", placeholder: "Enter name", value: profile.name || "", onChange: (val) => {
                             this.set("name", val);

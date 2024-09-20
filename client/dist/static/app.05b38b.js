@@ -23685,19 +23685,20 @@ class PageInput extends react.Component {
 ;// CONCATENATED MODULE: ./app/components/PageInputFile.js
 
 
+
 const PageInputFile_css = {
     label: {
-        width: '100%',
-        maxWidth: '280px',
-        marginBottom: '5px',
+        width: "100%",
+        maxWidth: "280px",
+        marginBottom: "5px",
     },
     input: {
-        width: '100%',
+        width: "100%",
     },
     inputBox: {
         display: "block",
-        maxWidth: '280px',
-        width: '100%',
+        maxWidth: "280px",
+        width: "100%",
     },
 };
 class PageInputFile extends react.Component {
@@ -23709,10 +23710,15 @@ class PageInputFile extends react.Component {
                 react.createElement(Help, { title: this.props.label, content: this.props.help })),
             react.createElement("label", { className: "bp5-file-input", style: PageInputFile_css.inputBox },
                 react.createElement("input", { style: PageInputFile_css.input, type: "file", accept: this.props.accept, disabled: this.props.disabled, onChange: (evt) => {
-                        let pth = "";
-                        if (evt.currentTarget.files && evt.currentTarget.files.length) {
-                            pth = evt.currentTarget.files[0].path;
+                        let file;
+                        if (evt.target.files && evt.target.files.length) {
+                            file = evt.target.files[0];
                         }
+                        else if (evt.currentTarget.files &&
+                            evt.currentTarget.files.length) {
+                            file = evt.currentTarget.files[0];
+                        }
+                        let pth = external_electron_default().webUtils.getPathForFile(file);
                         if (this.props.onChange) {
                             this.props.onChange(pth);
                         }
@@ -25062,6 +25068,8 @@ class PageSwitch extends react.Component {
 
 
 
+
+
 const ProfileSettings_css = {
     box: {
         display: "inline-block"
@@ -25104,6 +25112,16 @@ class ProfileSettings extends react.Component {
             if (prfl) {
                 if (this.state.setAutoStart !== null) {
                     prfl.disabled = !this.state.setAutoStart;
+                }
+                if (prfl.force_connect && prfl.disabled) {
+                    let err = new WriteError(null, "Profiles: Profile autostart enforced by server", { profile_id: prfl.id });
+                    errorAlert(err, 10);
+                    prfl.disabled = false;
+                    this.setState({
+                        ...this.state,
+                        setAutoStart: null,
+                    });
+                    return;
                 }
                 commit(prfl).then(() => {
                     if (this.state.setSystem !== null) {
