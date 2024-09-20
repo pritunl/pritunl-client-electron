@@ -1,6 +1,10 @@
 Pritunl Client Changelog
 ========================
 
+<%= version %>
+
+Fix profile import issues
+
 Version 1.3.4024.40 2024-09-18
 ------------------------------
 
