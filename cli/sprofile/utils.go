@@ -466,6 +466,13 @@ func SetState(sprflId string, state bool) (err error) {
 		return
 	}
 
+	if sprfl.ForceConnect && !state {
+		err = errortypes.ParseError{
+			errors.New("sprofile: Autostart enforced by server"),
+		}
+		return
+	}
+
 	sprfl.Disabled = !state
 
 	reqUrl := service.GetAddress() + "/sprofile"
