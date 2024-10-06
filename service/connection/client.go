@@ -1,0 +1,869 @@
+package connection
+
+import (
+	"bytes"
+	"context"
+	"crypto"
+	"crypto/hmac"
+	"crypto/rand"
+	"crypto/rsa"
+	"crypto/sha512"
+	"crypto/subtle"
+	"crypto/tls"
+	"crypto/x509"
+	"encoding/base64"
+	"encoding/json"
+	"encoding/pem"
+	"fmt"
+	"net/http"
+	"net/url"
+	"runtime"
+	"strconv"
+	"strings"
+	"sync"
+	"time"
+
+	"github.com/dropbox/godropbox/errors"
+	"github.com/pritunl/pritunl-client-electron/service/config"
+	"github.com/pritunl/pritunl-client-electron/service/errortypes"
+	"github.com/pritunl/pritunl-client-electron/service/event"
+	"github.com/pritunl/pritunl-client-electron/service/sprofile"
+	"github.com/pritunl/pritunl-client-electron/service/tpm"
+	"github.com/pritunl/pritunl-client-electron/service/utils"
+	"github.com/sirupsen/logrus"
+	"golang.org/x/crypto/nacl/box"
+)
+
+var (
+	clientTransport = &http.Transport{
+		DisableKeepAlives:   true,
+		TLSHandshakeTimeout: 5 * time.Second,
+		TLSClientConfig: &tls.Config{
+			InsecureSkipVerify: true,
+			MinVersion:         tls.VersionTLS12,
+			MaxVersion:         tls.VersionTLS13,
+		},
+	}
+	clientInsecure = &http.Client{
+		Transport: clientTransport,
+		Timeout:   10 * time.Second,
+	}
+	clientConnInsecure = &http.Client{
+		Transport: clientTransport,
+		Timeout:   30 * time.Second,
+	}
+)
+
+type ReqBox struct {
+	DeviceId       string   `json:"device_id"`
+	DeviceName     string   `json:"device_name"`
+	DeviceKey      string   `json:"device_key"`
+	DeviceHostname string   `json:"device_hostname"`
+	Platform       string   `json:"platform"`
+	MacAddr        string   `json:"mac_addr"`
+	MacAddrs       []string `json:"mac_addrs"`
+	Token          string   `json:"token"`
+	Nonce          string   `json:"nonce"`
+	Password       string   `json:"password"`
+	Timestamp      int64    `json:"timestamp"`
+	PublicKey      string   `json:"public_key"`
+	WgPublicKey    string   `json:"wg_public_key"`
+	PublicAddress  string   `json:"public_address"`
+	PublicAddress6 string   `json:"public_address6"`
+	SsoToken       string   `json:"sso_token"`
+}
+
+type RespBox struct {
+	Mode      string `json:"mode"`
+	SsoToken  string `json:"sso_token"`
+	SsoUrl    string `json:"sso_url"`
+	Data      string `json:"data"`
+	Nonce     string `json:"nonce"`
+	Signature string `json:"signature"`
+}
+
+type EncryptedKeyBox struct {
+	Data            string `json:"data"`
+	Nonce           string `json:"nonce"`
+	PublicKey       string `json:"public_key"`
+	Signature       string `json:"signature"`
+	DeviceSignature string `json:"device_signature"`
+}
+
+type EncryptedRequestData struct {
+	Body      []byte
+	Token     string
+	Timestamp string
+	Nonce     string
+	Signature string
+}
+
+type Cipher struct {
+	serverPubKey  *[32]byte
+	senderPubKey  *[32]byte
+	senderPrivKey *[32]byte
+}
+
+type ConnData struct {
+	Allow  bool   `json:"allow"`
+	Reason string `json:"reason"`
+	RegKey string `json:"reg_key"`
+
+	// ovpn
+	Token   string `json:"token"`
+	Remote  string `json:"remote"`
+	Remote6 string `json:"remote6"`
+
+	// wg
+	Configuration *WgConf `json:"configuration"`
+}
+
+type SsoEventData struct {
+	Id  string `json:"id"`
+	Url string `json:"url"`
+}
+
+type Client struct {
+	conn              *Connection        `json:"-"`
+	prov              Provider           `json:"-"`
+	requestCancelLock sync.Mutex         `json:"-"`
+	requestCancel     context.CancelFunc `json:"-"`
+	macAddrs          []string
+}
+
+func (c *Client) Fields() logrus.Fields {
+	return logrus.Fields{}
+}
+
+func (c *Client) Start(prov Provider) (err error) {
+	c.prov = prov
+
+	err = c.prov.PreConnect()
+	if err != nil {
+		return
+	}
+
+	if c.conn.State.IsStop() {
+		c.conn.State.Close()
+		return
+	}
+
+	c.conn.Data.UpdateEvent()
+
+	err = c.conn.Data.ParseProfile()
+	if err != nil {
+		c.conn.State.Close()
+		return
+	}
+
+	if c.conn.State.IsStop() {
+		c.conn.State.Close()
+		return
+	}
+
+	if c.conn.Profile.Mode == WgMode ||
+		c.conn.Profile.DynamicFirewall ||
+		c.conn.Profile.SsoAuth ||
+		c.conn.Profile.DeviceAuth {
+
+		err = c.connectPreAuth()
+		if err != nil {
+			return
+		}
+	} else {
+		err = c.connectDirect()
+		if err != nil {
+			return
+		}
+	}
+
+	return
+}
+
+func (c *Client) connectDirect() (err error) {
+	for _, remote := range c.conn.Data.Remotes {
+		logrus.WithFields(c.conn.Fields(logrus.Fields{
+			"remote": remote.GetFormatted(),
+		})).Info("connection: Attempting remote")
+	}
+
+	return
+}
+
+func (c *Client) connectPreAuth() (err error) {
+	var evt *event.Event
+	final := false
+	var data *ConnData
+
+	for _, remote := range c.conn.Data.Remotes {
+		logrus.WithFields(c.conn.Fields(logrus.Fields{
+			"remote": remote.GetFormatted(),
+		})).Info("connection: Attempting remote")
+
+		if c.conn.State.IsStop() {
+			c.conn.State.Close()
+			return
+		}
+
+		data, final, evt, err = c.authorize(remote.Host, "", time.Time{})
+		if err != nil {
+			return
+		}
+
+		if c.conn.State.IsStop() {
+			c.conn.State.Close()
+			return
+		}
+
+		if err == nil || final {
+			break
+		}
+
+		if c.conn.State.IsStop() {
+			c.conn.State.Close()
+			return
+		}
+	}
+
+	if err != nil {
+		if evt != nil {
+			evt.Init()
+		} else {
+			c.conn.Data.SendProfileEvent("connection_error")
+		}
+
+		logrus.WithFields(logrus.Fields{
+			"error": err,
+		}).Error("profile: All connection requests failed")
+		err = nil
+
+		// if p.connected && !p.stop {
+		// 	time.Sleep(3 * time.Second)
+		// 	p.restartSafe()
+		// } else {
+		// 	time.Sleep(1 * time.Second)
+		// 	p.stopSafe()
+		// }
+		return
+	}
+
+	if data == nil {
+		err = &errortypes.ParseError{
+			errors.Wrap(err, "profile: Connection data empty"),
+		}
+		return
+	}
+
+	if !data.Allow {
+		c.conn.Data.ResetAuthToken()
+
+		if c.conn.State.IsStop() {
+			c.conn.State.Close()
+			return
+		}
+
+		if data.RegKey != "" {
+			logrus.WithFields(c.conn.Fields(logrus.Fields{
+				"reason": data.Reason,
+			})).Error("profile: Device registration required")
+
+			c.conn.Data.RegistrationKey = data.RegKey
+
+			if c.conn.Profile.SystemProfile {
+				sprofile.Deactivate(c.conn.Profile.Id)
+
+				sprfl := sprofile.Get(c.conn.Profile.Id)
+				if sprfl != nil {
+					sprfl.State = false
+					sprfl.RegistrationKey = c.conn.Data.RegistrationKey
+					err = sprfl.Commit()
+					if err != nil {
+						return
+					}
+				} else {
+					logrus.WithFields(c.conn.Fields(nil)).Error(
+						"profile: Failed to find system profile")
+				}
+			}
+
+			c.conn.Data.SendProfileEvent("registration_required")
+		} else {
+			logrus.WithFields(c.conn.Fields(logrus.Fields{
+				"reason": data.Reason,
+			})).Error("profile: Failed to authenticate")
+
+			c.conn.Data.SendProfileEvent("auth_error")
+
+			if c.conn.Profile.SystemProfile {
+				logrus.WithFields(c.conn.Fields(nil)).Error(
+					"profile: Stopping system " +
+						"profile due to authentication errors")
+
+				sprofile.Deactivate(c.conn.Profile.Id)
+				sprofile.SetAuthErrorCount(c.conn.Profile.Id, 0)
+			}
+
+			time.Sleep(3 * time.Second)
+		}
+
+		c.conn.State.Close()
+		return
+	} else {
+		if c.conn.Profile.SystemProfile &&
+			c.conn.Data.RegistrationKey != "" {
+
+			c.conn.Data.RegistrationKey = ""
+			sprfl := sprofile.Get(c.conn.Profile.Id)
+			if sprfl != nil {
+				sprfl.RegistrationKey = ""
+				err = sprfl.Commit()
+				if err != nil {
+					return
+				}
+			} else {
+				logrus.WithFields(c.conn.Fields(nil)).Error(
+					"profile: Failed to find system profile")
+			}
+		} else {
+			c.conn.Data.SendProfileEvent("registration_pass")
+		}
+	}
+
+	err = c.prov.Connect(data)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+func (c *Client) getUrl(host, handle string) *url.URL {
+	if strings.Count(host, ":") > 1 && !strings.Contains(host, "[") {
+		host = "[" + host + "]"
+	}
+
+	reqPath := fmt.Sprintf(
+		"/key/%s/%s/%s/%s",
+		handle,
+		c.conn.Profile.OrgId,
+		c.conn.Profile.UserId,
+		c.conn.Profile.ServerId,
+	)
+
+	return &url.URL{
+		Scheme: "https",
+		Host:   host,
+		Path:   reqPath,
+	}
+}
+
+func (c *Client) initBox() (ciph *Cipher, reqBx *ReqBox, err error) {
+	var serverPubKey [32]byte
+	serverPubKeySlic, err := base64.StdEncoding.DecodeString(
+		c.conn.Profile.ServerBoxPublicKey)
+	if err != nil {
+		err = &errortypes.ParseError{
+			errors.Wrap(err, "profile: Failed to decode server box key"),
+		}
+		return
+	}
+	copy(serverPubKey[:], serverPubKeySlic)
+
+	senderPubKey, senderPrivKey, err := box.GenerateKey(rand.Reader)
+	if err != nil {
+		err = &errortypes.ReadError{
+			errors.Wrap(err, "profile: Failed to generate nacl key"),
+		}
+		return
+	}
+
+	ciph = &Cipher{
+		serverPubKey:  &serverPubKey,
+		senderPubKey:  senderPubKey,
+		senderPrivKey: senderPrivKey,
+	}
+
+	macAddrs, err := c.conn.Data.GetMacAddrs()
+	if err != nil {
+		return
+	}
+
+	if c.conn.State.IsStop() {
+		c.conn.State.Close()
+		return
+	}
+
+	pltfrm := ""
+	switch runtime.GOOS {
+	case "linux":
+		pltfrm = "linux"
+		break
+	case "windows":
+		pltfrm = "win"
+		break
+	case "darwin":
+		pltfrm = "mac"
+		break
+	default:
+		pltfrm = "unknown"
+		break
+	}
+
+	reqBx = &ReqBox{
+		DeviceId:       c.conn.Data.DeviceId,
+		DeviceName:     c.conn.Data.DeviceName,
+		DeviceHostname: c.conn.Data.Hostname,
+		Platform:       pltfrm,
+		MacAddr:        c.conn.Data.MacAddr,
+		MacAddrs:       macAddrs,
+		Timestamp:      time.Now().Unix(),
+		PublicAddress:  c.conn.Data.PublicAddr,
+		PublicAddress6: c.conn.Data.PublicAddr6,
+		PublicKey:      c.prov.GetPublicKey(),
+		WgPublicKey:    c.prov.GetPublicKey(),
+	}
+
+	return
+}
+
+func (c *Client) authorize(host string, ssoToken string,
+	ssoStart time.Time) (data *ConnData, final bool,
+	evt *event.Event, err error) {
+
+	tokn, err := c.conn.Data.GetAuthToken()
+	if err != nil {
+		return
+	}
+
+	if c.conn.State.IsStop() {
+		c.conn.State.Close()
+		return
+	}
+
+	ciph, reqBx, err := c.initBox()
+	if err != nil {
+		return
+	}
+
+	reqBx.Password = c.conn.Profile.Password
+	reqBx.Token = tokn.Token
+	reqBx.Nonce = tokn.Nonce
+	reqBx.SsoToken = ssoToken
+
+	handle := ""
+	if ssoToken != "" || (c.conn.Profile.SsoAuth && tokn.Validated) {
+		handle = c.prov.GetReqPrefix() + "_wait"
+	} else {
+		handle = c.prov.GetReqPrefix()
+	}
+	reqUrl := c.getUrl(host, handle)
+
+	if c.conn.State.IsStop() {
+		c.conn.State.Close()
+		return
+	}
+
+	res, err := c.EncRequest("POST", reqUrl, ciph, reqBx)
+	if err != nil {
+		return
+	}
+
+	if res.StatusCode == 428 && ssoToken != "" {
+		if time.Since(ssoStart) > 60*time.Second {
+			evt = &event.Event{
+				Type: "timeout_error",
+				Data: c.conn.Data,
+			}
+
+			err = &errortypes.RequestError{
+				errors.Wrap(err, "profile: Single sign-on timeout"),
+			}
+			return
+		}
+
+		data, _, evt, err = c.authorize(host, ssoToken, ssoStart)
+		if err != nil {
+			return
+		}
+
+		final = true
+		return
+	}
+
+	if res.StatusCode == 429 {
+		evt = &event.Event{
+			Type: "offline_error",
+			Data: c.conn.Data,
+		}
+
+		err = &errortypes.RequestError{
+			errors.Wrap(err, "profile: Server is offline"),
+		}
+		return
+	}
+
+	if res.StatusCode != 200 {
+		err = utils.LogRequestError(
+			res, "connection: Failed to complete authorize")
+		return
+	}
+
+	respBx := &RespBox{}
+	err = json.NewDecoder(res.Body).Decode(respBx)
+	if err != nil {
+		err = &errortypes.ParseError{
+			errors.Wrap(err, "profile: Failed to parse response body"),
+		}
+		return
+	}
+
+	if c.conn.State.IsStop() {
+		c.conn.State.Close()
+		return
+	}
+
+	if respBx.SsoUrl != "" && respBx.SsoToken != "" && ssoToken == "" {
+		evt2 := &event.Event{
+			Type: "sso_auth",
+			Data: &SsoEventData{
+				Id:  c.conn.Profile.Id,
+				Url: respBx.SsoUrl,
+			},
+		}
+		evt2.Init()
+
+		if c.conn.Profile.SystemProfile {
+			c.conn.Data.SsoUrl = respBx.SsoUrl
+		}
+
+		c.conn.Data.Status = "authenticating"
+		c.conn.Data.UpdateEvent()
+
+		data, _, evt, err = c.authorize(
+			host, respBx.SsoToken, time.Now())
+		if err != nil {
+			return
+		}
+
+		if c.conn.State.IsStop() {
+			c.conn.State.Close()
+			return
+		}
+
+		if c.conn.Profile.SystemProfile {
+			c.conn.Data.SsoUrl = ""
+		}
+
+		final = true
+		return
+	} else if ssoToken != "" {
+		c.conn.Data.Status = "connecting"
+		c.conn.Data.UpdateEvent()
+	}
+
+	if c.conn.State.IsStop() {
+		c.conn.State.Close()
+		return
+	}
+
+	data = &ConnData{}
+	err = c.decryptRespBox(ciph, respBx, data)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+func (c *Client) encryptReqBox(method string, reqPath string,
+	ciph *Cipher, reqBx *ReqBox) (encReqData *EncryptedRequestData,
+	err error) {
+
+	if c.conn.Profile.ServerBoxPublicKey == "" {
+		err = &errortypes.ReadError{
+			errors.Wrap(err, "profile: Server box public key not set"),
+		}
+		return
+	}
+
+	var tp tpm.TpmCaller
+	if runtime.GOOS == "darwin" && !config.Config.ForceLocalTpm {
+		tp = &tpm.Remote{}
+	} else {
+		tp = &tpm.Tpm{}
+	}
+
+	if c.conn.Profile.DeviceAuth {
+		err = tp.Open(config.Config.EnclavePrivateKey)
+		if err != nil {
+			return
+		}
+		defer tp.Close()
+
+		deviceKey, e := tp.PublicKey()
+		if e != nil {
+			err = e
+			return
+		}
+
+		reqBx.DeviceKey = deviceKey
+	}
+
+	boxData, err := json.Marshal(reqBx)
+	if err != nil {
+		err = &errortypes.ParseError{
+			errors.Wrap(err, "profile: Failed to marshal wg key box"),
+		}
+		return
+	}
+
+	var nonce [24]byte
+	nonceSl := make([]byte, 24)
+	_, err = rand.Read(nonceSl)
+	if err != nil {
+		err = &errortypes.ReadError{
+			errors.Wrap(err, "profile: Failed to generate nacl nonce"),
+		}
+		return
+	}
+	copy(nonce[:], nonceSl)
+
+	encrypted := box.Seal([]byte{}, boxData,
+		&nonce, ciph.serverPubKey, ciph.senderPrivKey)
+
+	nonce64 := base64.StdEncoding.EncodeToString(nonceSl)
+	ciphertext64 := base64.StdEncoding.EncodeToString(encrypted)
+	senderPubKey64 := base64.StdEncoding.EncodeToString(ciph.senderPubKey[:])
+
+	encBox := &EncryptedKeyBox{
+		Data:      ciphertext64,
+		Nonce:     nonce64,
+		PublicKey: senderPubKey64,
+	}
+
+	userPrivKeyBlock, _ := pem.Decode([]byte(c.conn.Data.PrivateKey))
+	if userPrivKeyBlock == nil {
+		err = &errortypes.ParseError{
+			errors.New("profile: Failed to decode private key"),
+		}
+		return
+	}
+
+	userPrivKey, err := x509.ParsePKCS1PrivateKey(userPrivKeyBlock.Bytes)
+	if err != nil {
+		userPrivKeyInf, e := x509.ParsePKCS8PrivateKey(
+			userPrivKeyBlock.Bytes)
+		if e != nil {
+			err = &errortypes.ParseError{
+				errors.Wrap(e, "profile: Failed to parse private key"),
+			}
+			return
+		}
+
+		userPrivKey = userPrivKeyInf.(*rsa.PrivateKey)
+	}
+
+	reqHash := sha512.Sum512([]byte(strings.Join([]string{
+		encBox.Data,
+		encBox.Nonce,
+		encBox.PublicKey,
+	}, "&")))
+
+	rsaSig, err := rsa.SignPSS(
+		rand.Reader,
+		userPrivKey,
+		crypto.SHA512,
+		reqHash[:],
+		&rsa.PSSOptions{
+			SaltLength: 0,
+			Hash:       crypto.SHA512,
+		},
+	)
+	if err != nil {
+		err = &errortypes.ParseError{
+			errors.Wrap(err, "profile: Failed to rsa sign data"),
+		}
+		return
+	}
+
+	encBox.Signature = base64.StdEncoding.EncodeToString(rsaSig)
+
+	if c.conn.Profile.DeviceAuth {
+		privKey64 := ""
+		privKey64, encBox.DeviceSignature, err = tp.Sign(reqHash[:])
+		if err != nil {
+			return
+		}
+
+		if privKey64 != "" {
+			config.Config.EnclavePrivateKey = privKey64
+
+			err = config.Save()
+			if err != nil {
+				return
+			}
+		}
+	}
+
+	encData, err := json.Marshal(encBox)
+	if err != nil {
+		return
+	}
+
+	encReqData = &EncryptedRequestData{
+		Body: encData,
+	}
+
+	timestamp := strconv.FormatInt(time.Now().Unix(), 10)
+	authNonce, err := utils.RandStr(32)
+	if err != nil {
+		return
+	}
+
+	authData := []string{
+		c.conn.Profile.SyncToken,
+		timestamp,
+		authNonce,
+		method,
+		reqPath,
+		encBox.Data,
+		encBox.Nonce,
+		encBox.PublicKey,
+		encBox.Signature,
+	}
+
+	if encBox.DeviceSignature != "" {
+		authData = append(authData, encBox.DeviceSignature)
+	}
+
+	authStr := strings.Join(authData, "&")
+
+	hashFunc := hmac.New(sha512.New, []byte(c.conn.Profile.SyncSecret))
+	hashFunc.Write([]byte(authStr))
+	rawSignature := hashFunc.Sum(nil)
+	sig := base64.StdEncoding.EncodeToString(rawSignature)
+
+	encReqData.Token = c.conn.Profile.SyncToken
+	encReqData.Timestamp = timestamp
+	encReqData.Nonce = authNonce
+	encReqData.Signature = sig
+
+	return
+}
+
+func (c *Client) decryptRespBox(ciph *Cipher, respBx *RespBox,
+	dest interface{}) (err error) {
+
+	respHashFunc := hmac.New(sha512.New, []byte(c.conn.Profile.SyncSecret))
+	respHashFunc.Write([]byte(respBx.Data + "&" + respBx.Nonce))
+	respRawSignature := respHashFunc.Sum(nil)
+	respSig := base64.StdEncoding.EncodeToString(respRawSignature)
+
+	if subtle.ConstantTimeCompare([]byte(respSig),
+		[]byte(respBx.Signature)) != 1 {
+
+		err = &errortypes.ParseError{
+			errors.Wrap(err, "profile: Response signature invalid"),
+		}
+		return
+	}
+
+	respCiphertext, err := base64.StdEncoding.DecodeString(respBx.Data)
+	if err != nil {
+		err = &errortypes.ParseError{
+			errors.Wrap(err, "profile: Failed to parse response data"),
+		}
+		return
+	}
+
+	var respNonce [24]byte
+	respNonceSl, err := base64.StdEncoding.DecodeString(respBx.Nonce)
+	if err != nil {
+		err = &errortypes.ParseError{
+			errors.Wrap(err, "profile: Failed to parse response nonce"),
+		}
+		return
+	}
+	copy(respNonce[:], respNonceSl)
+
+	respPlaintext, ok := box.Open([]byte{}, respCiphertext,
+		&respNonce, ciph.serverPubKey, ciph.senderPrivKey)
+
+	if !ok {
+		err = &errortypes.ParseError{
+			errors.New("profile: Failed to decrypt response"),
+		}
+		return
+	}
+
+	err = json.Unmarshal(respPlaintext, dest)
+	if err != nil {
+		err = &errortypes.ParseError{
+			errors.New("profile: Failed to parse response"),
+		}
+		return
+	}
+
+	return
+}
+
+func (c *Client) EncRequest(method string, reqUrl *url.URL,
+	ciph *Cipher, reqBx *ReqBox) (resp *http.Response, err error) {
+
+	encReqData, err := c.encryptReqBox(method, reqUrl.Path, ciph, reqBx)
+	if err != nil {
+		return
+	}
+
+	defer func() {
+		c.requestCancelLock.Lock()
+		if c.requestCancel != nil {
+			c.requestCancel()
+			c.requestCancel = nil
+		}
+		c.requestCancelLock.Unlock()
+	}()
+
+	conx, cancel := context.WithCancel(context.Background())
+
+	req, err := http.NewRequestWithContext(
+		conx,
+		method,
+		reqUrl.String(),
+		bytes.NewBuffer(encReqData.Body),
+	)
+	if err != nil {
+		err = &errortypes.RequestError{
+			errors.Wrap(err, "profile: Request put error"),
+		}
+		return
+	}
+
+	req.Header.Set("User-Agent", "pritunl-client")
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Auth-Token", encReqData.Token)
+	req.Header.Set("Auth-Timestamp", encReqData.Timestamp)
+	req.Header.Set("Auth-Nonce", encReqData.Nonce)
+	req.Header.Set("Auth-Signature", encReqData.Signature)
+
+	c.requestCancelLock.Lock()
+	c.requestCancel = cancel
+	c.requestCancelLock.Unlock()
+
+	resp, err = clientConnInsecure.Do(req)
+	if err != nil {
+		err = &errortypes.RequestError{
+			errors.Wrap(err, "profile: Request put error"),
+		}
+		return
+	}
+
+	return
+}
+
+type Provider interface {
+	GetPublicKey() string
+	GetReqPrefix() string
+	PreConnect() (err error)
+	Connect(data *ConnData) (err error)
+}
