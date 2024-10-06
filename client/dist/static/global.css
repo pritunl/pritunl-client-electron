@@ -12,8 +12,23 @@
   src: url('fredoka-one.ttf') format('truetype');
 }
 
+@font-face {
+  font-family: "Roboto Mono";
+  src: url("RobotoMono-Regular.ttf") format("truetype");
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "Roboto Mono";
+  src: url("RobotoMono-Medium.ttf") format("truetype");
+  font-weight: 500;
+}
+
 body {
-  background-color: #f5f8fa;
+  background-color: #f6f7f9;
+}
+body.bp5-dark {
+  background-color: #252a31;
 }
 
 h2 {
@@ -24,10 +39,6 @@ h2 {
   user-select: none;
 }
 
-body.bp5-dark {
-  background-color: #293742;
-}
-
 .logo-dark {
   display: none;
 }
@@ -36,12 +47,19 @@ body.bp5-dark {
   border-radius: 3px;
 }
 
+.main-menu {
+  position: fixed !important;
+  top: 38px;
+  right: 1px !important;
+  width: 220px !important;
+}
+
 ::-webkit-scrollbar {
   width: 15px;
   background: #f5f8fa;
 }
 ::-webkit-scrollbar-thumb {
-  border-radius: 3px;
+  border-radius: 2px;
   background: #ffffff;
   border: 1px solid rgb(16 22 26 / 20%);
 }
@@ -51,15 +69,15 @@ body.bp5-dark {
 
 .bp5-dark ::-webkit-scrollbar {
   width: 15px;
-  background: #293742;
+  background: #262b32;
 }
 .bp5-dark ::-webkit-scrollbar-thumb {
-  border-radius: 3px;
-  background: #30404d;
+  border-radius: 2px;
+  background: #2f343c;
   border: 1px solid rgb(16 22 26 / 70%);
 }
 .bp5-dark ::-webkit-scrollbar-corner {
-  background: #293742;
+  background: #262b32;
 }
 
 .bp5-dark .logo-light {

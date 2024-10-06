@@ -13864,7 +13864,7 @@ class Response {
         try {
             return JSON.parse(this.data || null);
         }
-        catch (_a) {
+        catch {
             return null;
         }
     }
@@ -14151,6 +14151,13 @@ function nonce() {
         nonce += Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
     }
     return nonce;
+}
+function titleCase(str) {
+    return str
+        .toLowerCase()
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
 }
 function shuffle(n) {
     let i = n.length, j;
@@ -15114,7 +15121,7 @@ function Tpm_open(callerId, privKey64) {
         try {
             dataObj = JSON.parse(line.replace(/\s/g, ""));
         }
-        catch (_a) {
+        catch {
             let err = new RequestError(null, "Tpm: Failed to parse line", {
                 caller_id: callerId,
                 line: data,
@@ -15366,7 +15373,7 @@ class Main {
             try {
                 windowSize = this.window.getSize();
             }
-            catch (_a) { }
+            catch { }
         });
         this.window.on("closed", async () => {
             main = null;
