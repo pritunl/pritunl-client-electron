@@ -2,6 +2,7 @@ package connection
 
 import (
 	"runtime"
+	"runtime/debug"
 	"sync"
 
 	"github.com/dropbox/godropbox/container/set"
@@ -20,6 +21,16 @@ type Store struct {
 }
 
 func (s *Store) cleanState() {
+	defer func() {
+		panc := recover()
+		if panc != nil {
+			logrus.WithFields(logrus.Fields{
+				"stack": string(debug.Stack()),
+				"panic": panc,
+			}).Error("profile: Clean state panic")
+		}
+	}()
+
 	if runtime.GOOS == "darwin" && len(s.conns) == 0 {
 		err := utils.ClearScutilConnKeys()
 		if err != nil {
@@ -33,6 +44,13 @@ func (s *Store) cleanState() {
 			s.dnsForced = false
 		}
 	}
+}
+
+func (s *Store) Len() int {
+	s.lock.RLock()
+	defer s.lock.RUnlock()
+
+	return len(s.conns)
 }
 
 func (s *Store) IsActive() bool {
@@ -55,12 +73,77 @@ func (s *Store) IsConnected() bool {
 	return false
 }
 
+func (s *Store) Add(prflId string, conn *Connection) {
+	s.lock.RLock()
+	c := s.conns[prflId]
+	if c == nil {
+		s.conns[prflId] = conn
+		s.lock.RUnlock()
+		return
+	}
+	s.lock.RUnlock()
+
+	logrus.WithFields(c.Fields(nil)).Error(
+		"connection: Overwriting stored connection")
+	c.StopWait()
+
+	s.lock.RLock()
+	c = s.conns[prflId]
+	if c != nil {
+		c.State.SetStop()
+	}
+	s.conns[prflId] = conn
+	s.lock.RUnlock()
+
+	logrus.WithFields(conn.Fields(nil)).Error(
+		"connection: Overwrote stored connection")
+
+	return
+}
+
+func (s *Store) Remove(prflId string, conn *Connection) {
+	s.lock.RLock()
+	defer s.lock.RUnlock()
+
+	c := s.conns[prflId]
+	if c == conn {
+		delete(s.conns, prflId)
+	} else {
+		logrus.WithFields(c.Fields(nil)).Error(
+			"connection: Attempting to delete active connection")
+		logrus.WithFields(conn.Fields(nil)).Error(
+			"connection: Attempted to delete active connection")
+	}
+
+	go func() {
+		s.lock.RLock()
+		defer s.lock.RUnlock()
+
+		s.cleanState()
+	}()
+
+	return
+}
+
 func (s *Store) Get(prflId string) (conn *Connection) {
 	s.lock.RLock()
 	defer s.lock.RUnlock()
 
 	s.cleanState()
 	conn = s.conns[prflId]
+
+	return
+}
+
+func (s *Store) GetData(prflId string) (prfl *Data) {
+	s.lock.RLock()
+	defer s.lock.RUnlock()
+
+	s.cleanState()
+	conn := s.conns[prflId]
+	if conn != nil {
+		prfl = conn.Data
+	}
 
 	return
 }
@@ -74,6 +157,20 @@ func (s *Store) GetAll() (conns map[string]*Connection) {
 	s.cleanState()
 	for _, conn := range s.conns {
 		conns[conn.Id] = conn
+	}
+
+	return
+}
+
+func (s *Store) GetAllData() (prfls map[string]*Data) {
+	s.lock.RLock()
+	defer s.lock.RUnlock()
+
+	prfls = map[string]*Data{}
+
+	s.cleanState()
+	for _, conn := range s.conns {
+		prfls[conn.Id] = conn.Data
 	}
 
 	return
