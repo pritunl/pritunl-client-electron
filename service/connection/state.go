@@ -1,6 +1,7 @@
 package connection
 
 import (
+	"os"
 	"sync"
 	"time"
 
@@ -17,6 +18,7 @@ type State struct {
 	deadline           bool
 	delay              bool
 	automatic          bool
+	noReconnect        bool
 	closed             bool
 	closeWaiters       []chan bool
 	closeWaitersLock   sync.Mutex
@@ -25,13 +27,15 @@ type State struct {
 
 func (s *State) Fields() logrus.Fields {
 	return logrus.Fields{
-		"state_time":       s.startTime,
-		"state_stop":       s.stop,
-		"state_deadline":   s.deadline,
-		"state_delay":      s.delay,
-		"state_automatic":  s.automatic,
-		"state_closed":     s.closed,
-		"state_temp_paths": s.tempPaths,
+		"state_time":           s.startTime,
+		"state_stop":           s.stop,
+		"state_deadline":       s.deadline,
+		"state_delay":          s.delay,
+		"state_no_reconnect":   s.noReconnect,
+		"state_automatic":      s.automatic,
+		"state_closed":         s.closed,
+		"state_closed_waiters": len(s.closeWaiters),
+		"state_temp_paths":     s.tempPaths,
 	}
 }
 
@@ -53,6 +57,17 @@ func (s *State) PreStart() {
 	}
 }
 
+func (s *State) IsReconnect() bool {
+	return !s.noReconnect
+}
+
+func (s *State) NoReconnect(reason string) {
+	logrus.WithFields(s.conn.Fields(logrus.Fields{
+		"reason": reason,
+	})).Info("connection: Stopping reconnect")
+	s.noReconnect = true
+}
+
 func (s *State) stopWatch() {
 	for {
 		time.Sleep(1 * time.Second)
@@ -71,13 +86,12 @@ func (s *State) stopWatch() {
 	}
 }
 
-func (s *State) Stop() {
-	if s.stop {
-		logrus.WithFields(s.conn.Fields(nil)).Info(
-			"state: Profile already in stop")
-		return
-	}
-
+func (s *State) SetStop() {
+	// if s.stop {
+	// 	logrus.WithFields(s.conn.Fields(nil)).Info(
+	// 		"state: Profile already in stop")
+	// 	return
+	// }
 	s.stop = true
 }
 
@@ -87,6 +101,13 @@ func (s *State) IsStop() bool {
 	s.lastStopCheckTime = time.Now()
 	s.lastStopCheckStack = trace
 
+	if Shutdown || s.stop {
+		return true
+	}
+	return false
+}
+
+func (s *State) IsStopFast() bool {
 	if Shutdown || s.stop {
 		return true
 	}
@@ -121,8 +142,15 @@ func (s *State) AddPath(pth string) {
 	s.tempPaths = append(s.tempPaths, pth)
 }
 
+func (s *State) RemovePaths() {
+	paths := s.tempPaths
+	for _, pth := range paths {
+		os.Remove(pth)
+	}
+}
+
 func (s *State) CloseWait() {
-	waiter := make(chan bool, 3)
+	waiter := make(chan bool, 8)
 
 	s.closeWaitersLock.Lock()
 	if !s.closed {
@@ -136,18 +164,30 @@ func (s *State) CloseWait() {
 	time.Sleep(50 * time.Millisecond)
 }
 
+// Called by client code to indicate connection thread is closed
 func (s *State) Close() {
+	s.conn.Client.Disconnect()
+
 	s.closeWaitersLock.Lock()
 	if s.closed {
 		s.closeWaitersLock.Unlock()
+
+		logrus.WithFields(s.conn.Fields(nil)).Warn(
+			"connection: Connection already closed")
 		return
 	}
 	s.closed = true
 
-	for _, waiter := range s.closeWaiters {
-		waiter <- true
+	GlobalStore.Remove(s.conn.Id, s.conn)
+
+	if s.closeWaiters != nil {
+		for _, waiter := range s.closeWaiters {
+			waiter <- true
+		}
 	}
-	s.closeWaiters = []chan bool{}
+	s.closeWaiters = nil
 
 	s.closeWaitersLock.Unlock()
+
+	s.conn.Client.Disconnected()
 }
