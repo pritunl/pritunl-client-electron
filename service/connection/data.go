@@ -18,41 +18,47 @@ import (
 )
 
 const (
-	Connecting = "connecting"
-	Connected  = "connected"
+	Connecting    = "connecting"
+	Connected     = "connected"
+	Disconnecting = "disconnecting"
+	Disconnected  = "disconnected"
 
 	OvpnRemote = "ovpn"
 	SyncRemote = "sync"
 )
 
 type Data struct {
-	conn            *Connection `json:"-"`
-	Id              string      `json:"id"`
-	Mode            string      `json:"mode"`
-	WgIface         string      `json:"iface"`
-	OvpnIface       string      `json:"tun_iface"`
-	Routes          []*Route    `json:"routes"`
-	Routes6         []*Route    `json:"routes6"`
-	Status          string      `json:"status"`
-	Timestamp       int64       `json:"timestamp"`
-	GatewayAddr     string      `json:"gateway_addr"`
-	GatewayAddr6    string      `json:"gateway_addr6"`
-	ServerAddr      string      `json:"server_addr"`
-	ClientAddr      string      `json:"client_addr"`
-	MacAddr         string      `json:"mac_addr"`
-	WebPort         int         `json:"web_port"`
-	WebNoSsl        bool        `json:"web_no_ssl"`
-	RegistrationKey string      `json:"registration_key"`
-	SsoUrl          string      `json:"sso_url"`
-	DeviceId        string      `json:"-"`
-	DeviceName      string      `json:"-"`
-	PrivateKey      string      `json:"-"`
-	Hostname        string      `json:"hostname"`
-	PublicAddr      string      `json:"public_addr"`
-	PublicAddr6     string      `json:"public_addr6"`
-	Remotes         []*Remote   `json:"remotes"`
-	macAddrs        []string    `json:"-"`
-	authToken       *AuthToken  `json:"-"`
+	conn             *Connection `json:"-"`
+	Id               string      `json:"id"`
+	Mode             string      `json:"mode"`
+	Iface            string      `json:"iface"`
+	WgTunIface       string      `json:"tun_iface"`
+	Routes           []*Route    `json:"routes"`
+	Routes6          []*Route    `json:"routes6"`
+	Status           string      `json:"status"`
+	Timestamp        int64       `json:"timestamp"`
+	GatewayAddr      string      `json:"gateway_addr"`
+	GatewayAddr6     string      `json:"gateway_addr6"`
+	ServerAddr       string      `json:"server_addr"`
+	ClientAddr       string      `json:"client_addr"`
+	DnsServers       []string    `json:"dns_servers"`
+	SearchDomains    []string    `json:"search_domains"`
+	MacAddr          string      `json:"mac_addr"`
+	WebPort          int         `json:"web_port"`
+	WebNoSsl         bool        `json:"web_no_ssl"`
+	RegistrationKey  string      `json:"registration_key"`
+	SsoUrl           string      `json:"sso_url"`
+	DeviceId         string      `json:"-"`
+	DeviceName       string      `json:"-"`
+	PrivateKey       string      `json:"-"`
+	Hostname         string      `json:"hostname"`
+	PublicAddr       string      `json:"public_addr"`
+	PublicAddr6      string      `json:"public_addr6"`
+	Remotes          Remotes     `json:"remotes"`
+	DefaultOvpnPort  int         `json:"-"`
+	DefaultOvpnProto string      `json:"-"`
+	macAddrs         []string    `json:"-"`
+	authToken        *AuthToken  `json:"-"`
 }
 
 type Route struct {
@@ -63,12 +69,18 @@ type Route struct {
 }
 
 func (d *Data) Fields() logrus.Fields {
+	remotes := []string{}
+	if d.Remotes != nil {
+		remotes = d.Remotes.GetFormatted()
+	}
+
 	return logrus.Fields{
-		"data_mode":       d.Mode,
-		"data_wg_iface":   d.WgIface,
-		"data_ovpn_iface": d.OvpnIface,
-		"data_status":     d.Status,
-		"data_timestamp":  d.Timestamp,
+		"data_mode":      d.Mode,
+		"data_iface":     d.Iface,
+		"data_tun_iface": d.WgTunIface,
+		"data_status":    d.Status,
+		"data_timestamp": d.Timestamp,
+		"data_remotes":   remotes,
 	}
 }
 
@@ -90,6 +102,14 @@ func (d *Data) UpdateEvent() {
 		}
 		evt.Init()
 	}
+}
+
+func (d *Data) Clear() {
+	d.Timestamp = 0
+	d.ClientAddr = ""
+	d.ServerAddr = ""
+	d.GatewayAddr = ""
+	d.GatewayAddr6 = ""
 }
 
 func (d *Data) GetMacAddrs() (addrs []string, err error) {
@@ -132,6 +152,7 @@ func (d *Data) GetMacAddrs() (addrs []string, err error) {
 
 func (d *Data) ParseProfile() (err error) {
 	remotes := Remotes{}
+	syncRemotes := Remotes{}
 	remoteHosts := set.NewSet()
 
 	defaultOvpnPort := 0
@@ -167,14 +188,48 @@ func (d *Data) ParseProfile() (err error) {
 				if e != nil {
 					logrus.WithFields(d.conn.Fields(logrus.Fields{
 						"remote": line,
-					})).Error("data: Profile contains invalid remote port")
+					})).Error("data: Remote contains invalid port")
 					continue
 				}
-				ovpnProto := lineSpl[3]
 
-				if defaultOvpnPort == 0 {
-					defaultOvpnPort = ovpnPort
-					defaultOvpnProto = ovpnProto
+				ovpnProto := ""
+				switch strings.ToLower(lineSpl[3]) {
+				case "udp", "udp-client":
+					ovpnProto = "udp"
+					break
+				case "udp4":
+					ovpnProto = "udp4"
+					break
+				case "udp6", "udp6-client":
+					ovpnProto = "udp6"
+					break
+				case "tcp":
+					ovpnProto = "tcp"
+					break
+				case "tcp4":
+					ovpnProto = "tcp4"
+					break
+				case "tcp6":
+					ovpnProto = "tcp6"
+					break
+				case "tcp-client":
+					ovpnProto = "tcp-client"
+					break
+				case "tcp6-client":
+					ovpnProto = "tcp6-client"
+					break
+				default:
+					logrus.WithFields(d.conn.Fields(logrus.Fields{
+						"line": line,
+					})).Error("data: Remote contains unknown protocol")
+					continue
+				}
+
+				if d.DefaultOvpnPort == 0 {
+					d.DefaultOvpnPort = ovpnPort
+				}
+				if d.DefaultOvpnProto == "" {
+					d.DefaultOvpnProto = ovpnProto
 				}
 
 				remote := &Remote{
@@ -221,7 +276,7 @@ func (d *Data) ParseProfile() (err error) {
 		}
 		if !remoteHosts.Contains(remote.Host) {
 			remoteHosts.Add(remote.Host)
-			remotes = append(remotes, remote)
+			syncRemotes = append(syncRemotes, remote)
 		}
 	}
 
@@ -248,6 +303,8 @@ func (d *Data) ParseProfile() (err error) {
 
 	sortMethod := ""
 	if d.conn.Profile.IsGeoSort() {
+		remotes = append(remotes, syncRemotes...)
+
 		sortMethod = "geo"
 		remoteHosts := geosort.SortRemotes(
 			d.PublicAddr, d.PublicAddr6, remotes.GetHosts(),
@@ -280,6 +337,10 @@ func (d *Data) ParseProfile() (err error) {
 			newRemotes = append(newRemotes, remotes[i])
 		}
 
+		for _, i := range mathrand.Perm(len(syncRemotes)) {
+			newRemotes = append(newRemotes, syncRemotes[i])
+		}
+
 		remotes = newRemotes
 	}
 
@@ -309,11 +370,37 @@ func (t *AuthToken) Reset() {
 	}
 }
 
+func (t *AuthToken) Validate() {
+	if t.tokn != nil {
+		t.tokn.Valid = true
+	}
+}
+
 func (d *Data) ResetAuthToken() {
 	authToken := d.authToken
 	if authToken != nil {
 		authToken.Reset()
 	}
+}
+
+func (d *Data) ValidateAuthToken() {
+	authToken := d.authToken
+	if authToken != nil {
+		authToken.Validate()
+	}
+}
+
+func (d *Data) HasAuthToken() bool {
+	if d.authToken != nil {
+		return true
+	}
+
+	tokn := token.Get(
+		d.conn.Id,
+		d.conn.Profile.ServerPublicKey,
+		d.conn.Profile.ServerBoxPublicKey,
+	)
+	return tokn != nil
 }
 
 func (d *Data) GetAuthToken() (authToken *AuthToken, err error) {
