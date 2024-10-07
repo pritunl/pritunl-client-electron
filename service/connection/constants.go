@@ -3,18 +3,22 @@ package connection
 import (
 	"time"
 
+	"github.com/pritunl/pritunl-client-electron/service/sprofile"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
 	"github.com/sirupsen/logrus"
 )
 
 const (
-	Deadline = 60 * time.Second
-	OvpnMode = "ovpn"
-	WgMode   = "wg"
+	Deadline            = 60 * time.Second
+	SingleSignOnTimeout = 90 * time.Second
+	OvpnMode            = "ovpn"
+	WgMode              = "wg"
 )
 
 var (
-	Shutdown = false
+	Shutdown  = false
+	DnsForced = false
+	Ping      = time.Now()
 )
 
 func SetShutdown() {
