@@ -1,6 +1,11 @@
 package connection
 
 import (
+	"runtime"
+	"runtime/debug"
+
+	"github.com/pritunl/pritunl-client-electron/service/config"
+	"github.com/pritunl/pritunl-client-electron/service/event"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
 	"github.com/sirupsen/logrus"
 )
@@ -68,6 +73,9 @@ func (c *Connection) Fields(fields ...logrus.Fields) logrus.Fields {
 func (c *Connection) Start(opts Options) (err error) {
 	err = c.State.Init(opts)
 	if err != nil {
+		logrus.WithFields(c.Fields(logrus.Fields{
+			"error": err,
+		})).Error("connection: Start init error")
 		c.State.Close()
 		return
 	}
@@ -91,6 +99,13 @@ func (c *Connection) Start(opts Options) (err error) {
 		return
 	}
 
+	GlobalStore.Add(c.Id, c)
+
+	if c.State.IsStop() {
+		c.State.Close()
+		return
+	}
+
 	c.Profile.Sync()
 
 	if c.State.IsStop() {
@@ -104,6 +119,9 @@ func (c *Connection) Start(opts Options) (err error) {
 		err = c.Ovpn.Start()
 	}
 	if err != nil {
+		logrus.WithFields(c.Fields(logrus.Fields{
+			"error": err,
+		})).Error("connection: Start error")
 		c.State.Close()
 		return
 	}
@@ -111,12 +129,42 @@ func (c *Connection) Start(opts Options) (err error) {
 	return
 }
 
+func (c *Connection) Stop() {
+	c.State.NoReconnect("stop")
+	c.Client.Disconnect()
+}
+
 func (c *Connection) StopWait() {
-	c.State.Stop()
-
+	c.State.NoReconnect("stop_wait")
+	c.Client.Disconnect()
 	c.State.CloseWait()
+}
 
-	return
+func (c *Connection) StopBackground() {
+	go func() {
+		defer func() {
+			panc := recover()
+			if panc != nil {
+				logrus.WithFields(c.Fields(logrus.Fields{
+					"stack": string(debug.Stack()),
+					"panic": panc,
+				})).Error("profile: Stop background panic")
+			}
+		}()
+
+		c.State.NoReconnect("stop_background")
+		c.Client.Disconnect()
+		c.State.CloseWait()
+	}()
+}
+
+func (c *Connection) Ready() bool {
+	if c.Profile.DeviceAuth && runtime.GOOS == "darwin" &&
+		!config.Config.ForceLocalTpm {
+
+		return event.GetState()
+	}
+	return true
 }
 
 func NewConnection(prfl *Profile) (conn *Connection, err error) {
@@ -142,6 +190,11 @@ func NewConnection(prfl *Profile) (conn *Connection, err error) {
 		},
 	}
 	prfl.conn = conn
+
+	err = conn.Init()
+	if err != nil {
+		return
+	}
 
 	return
 }
