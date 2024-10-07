@@ -18,6 +18,7 @@ import (
 	"net/http"
 	"net/url"
 	"runtime"
+	"runtime/debug"
 	"strconv"
 	"strings"
 	"sync"
@@ -32,6 +33,11 @@ import (
 	"github.com/pritunl/pritunl-client-electron/service/utils"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/crypto/nacl/box"
+)
+
+const (
+	GlobalTimeoutDirect  = 60 * time.Second
+	GlobalTimeoutPreAuth = 180 * time.Second
 )
 
 var (
@@ -66,7 +72,6 @@ type ReqBox struct {
 	Nonce          string   `json:"nonce"`
 	Password       string   `json:"password"`
 	Timestamp      int64    `json:"timestamp"`
-	PublicKey      string   `json:"public_key"`
 	WgPublicKey    string   `json:"wg_public_key"`
 	PublicAddress  string   `json:"public_address"`
 	PublicAddress6 string   `json:"public_address6"`
@@ -118,28 +123,45 @@ type ConnData struct {
 	Configuration *WgConf `json:"configuration"`
 }
 
+type PingData struct {
+	Status    bool `json:"status"`
+	Timestamp int  `json:"timestamp"`
+}
+
 type SsoEventData struct {
 	Id  string `json:"id"`
 	Url string `json:"url"`
 }
 
 type Client struct {
-	conn              *Connection        `json:"-"`
-	prov              Provider           `json:"-"`
-	requestCancelLock sync.Mutex         `json:"-"`
-	requestCancel     context.CancelFunc `json:"-"`
-	macAddrs          []string
+	conn              *Connection
+	prov              Provider
+	requestCancelLock sync.Mutex
+	requestCancel     context.CancelFunc
+	disconnectLock    sync.Mutex
+	disconnect        bool
+	disconnected      bool
+	disconnectWaiters []chan bool
+	startTime         time.Time
 }
 
 func (c *Client) Fields() logrus.Fields {
-	return logrus.Fields{}
+	return logrus.Fields{
+		"client_disconnect":         c.disconnect,
+		"client_disconnected":       c.disconnected,
+		"client_disconnect_waiters": len(c.disconnectWaiters),
+		"client_provider":           c.prov != nil,
+		"client_startime":           utils.SinceFormatted(c.startTime),
+	}
 }
 
 func (c *Client) Start(prov Provider) (err error) {
 	c.prov = prov
+	c.startTime = time.Now()
 
 	err = c.prov.PreConnect()
 	if err != nil {
+		c.conn.State.Close()
 		return
 	}
 
@@ -168,23 +190,81 @@ func (c *Client) Start(prov Provider) (err error) {
 
 		err = c.connectPreAuth()
 		if err != nil {
+			c.conn.State.Close()
 			return
 		}
 	} else {
 		err = c.connectDirect()
 		if err != nil {
+			c.conn.State.Close()
 			return
 		}
 	}
 
+	if c.conn.State.IsStop() {
+		c.conn.State.Close()
+		return
+	}
+
+	go func() {
+		defer func() {
+			panc := recover()
+			if panc != nil {
+				logrus.WithFields(c.conn.Fields(logrus.Fields{
+					"stack": string(debug.Stack()),
+					"panic": panc,
+				})).Error("profile: Watch connection panic")
+			}
+		}()
+
+		err = c.prov.WatchConnection()
+		if err != nil {
+			logrus.WithFields(c.conn.Fields(logrus.Fields{
+				"error": err,
+			})).Error("profile: Watch connection error")
+			c.conn.State.Close()
+			return
+		}
+	}()
+
 	return
 }
 
-func (c *Client) connectDirect() (err error) {
-	for _, remote := range c.conn.Data.Remotes {
+func (c *Client) globalTimeout(timeout time.Duration) {
+	start := time.Now()
+	for {
+		if c.conn.Data.Status != Connected ||
+			utils.SinceAbs(start) > timeout ||
+			c.conn.State.IsStop() {
+
+			break
+		}
+	}
+
+	if c.conn.State.IsStop() {
+		return
+	}
+
+	if c.conn.Data.Status != Connected {
 		logrus.WithFields(c.conn.Fields(logrus.Fields{
-			"remote": remote.GetFormatted(),
-		})).Info("connection: Attempting remote")
+			"global_timeout": timeout.Seconds(),
+		})).Error("profile: Global connection timeout")
+
+		c.Disconnect()
+	}
+}
+
+func (c *Client) connectDirect() (err error) {
+	go c.globalTimeout(GlobalTimeoutDirect)
+
+	logrus.WithFields(c.conn.Fields(logrus.Fields{
+		"remotes": c.conn.Data.Remotes.GetFormatted(),
+	})).Info("connection: Attempting remotes")
+
+	err = c.prov.Connect(&ConnData{})
+	if err != nil {
+		c.conn.State.Close()
+		return
 	}
 
 	return
@@ -194,6 +274,8 @@ func (c *Client) connectPreAuth() (err error) {
 	var evt *event.Event
 	final := false
 	var data *ConnData
+
+	go c.globalTimeout(GlobalTimeoutPreAuth)
 
 	for _, remote := range c.conn.Data.Remotes {
 		logrus.WithFields(c.conn.Fields(logrus.Fields{
@@ -207,22 +289,17 @@ func (c *Client) connectPreAuth() (err error) {
 
 		data, final, evt, err = c.authorize(remote.Host, "", time.Time{})
 		if err != nil {
-			return
-		}
-
-		if c.conn.State.IsStop() {
-			c.conn.State.Close()
-			return
+			break
 		}
 
 		if err == nil || final {
 			break
 		}
+	}
 
-		if c.conn.State.IsStop() {
-			c.conn.State.Close()
-			return
-		}
+	if c.conn.State.IsStop() {
+		c.conn.State.Close()
+		return
 	}
 
 	if err != nil {
@@ -268,6 +345,7 @@ func (c *Client) connectPreAuth() (err error) {
 			})).Error("profile: Device registration required")
 
 			c.conn.Data.RegistrationKey = data.RegKey
+			c.conn.State.NoReconnect("client_device_registration")
 
 			if c.conn.Profile.SystemProfile {
 				sprofile.Deactivate(c.conn.Profile.Id)
@@ -292,6 +370,7 @@ func (c *Client) connectPreAuth() (err error) {
 				"reason": data.Reason,
 			})).Error("profile: Failed to authenticate")
 
+			c.conn.State.NoReconnect("client_auth_error")
 			c.conn.Data.SendProfileEvent("auth_error")
 
 			if c.conn.Profile.SystemProfile {
@@ -331,17 +410,14 @@ func (c *Client) connectPreAuth() (err error) {
 
 	err = c.prov.Connect(data)
 	if err != nil {
+		c.conn.State.Close()
 		return
 	}
 
 	return
 }
 
-func (c *Client) getUrl(host, handle string) *url.URL {
-	if strings.Count(host, ":") > 1 && !strings.Contains(host, "[") {
-		host = "[" + host + "]"
-	}
-
+func (c *Client) GetUrl(scheme, host, handle string) *url.URL {
 	reqPath := fmt.Sprintf(
 		"/key/%s/%s/%s/%s",
 		handle,
@@ -351,13 +427,13 @@ func (c *Client) getUrl(host, handle string) *url.URL {
 	)
 
 	return &url.URL{
-		Scheme: "https",
-		Host:   host,
+		Scheme: scheme,
+		Host:   ParseAddress(host),
 		Path:   reqPath,
 	}
 }
 
-func (c *Client) initBox() (ciph *Cipher, reqBx *ReqBox, err error) {
+func (c *Client) InitBox() (ciph *Cipher, reqBx *ReqBox, err error) {
 	var serverPubKey [32]byte
 	serverPubKeySlic, err := base64.StdEncoding.DecodeString(
 		c.conn.Profile.ServerBoxPublicKey)
@@ -419,7 +495,6 @@ func (c *Client) initBox() (ciph *Cipher, reqBx *ReqBox, err error) {
 		Timestamp:      time.Now().Unix(),
 		PublicAddress:  c.conn.Data.PublicAddr,
 		PublicAddress6: c.conn.Data.PublicAddr6,
-		PublicKey:      c.prov.GetPublicKey(),
 		WgPublicKey:    c.prov.GetPublicKey(),
 	}
 
@@ -440,7 +515,7 @@ func (c *Client) authorize(host string, ssoToken string,
 		return
 	}
 
-	ciph, reqBx, err := c.initBox()
+	ciph, reqBx, err := c.InitBox()
 	if err != nil {
 		return
 	}
@@ -456,7 +531,7 @@ func (c *Client) authorize(host string, ssoToken string,
 	} else {
 		handle = c.prov.GetReqPrefix()
 	}
-	reqUrl := c.getUrl(host, handle)
+	reqUrl := c.GetUrl("https", host, handle)
 
 	if c.conn.State.IsStop() {
 		c.conn.State.Close()
@@ -467,16 +542,17 @@ func (c *Client) authorize(host string, ssoToken string,
 	if err != nil {
 		return
 	}
+	defer res.Body.Close()
 
 	if res.StatusCode == 428 && ssoToken != "" {
-		if time.Since(ssoStart) > 60*time.Second {
+		if time.Since(ssoStart) > SingleSignOnTimeout {
 			evt = &event.Event{
 				Type: "timeout_error",
 				Data: c.conn.Data,
 			}
 
 			err = &errortypes.RequestError{
-				errors.Wrap(err, "profile: Single sign-on timeout"),
+				errors.Newf("connection: Single sign-on timeout"),
 			}
 			return
 		}
@@ -567,7 +643,7 @@ func (c *Client) authorize(host string, ssoToken string,
 	}
 
 	data = &ConnData{}
-	err = c.decryptRespBox(ciph, respBx, data)
+	err = c.DecryptRespBox(ciph, respBx, data)
 	if err != nil {
 		return
 	}
@@ -751,7 +827,7 @@ func (c *Client) encryptReqBox(method string, reqPath string,
 	return
 }
 
-func (c *Client) decryptRespBox(ciph *Cipher, respBx *RespBox,
+func (c *Client) DecryptRespBox(ciph *Cipher, respBx *RespBox,
 	dest interface{}) (err error) {
 
 	respHashFunc := hmac.New(sha512.New, []byte(c.conn.Profile.SyncSecret))
@@ -805,6 +881,26 @@ func (c *Client) decryptRespBox(ciph *Cipher, respBx *RespBox,
 	}
 
 	return
+}
+
+func (c *Client) CancelRequest() {
+	defer func() {
+		panc := recover()
+		if panc != nil {
+			logrus.WithFields(c.conn.Fields(logrus.Fields{
+				"stack": string(debug.Stack()),
+				"panic": panc,
+			})).Error("profile: Cancel request panic")
+		}
+	}()
+
+	c.requestCancelLock.Lock()
+	defer c.requestCancelLock.Unlock()
+
+	if c.requestCancel != nil {
+		c.requestCancel()
+		c.requestCancel = nil
+	}
 }
 
 func (c *Client) EncRequest(method string, reqUrl *url.URL,
@@ -861,9 +957,239 @@ func (c *Client) EncRequest(method string, reqUrl *url.URL,
 	return
 }
 
+func (c *Client) Ping(host string, ssoToken string,
+	ssoStart time.Time) (data *ConnData, final bool,
+	evt *event.Event, err error) {
+
+	tokn, err := c.conn.Data.GetAuthToken()
+	if err != nil {
+		return
+	}
+
+	if c.conn.State.IsStop() {
+		c.conn.State.Close()
+		return
+	}
+
+	ciph, reqBx, err := c.InitBox()
+	if err != nil {
+		return
+	}
+
+	reqBx.Password = c.conn.Profile.Password
+	reqBx.Token = tokn.Token
+	reqBx.Nonce = tokn.Nonce
+	reqBx.SsoToken = ssoToken
+
+	handle := ""
+	if ssoToken != "" || (c.conn.Profile.SsoAuth && tokn.Validated) {
+		handle = c.prov.GetReqPrefix() + "_wait"
+	} else {
+		handle = c.prov.GetReqPrefix()
+	}
+	reqUrl := c.GetUrl("https", host, handle)
+
+	if c.conn.State.IsStop() {
+		c.conn.State.Close()
+		return
+	}
+
+	res, err := c.EncRequest("POST", reqUrl, ciph, reqBx)
+	if err != nil {
+		return
+	}
+
+	if res.StatusCode == 428 && ssoToken != "" {
+		if time.Since(ssoStart) > 60*time.Second {
+			evt = &event.Event{
+				Type: "timeout_error",
+				Data: c.conn.Data,
+			}
+
+			err = &errortypes.RequestError{
+				errors.Wrap(err, "profile: Single sign-on timeout"),
+			}
+			return
+		}
+
+		data, _, evt, err = c.authorize(host, ssoToken, ssoStart)
+		if err != nil {
+			return
+		}
+
+		final = true
+		return
+	}
+
+	if res.StatusCode == 429 {
+		evt = &event.Event{
+			Type: "offline_error",
+			Data: c.conn.Data,
+		}
+
+		err = &errortypes.RequestError{
+			errors.Wrap(err, "profile: Server is offline"),
+		}
+		return
+	}
+
+	if res.StatusCode != 200 {
+		err = utils.LogRequestError(
+			res, "connection: Failed to complete authorize")
+		return
+	}
+
+	respBx := &RespBox{}
+	err = json.NewDecoder(res.Body).Decode(respBx)
+	if err != nil {
+		err = &errortypes.ParseError{
+			errors.Wrap(err, "profile: Failed to parse response body"),
+		}
+		return
+	}
+
+	if c.conn.State.IsStop() {
+		c.conn.State.Close()
+		return
+	}
+
+	if respBx.SsoUrl != "" && respBx.SsoToken != "" && ssoToken == "" {
+		evt2 := &event.Event{
+			Type: "sso_auth",
+			Data: &SsoEventData{
+				Id:  c.conn.Profile.Id,
+				Url: respBx.SsoUrl,
+			},
+		}
+		evt2.Init()
+
+		if c.conn.Profile.SystemProfile {
+			c.conn.Data.SsoUrl = respBx.SsoUrl
+		}
+
+		c.conn.Data.Status = "authenticating"
+		c.conn.Data.UpdateEvent()
+
+		data, _, evt, err = c.authorize(
+			host, respBx.SsoToken, time.Now())
+		if err != nil {
+			return
+		}
+
+		if c.conn.State.IsStop() {
+			c.conn.State.Close()
+			return
+		}
+
+		if c.conn.Profile.SystemProfile {
+			c.conn.Data.SsoUrl = ""
+		}
+
+		final = true
+		return
+	} else if ssoToken != "" {
+		c.conn.Data.Status = "connecting"
+		c.conn.Data.UpdateEvent()
+	}
+
+	if c.conn.State.IsStop() {
+		c.conn.State.Close()
+		return
+	}
+
+	data = &ConnData{}
+	err = c.DecryptRespBox(ciph, respBx, data)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+func (c *Client) Disconnect() {
+	c.disconnectLock.Lock()
+	if c.disconnected {
+		c.disconnectLock.Unlock()
+		return
+	}
+	if c.disconnect {
+		waiter := make(chan bool, 8)
+		c.disconnectWaiters = append(c.disconnectWaiters, waiter)
+		c.disconnectLock.Unlock()
+		<-waiter
+		return
+	}
+	c.disconnect = true
+	c.disconnectLock.Unlock()
+
+	c.conn.State.SetStop()
+
+	logrus.WithFields(c.conn.Fields(nil)).Error(
+		"connection: Disconnecting")
+
+	c.conn.Data.Status = "disconnecting"
+	c.conn.Data.UpdateEvent()
+
+	c.CancelRequest()
+
+	delay := 5*time.Second - utils.SinceAbs(c.startTime)
+	if delay > 0 && delay <= 5*time.Second {
+		time.Sleep(1*time.Second + delay)
+	} else {
+		time.Sleep(1 * time.Second)
+	}
+
+	if c.prov != nil {
+		c.prov.Disconnect()
+	}
+
+	time.Sleep(1 * time.Second)
+
+	if runtime.GOOS == "darwin" && !config.Config.DisableWgDns {
+		err := utils.ClearScutilDns(c.conn.Id)
+		if err != nil {
+			logrus.WithFields(c.conn.Fields(logrus.Fields{
+				"error": err,
+			})).Error("profile: Failed to clear scutil DNS")
+		}
+	}
+
+	c.conn.State.RemovePaths()
+
+	c.conn.Data.Status = "disconnected"
+	c.conn.Data.Clear()
+	c.conn.Data.UpdateEvent()
+
+	c.disconnectLock.Lock()
+	c.disconnected = true
+	if c.disconnectWaiters != nil {
+		for _, waiter := range c.disconnectWaiters {
+			waiter <- true
+		}
+	}
+	c.disconnectWaiters = nil
+	c.disconnectLock.Unlock()
+
+	return
+}
+
+func (c *Client) Disconnected() {
+	if c.conn.State.IsReconnect() {
+		println("**************************************************")
+		println("disconnected_reconnect")
+		println("**************************************************")
+	} else {
+		println("**************************************************")
+		println("disconnected")
+		println("**************************************************")
+	}
+}
+
 type Provider interface {
 	GetPublicKey() string
 	GetReqPrefix() string
 	PreConnect() (err error)
 	Connect(data *ConnData) (err error)
+	WatchConnection() (err error)
+	Disconnect()
 }
