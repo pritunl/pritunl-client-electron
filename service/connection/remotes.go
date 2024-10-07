@@ -8,6 +8,7 @@ import (
 
 	"github.com/dropbox/godropbox/errors"
 	"github.com/pritunl/pritunl-client-electron/service/errortypes"
+	"github.com/pritunl/pritunl-client-electron/service/parser"
 	"github.com/sirupsen/logrus"
 )
 
@@ -62,6 +63,16 @@ func (r Remotes) GetAddrMap() (addrMap map[string]*Remote, other []*Remote) {
 	return
 }
 
+func (r Remotes) GetParser() (remotes parser.Remotes) {
+	remotes = parser.Remotes{}
+
+	for _, remote := range r {
+		remotes = append(remotes, remote.GetParser()...)
+	}
+
+	return
+}
+
 func (r *Remote) Lookup() {
 	ip := net.ParseIP(r.Host)
 	if ip != nil {
@@ -104,6 +115,33 @@ func (r *Remote) Lookup() {
 	}
 }
 
+func (r *Remote) Equal(addr string) bool {
+	if strings.Contains(addr, ":") {
+		var hostIp6 net.IP
+		if strings.Contains(r.Host, ":") {
+			hostIp6 = net.ParseIP(r.Host)
+		}
+
+		var addrIp6 net.IP
+		if strings.Contains(r.Addr6, ":") {
+			addrIp6 = net.ParseIP(r.Addr6)
+		}
+
+		ip6 := net.ParseIP(addr)
+		if ip6 != nil {
+			if ip6.Equal(hostIp6) || ip6.Equal(addrIp6) {
+				return true
+			}
+		}
+	}
+
+	if addr == r.Host || addr == r.Addr4 || addr == r.Addr6 {
+		return true
+	}
+
+	return false
+}
+
 func (r *Remote) GetUrl(path string) *url.URL {
 	remote := r.Host
 
@@ -120,11 +158,44 @@ func (r *Remote) GetUrl(path string) *url.URL {
 
 func (r *Remote) GetFormatted() (host string) {
 	host = r.Host
+
+	if r.Type == SyncRemote {
+		host += "*"
+	}
 	if r.Addr4 != "" {
 		host += fmt.Sprint("[%s]", r.Addr4)
 	}
 	if r.Addr6 != "" {
 		host += fmt.Sprint("[%s]", r.Addr6)
+	}
+
+	return
+}
+
+func (r *Remote) GetParser() (remotes parser.Remotes) {
+	remotes = parser.Remotes{}
+
+	if r.Addr4 != "" {
+		remotes = append(remotes, parser.Remote{
+			Host:  r.Addr4,
+			Port:  r.OvpnPort,
+			Proto: r.OvpnProto,
+		})
+	}
+	if r.Addr6 != "" {
+		remotes = append(remotes, parser.Remote{
+			Host:  r.Addr6,
+			Port:  r.OvpnPort,
+			Proto: r.OvpnProto,
+		})
+	}
+
+	if r.Addr4 == "" && r.Addr6 == "" && r.Host != "" {
+		remotes = append(remotes, parser.Remote{
+			Host:  r.Host,
+			Port:  r.OvpnPort,
+			Proto: r.OvpnProto,
+		})
 	}
 
 	return
