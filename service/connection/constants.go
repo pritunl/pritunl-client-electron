@@ -26,4 +26,5 @@ func SetShutdown() {
 		"trace": utils.GetStackTrace(),
 	}).Info("connection: Set shutdown")
 	Shutdown = true
+	sprofile.Shutdown()
 }
