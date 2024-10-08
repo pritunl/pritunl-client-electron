@@ -1,10 +1,12 @@
 package handlers
 
 import (
+	"runtime/debug"
+
 	"github.com/dropbox/godropbox/errors"
 	"github.com/gin-gonic/gin"
+	"github.com/pritunl/pritunl-client-electron/service/connection"
 	"github.com/pritunl/pritunl-client-electron/service/errortypes"
-	"github.com/pritunl/pritunl-client-electron/service/profile"
 	"github.com/pritunl/pritunl-client-electron/service/sprofile"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
 	"github.com/sirupsen/logrus"
@@ -39,7 +41,7 @@ type profileData struct {
 }
 
 func profilesGet(c *gin.Context) {
-	c.JSON(200, profile.GetProfiles())
+	c.JSON(200, connection.GlobalStore.GetAllData())
 }
 
 func profileGet(c *gin.Context) {
@@ -52,7 +54,7 @@ func profileGet(c *gin.Context) {
 		return
 	}
 
-	prfl := profile.GetProfile(prflId)
+	prfl := connection.GlobalStore.GetData(prflId)
 	if prfl == nil {
 		utils.AbortWithStatus(c, 404)
 		return
@@ -94,12 +96,12 @@ func profilePost(c *gin.Context) {
 		return
 	}
 
-	prfl := profile.GetProfile(data.Id)
-	if prfl != nil {
-		prfl.Stop()
+	conn := connection.GlobalStore.Get(data.Id)
+	if conn != nil {
+		conn.StopWait()
 	}
 
-	prfl = &profile.Profile{
+	prfl := &connection.Profile{
 		Id:                 data.Id,
 		Mode:               data.Mode,
 		OrgId:              data.OrgId,
@@ -125,26 +127,26 @@ func profilePost(c *gin.Context) {
 		TokenTtl:           data.TokenTtl,
 		Reconnect:          data.Reconnect,
 	}
-	prfl.Init()
 
-	go func() {
-		err = prfl.Start(data.Timeout, false, false)
-		if err != nil {
-			logrus.WithFields(logrus.Fields{
-				"profile_id": prfl.Id,
-				"error":      err,
-			}).Error("profile: Failed to start profile")
-		}
-	}()
-
-	err = prfl.StartWait()
+	conn, err = connection.NewConnection(prfl)
 	if err != nil {
-		err = &errortypes.ParseError{
-			errors.Wrap(err, "handler: Start error"),
-		}
 		utils.AbortWithError(c, 500, err)
 		return
 	}
+
+	go func() {
+		defer func() {
+			panc := recover()
+			if panc != nil {
+				logrus.WithFields(logrus.Fields{
+					"stack": string(debug.Stack()),
+					"panic": panc,
+				}).Error("handlers: Profile start panic")
+			}
+		}()
+
+		conn.Start(connection.Options{})
+	}()
 
 	c.JSON(200, nil)
 }
@@ -174,9 +176,9 @@ func profileDel(c *gin.Context) {
 		return
 	}
 
-	prfl := profile.GetProfile(data.Id)
-	if prfl != nil {
-		prfl.Stop()
+	conn := connection.GlobalStore.Get(data.Id)
+	if conn != nil {
+		conn.Stop()
 	}
 
 	c.JSON(200, nil)
@@ -199,9 +201,9 @@ func profileDel2(c *gin.Context) {
 		return
 	}
 
-	prfl := profile.GetProfile(prflId)
-	if prfl != nil {
-		prfl.Stop()
+	conn := connection.GlobalStore.Get(prflId)
+	if conn != nil {
+		conn.Stop()
 	}
 
 	c.JSON(200, nil)
