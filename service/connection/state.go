@@ -153,7 +153,7 @@ func (s *State) CloseWait() {
 	waiter := make(chan bool, 8)
 
 	s.closeWaitersLock.Lock()
-	if !s.closed {
+	if s.closed {
 		s.closeWaitersLock.Unlock()
 		return
 	}
