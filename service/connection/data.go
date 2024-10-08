@@ -306,8 +306,13 @@ func (d *Data) ParseProfile() (err error) {
 		remotes = append(remotes, syncRemotes...)
 
 		sortMethod = "geo"
+
+		for _, remote := range remotes {
+			remote.Lookup()
+		}
+
 		remoteHosts := geosort.SortRemotes(
-			d.PublicAddr, d.PublicAddr6, remotes.GetHosts(),
+			d.PublicAddr, d.PublicAddr6, remotes.GetAddrs(),
 			d.conn.Profile.GeoSort)
 
 		addrMap, otherRemotes := remotes.GetAddrMap()
