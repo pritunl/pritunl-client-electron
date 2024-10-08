@@ -14,13 +14,28 @@ type Remote struct {
 	Proto string
 }
 
+func (r *Remote) GetFormatted() string {
+	return r.Host + fmt.Sprintf("(%d/%s)", r.Port, r.Proto)
+}
+
+type Remotes []Remote
+
+func (r Remotes) GetFormatted() (remotes []string) {
+	remotes = []string{}
+
+	for _, remote := range r {
+		remotes = append(remotes, remote.GetFormatted())
+	}
+
+	return
+}
+
 type Ovpn struct {
 	EnvId             string
 	EnvName           string
 	Dev               string
 	DevType           string
 	Remotes           []Remote
-	RemoteRandom      bool
 	NoBind            bool
 	PersistTun        bool
 	Cipher            string
@@ -74,9 +89,6 @@ func (o *Ovpn) Export() string {
 			remote.Port,
 			remote.Proto,
 		)
-	}
-	if o.RemoteRandom {
-		output += "remote-random\n"
 	}
 	if o.NoBind {
 		output += "nobind\n"
@@ -184,11 +196,10 @@ func (o *Ovpn) Export() string {
 	return output
 }
 
-func Import(data, fixedRemote, fixedRemote6 string,
+func Import(data string, remotes []Remote,
 	disableGateway, disableDns bool) (o *Ovpn) {
 
 	o = &Ovpn{
-		Remotes:        []Remote{},
 		DisableGateway: disableGateway,
 		DisableDns:     disableDns,
 	}
@@ -200,9 +211,6 @@ func Import(data, fixedRemote, fixedRemote6 string,
 	inKey := false
 
 	data = strings.ReplaceAll(data, "\r", "")
-
-	fixedPort := 0
-	fixedProto := ""
 
 	for _, origLine := range strings.Split(data, "\n") {
 		line := FilterStr(origLine, 256)
@@ -301,70 +309,6 @@ func Import(data, fixedRemote, fixedRemote6 string,
 				o.Dev = "tap"
 				break
 			}
-			break
-		case "remote":
-			if len(lines) != 4 {
-				logrus.WithFields(logrus.Fields{
-					"line": line,
-				}).Warn("parser: Configuration line  [2]")
-				continue
-			}
-
-			port, e := strconv.Atoi(lines[2])
-			if e != nil {
-				logrus.WithFields(logrus.Fields{
-					"line": line,
-				}).Warn("parser: Configuration line ignored [3]")
-				continue
-			}
-
-			remote := Remote{
-				Host: lines[1],
-				Port: port,
-			}
-
-			switch strings.ToLower(lines[3]) {
-			case "udp", "udp-client":
-				remote.Proto = "udp"
-				break
-			case "udp4":
-				remote.Proto = "udp4"
-				break
-			case "udp6", "udp6-client":
-				remote.Proto = "udp6"
-				break
-			case "tcp":
-				remote.Proto = "tcp"
-				break
-			case "tcp4":
-				remote.Proto = "tcp4"
-				break
-			case "tcp6":
-				remote.Proto = "tcp6"
-				break
-			case "tcp-client":
-				remote.Proto = "tcp-client"
-				break
-			case "tcp6-client":
-				remote.Proto = "tcp6-client"
-				break
-			default:
-				logrus.WithFields(logrus.Fields{
-					"line": line,
-				}).Warn("parser: Configuration line ignored [4]")
-				continue
-			}
-
-			if fixedRemote != "" || fixedRemote6 != "" {
-				fixedPort = remote.Port
-				fixedProto = remote.Proto
-			} else {
-				o.Remotes = append(o.Remotes, remote)
-			}
-
-			break
-		case "remote-random":
-			o.RemoteRandom = true
 			break
 		case "nobind":
 			o.NoBind = true
@@ -752,20 +696,7 @@ func Import(data, fixedRemote, fixedRemote6 string,
 		o.DevType = "tun"
 	}
 
-	if fixedRemote != "" {
-		o.Remotes = append(o.Remotes, Remote{
-			Host:  fixedRemote,
-			Port:  fixedPort,
-			Proto: fixedProto,
-		})
-	}
-	if fixedRemote6 != "" {
-		o.Remotes = append(o.Remotes, Remote{
-			Host:  fixedRemote6,
-			Port:  fixedPort,
-			Proto: fixedProto,
-		})
-	}
+	o.Remotes = remotes
 
 	return
 }
