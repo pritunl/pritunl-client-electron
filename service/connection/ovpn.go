@@ -468,11 +468,6 @@ func (o *Ovpn) writeManagementPass() (pth string, err error) {
 		return
 	}
 
-	if o.conn.State.IsStop() {
-		o.conn.State.Close()
-		return
-	}
-
 	return
 }
 

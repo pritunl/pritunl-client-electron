@@ -6,6 +6,7 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/dropbox/godropbox/container/set"
 	"github.com/dropbox/godropbox/errors"
@@ -25,6 +26,15 @@ const (
 
 	OvpnRemote = "ovpn"
 	SyncRemote = "sync"
+)
+
+var (
+	eventLimiter = map[string]time.Time{}
+	eventLimits  = map[string]time.Duration{
+		"connection_error":  30 * time.Second,
+		"timeout_error":     30 * time.Second,
+		"handshake_timeout": 10 * time.Second,
+	}
 )
 
 type Data struct {
@@ -469,6 +479,15 @@ func (d *Data) GetAuthToken() (authToken *AuthToken, err error) {
 }
 
 func (d *Data) SendProfileEvent(evtType string) {
+	limit := eventLimits[evtType]
+	if limit != 0 {
+		if utils.SinceAbs(eventLimiter[evtType]) < limit {
+			println("skip", evtType)
+			return
+		}
+		eventLimiter[evtType] = time.Now()
+	}
+
 	evt := &event.Event{
 		Type: evtType,
 		Data: d,
