@@ -4,15 +4,15 @@ import (
 	"bytes"
 	"crypto/tls"
 	"encoding/json"
-	"github.com/dropbox/godropbox/container/set"
-	"github.com/dropbox/godropbox/errors"
-	"github.com/pritunl/pritunl-client-electron/service/errortypes"
-	"github.com/pritunl/pritunl-client-electron/service/utils"
-	"github.com/sirupsen/logrus"
 	"net"
 	"net/http"
 	"net/url"
 	"time"
+
+	"github.com/dropbox/godropbox/container/set"
+	"github.com/dropbox/godropbox/errors"
+	"github.com/pritunl/pritunl-client-electron/service/errortypes"
+	"github.com/sirupsen/logrus"
 )
 
 var (
@@ -142,33 +142,11 @@ func (g *GeoSort) Sort() (err error) {
 }
 
 func SortRemotes(addr4, addr6 string, remotes []string, license string) (
-	newAddr4, newAddr6 string, newRemotes []string, err error) {
-
-	if addr4 == "" {
-		newAddr4, err = utils.GetPublicAddress4()
-		if err != nil {
-			logrus.WithFields(logrus.Fields{
-				"error": err,
-			}).Info("geosort: Failed to get public IPv4 address")
-			err = nil
-		}
-	}
+	newRemotes []string) {
 
 	if addr4 == "" && addr6 == "" {
-		newAddr6, err = utils.GetPublicAddress6()
-		if err != nil {
-			//logrus.WithFields(logrus.Fields{
-			//	"error": err,
-			//}).Info("geosort: Failed to get public IPv6 address")
-			err = nil
-		}
-	}
-
-	if newAddr4 == "" {
-		newAddr4 = addr4
-	}
-	if newAddr6 == "" {
-		newAddr6 = addr6
+		newRemotes = remotes
+		return
 	}
 
 	remotesSet := set.NewSet()
@@ -183,71 +161,48 @@ func SortRemotes(addr4, addr6 string, remotes []string, license string) (
 		remotesSet.Add(remote)
 
 		ip := net.ParseIP(remote)
-		if ip != nil {
-			ipStr := ip.String()
-			if ip.To4() == nil {
-				if !destAddrsSet6.Contains(ipStr) {
-					destAddrsSet6.Add(ipStr)
-					destAddrs6 = append(destAddrs6, ipStr)
-				}
-			} else {
-				if !destAddrsSet.Contains(ipStr) {
-					destAddrsSet.Add(ipStr)
-					destAddrs = append(destAddrs, ipStr)
-				}
-			}
+		if ip == nil {
+			logrus.WithFields(logrus.Fields{
+				"remote": remote,
+			}).Warn("profile: Remote not IP address")
 			continue
 		}
 
-		remoteIps, e := net.LookupIP(remote)
-		if e != nil {
-			logrus.WithFields(logrus.Fields{
-				"domain": remote,
-				"error":  e,
-			}).Info("profile: Failed to resolve remote domain")
-		}
-
-		for _, remoteIp := range remoteIps {
-			remoteIpStr := remoteIp.String()
-			if remoteIp.To4() == nil {
-				if !destAddrsSet6.Contains(remoteIpStr) {
-					destAddrsSet6.Add(remoteIpStr)
-					destAddrs6 = append(destAddrs6, remoteIpStr)
-				}
-			} else {
-				if !destAddrsSet.Contains(remoteIpStr) {
-					destAddrsSet.Add(remoteIpStr)
-					destAddrs = append(destAddrs, remoteIpStr)
-				}
+		ipStr := ip.String()
+		if ip.To4() == nil {
+			if !destAddrsSet6.Contains(ipStr) {
+				destAddrsSet6.Add(ipStr)
+				destAddrs6 = append(destAddrs6, ipStr)
+			}
+		} else {
+			if !destAddrsSet.Contains(ipStr) {
+				destAddrsSet.Add(ipStr)
+				destAddrs = append(destAddrs, ipStr)
 			}
 		}
 	}
 
 	geo := &GeoSort{
 		License:               license,
-		SourceAddress:         newAddr4,
-		SourceAddress6:        newAddr6,
+		SourceAddress:         addr4,
+		SourceAddress6:        addr6,
 		DestinationAddresses:  destAddrs,
 		DestinationAddresses6: destAddrs6,
 	}
 
-	err = geo.Sort()
+	err := geo.Sort()
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
 			"remotes": remotes,
 			"error":   err,
 		}).Error("geosort: Geo sort failed")
-		err = nil
+
+		newRemotes = remotes
+		return
 	}
 
 	newRemotes = geo.DestinationAddresses
 	newRemotes = append(newRemotes, geo.DestinationAddresses6...)
-
-	logrus.WithFields(logrus.Fields{
-		"public_address":  newAddr4,
-		"public_address6": newAddr6,
-		"remotes":         newRemotes,
-	}).Info("geosort: Sorted remotes")
 
 	return
 }
