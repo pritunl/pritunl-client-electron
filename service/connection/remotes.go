@@ -33,6 +33,21 @@ func (r Remotes) GetHosts() (hosts []string) {
 	return
 }
 
+func (r Remotes) GetAddrs() (addrs []string) {
+	addrs = []string{}
+
+	for _, remote := range r {
+		if remote.Addr4 != "" {
+			addrs = append(addrs, remote.Addr4)
+		}
+		if remote.Addr6 != "" {
+			addrs = append(addrs, remote.Addr6)
+		}
+	}
+
+	return
+}
+
 func (r Remotes) GetFormatted() (hosts []string) {
 	hosts = []string{}
 
@@ -163,10 +178,10 @@ func (r *Remote) GetFormatted() (host string) {
 		host += "*"
 	}
 	if r.Addr4 != "" {
-		host += fmt.Sprint("[%s]", r.Addr4)
+		host += fmt.Sprintf("[%s]", r.Addr4)
 	}
 	if r.Addr6 != "" {
-		host += fmt.Sprint("[%s]", r.Addr6)
+		host += fmt.Sprintf("[%s]", r.Addr6)
 	}
 
 	return
