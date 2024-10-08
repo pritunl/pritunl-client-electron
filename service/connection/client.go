@@ -231,10 +231,9 @@ func (c *Client) Start(prov Provider) (err error) {
 }
 
 func (c *Client) globalTimeout(timeout time.Duration) {
-	start := time.Now()
-	for {
-		if c.conn.Data.Status != Connected ||
-			utils.SinceAbs(start) > timeout ||
+	for i := 0; i < int(timeout.Seconds()); i++ {
+		time.Sleep(1 * time.Second)
+		if c.conn.Data.Status == Connected ||
 			c.conn.State.IsStop() {
 
 			break
@@ -332,6 +331,13 @@ func (c *Client) connectPreAuth() (err error) {
 	}
 
 	if !data.Allow {
+		logrus.WithFields(c.conn.Fields(logrus.Fields{
+			"allow":   data.Allow,
+			"reason":  data.Reason,
+			"remote":  data.Remote,
+			"remote6": data.Remote6,
+		})).Info("connection: Authorization failed")
+
 		c.conn.Data.ResetAuthToken()
 
 		if c.conn.State.IsStop() {
@@ -388,6 +394,13 @@ func (c *Client) connectPreAuth() (err error) {
 		c.conn.State.Close()
 		return
 	} else {
+		logrus.WithFields(c.conn.Fields(logrus.Fields{
+			"allow":   data.Allow,
+			"reason":  data.Reason,
+			"remote":  data.Remote,
+			"remote6": data.Remote6,
+		})).Info("connection: Authorization successful")
+
 		if c.conn.Profile.SystemProfile &&
 			c.conn.Data.RegistrationKey != "" {
 
@@ -461,11 +474,6 @@ func (c *Client) InitBox() (ciph *Cipher, reqBx *ReqBox, err error) {
 
 	macAddrs, err := c.conn.Data.GetMacAddrs()
 	if err != nil {
-		return
-	}
-
-	if c.conn.State.IsStop() {
-		c.conn.State.Close()
 		return
 	}
 
@@ -669,7 +677,7 @@ func (c *Client) encryptReqBox(method string, reqPath string,
 		tp = &tpm.Tpm{}
 	}
 
-	if c.conn.Profile.DeviceAuth {
+	if c.conn.Profile.DeviceAuth && method == "POST" {
 		err = tp.Open(config.Config.EnclavePrivateKey)
 		if err != nil {
 			return
@@ -764,7 +772,7 @@ func (c *Client) encryptReqBox(method string, reqPath string,
 
 	encBox.Signature = base64.StdEncoding.EncodeToString(rsaSig)
 
-	if c.conn.Profile.DeviceAuth {
+	if c.conn.Profile.DeviceAuth && method == "POST" {
 		privKey64 := ""
 		privKey64, encBox.DeviceSignature, err = tp.Sign(reqHash[:])
 		if err != nil {
