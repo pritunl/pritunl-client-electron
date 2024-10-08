@@ -379,11 +379,7 @@ func (o *Ovpn) Connect(data *ConnData) (err error) {
 
 	o.running = 1
 	go o.watchCmd()
-
-	time.Sleep(1 * time.Second)
-	if o.conn.State.IsStop() {
-
-	}
+	go o.waitCmd()
 
 	return
 }
@@ -1211,6 +1207,25 @@ func (o *Ovpn) watchCmd() {
 				"stack": string(debug.Stack()),
 				"panic": panc,
 			})).Error("profile: Watch cmd panic")
+		}
+	}()
+
+	for {
+		time.Sleep(3 * time.Second)
+		if o.conn.State.IsStop() {
+			break
+		}
+	}
+}
+
+func (o *Ovpn) waitCmd() {
+	defer func() {
+		panc := recover()
+		if panc != nil {
+			logrus.WithFields(o.conn.Fields(logrus.Fields{
+				"stack": string(debug.Stack()),
+				"panic": panc,
+			})).Error("profile: Wait cmd panic")
 		}
 	}()
 
