@@ -174,22 +174,20 @@ func NewConnection(prfl *Profile) (conn *Connection, err error) {
 		Id:      prfl.Id,
 		Profile: prfl,
 		Data: &Data{
-			conn: conn,
+			Id: prfl.Id,
 		},
-		State: &State{
-			conn: conn,
-		},
-		Client: &Client{
-			conn: conn,
-		},
-		Ovpn: &Ovpn{
-			conn: conn,
-		},
-		Wg: &Wg{
-			conn: conn,
-		},
+		State:  &State{},
+		Client: &Client{},
+		Ovpn:   &Ovpn{},
+		Wg:     &Wg{},
 	}
-	prfl.conn = conn
+
+	conn.Profile.conn = conn
+	conn.Data.conn = conn
+	conn.State.conn = conn
+	conn.Client.conn = conn
+	conn.Ovpn.conn = conn
+	conn.Wg.conn = conn
 
 	err = conn.Init()
 	if err != nil {
