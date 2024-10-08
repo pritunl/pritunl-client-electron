@@ -282,6 +282,35 @@ func GetPublicAddress6() (addr6 string, err error) {
 	return
 }
 
+func ParseRequestError(res *http.Response, message string) (
+	fields logrus.Fields, err error) {
+
+	resBody := ""
+
+	data, err := io.ReadAll(res.Body)
+	if err == nil {
+		resBody = string(data)
+	}
+
+	if message == "" {
+		message = "request: Bad status from server"
+	}
+
+	err = &errortypes.RequestError{
+		errors.Newf("request: Bad status %d code from server",
+			res.StatusCode),
+	}
+
+	fields = logrus.Fields{
+		"host":        res.Request.Host,
+		"status_code": res.StatusCode,
+		"body":        resBody,
+		"error":       err,
+	}
+
+	return
+}
+
 func LogRequestError(res *http.Response, message string) (err error) {
 	resBody := ""
 
@@ -294,16 +323,18 @@ func LogRequestError(res *http.Response, message string) (err error) {
 		message = "request: Bad status from server"
 	}
 
-	logrus.WithFields(logrus.Fields{
-		"host":        res.Request.Host,
-		"status_code": res.StatusCode,
-		"body":        resBody,
-	}).Error(message)
-
 	err = &errortypes.RequestError{
-		errors.Wrapf(err, "request: Bad status %d code from server",
+		errors.Newf("request: Bad status %d code from server",
 			res.StatusCode),
 	}
+
+	logrus.WithFields(logrus.Fields{
+		"url":         res.Request.URL.String(),
+		"method":      res.Request.Method,
+		"status_code": res.StatusCode,
+		"body":        resBody,
+		"error":       err,
+	}).Error(message)
 
 	return
 }
