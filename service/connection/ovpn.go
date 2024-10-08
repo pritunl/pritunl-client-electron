@@ -412,11 +412,6 @@ func (o *Ovpn) write(data *ConnData) (
 	pth = filepath.Join(rootDir, o.conn.Id)
 	prflData := o.parsedPrfl.Export()
 
-	if o.conn.State.IsStop() {
-		o.conn.State.Close()
-		return
-	}
-
 	if runtime.GOOS == "windows" {
 		o.managementPort = ManagementPortAcquire()
 
@@ -432,11 +427,6 @@ func (o *Ovpn) write(data *ConnData) (
 			o.managementPort,
 			strings.ReplaceAll(managementPassPath, "\\", "\\\\"),
 		)
-
-		if o.conn.State.IsStop() {
-			o.conn.State.Close()
-			return
-		}
 	}
 
 	_ = os.Remove(pth)

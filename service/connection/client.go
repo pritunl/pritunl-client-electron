@@ -291,6 +291,11 @@ func (c *Client) connectPreAuth() (err error) {
 			break
 		}
 
+		if c.conn.State.IsStop() {
+			c.conn.State.Close()
+			return
+		}
+
 		if err == nil || final {
 			break
 		}
@@ -313,13 +318,8 @@ func (c *Client) connectPreAuth() (err error) {
 		}).Error("profile: All connection requests failed")
 		err = nil
 
-		// if p.connected && !p.stop {
-		// 	time.Sleep(3 * time.Second)
-		// 	p.restartSafe()
-		// } else {
-		// 	time.Sleep(1 * time.Second)
-		// 	p.stopSafe()
-		// }
+		c.conn.State.Close()
+
 		return
 	}
 
@@ -567,6 +567,11 @@ func (c *Client) authorize(host string, ssoToken string,
 
 		data, _, evt, err = c.authorize(host, ssoToken, ssoStart)
 		if err != nil {
+			return
+		}
+
+		if c.conn.State.IsStop() {
+			c.conn.State.Close()
 			return
 		}
 
@@ -959,155 +964,6 @@ func (c *Client) EncRequest(method string, reqUrl *url.URL,
 		err = &errortypes.RequestError{
 			errors.Wrap(err, "profile: Request put error"),
 		}
-		return
-	}
-
-	return
-}
-
-func (c *Client) Ping(host string, ssoToken string,
-	ssoStart time.Time) (data *ConnData, final bool,
-	evt *event.Event, err error) {
-
-	tokn, err := c.conn.Data.GetAuthToken()
-	if err != nil {
-		return
-	}
-
-	if c.conn.State.IsStop() {
-		c.conn.State.Close()
-		return
-	}
-
-	ciph, reqBx, err := c.InitBox()
-	if err != nil {
-		return
-	}
-
-	reqBx.Password = c.conn.Profile.Password
-	reqBx.Token = tokn.Token
-	reqBx.Nonce = tokn.Nonce
-	reqBx.SsoToken = ssoToken
-
-	handle := ""
-	if ssoToken != "" || (c.conn.Profile.SsoAuth && tokn.Validated) {
-		handle = c.prov.GetReqPrefix() + "_wait"
-	} else {
-		handle = c.prov.GetReqPrefix()
-	}
-	reqUrl := c.GetUrl("https", host, handle)
-
-	if c.conn.State.IsStop() {
-		c.conn.State.Close()
-		return
-	}
-
-	res, err := c.EncRequest("POST", reqUrl, ciph, reqBx)
-	if err != nil {
-		return
-	}
-
-	if res.StatusCode == 428 && ssoToken != "" {
-		if time.Since(ssoStart) > 60*time.Second {
-			evt = &event.Event{
-				Type: "timeout_error",
-				Data: c.conn.Data,
-			}
-
-			err = &errortypes.RequestError{
-				errors.Wrap(err, "profile: Single sign-on timeout"),
-			}
-			return
-		}
-
-		data, _, evt, err = c.authorize(host, ssoToken, ssoStart)
-		if err != nil {
-			return
-		}
-
-		final = true
-		return
-	}
-
-	if res.StatusCode == 429 {
-		evt = &event.Event{
-			Type: "offline_error",
-			Data: c.conn.Data,
-		}
-
-		err = &errortypes.RequestError{
-			errors.Wrap(err, "profile: Server is offline"),
-		}
-		return
-	}
-
-	if res.StatusCode != 200 {
-		err = utils.LogRequestError(
-			res, "connection: Failed to complete authorize")
-		return
-	}
-
-	respBx := &RespBox{}
-	err = json.NewDecoder(res.Body).Decode(respBx)
-	if err != nil {
-		err = &errortypes.ParseError{
-			errors.Wrap(err, "profile: Failed to parse response body"),
-		}
-		return
-	}
-
-	if c.conn.State.IsStop() {
-		c.conn.State.Close()
-		return
-	}
-
-	if respBx.SsoUrl != "" && respBx.SsoToken != "" && ssoToken == "" {
-		evt2 := &event.Event{
-			Type: "sso_auth",
-			Data: &SsoEventData{
-				Id:  c.conn.Profile.Id,
-				Url: respBx.SsoUrl,
-			},
-		}
-		evt2.Init()
-
-		if c.conn.Profile.SystemProfile {
-			c.conn.Data.SsoUrl = respBx.SsoUrl
-		}
-
-		c.conn.Data.Status = "authenticating"
-		c.conn.Data.UpdateEvent()
-
-		data, _, evt, err = c.authorize(
-			host, respBx.SsoToken, time.Now())
-		if err != nil {
-			return
-		}
-
-		if c.conn.State.IsStop() {
-			c.conn.State.Close()
-			return
-		}
-
-		if c.conn.Profile.SystemProfile {
-			c.conn.Data.SsoUrl = ""
-		}
-
-		final = true
-		return
-	} else if ssoToken != "" {
-		c.conn.Data.Status = "connecting"
-		c.conn.Data.UpdateEvent()
-	}
-
-	if c.conn.State.IsStop() {
-		c.conn.State.Close()
-		return
-	}
-
-	data = &ConnData{}
-	err = c.DecryptRespBox(ciph, respBx, data)
-	if err != nil {
 		return
 	}
 
