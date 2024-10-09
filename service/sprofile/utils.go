@@ -223,7 +223,7 @@ func Reload(init bool) (err error) {
 		} else {
 			curPrfl := curPrfls[prfl.Id]
 			if curPrfl != nil {
-				prfl.State = curPrfl.State
+				prfl.ImportState(curPrfl)
 			}
 		}
 

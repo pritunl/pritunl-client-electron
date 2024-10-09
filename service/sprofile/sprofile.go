@@ -226,6 +226,12 @@ func (s *Sprofile) Copy() (sprfl *Sprofile) {
 	return
 }
 
+func (s *Sprofile) ImportState(sprfl *Sprofile) {
+	s.State = sprfl.State
+	s.Interactive = sprfl.Interactive
+	s.AuthErrorCount = sprfl.AuthErrorCount
+}
+
 func (s *Sprofile) GetOutput() (data string, err error) {
 	logPth := s.BasePath() + ".log"
 
