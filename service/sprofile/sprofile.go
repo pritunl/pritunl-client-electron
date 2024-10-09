@@ -45,6 +45,7 @@ type Sprofile struct {
 	Id                 string   `json:"id"`
 	Name               string   `json:"name"`
 	State              bool     `json:"-"`
+	Interactive        bool     `json:"-"`
 	Wg                 bool     `json:"wg"`
 	LastMode           string   `json:"last_mode"`
 	OrganizationId     string   `json:"organization_id"`
@@ -185,6 +186,7 @@ func (s *Sprofile) Copy() (sprfl *Sprofile) {
 		Id:                 s.Id,
 		Name:               s.Name,
 		State:              s.State,
+		Interactive:        s.Interactive,
 		Wg:                 s.Wg,
 		LastMode:           s.LastMode,
 		OrganizationId:     s.OrganizationId,

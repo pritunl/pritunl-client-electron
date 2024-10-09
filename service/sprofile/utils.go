@@ -31,8 +31,8 @@ func Activate(prflId, mode, password string) (err error) {
 	for _, prfl := range cache {
 		if prfl.Id == prflId {
 			prfl = prfl.Copy()
-
 			prfl.State = true
+			prfl.Interactive = true
 			prfl.LastMode = mode
 			prfl.Password = password
 
@@ -58,6 +58,7 @@ func Deactivate(prflId string) {
 	for _, prfl := range cache {
 		if prfl.Id == prflId {
 			prfl.State = false
+			prfl.Interactive = false
 		}
 		prflsCache = append(prflsCache, prfl)
 	}
