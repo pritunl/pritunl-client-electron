@@ -36,6 +36,7 @@ type Profile struct {
 	TokenTtl           int                `json:"token_ttl"`
 	Reconnect          bool               `json:"reconnect"`
 	Timeout            bool               `json:"timeout"`
+	SystemInteractive  bool               `json:"-"`
 	SystemProfile      bool               `json:"-"`
 	requestCancelLock  sync.Mutex         `json:"-"`
 	requestCancel      context.CancelFunc `json:"-"`
@@ -43,18 +44,20 @@ type Profile struct {
 
 func (p *Profile) Fields() logrus.Fields {
 	return logrus.Fields{
-		"profile_id":               p.Id,
-		"profile_mode":             p.Mode,
-		"profile_dynamic_firewall": p.DynamicFirewall,
-		"profile_device_auth":      p.DeviceAuth,
-		"profile_disable_gateway":  p.DisableGateway,
-		"profile_disable_dns":      p.DisableDns,
-		"profile_geo_sort":         p.IsGeoSort(),
-		"profile_force_connect":    p.ForceConnect,
-		"profile_force_dns":        p.ForceDns,
-		"profile_sso_auth":         p.SsoAuth,
-		"profile_reconnect":        p.Reconnect,
-		"profile_timeout":          p.Timeout,
+		"profile_id":                 p.Id,
+		"profile_mode":               p.Mode,
+		"profile_dynamic_firewall":   p.DynamicFirewall,
+		"profile_device_auth":        p.DeviceAuth,
+		"profile_disable_gateway":    p.DisableGateway,
+		"profile_disable_dns":        p.DisableDns,
+		"profile_geo_sort":           p.IsGeoSort(),
+		"profile_force_connect":      p.ForceConnect,
+		"profile_force_dns":          p.ForceDns,
+		"profile_sso_auth":           p.SsoAuth,
+		"profile_reconnect":          p.Reconnect,
+		"profile_timeout":            p.Timeout,
+		"profile_system_profile":     p.SystemProfile,
+		"profile_system_interactive": p.SystemInteractive,
 	}
 }
 
@@ -63,7 +66,7 @@ func (p *Profile) IsGeoSort() bool {
 }
 
 func (p *Profile) Sync() {
-	if !p.SystemProfile {
+	if p.SystemProfile {
 		sprfl := sprofile.Get(p.Id)
 		if sprfl == nil {
 			logrus.WithFields(p.conn.Fields(nil)).Error(
@@ -125,5 +128,6 @@ func (p *Profile) ImportSystemProfile(sprfl *sprofile.Sprofile) {
 	p.ServerBoxPublicKey = sprfl.ServerBoxPublicKey
 	p.TokenTtl = sprfl.TokenTtl
 	p.Reconnect = true
+	p.SystemInteractive = sprfl.Interactive
 	p.SystemProfile = true
 }
