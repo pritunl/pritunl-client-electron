@@ -6,15 +6,16 @@ import (
 
 	"github.com/pritunl/pritunl-client-electron/service/config"
 	"github.com/pritunl/pritunl-client-electron/service/event"
+	"github.com/pritunl/pritunl-client-electron/service/sprofile"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
 	"github.com/sirupsen/logrus"
 )
 
 type Options struct {
-	Deadline  bool
-	Delay     bool
-	Automatic bool
-	Fork      bool
+	Deadline    bool
+	Delay       bool
+	Interactive bool
+	Fork        bool
 }
 
 type Connection struct {
@@ -71,6 +72,15 @@ func (c *Connection) Fields(fields ...logrus.Fields) logrus.Fields {
 }
 
 func (c *Connection) Start(opts Options) (err error) {
+	if c.Profile.SystemInteractive {
+		opts.Interactive = true
+
+		sprfl := sprofile.Get(c.Profile.Id)
+		if sprfl != nil {
+			sprfl.Interactive = false
+		}
+	}
+
 	err = c.State.Init(opts)
 	if err != nil {
 		logrus.WithFields(c.Fields(logrus.Fields{
