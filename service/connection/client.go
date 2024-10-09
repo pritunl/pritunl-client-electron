@@ -612,6 +612,26 @@ func (c *Client) authorize(host string, ssoToken string,
 	}
 
 	if respBx.SsoUrl != "" && respBx.SsoToken != "" && ssoToken == "" {
+		if !c.conn.State.IsInteractive() {
+			logrus.WithFields(c.conn.Fields(nil)).Info(
+				"connection: Stopping non-interactive single sign-on")
+
+			c.conn.State.NoReconnect("client_auth_error")
+			c.conn.Data.SendProfileEvent("sso_interactive")
+
+			if c.conn.Profile.SystemProfile {
+				logrus.WithFields(c.conn.Fields(nil)).Error(
+					"profile: Stopping system " +
+						"profile due to non-interactive single sign-on")
+
+				sprofile.Deactivate(c.conn.Profile.Id)
+				sprofile.SetAuthErrorCount(c.conn.Profile.Id, 0)
+			}
+
+			c.conn.State.Close()
+			return
+		}
+
 		evt2 := &event.Event{
 			Type: "sso_auth",
 			Data: &SsoEventData{
