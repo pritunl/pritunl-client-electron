@@ -17,7 +17,7 @@ type State struct {
 	lastStopCheckTime  time.Time
 	deadline           bool
 	delay              bool
-	automatic          bool
+	interactive        bool
 	noReconnect        bool
 	closed             bool
 	closeWaiters       []chan bool
@@ -32,7 +32,7 @@ func (s *State) Fields() logrus.Fields {
 		"state_deadline":       s.deadline,
 		"state_delay":          s.delay,
 		"state_no_reconnect":   s.noReconnect,
-		"state_automatic":      s.automatic,
+		"state_interactive":    s.interactive,
 		"state_closed":         s.closed,
 		"state_closed_waiters": len(s.closeWaiters),
 		"state_temp_paths":     s.tempPaths,
@@ -42,7 +42,7 @@ func (s *State) Fields() logrus.Fields {
 func (s *State) Init(opts Options) (err error) {
 	s.deadline = opts.Deadline
 	s.delay = opts.Delay
-	s.automatic = opts.Automatic
+	s.interactive = opts.Interactive
 	s.startTime = time.Now()
 	s.tempPaths = []string{}
 
@@ -59,6 +59,10 @@ func (s *State) PreStart() {
 
 func (s *State) IsReconnect() bool {
 	return !s.noReconnect
+}
+
+func (s *State) IsInteractive() bool {
+	return s.interactive
 }
 
 func (s *State) NoReconnect(reason string) {
@@ -112,10 +116,6 @@ func (s *State) IsStopFast() bool {
 		return true
 	}
 	return false
-}
-
-func (s *State) IsAutomatic() bool {
-	return s.automatic
 }
 
 func (s *State) SetConnecting() {
