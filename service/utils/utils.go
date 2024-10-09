@@ -661,8 +661,7 @@ func ClearDNSCache() {
 					logrus.WithFields(logrus.Fields{
 						"stack": string(debug.Stack()),
 						"panic": panc,
-					}).Error("utils: Panic")
-					panic(panc)
+					}).Error("utils: Clear DNS cache panic")
 				}
 			}()
 
@@ -682,8 +681,7 @@ func ClearDNSCache() {
 					logrus.WithFields(logrus.Fields{
 						"stack": string(debug.Stack()),
 						"panic": panc,
-					}).Error("utils: Panic")
-					panic(panc)
+					}).Error("utils: Clear DNS cache panic")
 				}
 			}()
 
@@ -704,8 +702,7 @@ func ClearDNSCache() {
 					logrus.WithFields(logrus.Fields{
 						"stack": string(debug.Stack()),
 						"panic": panc,
-					}).Error("utils: Panic")
-					panic(panc)
+					}).Error("utils: Clear DNS cache panic")
 				}
 			}()
 

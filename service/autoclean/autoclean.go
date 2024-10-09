@@ -2,15 +2,16 @@
 package autoclean
 
 import (
-	"github.com/sirupsen/logrus"
-	"github.com/dropbox/godropbox/errors"
-	"github.com/pritunl/pritunl-client-electron/service/command"
-	"github.com/pritunl/pritunl-client-electron/service/utils"
 	"os"
 	"path/filepath"
 	"runtime"
 	"runtime/debug"
 	"time"
+
+	"github.com/dropbox/godropbox/errors"
+	"github.com/pritunl/pritunl-client-electron/service/command"
+	"github.com/pritunl/pritunl-client-electron/service/utils"
+	"github.com/sirupsen/logrus"
 )
 
 const (
@@ -84,8 +85,7 @@ func CheckAndCleanWatch() {
 				logrus.WithFields(logrus.Fields{
 					"stack": string(debug.Stack()),
 					"panic": panc,
-				}).Error("autoclean: Panic")
-				panic(panc)
+				}).Error("autoclean: Check and clean panic")
 			}
 		}()
 

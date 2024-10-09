@@ -80,8 +80,9 @@ func wakeWatch() {
 			logrus.WithFields(logrus.Fields{
 				"stack": string(debug.Stack()),
 				"panic": panc,
-			}).Error("watch: Panic")
-			panic(panc)
+			}).Error("watch: Wake watch panic")
+			time.Sleep(10 * time.Second)
+			go wakeWatch()
 		}
 	}()
 
@@ -138,8 +139,9 @@ func dnsWatch() {
 			logrus.WithFields(logrus.Fields{
 				"stack": string(debug.Stack()),
 				"panic": panc,
-			}).Error("watch: Panic")
-			panic(panc)
+			}).Error("watch: DNS watch panic")
+			time.Sleep(10 * time.Second)
+			go dnsWatch()
 		}
 	}()
 

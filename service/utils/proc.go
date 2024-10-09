@@ -388,7 +388,6 @@ func ExecWaitTimeout(proc *os.Process, timeout time.Duration) {
 				"stack": string(debug.Stack()),
 				"panic": panc,
 			}).Error("utils: Panic")
-			panic(panc)
 		}
 	}()
 
@@ -402,7 +401,6 @@ func ExecWaitTimeout(proc *os.Process, timeout time.Duration) {
 					"stack": string(debug.Stack()),
 					"panic": panc,
 				}).Error("utils: Panic")
-				panic(panc)
 			}
 		}()
 		proc.Wait()
@@ -416,7 +414,6 @@ func ExecWaitTimeout(proc *os.Process, timeout time.Duration) {
 					"stack": string(debug.Stack()),
 					"panic": panc,
 				}).Error("utils: Panic")
-				panic(panc)
 			}
 		}()
 		time.Sleep(timeout)
@@ -428,7 +425,6 @@ func ExecWaitTimeout(proc *os.Process, timeout time.Duration) {
 						"stack": string(debug.Stack()),
 						"panic": panc,
 					}).Error("utils: Panic")
-					panic(panc)
 				}
 			}()
 			proc.Kill()

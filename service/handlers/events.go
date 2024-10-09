@@ -65,14 +65,12 @@ func eventsGet(c *gin.Context) {
 					"stack": string(debug.Stack()),
 					"panic": panc,
 				}).Error("events: Panic")
-				panic(panc)
 			}
 		}()
 
 		for {
 			_, msgByt, err := conn.NextReader()
 			if err != nil {
-				conn.Close()
 				break
 			}
 
