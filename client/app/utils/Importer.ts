@@ -141,6 +141,12 @@ export class Importer {
 		try {
 			confData = JSON.parse(jsonData)
 		} catch (e) {
+			let err = new Errors.ParseError(null,
+				"Importer: Json parse error",
+				{path: pth},
+			)
+			Logger.error(err)
+			confData = null
 		}
 
 		if (!confData) {
