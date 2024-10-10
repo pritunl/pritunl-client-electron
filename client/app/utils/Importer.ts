@@ -171,6 +171,8 @@ export class Importer {
 					await curPrfl.writeConf()
 					await curPrfl.writeData(ovpnData)
 
+					prfl = curPrfl
+
 					exists = true
 
 					break
