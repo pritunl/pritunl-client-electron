@@ -12,12 +12,15 @@ import (
 
 	"github.com/dropbox/godropbox/container/set"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
+	"github.com/sirupsen/logrus"
 )
 
 var (
-	ipReg       = regexp.MustCompile(`(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}`)
-	profileReg  = regexp.MustCompile(`[^a-z0-9_\- ]+`)
-	restartLock sync.Mutex
+	ipReg             = regexp.MustCompile(`(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}`)
+	profileReg        = regexp.MustCompile(`[^a-z0-9_\- ]+`)
+	restartLock       sync.Mutex
+	cachedPublicAddr4 = ""
+	cachedPublicAddr6 = ""
 )
 
 var safeChars = set.NewSet(
@@ -194,6 +197,54 @@ func Clean() (err error) {
 			"sc.exe", "delete", fmt.Sprintf("WireGuardTunnel$pritunl%d", i),
 		)
 	}
+
+	return
+}
+
+func GetPublicAddress4() (addr4 string, err error) {
+	if GlobalStore.IsConnected() && cachedPublicAddr4 != "" {
+		logrus.Info("connection: Using cached public address")
+		addr4 = cachedPublicAddr4
+		return
+	}
+
+	addr4, err = utils.GetPublicAddress4()
+	if err != nil {
+		if cachedPublicAddr4 != "" {
+			logrus.WithFields(logrus.Fields{
+				"error": err,
+			}).Error("connection: Failed to get public address using cache")
+			addr4 = cachedPublicAddr4
+			err = nil
+			return
+		}
+		return
+	}
+	cachedPublicAddr4 = addr4
+
+	return
+}
+
+func GetPublicAddress6() (addr6 string, err error) {
+	if GlobalStore.IsConnected() && cachedPublicAddr6 != "" {
+		logrus.Info("connection: Using cached public address6")
+		addr6 = cachedPublicAddr6
+		return
+	}
+
+	addr6, err = utils.GetPublicAddress6()
+	if err != nil {
+		if cachedPublicAddr6 != "" {
+			logrus.WithFields(logrus.Fields{
+				"error": err,
+			}).Error("connection: Failed to get public address6 using cache")
+			addr6 = cachedPublicAddr6
+			err = nil
+			return
+		}
+		return
+	}
+	cachedPublicAddr6 = addr6
 
 	return
 }

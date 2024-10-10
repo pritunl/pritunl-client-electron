@@ -296,7 +296,7 @@ func (d *Data) ParseProfile() (err error) {
 	}
 
 	if d.conn.Profile.DynamicFirewall || d.conn.Profile.IsGeoSort() {
-		addr4, e := utils.GetPublicAddress4()
+		addr4, e := GetPublicAddress4()
 		if e != nil {
 			logrus.WithFields(d.conn.Fields(logrus.Fields{
 				"error": e,
@@ -304,7 +304,7 @@ func (d *Data) ParseProfile() (err error) {
 		}
 		d.PublicAddr = addr4
 
-		addr6, e := utils.GetPublicAddress6()
+		addr6, e := GetPublicAddress6()
 		if e != nil {
 			logrus.Info("geosort: Failed to get public IPv6 address")
 		}
