@@ -870,39 +870,41 @@ func (o *Ovpn) killCmd() {
 		panc := recover()
 		if panc != nil {
 			logrus.WithFields(o.conn.Fields(logrus.Fields{
-				"stack": string(debug.Stack()),
+				"trace": string(debug.Stack()),
 				"panic": panc,
 			})).Error("profile: Kill ovpn cmd panic")
 		}
 	}()
 
 	cmd := o.cmd
-	if cmd == nil {
+	if cmd == nil || cmd.Process == nil {
 		return
 	}
 
 	waiter := make(chan bool, 8)
 	exited := false
 
-	if runtime.GOOS == "windows" {
-		err := o.sendManagementCommand("signal SIGTERM")
-		if err != nil {
-			err = &errortypes.ExecError{
-				errors.Wrap(err, "profile: Management interrupt error"),
+	if o.cmd.ProcessState == nil || !o.cmd.ProcessState.Exited() {
+		if runtime.GOOS == "windows" {
+			err := o.sendManagementCommand("signal SIGTERM")
+			if err != nil {
+				err = &errortypes.ExecError{
+					errors.Wrap(err, "profile: Management interrupt error"),
+				}
+				logrus.WithFields(o.conn.Fields(logrus.Fields{
+					"error": err,
+				})).Error("profile: Failed to management interrupt ovpn process")
 			}
-			logrus.WithFields(o.conn.Fields(logrus.Fields{
-				"error": err,
-			})).Error("profile: Failed to management interrupt ovpn process")
-		}
-	} else {
-		err := o.cmd.Process.Signal(os.Interrupt)
-		if err != nil {
-			err = &errortypes.ExecError{
-				errors.Wrap(err, "profile: Interrupt error"),
+		} else {
+			err := o.cmd.Process.Signal(os.Interrupt)
+			if err != nil {
+				err = &errortypes.ExecError{
+					errors.Wrap(err, "profile: Interrupt error"),
+				}
+				logrus.WithFields(o.conn.Fields(logrus.Fields{
+					"error": err,
+				})).Error("profile: Failed to interrupt ovpn process")
 			}
-			logrus.WithFields(o.conn.Fields(logrus.Fields{
-				"error": err,
-			})).Error("profile: Failed to interrupt ovpn process")
 		}
 	}
 
