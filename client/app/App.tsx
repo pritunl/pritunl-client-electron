@@ -148,10 +148,25 @@ Blueprint.FocusStyleManager.onlyShowFocusOnTabs();
 Alert.init();
 
 Config.load().then((): void => {
-	if (Config.theme === "light") {
-		Theme.light();
+	if (Config.theme) {
+		let themeParts = Config.theme.split("-")
+		if (themeParts[1] === "5") {
+			Theme.themeVer5()
+		} else {
+			Theme.themeVer3()
+		}
+
+		if (themeParts[0] === "light") {
+			Theme.light();
+		} else {
+			Theme.dark();
+		}
 	} else {
 		Theme.dark();
+	}
+
+	if (Config.editor_theme) {
+		Theme.setEditorTheme(Config.editor_theme);
 	}
 
 	Constants.load();
