@@ -15,14 +15,14 @@ var (
 	sprofileShutown = false
 )
 
-func ImportSystemProfile(sPrfl *sprofile.Sprofile) (
+func ImportSystemProfile(sprfl *sprofile.Sprofile) (
 	conn *Connection, err error) {
 
 	prfl := &Profile{
-		Id: sPrfl.Id,
+		Id: sprfl.Id,
 	}
 
-	prfl.ImportSystemProfile(sPrfl)
+	prfl.ImportSystemProfile(sprfl)
 
 	conn, err = NewConnection(prfl)
 	if err != nil {
@@ -148,7 +148,7 @@ func watchSystemProfiles() {
 			return
 		}
 
-		if GlobalStore.Len() == 0 {
+		if !GlobalStore.IsActive() {
 			_ = update.Check()
 		}
 

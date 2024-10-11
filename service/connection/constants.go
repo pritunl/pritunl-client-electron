@@ -9,6 +9,7 @@ import (
 )
 
 const (
+	LogClose            = false
 	Deadline            = 60 * time.Second
 	SingleSignOnTimeout = 90 * time.Second
 	OvpnMode            = "ovpn"

@@ -20,6 +20,7 @@ type State struct {
 	interactive        bool
 	noReconnect        bool
 	closed             bool
+	systemInteractive  bool
 	closeWaiters       []chan bool
 	closeWaitersLock   sync.Mutex
 	tempPaths          []string
@@ -27,15 +28,16 @@ type State struct {
 
 func (s *State) Fields() logrus.Fields {
 	return logrus.Fields{
-		"state_time":           s.startTime,
-		"state_stop":           s.stop,
-		"state_deadline":       s.deadline,
-		"state_delay":          s.delay,
-		"state_no_reconnect":   s.noReconnect,
-		"state_interactive":    s.interactive,
-		"state_closed":         s.closed,
-		"state_closed_waiters": len(s.closeWaiters),
-		"state_temp_paths":     s.tempPaths,
+		"state_time":               s.startTime,
+		"state_stop":               s.stop,
+		"state_deadline":           s.deadline,
+		"state_delay":              s.delay,
+		"state_no_reconnect":       s.noReconnect,
+		"state_interactive":        s.interactive,
+		"state_system_interactive": s.systemInteractive,
+		"state_closed":             s.closed,
+		"state_closed_waiters":     len(s.closeWaiters),
+		"state_temp_paths":         s.tempPaths,
 	}
 }
 
@@ -62,7 +64,7 @@ func (s *State) IsReconnect() bool {
 }
 
 func (s *State) IsInteractive() bool {
-	return s.interactive
+	return s.interactive || s.systemInteractive
 }
 
 func (s *State) NoReconnect(reason string) {
@@ -164,19 +166,26 @@ func (s *State) CloseWait() {
 	time.Sleep(50 * time.Millisecond)
 }
 
-// Called by client code to indicate connection thread is closed
 func (s *State) Close() {
 	s.conn.Client.Disconnect()
 
 	s.closeWaitersLock.Lock()
 	if s.closed {
 		s.closeWaitersLock.Unlock()
-
-		logrus.WithFields(s.conn.Fields(nil)).Warn(
-			"connection: Connection already closed")
+		if LogClose {
+			logrus.WithFields(s.conn.Fields(logrus.Fields{
+				"trace": utils.GetStackTrace(),
+			})).Info("connection: Connection already closed")
+		}
 		return
 	}
 	s.closed = true
+
+	if LogClose {
+		logrus.WithFields(s.conn.Fields(logrus.Fields{
+			"trace": utils.GetStackTrace(),
+		})).Info("connection: Connection closed")
+	}
 
 	GlobalStore.Remove(s.conn.Id, s.conn)
 
