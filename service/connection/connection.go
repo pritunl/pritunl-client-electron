@@ -72,9 +72,7 @@ func (c *Connection) Fields(fields ...logrus.Fields) logrus.Fields {
 }
 
 func (c *Connection) Start(opts Options) (err error) {
-	if c.Profile.SystemInteractive {
-		opts.Interactive = true
-
+	if c.State.IsInteractive() && c.Profile.SystemProfile {
 		sprfl := sprofile.Get(c.Profile.Id)
 		if sprfl != nil {
 			sprfl.Interactive = false
@@ -137,6 +135,27 @@ func (c *Connection) Start(opts Options) (err error) {
 	}
 
 	return
+}
+
+func (c *Connection) Restart() {
+	c.State.NoReconnect("restart")
+	c.StopWait()
+
+	newConn, err := NewConnection(c.Profile)
+	if err != nil {
+		logrus.WithFields(c.Fields(logrus.Fields{
+			"error": err,
+		})).Error("profile: Failed to init connection in restart")
+		return
+	}
+
+	err = newConn.Start(Options{})
+	if err != nil {
+		logrus.WithFields(c.Fields(logrus.Fields{
+			"error": err,
+		})).Error("profile: Failed to start connection in restart")
+		return
+	}
 }
 
 func (c *Connection) Stop() {
