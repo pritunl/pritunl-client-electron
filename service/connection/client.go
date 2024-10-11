@@ -356,10 +356,11 @@ func (c *Client) connectPreAuth() (err error) {
 			if c.conn.Profile.SystemProfile {
 				sprofile.Deactivate(c.conn.Profile.Id)
 
+				c.conn.Profile.RegistrationKey = data.RegKey
 				sprfl := sprofile.Get(c.conn.Profile.Id)
 				if sprfl != nil {
 					sprfl.State = false
-					sprfl.RegistrationKey = c.conn.Data.RegistrationKey
+					sprfl.RegistrationKey = c.conn.Profile.RegistrationKey
 					err = sprfl.Commit()
 					if err != nil {
 						return
@@ -401,10 +402,11 @@ func (c *Client) connectPreAuth() (err error) {
 			"remote6": data.Remote6,
 		})).Info("connection: Authorization successful")
 
+		c.conn.Data.RegistrationKey = ""
 		if c.conn.Profile.SystemProfile &&
-			c.conn.Data.RegistrationKey != "" {
+			c.conn.Profile.RegistrationKey != "" {
 
-			c.conn.Data.RegistrationKey = ""
+			c.conn.Profile.RegistrationKey = data.RegKey
 			sprfl := sprofile.Get(c.conn.Profile.Id)
 			if sprfl != nil {
 				sprfl.RegistrationKey = ""
@@ -1059,13 +1061,12 @@ func (c *Client) Disconnect() {
 
 func (c *Client) Disconnected() {
 	if c.conn.State.IsReconnect() {
-		println("**************************************************")
-		println("disconnected_reconnect")
-		println("**************************************************")
+		logrus.WithFields(c.conn.Fields(nil)).Info(
+			"profile: Disconnected with restart")
+		c.conn.Restart()
 	} else {
-		println("**************************************************")
-		println("disconnected")
-		println("**************************************************")
+		logrus.WithFields(c.conn.Fields(nil)).Info(
+			"profile: Disconnected without restart")
 	}
 }
 
