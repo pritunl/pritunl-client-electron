@@ -777,7 +777,7 @@ func (o *Ovpn) watchOutput(buffer io.ReadCloser) {
 		panc := recover()
 		if panc != nil {
 			logrus.WithFields(o.conn.Fields(logrus.Fields{
-				"stack": string(debug.Stack()),
+				"trace": string(debug.Stack()),
 				"panic": panc,
 			})).Error("profile: Watch output panic")
 		}
@@ -820,7 +820,7 @@ func (o *Ovpn) parseOutput() {
 		panc := recover()
 		if panc != nil {
 			logrus.WithFields(o.conn.Fields(logrus.Fields{
-				"stack": string(debug.Stack()),
+				"trace": string(debug.Stack()),
 				"panic": panc,
 			})).Error("profile: Parse output panic")
 		}
@@ -843,7 +843,7 @@ func (o *Ovpn) Close() {
 		panc := recover()
 		if panc != nil {
 			logrus.WithFields(o.conn.Fields(logrus.Fields{
-				"stack": string(debug.Stack()),
+				"trace": string(debug.Stack()),
 				"panic": panc,
 			})).Error("profile: Close ovpn panic")
 		}
@@ -911,7 +911,7 @@ func (o *Ovpn) killCmd() {
 			panc := recover()
 			if panc != nil {
 				logrus.WithFields(logrus.Fields{
-					"stack": string(debug.Stack()),
+					"trace": string(debug.Stack()),
 					"panic": panc,
 				}).Error("utils: Kill command wait panic")
 			}
@@ -926,7 +926,7 @@ func (o *Ovpn) killCmd() {
 			panc := recover()
 			if panc != nil {
 				logrus.WithFields(logrus.Fields{
-					"stack": string(debug.Stack()),
+					"trace": string(debug.Stack()),
 					"panic": panc,
 				}).Error("utils: Kill exit wait panic")
 				time.Sleep(1 * time.Second)
@@ -984,7 +984,7 @@ func (o *Ovpn) parseLine(line string) {
 				panc := recover()
 				if panc != nil {
 					logrus.WithFields(o.conn.Fields(logrus.Fields{
-						"stack": string(debug.Stack()),
+						"trace": string(debug.Stack()),
 						"panic": panc,
 					})).Error("profile: Clear DNS cache panic")
 				}
@@ -1010,7 +1010,7 @@ func (o *Ovpn) parseLine(line string) {
 				panc := recover()
 				if panc != nil {
 					logrus.WithFields(o.conn.Fields(logrus.Fields{
-						"stack": string(debug.Stack()),
+						"trace": string(debug.Stack()),
 						"panic": panc,
 					})).Error("profile: Kill profile panic")
 				}
@@ -1189,7 +1189,7 @@ func (o *Ovpn) watchCmd() {
 		panc := recover()
 		if panc != nil {
 			logrus.WithFields(o.conn.Fields(logrus.Fields{
-				"stack": string(debug.Stack()),
+				"trace": string(debug.Stack()),
 				"panic": panc,
 			})).Error("profile: Watch cmd panic")
 		}
@@ -1208,7 +1208,7 @@ func (o *Ovpn) waitCmd() {
 		panc := recover()
 		if panc != nil {
 			logrus.WithFields(o.conn.Fields(logrus.Fields{
-				"stack": string(debug.Stack()),
+				"trace": string(debug.Stack()),
 				"panic": panc,
 			})).Error("profile: Wait cmd panic")
 		}

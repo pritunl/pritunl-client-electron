@@ -156,7 +156,7 @@ func (c *Connection) StopBackground() {
 			panc := recover()
 			if panc != nil {
 				logrus.WithFields(c.Fields(logrus.Fields{
-					"stack": string(debug.Stack()),
+					"trace": string(debug.Stack()),
 					"panic": panc,
 				})).Error("profile: Stop background panic")
 			}

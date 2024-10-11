@@ -98,9 +98,10 @@ func main() {
 		panc := recover()
 		if panc != nil {
 			logrus.WithFields(logrus.Fields{
-				"stack": string(debug.Stack()),
+				"trace": string(debug.Stack()),
 				"panic": panc,
 			}).Error("main: Panic")
+			time.Sleep(5 * time.Second)
 			panic(panc)
 		}
 	}()

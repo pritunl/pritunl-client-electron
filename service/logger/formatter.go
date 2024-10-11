@@ -27,7 +27,7 @@ func format(entry *logrus.Entry) (output []byte) {
 
 	var errStr string
 	for key, val := range entry.Data {
-		if key == "error" {
+		if key == "error" || key == "trace" {
 			errStr = fmt.Sprintf("%s", val)
 			continue
 		}

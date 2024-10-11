@@ -997,7 +997,7 @@ func (p *Profile) parseLine(line string) {
 				panc := recover()
 				if panc != nil {
 					logrus.WithFields(logrus.Fields{
-						"stack": string(debug.Stack()),
+						"trace": string(debug.Stack()),
 						"panic": panc,
 					}).Error("profile: Panic")
 					panic(panc)
@@ -1023,12 +1023,13 @@ func (p *Profile) parseLine(line string) {
 	} else if strings.Contains(
 		line, "Can't assign requested address (code=49)") {
 
+		// TODO Possibly disable
 		go func() {
 			defer func() {
 				panc := recover()
 				if panc != nil {
 					logrus.WithFields(logrus.Fields{
-						"stack": string(debug.Stack()),
+						"trace": string(debug.Stack()),
 						"panic": panc,
 					}).Error("profile: Panic")
 					panic(panc)
@@ -1662,7 +1663,7 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 			panc := recover()
 			if panc != nil {
 				logrus.WithFields(logrus.Fields{
-					"stack": string(debug.Stack()),
+					"trace": string(debug.Stack()),
 					"panic": panc,
 				}).Error("profile: Panic")
 				panic(panc)
@@ -1705,7 +1706,7 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 			panc := recover()
 			if panc != nil {
 				logrus.WithFields(logrus.Fields{
-					"stack": string(debug.Stack()),
+					"trace": string(debug.Stack()),
 					"panic": panc,
 				}).Error("profile: Panic")
 				panic(panc)
@@ -1745,7 +1746,7 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 			panc := recover()
 			if panc != nil {
 				logrus.WithFields(logrus.Fields{
-					"stack": string(debug.Stack()),
+					"trace": string(debug.Stack()),
 					"panic": panc,
 				}).Error("profile: Panic")
 				panic(panc)
@@ -1780,7 +1781,7 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 			panc := recover()
 			if panc != nil {
 				logrus.WithFields(logrus.Fields{
-					"stack": string(debug.Stack()),
+					"trace": string(debug.Stack()),
 					"panic": panc,
 				}).Error("profile: Panic")
 				panic(panc)
@@ -1828,7 +1829,7 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 				panc := recover()
 				if panc != nil {
 					logrus.WithFields(logrus.Fields{
-						"stack": string(debug.Stack()),
+						"trace": string(debug.Stack()),
 						"panic": panc,
 					}).Error("profile: Panic")
 					panic(panc)
@@ -1856,7 +1857,7 @@ func (p *Profile) startOvpn(timeout bool) (err error) {
 							panc := recover()
 							if panc != nil {
 								logrus.WithFields(logrus.Fields{
-									"stack": string(debug.Stack()),
+									"trace": string(debug.Stack()),
 									"panic": panc,
 								}).Error("profile: Panic")
 								panic(panc)
@@ -3759,7 +3760,7 @@ func (p *Profile) watchWg(data *WgData) {
 		panc := recover()
 		if panc != nil {
 			logrus.WithFields(logrus.Fields{
-				"stack": string(debug.Stack()),
+				"trace": string(debug.Stack()),
 				"panic": panc,
 			}).Error("profile: Panic")
 			panic(panc)
@@ -4322,7 +4323,7 @@ func (p *Profile) stopOvpn() (err error) {
 				panc := recover()
 				if panc != nil {
 					logrus.WithFields(logrus.Fields{
-						"stack": string(debug.Stack()),
+						"trace": string(debug.Stack()),
 						"panic": panc,
 					}).Error("profile: Panic")
 					panic(panc)
@@ -4356,7 +4357,7 @@ func (p *Profile) stopOvpn() (err error) {
 				panc := recover()
 				if panc != nil {
 					logrus.WithFields(logrus.Fields{
-						"stack": string(debug.Stack()),
+						"trace": string(debug.Stack()),
 						"panic": panc,
 					}).Error("profile: Panic")
 					panic(panc)

@@ -385,7 +385,7 @@ func ExecWaitTimeout(proc *os.Process, timeout time.Duration) {
 		panc := recover()
 		if panc != nil {
 			logrus.WithFields(logrus.Fields{
-				"stack": string(debug.Stack()),
+				"trace": string(debug.Stack()),
 				"panic": panc,
 			}).Error("utils: Panic")
 		}
@@ -398,7 +398,7 @@ func ExecWaitTimeout(proc *os.Process, timeout time.Duration) {
 			panc := recover()
 			if panc != nil {
 				logrus.WithFields(logrus.Fields{
-					"stack": string(debug.Stack()),
+					"trace": string(debug.Stack()),
 					"panic": panc,
 				}).Error("utils: Panic")
 			}
@@ -411,7 +411,7 @@ func ExecWaitTimeout(proc *os.Process, timeout time.Duration) {
 			panc := recover()
 			if panc != nil {
 				logrus.WithFields(logrus.Fields{
-					"stack": string(debug.Stack()),
+					"trace": string(debug.Stack()),
 					"panic": panc,
 				}).Error("utils: Panic")
 			}
@@ -422,7 +422,7 @@ func ExecWaitTimeout(proc *os.Process, timeout time.Duration) {
 				panc := recover()
 				if panc != nil {
 					logrus.WithFields(logrus.Fields{
-						"stack": string(debug.Stack()),
+						"trace": string(debug.Stack()),
 						"panic": panc,
 					}).Error("utils: Panic")
 				}

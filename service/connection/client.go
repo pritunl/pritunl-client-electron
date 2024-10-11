@@ -211,7 +211,7 @@ func (c *Client) Start(prov Provider) (err error) {
 			panc := recover()
 			if panc != nil {
 				logrus.WithFields(c.conn.Fields(logrus.Fields{
-					"stack": string(debug.Stack()),
+					"trace": string(debug.Stack()),
 					"panic": panc,
 				})).Error("profile: Watch connection panic")
 			}
@@ -921,7 +921,7 @@ func (c *Client) CancelRequest() {
 		panc := recover()
 		if panc != nil {
 			logrus.WithFields(c.conn.Fields(logrus.Fields{
-				"stack": string(debug.Stack()),
+				"trace": string(debug.Stack()),
 				"panic": panc,
 			})).Error("profile: Cancel request panic")
 		}

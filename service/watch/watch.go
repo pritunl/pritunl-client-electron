@@ -78,7 +78,7 @@ func wakeWatch() {
 		panc := recover()
 		if panc != nil {
 			logrus.WithFields(logrus.Fields{
-				"stack": string(debug.Stack()),
+				"trace": string(debug.Stack()),
 				"panic": panc,
 			}).Error("watch: Wake watch panic")
 			time.Sleep(10 * time.Second)
@@ -137,7 +137,7 @@ func dnsWatch() {
 		panc := recover()
 		if panc != nil {
 			logrus.WithFields(logrus.Fields{
-				"stack": string(debug.Stack()),
+				"trace": string(debug.Stack()),
 				"panic": panc,
 			}).Error("watch: DNS watch panic")
 			time.Sleep(10 * time.Second)
