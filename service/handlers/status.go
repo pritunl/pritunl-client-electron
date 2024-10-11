@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/pritunl/pritunl-client-electron/service/profile"
+	"github.com/pritunl/pritunl-client-electron/service/connection"
 )
 
 type statusData struct {
@@ -11,7 +11,7 @@ type statusData struct {
 
 func statusGet(c *gin.Context) {
 	data := &statusData{
-		Status: profile.GetStatus(),
+		Status: connection.GlobalStore.IsConnected(),
 	}
 
 	c.JSON(200, data)

@@ -4,8 +4,8 @@ import (
 	"runtime"
 
 	"github.com/gin-gonic/gin"
+	"github.com/pritunl/pritunl-client-electron/service/connection"
 	"github.com/pritunl/pritunl-client-electron/service/constants"
-	"github.com/pritunl/pritunl-client-electron/service/profile"
 	"github.com/pritunl/pritunl-client-electron/service/update"
 )
 
@@ -24,13 +24,13 @@ func stateGet(c *gin.Context) {
 
 	switch runtime.GOOS {
 	case "linux", "darwin":
-		if profile.GetWgPath() != "" && profile.GetWgQuickPath() != "" {
+		if connection.GetWgPath() != "" && connection.GetWgQuickPath() != "" {
 			data.Wg = true
 		}
 
 		break
 	case "windows":
-		if profile.GetWgPath() != "" {
+		if connection.GetWgPath() != "" {
 			data.Wg = true
 		}
 

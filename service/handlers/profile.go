@@ -145,7 +145,9 @@ func profilePost(c *gin.Context) {
 			}
 		}()
 
-		conn.Start(connection.Options{})
+		conn.Start(connection.Options{
+			Interactive: true,
+		})
 	}()
 
 	c.JSON(200, nil)

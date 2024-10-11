@@ -3,17 +3,17 @@ package handlers
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/pritunl/pritunl-client-electron/service/autoclean"
-	"github.com/pritunl/pritunl-client-electron/service/profile"
+	"github.com/pritunl/pritunl-client-electron/service/connection"
 )
 
 func stopPost(c *gin.Context) {
-	prfls := profile.GetProfiles()
-	for _, prfl := range prfls {
-		prfl.StopBackground()
+	conns := connection.GlobalStore.GetAll()
+	for _, conn := range conns {
+		conn.StopBackground()
 	}
 
-	for _, prfl := range prfls {
-		prfl.Wait()
+	for _, conn := range conns {
+		conn.StopWait()
 	}
 
 	autoclean.CheckAndCleanWatch()

@@ -3,8 +3,8 @@ package handlers
 import (
 	"github.com/dropbox/godropbox/errors"
 	"github.com/gin-gonic/gin"
+	"github.com/pritunl/pritunl-client-electron/service/connection"
 	"github.com/pritunl/pritunl-client-electron/service/errortypes"
-	"github.com/pritunl/pritunl-client-electron/service/profile"
 	"github.com/pritunl/pritunl-client-electron/service/sprofile"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
 )
@@ -168,9 +168,9 @@ func sprofileDel(c *gin.Context) {
 		return
 	}
 
-	prfl := profile.GetProfile(data.Id)
-	if prfl != nil {
-		prfl.Stop()
+	conn := connection.GlobalStore.Get(data.Id)
+	if conn != nil {
+		conn.Stop()
 	}
 
 	sprofile.Remove(data.Id)
@@ -188,9 +188,9 @@ func sprofileDel2(c *gin.Context) {
 		return
 	}
 
-	prfl := profile.GetProfile(prflId)
-	if prfl != nil {
-		prfl.Stop()
+	conn := connection.GlobalStore.Get(prflId)
+	if conn != nil {
+		conn.Stop()
 	}
 
 	sprofile.Remove(prflId)

@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/pritunl/pritunl-client-electron/service/profile"
+	"github.com/pritunl/pritunl-client-electron/service/connection"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
 )
 
@@ -19,7 +19,7 @@ func networkAllReset(c *gin.Context) {
 	utils.ResetNetworking()
 	utils.ClearDNSCache()
 
-	_ = profile.RestartProfiles(false)
+	_ = connection.RestartProfiles()
 
 	c.JSON(200, nil)
 }
