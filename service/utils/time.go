@@ -15,3 +15,10 @@ func SinceAbs(t time.Time) (s time.Duration) {
 	}
 	return
 }
+
+func SinceFormatted(t time.Time) int {
+	if t.IsZero() {
+		return -1
+	}
+	return int(time.Since(t).Seconds())
+}
