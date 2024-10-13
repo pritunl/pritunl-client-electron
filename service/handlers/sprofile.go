@@ -159,8 +159,8 @@ func sprofileDel(c *gin.Context) {
 		return
 	}
 
-	data.Id = utils.FilterStr(data.Id)
-	if data.Id == "" {
+	prflId := utils.FilterStr(data.Id)
+	if prflId == "" {
 		err = &errortypes.ParseError{
 			errors.New("handler: Invalid profile ID"),
 		}
@@ -168,12 +168,14 @@ func sprofileDel(c *gin.Context) {
 		return
 	}
 
-	conn := connection.GlobalStore.Get(data.Id)
+	connection.GlobalStore.SetStop(prflId)
+
+	conn := connection.GlobalStore.Get(prflId)
 	if conn != nil {
 		conn.Stop()
 	}
 
-	sprofile.Remove(data.Id)
+	sprofile.Remove(prflId)
 
 	c.JSON(200, nil)
 }
@@ -187,6 +189,8 @@ func sprofileDel2(c *gin.Context) {
 		utils.AbortWithError(c, 400, err)
 		return
 	}
+
+	connection.GlobalStore.SetStop(prflId)
 
 	conn := connection.GlobalStore.Get(prflId)
 	if conn != nil {
