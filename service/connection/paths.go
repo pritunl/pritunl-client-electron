@@ -50,8 +50,10 @@ func GetWgPath() string {
 			return path
 		}
 
-		path, _ = exec.LookPath("wg.exe")
-		if path != "" {
+		path, _ = exec.LookPath(filepath.Join(utils.GetWinDrive(),
+			"Program Files (x86)", "WireGuard", "wg.exe"))
+		exists, _ = utils.Exists(path)
+		if exists {
 			return path
 		}
 
@@ -102,8 +104,10 @@ func GetWgQuickPath() string {
 			return path
 		}
 
-		path, _ = exec.LookPath("wg-quick.exe")
-		if path != "" {
+		path, _ = exec.LookPath(filepath.Join(utils.GetWinDrive(),
+			"Program Files (x86)", "WireGuard", "wg-quick.exe"))
+		exists, _ = utils.Exists(path)
+		if exists {
 			return path
 		}
 
@@ -154,8 +158,10 @@ func GetWgUtilPath() string {
 			return path
 		}
 
-		path, _ = exec.LookPath("wireguard.exe")
-		if path != "" {
+		path, _ = exec.LookPath(filepath.Join(utils.GetWinDrive(),
+			"Program Files (x86)", "WireGuard", "wireguard.exe"))
+		exists, _ = utils.Exists(path)
+		if exists {
 			return path
 		}
 
@@ -225,11 +231,7 @@ func GetOvpnDir() (pth string) {
 
 	switch runtime.GOOS {
 	case "windows":
-		if runtime.GOARCH == "arm" || runtime.GOARCH == "arm64" {
-			pth = filepath.Join(utils.GetRootDir(), "openvpn_arm64")
-		} else {
-			pth = filepath.Join(utils.GetRootDir(), "openvpn_amd64")
-		}
+		pth = filepath.Join(utils.GetRootDir(), "openvpn")
 	case "darwin":
 		pth = ""
 	case "linux":
@@ -274,13 +276,7 @@ func GetOvpnPath() (pth string) {
 
 	switch runtime.GOOS {
 	case "windows":
-		if runtime.GOARCH == "arm" || runtime.GOARCH == "arm64" {
-			pth = filepath.Join(utils.GetRootDir(),
-				"openvpn_arm64", "openvpn.exe")
-		} else {
-			pth = filepath.Join(utils.GetRootDir(),
-				"openvpn_amd64", "openvpn.exe")
-		}
+		pth = filepath.Join(utils.GetRootDir(), "openvpn", "openvpn.exe")
 		break
 	case "darwin":
 		if constants.Macos10 {
