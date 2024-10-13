@@ -22,6 +22,7 @@ import (
 	"github.com/dropbox/godropbox/container/set"
 	"github.com/dropbox/godropbox/errors"
 	"github.com/pritunl/pritunl-client-electron/service/command"
+	"github.com/pritunl/pritunl-client-electron/service/constants"
 	"github.com/pritunl/pritunl-client-electron/service/errortypes"
 	"github.com/pritunl/pritunl-client-electron/service/platform"
 	"github.com/sirupsen/logrus"
@@ -764,53 +765,30 @@ func GetRootDir() (pth string) {
 }
 
 func TunTapPath() string {
-	if runtime.GOARCH == "arm" || runtime.GOARCH == "arm64" {
-		pth := filepath.Join(GetRootDir(), "..",
-			"tuntap_win", "tuntap_arm64")
+	if constants.Development {
+		pth := filepath.Join(GetRootDir(), "..", "tuntap_win", "tuntap")
 
 		exists, _ := ExistsDir(pth)
 		if exists {
 			return pth
 		}
-
-		return filepath.Join(GetRootDir(), "tuntap_arm64")
-	} else {
-		pth := filepath.Join(GetRootDir(), "..",
-			"tuntap_win", "tuntap_amd64")
-
-		exists, _ := ExistsFile(pth)
-		if exists {
-			return pth
-		}
-
-		return filepath.Join(GetRootDir(), "tuntap_amd64")
 	}
+
+	return filepath.Join(GetRootDir(), "tuntap")
 }
 
 func TapCtlPath() string {
-	if runtime.GOARCH == "arm" || runtime.GOARCH == "arm64" {
+	if constants.Development {
 		pth := filepath.Join(GetRootDir(), "..",
-			"openvpn_win", "openvpn_arm64", "tapctl.exe")
+			"openvpn_win", "openvpn", "tapctl.exe")
 
 		exists, _ := ExistsFile(pth)
 		if exists {
 			return pth
 		}
-
-		return filepath.Join(GetRootDir(), "openvpn_arm64",
-			"tapctl.exe")
-	} else {
-		pth := filepath.Join(GetRootDir(), "..",
-			"openvpn_win", "openvpn_amd64", "tapctl.exe")
-
-		exists, _ := ExistsFile(pth)
-		if exists {
-			return pth
-		}
-
-		return filepath.Join(GetRootDir(), "openvpn_amd64",
-			"tapctl.exe")
 	}
+
+	return filepath.Join(GetRootDir(), "openvpn", "tapctl.exe")
 }
 
 func GetWinDrive() string {
