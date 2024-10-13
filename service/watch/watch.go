@@ -10,8 +10,8 @@ import (
 	"time"
 
 	"github.com/pritunl/pritunl-client-electron/service/config"
+	"github.com/pritunl/pritunl-client-electron/service/connection"
 	"github.com/pritunl/pritunl-client-electron/service/event"
-	"github.com/pritunl/pritunl-client-electron/service/profile"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
 	"github.com/sirupsen/logrus"
 )
@@ -90,11 +90,9 @@ func wakeWatch() {
 	update := false
 
 	for {
-		if !profile.GetActive() {
+		if !connection.GlobalStore.IsActive() {
 			if update {
-				status := profile.GetStatus()
-
-				if status {
+				if connection.GlobalStore.IsConnected() {
 					evt := event.Event{
 						Type: "connected",
 					}
@@ -123,7 +121,7 @@ func wakeWatch() {
 
 				logrus.Warn("watch: Wakeup restarting...")
 
-				profile.RestartProfiles(false)
+				connection.RestartProfiles()
 			} else {
 				restartLock.Unlock()
 			}
@@ -155,9 +153,9 @@ func dnsWatch() {
 	for {
 		time.Sleep(2 * time.Second)
 
-		if !profile.GetStatus() {
+		if !connection.GlobalStore.IsConnected() {
 			if check > 0 {
-				if profile.DnsForced {
+				if connection.DnsForced {
 					utils.ClearDns()
 				}
 
