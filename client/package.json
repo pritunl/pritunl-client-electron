@@ -37,7 +37,7 @@
     "@electron/fuses": "1.8.0",
     "@electron/rebuild": "3.6.0",
     "@electron/packager": "18.3.5",
-    "electron": "32.1.0",
+    "electron": "32.1.2",
     "rcedit": "4.0.1",
     "rimraf": "6.0.1",
     "source-map-loader": "5.0.0",
