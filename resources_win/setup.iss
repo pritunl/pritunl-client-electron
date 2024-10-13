@@ -33,13 +33,16 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: checkedonce
 
 [Files]
-Source: "..\build\win\pritunl-win32-x64\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\tuntap_win\tuntap_amd64\*"; DestDir: "{app}\tuntap_amd64"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\tuntap_win\tuntap_arm64\*"; DestDir: "{app}\tuntap_arm64"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\openvpn_win\openvpn_amd64\*"; DestDir: "{app}\openvpn_amd64"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\openvpn_win\openvpn_arm64\*"; DestDir: "{app}\openvpn_arm64"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\service\service.exe"; DestDir: "{app}"; DestName: "pritunl-service.exe"; Flags: ignoreversion
-Source: "..\cli\cli.exe"; DestDir: "{app}"; DestName: "pritunl-client.exe"; Flags: ignoreversion
+Source: "..\build\win\pritunl-win32-x64\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Check: not IsArm64
+Source: "..\build\win\pritunl-win32-arm64\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Check: IsArm64
+Source: "..\tuntap_win\tuntap_amd64\*"; DestDir: "{app}\tuntap"; Flags: ignoreversion recursesubdirs createallsubdirs; Check: not IsArm64
+Source: "..\openvpn_win\openvpn_amd64\*"; DestDir: "{app}\openvpn"; Flags: ignoreversion recursesubdirs createallsubdirs; Check: not IsArm64
+Source: "..\tuntap_win\tuntap_arm64\*"; DestDir: "{app}\tuntap"; Flags: ignoreversion recursesubdirs createallsubdirs; Check: IsArm64
+Source: "..\openvpn_win\openvpn_arm64\*"; DestDir: "{app}\openvpn"; Flags: ignoreversion recursesubdirs createallsubdirs; Check: IsArm64
+Source: "..\service\service_amd64.exe"; DestDir: "{app}"; DestName: "pritunl-service.exe"; Flags: ignoreversion; Check: not IsArm64
+Source: "..\cli\cli_amd64.exe"; DestDir: "{app}"; DestName: "pritunl-client.exe"; Flags: ignoreversion; Check: not IsArm64
+Source: "..\service\service_arm64.exe"; DestDir: "{app}"; DestName: "pritunl-service.exe"; Flags: ignoreversion; Check: IsArm64
+Source: "..\cli\cli_arm64.exe"; DestDir: "{app}"; DestName: "pritunl-client.exe"; Flags: ignoreversion; Check: IsArm64
 
 [Code]
 function InitializeSetup(): Boolean;
