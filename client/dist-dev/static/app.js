@@ -3626,7 +3626,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   themeVer: () => (/* binding */ themeVer),
 /* harmony export */   themeVer3: () => (/* binding */ themeVer3),
 /* harmony export */   themeVer5: () => (/* binding */ themeVer5),
-/* harmony export */   toggle: () => (/* binding */ toggle)
+/* harmony export */   toggle: () => (/* binding */ toggle),
+/* harmony export */   toggleVer: () => (/* binding */ toggleVer)
 /* harmony export */ });
 /* harmony import */ var _Config__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Config */ "./app/Config.js");
 /* harmony import */ var _utils_MiscUtils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./utils/MiscUtils */ "./app/utils/MiscUtils.js");
@@ -3681,19 +3682,19 @@ function dark() {
     });
 }
 function toggle() {
-    if (theme === "dark" && themeVer === 3) {
+    if (theme === "light") {
+        dark();
+    }
+    else {
         light();
     }
-    else if (theme === "light" && themeVer === 3) {
-        dark();
-        themeVer5();
-    }
-    else if (theme === "dark" && themeVer === 5) {
-        light();
-    }
-    else if (theme === "light" && themeVer === 5) {
-        dark();
+}
+function toggleVer() {
+    if (themeVer === 5) {
         themeVer3();
+    }
+    else {
+        themeVer5();
     }
 }
 function getEditorTheme() {
@@ -5632,6 +5633,16 @@ class Main extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
             themeLabel = "Dark Theme";
             themeIcon = "moon";
         }
+        let themeVerLabel = "";
+        let themeVerIcon;
+        if (_Theme__WEBPACK_IMPORTED_MODULE_2__.themeVer === 3) {
+            themeVerLabel = "Square Theme";
+            themeVerIcon = "style";
+        }
+        else {
+            themeVerLabel = "Round Theme";
+            themeVerIcon = "style";
+        }
         let trayLabel = "";
         if (_Config__WEBPACK_IMPORTED_MODULE_3__["default"].disable_tray_icon) {
             trayLabel = "Enable Tray Icon";
@@ -5679,6 +5690,15 @@ class Main extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
                     }
                 }, onClick: () => {
                     _Theme__WEBPACK_IMPORTED_MODULE_2__.toggle();
+                    _Theme__WEBPACK_IMPORTED_MODULE_2__.save();
+                } }),
+            react__WEBPACK_IMPORTED_MODULE_0__.createElement(_blueprintjs_core__WEBPACK_IMPORTED_MODULE_16__.MenuItem, { text: themeVerLabel, icon: themeVerIcon, onKeyDown: (evt) => {
+                    if (evt.key === "Enter") {
+                        _Theme__WEBPACK_IMPORTED_MODULE_2__.toggleVer();
+                        _Theme__WEBPACK_IMPORTED_MODULE_2__.save();
+                    }
+                }, onClick: () => {
+                    _Theme__WEBPACK_IMPORTED_MODULE_2__.toggleVer();
                     _Theme__WEBPACK_IMPORTED_MODULE_2__.save();
                 } }),
             react__WEBPACK_IMPORTED_MODULE_0__.createElement(_blueprintjs_core__WEBPACK_IMPORTED_MODULE_16__.MenuItem, { text: "Refresh", icon: "refresh", hidden: true, disabled: this.state.disabled, onKeyDown: (evt) => {
@@ -8910,6 +8930,9 @@ class Importer {
             confData = JSON.parse(jsonData);
         }
         catch (e) {
+            let err = new _Errors__WEBPACK_IMPORTED_MODULE_4__.ParseError(null, "Importer: Json parse error", { path: pth });
+            _Logger__WEBPACK_IMPORTED_MODULE_5__.error(err);
+            confData = null;
         }
         if (!confData) {
             confData = {
@@ -8928,6 +8951,7 @@ class Importer {
                     curPrfl.importConf(prfl);
                     await curPrfl.writeConf();
                     await curPrfl.writeData(ovpnData);
+                    prfl = curPrfl;
                     exists = true;
                     break;
                 }

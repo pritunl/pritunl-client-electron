@@ -24034,19 +24034,19 @@ function dark() {
     });
 }
 function toggle() {
-    if (theme === "dark" && themeVer === 3) {
+    if (theme === "light") {
+        dark();
+    }
+    else {
         light();
     }
-    else if (theme === "light" && themeVer === 3) {
-        dark();
-        themeVer5();
-    }
-    else if (theme === "dark" && themeVer === 5) {
-        light();
-    }
-    else if (theme === "light" && themeVer === 5) {
-        dark();
+}
+function toggleVer() {
+    if (themeVer === 5) {
         themeVer3();
+    }
+    else {
+        themeVer5();
     }
 }
 function getEditorTheme() {
@@ -26279,6 +26279,9 @@ class Importer {
             confData = JSON.parse(jsonData);
         }
         catch (e) {
+            let err = new ParseError(null, "Importer: Json parse error", { path: pth });
+            Logger_error(err);
+            confData = null;
         }
         if (!confData) {
             confData = {
@@ -26297,6 +26300,7 @@ class Importer {
                     curPrfl.importConf(prfl);
                     await curPrfl.writeConf();
                     await curPrfl.writeData(ovpnData);
+                    prfl = curPrfl;
                     exists = true;
                     break;
                 }
@@ -33349,6 +33353,16 @@ class Main extends react.Component {
             themeLabel = "Dark Theme";
             themeIcon = "moon";
         }
+        let themeVerLabel = "";
+        let themeVerIcon;
+        if (themeVer === 3) {
+            themeVerLabel = "Square Theme";
+            themeVerIcon = "style";
+        }
+        else {
+            themeVerLabel = "Round Theme";
+            themeVerIcon = "style";
+        }
         let trayLabel = "";
         if (app_Config.disable_tray_icon) {
             trayLabel = "Enable Tray Icon";
@@ -33396,6 +33410,15 @@ class Main extends react.Component {
                     }
                 }, onClick: () => {
                     toggle();
+                    save();
+                } }),
+            react.createElement(MenuItem, { text: themeVerLabel, icon: themeVerIcon, onKeyDown: (evt) => {
+                    if (evt.key === "Enter") {
+                        toggleVer();
+                        save();
+                    }
+                }, onClick: () => {
+                    toggleVer();
                     save();
                 } }),
             react.createElement(MenuItem, { text: "Refresh", icon: "refresh", hidden: true, disabled: this.state.disabled, onKeyDown: (evt) => {
