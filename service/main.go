@@ -16,9 +16,9 @@ import (
 	"github.com/pritunl/pritunl-client-electron/service/auth"
 	"github.com/pritunl/pritunl-client-electron/service/autoclean"
 	"github.com/pritunl/pritunl-client-electron/service/config"
+	"github.com/pritunl/pritunl-client-electron/service/connection"
 	"github.com/pritunl/pritunl-client-electron/service/constants"
 	"github.com/pritunl/pritunl-client-electron/service/logger"
-	"github.com/pritunl/pritunl-client-electron/service/profile"
 	"github.com/pritunl/pritunl-client-electron/service/router"
 	"github.com/pritunl/pritunl-client-electron/service/setup"
 	"github.com/pritunl/pritunl-client-electron/service/tuntap"
@@ -47,7 +47,7 @@ func main() {
 	}
 
 	if *clean {
-		err := setup.TunTapClean(true)
+		err = setup.TunTapClean(true)
 		if err != nil {
 			fmt.Println(err.Error())
 		}
@@ -58,7 +58,7 @@ func main() {
 		constants.Development = true
 	}
 
-	err := config.Load()
+	err = config.Load()
 	if err != nil {
 		panic(err)
 	}
@@ -140,7 +140,7 @@ func main() {
 
 	watch.StartWatch()
 
-	err = profile.Clean()
+	err = connection.Clean()
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
 			"error": err,
@@ -193,7 +193,7 @@ func main() {
 		}
 	}()
 
-	profile.WatchSystemProfiles()
+	connection.WatchSystemProfiles()
 
 	if winsvc.IsWindowsService() {
 		service := winsvc.New()
@@ -217,15 +217,15 @@ func main() {
 
 	time.Sleep(250 * time.Millisecond)
 
-	profile.Shutdown()
+	connection.SetShutdown()
 
-	prfls := profile.GetProfiles()
-	for _, prfl := range prfls {
-		prfl.StopBackground()
+	conns := connection.GlobalStore.GetAll()
+	for _, conn := range conns {
+		conn.StopBackground()
 	}
 
-	for _, prfl := range prfls {
-		prfl.Wait()
+	for _, conn := range conns {
+		conn.StopWait()
 	}
 
 	if runtime.GOOS == "darwin" {
