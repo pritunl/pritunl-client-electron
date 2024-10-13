@@ -60,7 +60,10 @@ func (s *State) PreStart() {
 }
 
 func (s *State) IsReconnect() bool {
-	return !s.noReconnect
+	if GlobalStore.IsStop(s.conn.Id) {
+		return false
+	}
+	return !s.noReconnect || !s.conn.Profile.Reconnect
 }
 
 func (s *State) IsInteractive() bool {
@@ -68,6 +71,9 @@ func (s *State) IsInteractive() bool {
 }
 
 func (s *State) NoReconnect(reason string) {
+	if s.noReconnect {
+		return
+	}
 	logrus.WithFields(s.conn.Fields(logrus.Fields{
 		"reason": reason,
 	})).Info("connection: Stopping reconnect")
