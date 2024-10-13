@@ -4,6 +4,7 @@ import (
 	"runtime"
 	"runtime/debug"
 	"sync"
+	"time"
 
 	"github.com/dropbox/godropbox/container/set"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
@@ -12,12 +13,14 @@ import (
 
 var GlobalStore = &Store{
 	conns: map[string]*Connection{},
+	stops: map[string]time.Time{},
 }
 
 type Store struct {
 	dnsForced bool
 	lock      sync.RWMutex
 	conns     map[string]*Connection
+	stops     map[string]time.Time
 }
 
 func (s *Store) cleanState() {
@@ -73,7 +76,34 @@ func (s *Store) IsConnected() bool {
 	return false
 }
 
+func (s *Store) SetStop(prflId string) {
+	prflId = utils.FilterStrN(prflId, 128)
+
+	s.lock.RLock()
+	defer s.lock.RUnlock()
+
+	s.stops[prflId] = time.Now()
+}
+
+func (s *Store) IsStop(prflId string) bool {
+	prflId = utils.FilterStrN(prflId, 128)
+
+	s.lock.RLock()
+	defer s.lock.RUnlock()
+
+	stop := s.stops[prflId]
+	if !stop.IsZero() {
+		if utils.SinceAbs(stop) < 6*time.Second {
+			return true
+		}
+		delete(s.stops, prflId)
+	}
+	return false
+}
+
 func (s *Store) Add(prflId string, conn *Connection) {
+	prflId = utils.FilterStrN(prflId, 128)
+
 	s.lock.RLock()
 	c := s.conns[prflId]
 	if c == nil {
@@ -102,6 +132,8 @@ func (s *Store) Add(prflId string, conn *Connection) {
 }
 
 func (s *Store) Remove(prflId string, conn *Connection) {
+	prflId = utils.FilterStrN(prflId, 128)
+
 	s.lock.RLock()
 	defer s.lock.RUnlock()
 
@@ -126,6 +158,8 @@ func (s *Store) Remove(prflId string, conn *Connection) {
 }
 
 func (s *Store) Get(prflId string) (conn *Connection) {
+	prflId = utils.FilterStrN(prflId, 128)
+
 	s.lock.RLock()
 	defer s.lock.RUnlock()
 
@@ -136,6 +170,8 @@ func (s *Store) Get(prflId string) (conn *Connection) {
 }
 
 func (s *Store) GetData(prflId string) (prfl *Data) {
+	prflId = utils.FilterStrN(prflId, 128)
+
 	s.lock.RLock()
 	defer s.lock.RUnlock()
 
