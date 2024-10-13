@@ -139,7 +139,7 @@ func profilePost(c *gin.Context) {
 			panc := recover()
 			if panc != nil {
 				logrus.WithFields(logrus.Fields{
-					"stack": string(debug.Stack()),
+					"trace": string(debug.Stack()),
 					"panic": panc,
 				}).Error("handlers: Profile start panic")
 			}
@@ -162,8 +162,8 @@ func profileDel(c *gin.Context) {
 		return
 	}
 
-	data.Id = utils.FilterStr(data.Id)
-	if data.Id == "" {
+	prflId := utils.FilterStr(data.Id)
+	if prflId == "" {
 		err = &errortypes.ParseError{
 			errors.New("handler: Invalid profile ID"),
 		}
@@ -171,14 +171,16 @@ func profileDel(c *gin.Context) {
 		return
 	}
 
-	sprfl := sprofile.Get(data.Id)
+	connection.GlobalStore.SetStop(prflId)
+
+	sprfl := sprofile.Get(prflId)
 	if sprfl != nil {
-		sprofile.Deactivate(data.Id)
+		sprofile.Deactivate(prflId)
 		c.JSON(200, nil)
 		return
 	}
 
-	conn := connection.GlobalStore.Get(data.Id)
+	conn := connection.GlobalStore.Get(prflId)
 	if conn != nil {
 		conn.Stop()
 	}
@@ -195,6 +197,8 @@ func profileDel2(c *gin.Context) {
 		utils.AbortWithError(c, 400, err)
 		return
 	}
+
+	connection.GlobalStore.SetStop(prflId)
 
 	sprfl := sprofile.Get(prflId)
 	if sprfl != nil {
