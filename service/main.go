@@ -47,7 +47,7 @@ func main() {
 	}
 
 	if *clean {
-		err = setup.TunTapClean(true)
+		err := setup.TunTapClean(true)
 		if err != nil {
 			fmt.Println(err.Error())
 		}
@@ -58,7 +58,7 @@ func main() {
 		constants.Development = true
 	}
 
-	err = config.Load()
+	err := config.Load()
 	if err != nil {
 		panic(err)
 	}
