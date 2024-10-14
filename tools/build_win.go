@@ -56,6 +56,7 @@ func main() {
 	}
 
 	cmd = exec.Command("go", "build", "-v", "-ldflags", "-H windowsgui")
+	cmd.Env = append(os.Environ(), "GOOS=windows")
 	cmd.Env = append(os.Environ(), "GOARCH=arm64")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -126,6 +127,7 @@ func main() {
 	}
 
 	cmd = exec.Command("go", "build", "-v")
+	cmd.Env = append(os.Environ(), "GOOS=windows")
 	cmd.Env = append(os.Environ(), "GOARCH=arm64")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -181,6 +183,24 @@ func main() {
 		"pritunl",
 		"--platform=win32",
 		"--arch=x64",
+		"--icon=www\\img\\logo.ico",
+		"--out=..\\build\\win",
+		"--prune",
+		"--asar",
+	)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err = cmd.Run()
+	if err != nil {
+		panic(err)
+	}
+
+	cmd = exec.Command(
+		".\\node_modules\\.bin\\electron-packager",
+		".\\",
+		"pritunl",
+		"--platform=win32",
+		"--arch=arm64",
 		"--icon=www\\img\\logo.ico",
 		"--out=..\\build\\win",
 		"--prune",
@@ -274,26 +294,7 @@ func main() {
 		panic(err)
 	}
 
-	cmd = exec.Command(
-		".\\node_modules\\.bin\\electron-packager",
-		".\\",
-		"pritunl",
-		"--platform=win32",
-		"--arch=arm64",
-		"--icon=www\\img\\logo.ico",
-		"--out=..\\build\\win",
-		"--prune",
-		"--asar",
-	)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	err = cmd.Run()
-	if err != nil {
-		panic(err)
-	}
-
-	err = os.Chdir(filepath.Join("..", "build", "win",
-		"pritunl-win32-arm64"))
+	err = os.Chdir(filepath.Join("..", "pritunl-win32-arm64"))
 	if err != nil {
 		panic(err)
 	}
