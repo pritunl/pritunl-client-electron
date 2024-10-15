@@ -19,6 +19,10 @@ async function packageApp() {
         '../build/resources/pritunl-client',
         '../build/resources/pritunl-openvpn',
         '../build/resources/pritunl-openvpn10',
+        '../build/resources/bash',
+        '../build/resources/wg',
+        '../build/resources/wg-quick',
+        '../build/resources/wireguard-go',
         '../build/resources/Pritunl Device Authentication',
       ],
       osxUniversal: {
