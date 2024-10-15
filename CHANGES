@@ -6,6 +6,7 @@ Pritunl Client Changelog
 Rewritten connection management
 New themes
 Full Windows ARM support
+Bundle WireGuard on macOS
 
 Version 1.3.4026.10 2024-09-20
 ------------------------------
