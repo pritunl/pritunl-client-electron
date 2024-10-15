@@ -4,6 +4,7 @@ Pritunl Client Changelog
 <%= version %>
 
 Rewritten connection management
+New themes
 Full Windows ARM support
 
 Version 1.3.4026.10 2024-09-20
