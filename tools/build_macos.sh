@@ -54,6 +54,15 @@ cp openvpn_macos/openvpn_universal build/resources/pritunl-openvpn
 codesign --force --timestamp --options=runtime -s "Developer ID Application: Pritunl, Inc. (U22BLATN63)" build/resources/pritunl-openvpn
 rm -rf openvpn_macos/openvpn_universal
 
+# WireGuard
+cp wireguard_macos/bash build/resources/bash
+cp wireguard_macos/wg build/resources/wg
+cp wireguard_macos/wg-quick build/resources/wg-quick
+cp wireguard_macos/wireguard-go build/resources/wireguard-go
+codesign --force --timestamp --options=runtime -s "Developer ID Application: Pritunl, Inc. (U22BLATN63)" build/resources/bash
+codesign --force --timestamp --options=runtime -s "Developer ID Application: Pritunl, Inc. (U22BLATN63)" build/resources/wg
+codesign --force --timestamp --options=runtime -s "Developer ID Application: Pritunl, Inc. (U22BLATN63)" build/resources/wg-quick
+codesign --force --timestamp --options=runtime -s "Developer ID Application: Pritunl, Inc. (U22BLATN63)" build/resources/wireguard-go
 
 # Pritunl
 mkdir -p build/macos/Applications
