@@ -13,22 +13,13 @@ import (
 func GetBashPath() string {
 	switch runtime.GOOS {
 	case "darwin":
-		path, _ := exec.LookPath("/usr/local/bin/bash")
-		if path != "" {
-			return path
+		if constants.Development {
+			return filepath.Join(utils.GetRootDir(), "..",
+				"wireguard_macos", "bash")
 		}
 
-		path, _ = exec.LookPath("/opt/homebrew/bin/bash")
-		if path != "" {
-			return path
-		}
-
-		path, _ = exec.LookPath("/bin/bash")
-		if path != "" {
-			return path
-		}
-
-		break
+		return filepath.Join(string(os.PathSeparator), "Applications",
+			"Pritunl.app", "Contents", "Resources", "bash")
 	case "linux":
 		break
 	case "windows":
@@ -59,27 +50,13 @@ func GetWgPath() string {
 
 		break
 	case "darwin":
-		exists, _ := utils.Exists("/usr/bin/wg")
-		if exists {
-			return "/usr/bin/wg"
+		if constants.Development {
+			return filepath.Join(utils.GetRootDir(), "..",
+				"wireguard_macos", "wg")
 		}
 
-		exists, _ = utils.Exists("/usr/local/bin/wg")
-		if exists {
-			return "/usr/local/bin/wg"
-		}
-
-		exists, _ = utils.Exists("/opt/homebrew/bin/wg")
-		if exists {
-			return "/opt/homebrew/bin/wg"
-		}
-
-		path, _ := exec.LookPath("wg")
-		if path != "" {
-			return path
-		}
-
-		break
+		return filepath.Join(string(os.PathSeparator), "Applications",
+			"Pritunl.app", "Contents", "Resources", "wg")
 	case "linux":
 		path, _ := exec.LookPath("wg")
 		if path != "" {
@@ -113,27 +90,13 @@ func GetWgQuickPath() string {
 
 		break
 	case "darwin":
-		exists, _ := utils.Exists("/usr/bin/wg-quick")
-		if exists {
-			return "/usr/bin/wg-quick"
+		if constants.Development {
+			return filepath.Join(utils.GetRootDir(), "..",
+				"wireguard_macos", "wg-quick")
 		}
 
-		exists, _ = utils.Exists("/usr/local/bin/wg-quick")
-		if exists {
-			return "/usr/local/bin/wg-quick"
-		}
-
-		exists, _ = utils.Exists("/opt/homebrew/bin/wg-quick")
-		if exists {
-			return "/opt/homebrew/bin/wg-quick"
-		}
-
-		path, _ := exec.LookPath("wg-quick")
-		if path != "" {
-			return path
-		}
-
-		break
+		return filepath.Join(string(os.PathSeparator), "Applications",
+			"Pritunl.app", "Contents", "Resources", "wg-quick")
 	case "linux":
 		path, _ := exec.LookPath("wg-quick")
 		if path != "" {
@@ -187,17 +150,7 @@ func GetWgConfDir() (dir1 string, dir2 string, err error) {
 
 		return
 	case "darwin":
-		dir1 = "/usr/local/etc/wireguard"
-
-		exists, e := utils.ExistsDir("/opt/homebrew/etc")
-		if e != nil {
-			err = e
-			return
-		}
-		if exists {
-			dir2 = "/opt/homebrew/etc/wireguard"
-		}
-
+		dir1 = "/etc/wireguard"
 		return
 	case "linux":
 		dir1 = "/etc/wireguard"
