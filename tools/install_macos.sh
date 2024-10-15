@@ -24,15 +24,15 @@ mkdir -p build/macos/Applications
 cd client
 npm install
 ./node_modules/.bin/electron-rebuild
-./node_modules/.bin/electron-packager ./ Pritunl --platform=darwin --arch=x64 --icon=./www/img/pritunl.icns --out=../build/macos/Applications
+node package.js
 cd ../
 mv build/macos/Applications/Pritunl-darwin-x64/Pritunl.app build/macos/Applications/
 rm -rf build/macos/Applications/Pritunl-darwin-x64
 
 # Service
 cd service
-GO111MODULE=off GOPATH="$(pwd)/go" go get -d
-GO111MODULE=off GOPATH="$(pwd)/go" go build -v
+GOPATH="$(pwd)/go" go get -d
+GOPATH="$(pwd)/go" go build -v
 cd ..
 cp service/service build/macos/Applications/Pritunl.app/Contents/Resources/pritunl-service
 
@@ -40,9 +40,29 @@ cp service/service build/macos/Applications/Pritunl.app/Contents/Resources/pritu
 mkdir -p build/macos/Library/LaunchDaemons
 cp service_macos/com.pritunl.service.plist build/macos/Library/LaunchDaemons
 
+# Device Authentication
+cd service_macos
+rm -f "Pritunl Device Authentication"
+swiftc -sdk $(xcrun --show-sdk-path --sdk macosx) -framework CryptoKit -framework LocalAuthentication -framework Security -framework Foundation device_auth.swift -o "Pritunl Device Authentication"
+cp "./Pritunl Device Authentication" build/macos/Applications/Pritunl.app/Contents/Resources/
+cd ..
+
 # Openvpn
 cp openvpn_macos/openvpn build/macos/Applications/Pritunl.app/Contents/Resources/pritunl-openvpn
 cp openvpn_macos/openvpn10 build/macos/Applications/Pritunl.app/Contents/Resources/pritunl-openvpn10
+
+# WireGuard
+cp wireguard_macos/bash build/macos/Applications/Pritunl.app/Contents/Resources/bash
+cp wireguard_macos/wg build/macos/Applications/Pritunl.app/Contents/Resources/wg
+cp wireguard_macos/wg-quick build/macos/Applications/Pritunl.app/Contents/Resources/wg-quick
+cp wireguard_macos/wireguard-go build/macos/Applications/Pritunl.app/Contents/Resources/wireguard-go
+
+# CLI
+cd cli
+GOPATH="$(pwd)/go" go get -d
+GOPATH="$(pwd)/go" go build -v
+cd ..
+cp cli/cli build/macos/Applications/Pritunl.app/Contents/Resources/pritunl-client
 
 # Files
 sudo touch /var/run/pritunl_auth
