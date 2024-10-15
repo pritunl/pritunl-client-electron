@@ -1,3 +1,6 @@
+###################################################################
+# openvpn
+###################################################################
 mkdir -p /Users/apple/build
 cp ./* /Users/apple/build/
 cp ../../openvpn_macos/* /Users/apple/build/
@@ -50,3 +53,114 @@ cd ../
 
 
 codesign --force --timestamp --options=runtime -s "Developer ID Application: Pritunl, Inc. (U22BLATN63)" ./openvpn/sbin/openvpn
+
+###################################################################
+# wireguard
+###################################################################
+mkdir -p /Users/apple/build
+cp ../../wireguard_macos/* /Users/apple/build/
+cd /Users/apple/build
+
+export MACOSX_DEPLOYMENT_TARGET=11.0
+export CFLAGS="-mmacosx-version-min=11.0"
+export CXXFLAGS="-mmacosx-version-min=11.0"
+export CPPFLAGS="-mmacosx-version-min=11.0"
+export LINKFLAGS="-mmacosx-version-min=11.0"
+
+tar xf bash-5.2.tar.gz
+cd ./bash-5.2
+./configure
+make
+cp ./bash ../bash-arm64
+cd ../
+
+export MACOSX_DEPLOYMENT_TARGET=11.0
+export CFLAGS="-mmacosx-version-min=11.0"
+export CXXFLAGS="-mmacosx-version-min=11.0"
+export CPPFLAGS="-mmacosx-version-min=11.0"
+export LINKFLAGS="-mmacosx-version-min=11.0"
+
+tar xf wireguard-go-0.0.20230223.tar.xz
+cd ./wireguard-go-0.0.20230223
+make
+cp ./wireguard-go ../wireguard-go-arm64
+cd ../
+
+export MACOSX_DEPLOYMENT_TARGET=11.0
+export CFLAGS="-mmacosx-version-min=11.0"
+export CXXFLAGS="-mmacosx-version-min=11.0"
+export CPPFLAGS="-mmacosx-version-min=11.0"
+export LINKFLAGS="-mmacosx-version-min=11.0"
+
+tar xf wireguard-tools-1.0.20210914.tar.xz
+cd ./wireguard-tools-1.0.20210914
+make -C src WITH_WGQUICK=yes
+cp ./src/wg ../wg-arm64
+cp ./src/wg-quick/darwin.bash ../wg-quick
+cd ../
+
+export MACOSX_DEPLOYMENT_TARGET=11.0
+export CFLAGS="-arch x86_64 -mmacosx-version-min=11.0"
+export CXXFLAGS="-arch x86_64 -mmacosx-version-min=11.0"
+export CPPFLAGS="-arch x86_64 -mmacosx-version-min=11.0"
+export LDFLAGS="-arch x86_64 -mmacosx-version-min=11.0"
+export LINKFLAGS="-arch x86_64 -mmacosx-version-min=11.0"
+export GOOS=darwin
+export GOARCH=amd64
+
+rm -rf ./bash-5.2
+tar xf bash-5.2.tar.gz
+cd ./bash-5.2
+./configure --host=x86_64-apple-darwin
+make
+cp ./bash ../bash-amd64
+cd ../
+
+export MACOSX_DEPLOYMENT_TARGET=11.0
+export CFLAGS="-arch x86_64 -mmacosx-version-min=11.0"
+export CXXFLAGS="-arch x86_64 -mmacosx-version-min=11.0"
+export CPPFLAGS="-arch x86_64 -mmacosx-version-min=11.0"
+export LDFLAGS="-arch x86_64 -mmacosx-version-min=11.0"
+export LINKFLAGS="-arch x86_64 -mmacosx-version-min=11.0"
+export GOOS=darwin
+export GOARCH=amd64
+
+rm -rf ./wireguard-go-0.0.20230223
+tar xf wireguard-go-0.0.20230223.tar.xz
+cd ./wireguard-go-0.0.20230223
+make
+cp ./wireguard-go ../wireguard-go-amd64
+cd ../
+
+export MACOSX_DEPLOYMENT_TARGET=11.0
+export CFLAGS="-arch x86_64 -mmacosx-version-min=11.0"
+export CXXFLAGS="-arch x86_64 -mmacosx-version-min=11.0"
+export CPPFLAGS="-arch x86_64 -mmacosx-version-min=11.0"
+export LDFLAGS="-arch x86_64 -mmacosx-version-min=11.0"
+export LINKFLAGS="-arch x86_64 -mmacosx-version-min=11.0"
+export GOOS=darwin
+export GOARCH=amd64
+
+rm -rf ./wireguard-tools-1.0.20210914
+tar xf wireguard-tools-1.0.20210914.tar.xz
+cd ./wireguard-tools-1.0.20210914
+make -C src WITH_WGQUICK=yes
+cp ./src/wg ../wg-amd64
+cd ../
+
+lipo -info bash-amd64
+lipo -info bash-arm64
+lipo -create -output bash bash-amd64 bash-arm64
+
+lipo -info wireguard-go-amd64
+lipo -info wireguard-go-arm64
+lipo -create -output wireguard-go wireguard-go-amd64 wireguard-go-arm64
+
+lipo -info wg-amd64
+lipo -info wg-arm64
+lipo -create -output wg wg-amd64 wg-arm64
+
+codesign --force --timestamp --options=runtime -s "Developer ID Application: Pritunl, Inc. (U22BLATN63)" ./bash
+codesign --force --timestamp --options=runtime -s "Developer ID Application: Pritunl, Inc. (U22BLATN63)" ./wireguard-go
+codesign --force --timestamp --options=runtime -s "Developer ID Application: Pritunl, Inc. (U22BLATN63)" ./wg
+codesign --force --timestamp --options=runtime -s "Developer ID Application: Pritunl, Inc. (U22BLATN63)" ./wg-quick
