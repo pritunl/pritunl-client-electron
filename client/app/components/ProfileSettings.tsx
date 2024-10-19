@@ -11,6 +11,8 @@ import PageInput from "./PageInput"
 import PageSwitch from "./PageSwitch"
 import * as MiscUtils from "../utils/MiscUtils";
 import * as Constants from "../Constants";
+import * as Errors from "../Errors";
+import * as Logger from "../Logger";
 
 interface Props {
 	profile: ProfileTypes.ProfileRo
@@ -113,6 +115,20 @@ export default class ProfileSettings extends React.Component<Props, State> {
 		if (prfl) {
 			if (this.state.setAutoStart !== null) {
 				prfl.disabled = !this.state.setAutoStart
+			}
+
+			if (prfl.force_connect && prfl.disabled) {
+				let err = new Errors.WriteError(
+					null, "Profiles: Profile autostart enforced by server",
+					{profile_id: prfl.id}
+				)
+				Logger.errorAlert(err, 10)
+				prfl.disabled = false
+				this.setState({
+					...this.state,
+					setAutoStart: null,
+				})
+				return
 			}
 
 			ProfileActions.commit(prfl).then(() => {
