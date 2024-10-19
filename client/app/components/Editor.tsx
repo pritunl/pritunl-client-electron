@@ -44,12 +44,13 @@ export default class Editor extends React.Component<Props, State> {
 					height={this.props.height}
 					width={this.props.width}
 					defaultLanguage="markdown"
-					theme={Theme.editorTheme()}
+					theme={Theme.getEditorTheme()}
 					value={this.props.value}
 					options={{
 						folding: false,
 						fontSize: this.props.fontSize,
-						fontFamily: '"DejaVu Sans Mono", Monaco, Menlo, "Ubuntu Mono", Consolas, source-code-pro, monospace',
+						fontFamily: Theme.monospaceFont,
+						fontWeight: Theme.monospaceWeight,
 						tabSize: 4,
 						detectIndentation: false,
 						readOnly: this.props.readOnly,
