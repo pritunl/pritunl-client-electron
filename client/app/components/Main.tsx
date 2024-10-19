@@ -70,6 +70,8 @@ const css = {
 		overflowY: 'auto',
 	} as React.CSSProperties,
 	menuLabel: {
+		fontSize: '15px',
+		textAlign: 'center',
 	} as React.CSSProperties,
 	updateButton: {
 		marginTop: "7px",
@@ -224,12 +226,22 @@ export default class Main extends React.Component<{}, State> {
 
 		let themeLabel = ""
 		let themeIcon: Blueprint.IconName;
-		if (Theme.theme() === "dark") {
+		if (Theme.theme === "dark") {
 			themeLabel = "Light Theme"
 			themeIcon = "flash"
 		} else {
 			themeLabel = "Dark Theme"
 			themeIcon = "moon"
+		}
+
+		let themeVerLabel = ""
+		let themeVerIcon: Blueprint.IconName;
+		if (Theme.themeVer === 3) {
+			themeVerLabel = "Square Theme"
+			themeVerIcon = "style"
+		} else {
+			themeVerLabel = "Round Theme"
+			themeVerIcon = "style"
 		}
 
 		let trayLabel = ""
@@ -271,10 +283,12 @@ export default class Main extends React.Component<{}, State> {
 		}
 
 		let menu: JSX.Element = <Blueprint.Menu>
-			<li
-				className="bp5-menu-header"
-				style={css.menuLabel}
-			><h5 className="bp5-heading">{"Pritunl Client" + version}</h5></li>
+			<li className="bp5-menu-header">
+				<h6
+					className="bp5-heading"
+					style={css.menuLabel}
+				>{"Pritunl Client" + version}</h6>
+			</li>
 			<Blueprint.MenuDivider/>
 			<Blueprint.MenuItem
 				text={themeLabel}
@@ -287,6 +301,20 @@ export default class Main extends React.Component<{}, State> {
 				}}
 				onClick={(): void => {
 					Theme.toggle()
+					Theme.save()
+				}}
+			/>
+			<Blueprint.MenuItem
+				text={themeVerLabel}
+				icon={themeVerIcon}
+				onKeyDown={(evt): void => {
+					if (evt.key === "Enter") {
+						Theme.toggleVer()
+						Theme.save()
+					}
+				}}
+				onClick={(): void => {
+					Theme.toggleVer()
 					Theme.save()
 				}}
 			/>
@@ -472,6 +500,7 @@ export default class Main extends React.Component<{}, State> {
 					<div>
 						<Blueprint.Popover
 							interactionKind="click"
+							popoverClassName="main-menu"
 							placement={Blueprint.Position.BOTTOM}
 							content={menu}
 							defaultIsOpen={false}
