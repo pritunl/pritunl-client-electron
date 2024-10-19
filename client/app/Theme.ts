@@ -62,16 +62,18 @@ export function dark(): void {
 }
 
 export function toggle(): void {
-	if (theme === "dark" && themeVer === 3) {
-		light();
-	} else if (theme === "light" && themeVer === 3) {
+	if (theme === "light") {
 		dark();
-		themeVer5();
-	} else if (theme === "dark" && themeVer === 5) {
+	} else {
 		light();
-	} else if (theme === "light" && themeVer === 5) {
-		dark();
+	}
+}
+
+export function toggleVer(): void {
+	if (themeVer === 5) {
 		themeVer3();
+	} else {
+		themeVer5();
 	}
 }
 
