@@ -28167,7 +28167,12 @@ class Profiles extends react.Component {
     render() {
         let profilesDom = [];
         let minimal = this.state.profiles.length > 3;
+        let prflIds = new Set();
         this.state.profiles.forEach((prfl) => {
+            if (prflIds.has(prfl.id)) {
+                return;
+            }
+            prflIds.add(prfl.id);
             profilesDom.push(react.createElement(Profile, { key: prfl.id, profile: prfl, minimal: minimal }));
         });
         return react.createElement("div", null, profilesDom);

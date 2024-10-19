@@ -7463,7 +7463,12 @@ class Profiles extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
     render() {
         let profilesDom = [];
         let minimal = this.state.profiles.length > 3;
+        let prflIds = new Set();
         this.state.profiles.forEach((prfl) => {
+            if (prflIds.has(prfl.id)) {
+                return;
+            }
+            prflIds.add(prfl.id);
             profilesDom.push(react__WEBPACK_IMPORTED_MODULE_0__.createElement(_Profile__WEBPACK_IMPORTED_MODULE_3__["default"], { key: prfl.id, profile: prfl, minimal: minimal }));
         });
         return react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", null, profilesDom);
