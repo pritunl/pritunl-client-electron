@@ -63,7 +63,9 @@ func SyncSystemProfiles() (err error) {
 							"profile_id": conn.Id,
 						}).Info("profile: Profile not ready, waiting")
 					} else {
-						conn.Start(Options{})
+						go conn.Start(Options{
+							Interactive: sPrfl.Interactive,
+						})
 					}
 
 					waiter.Done()
@@ -82,7 +84,9 @@ func SyncSystemProfiles() (err error) {
 						return
 					}
 
-					conn.Start(Options{})
+					go conn.Start(Options{
+						Interactive: sPrfl.Interactive,
+					})
 
 					waiter.Done()
 				}()
