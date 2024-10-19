@@ -32,6 +32,14 @@ export function nonce(): string {
 	return nonce
 }
 
+export function titleCase(str: string): string {
+	return str
+		.toLowerCase()
+		.split(' ')
+		.map(word => word.charAt(0).toUpperCase() + word.slice(1))
+		.join(' ');
+}
+
 export function shuffle(n: any[]): any[] {
 	let i = n.length, j
 	while (i != 0) {
