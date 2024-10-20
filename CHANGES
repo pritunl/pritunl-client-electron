@@ -1,6 +1,10 @@
 Pritunl Client Changelog
 ========================
 
+<%= version %>
+
+Fix issues system profiles
+
 Version 1.3.4051.36 2024-10-15
 ------------------------------
 
