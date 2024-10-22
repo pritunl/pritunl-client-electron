@@ -43,7 +43,7 @@ const (
 var (
 	clientTransport = &http.Transport{
 		DisableKeepAlives:   true,
-		TLSHandshakeTimeout: 5 * time.Second,
+		TLSHandshakeTimeout: 8 * time.Second,
 		TLSClientConfig: &tls.Config{
 			InsecureSkipVerify: true,
 			MinVersion:         tls.VersionTLS12,
@@ -52,11 +52,7 @@ var (
 	}
 	clientInsecure = &http.Client{
 		Transport: clientTransport,
-		Timeout:   10 * time.Second,
-	}
-	clientConnInsecure = &http.Client{
-		Transport: clientTransport,
-		Timeout:   30 * time.Second,
+		Timeout:   40 * time.Second,
 	}
 )
 
@@ -981,7 +977,7 @@ func (c *Client) EncRequest(method string, reqUrl *url.URL,
 	c.requestCancel = cancel
 	c.requestCancelLock.Unlock()
 
-	resp, err = clientConnInsecure.Do(req)
+	resp, err = clientInsecure.Do(req)
 	if err != nil {
 		err = &errortypes.RequestError{
 			errors.Wrap(err, "profile: Request put error"),
