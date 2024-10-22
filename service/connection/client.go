@@ -283,17 +283,13 @@ func (c *Client) connectPreAuth() (err error) {
 		}
 
 		data, final, evt, err = c.authorize(remote.Host, "", time.Time{})
-		if err != nil {
+		if err == nil || final {
 			break
 		}
 
 		if c.conn.State.IsStop() {
 			c.conn.State.Close()
 			return
-		}
-
-		if err == nil || final {
-			break
 		}
 	}
 
