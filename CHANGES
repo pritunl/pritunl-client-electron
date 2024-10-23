@@ -1,6 +1,10 @@
 Pritunl Client Changelog
 ========================
 
+<%= version %>
+
+Fix connection retry
+
 Version 1.3.4058.0 2024-10-22
 -----------------------------
 
