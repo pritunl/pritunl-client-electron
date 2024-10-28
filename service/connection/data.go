@@ -313,7 +313,7 @@ func (d *Data) ParseProfile() (err error) {
 
 	sortMethod := ""
 	if d.conn.Profile.IsGeoSort() {
-		remotes = append(remotes, syncRemotes...)
+		remotes = append(syncRemotes, remotes...)
 
 		sortMethod = "geo"
 
@@ -348,12 +348,12 @@ func (d *Data) ParseProfile() (err error) {
 		sortMethod = "random"
 		newRemotes := Remotes{}
 
-		for _, i := range mathrand.Perm(len(remotes)) {
-			newRemotes = append(newRemotes, remotes[i])
-		}
-
 		for _, i := range mathrand.Perm(len(syncRemotes)) {
 			newRemotes = append(newRemotes, syncRemotes[i])
+		}
+
+		for _, i := range mathrand.Perm(len(remotes)) {
+			newRemotes = append(newRemotes, remotes[i])
 		}
 
 		remotes = newRemotes
