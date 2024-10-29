@@ -63,7 +63,7 @@ func (s *State) IsReconnect() bool {
 	if GlobalStore.IsStop(s.conn.Id) {
 		return false
 	}
-	return !s.noReconnect || !s.conn.Profile.Reconnect
+	return !s.noReconnect && s.conn.Profile.Reconnect
 }
 
 func (s *State) IsInteractive() bool {
