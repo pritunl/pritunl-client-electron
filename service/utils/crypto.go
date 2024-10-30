@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"encoding/ascii85"
 	"encoding/base64"
+	"encoding/hex"
 	"math"
 	"math/big"
 	mathrand "math/rand"
@@ -72,6 +73,16 @@ func RandStrComplex(n int) (str string, err error) {
 		return
 	}
 
+	return
+}
+
+func RandId() (id string, err error) {
+	randByt, err := RandBytes(8)
+	if err != nil {
+		return
+	}
+
+	id = hex.EncodeToString(randByt)
 	return
 }
 

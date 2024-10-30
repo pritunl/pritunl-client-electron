@@ -12,6 +12,7 @@ import (
 type State struct {
 	conn               *Connection
 	startTime          time.Time
+	id                 string
 	stop               bool
 	lastStopCheckStack string
 	lastStopCheckTime  time.Time
@@ -28,6 +29,7 @@ type State struct {
 
 func (s *State) Fields() logrus.Fields {
 	return logrus.Fields{
+		"state_id":                 s.id,
 		"state_time":               s.startTime,
 		"state_stop":               s.stop,
 		"state_deadline":           s.deadline,
@@ -42,6 +44,11 @@ func (s *State) Fields() logrus.Fields {
 }
 
 func (s *State) Init(opts Options) (err error) {
+	s.id, err = utils.RandId()
+	if err != nil {
+		return
+	}
+
 	s.deadline = opts.Deadline
 	s.delay = opts.Delay
 	s.interactive = opts.Interactive
