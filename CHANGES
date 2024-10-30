@@ -1,6 +1,11 @@
 Pritunl Client Changelog
 ========================
 
+<%= version %>
+
+Improve connection management
+Fix disable reconnection option
+
 Version 1.3.4059.45 2024-10-23
 ------------------------------
 
