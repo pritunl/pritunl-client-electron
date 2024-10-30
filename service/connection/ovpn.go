@@ -120,8 +120,34 @@ func (o *Ovpn) Connect(data *ConnData) (err error) {
 
 	remotes := Remotes{}
 	if data.Remote != "" || data.Remote6 != "" {
+		foundRemote := false
+		foundRemote6 := false
 		for _, remote := range o.conn.Data.Remotes {
-			if remote.Equal(data.Remote) || remote.Equal(data.Remote6) {
+			if remote.Type != OvpnRemote {
+				continue
+			}
+
+			if remote.Equal(data.Remote) {
+				foundRemote = true
+				remotes = append(remotes, remote)
+			}
+			if remote.Equal(data.Remote6) {
+				foundRemote6 = true
+				remotes = append(remotes, remote)
+			}
+		}
+
+		for _, remote := range o.conn.Data.Remotes {
+			if remote.Type == OvpnRemote {
+				continue
+			}
+
+			if !foundRemote && remote.Equal(data.Remote) {
+				foundRemote = true
+				remotes = append(remotes, remote)
+			}
+			if !foundRemote6 && remote.Equal(data.Remote6) {
+				foundRemote6 = true
 				remotes = append(remotes, remote)
 			}
 		}
