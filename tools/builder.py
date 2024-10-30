@@ -20,8 +20,9 @@ from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 CHANGES_PATH = 'CHANGES'
 CONSTANTS_PATH = 'service/constants/constants.go'
 CONSTANTS_PATH2 = 'client/package.json'
-CONSTANTS_PATH3 = 'cli/constants/constants.go'
-CONSTANTS_PATH4 = 'resources_win/setup.iss'
+CONSTANTS_PATH3 = 'client/package-lock.json'
+CONSTANTS_PATH4 = 'cli/constants/constants.go'
+CONSTANTS_PATH5 = 'resources_win/setup.iss'
 STABLE_PACUR_PATH = '../pritunl-pacur'
 TEST_PACUR_PATH = '../pritunl-pacur-test'
 BUILD_KEYS_PATH = 'tools/build_keys.json'
@@ -196,7 +197,7 @@ def iter_packages():
         for name in os.listdir(target_path):
             if cur_version not in name:
                 continue
-            elif name.endswith(".pkg.tar.xz"):
+            elif name.endswith(".pkg.tar.zst"):
                 pass
             elif name.endswith(".rpm"):
                 pass
@@ -273,16 +274,27 @@ if cmd == 'set-version':
 
     with open(CONSTANTS_PATH3, 'w') as constants_file:
         constants_file.write(re.sub(
-            '(Version = ".*?")',
-            'Version = "%s"' % new_version,
+            '("version": ".*?")',
+            '"version": "%s"' % new_version,
             constants_data,
-            count=1,
+            count=2,
         ))
 
     with open(CONSTANTS_PATH4, 'r') as constants_file:
         constants_data = constants_file.read()
 
     with open(CONSTANTS_PATH4, 'w') as constants_file:
+        constants_file.write(re.sub(
+            '(Version = ".*?")',
+            'Version = "%s"' % new_version,
+            constants_data,
+            count=1,
+        ))
+
+    with open(CONSTANTS_PATH5, 'r') as constants_file:
+        constants_data = constants_file.read()
+
+    with open(CONSTANTS_PATH5, 'w') as constants_file:
         constants_file.write(re.sub(
             '(MyAppVersion ".*?")',
             'MyAppVersion "%s"' % new_version,
@@ -344,6 +356,7 @@ if cmd == 'set-version':
     subprocess.check_call(['git', 'add', CONSTANTS_PATH2])
     subprocess.check_call(['git', 'add', CONSTANTS_PATH3])
     subprocess.check_call(['git', 'add', CONSTANTS_PATH4])
+    subprocess.check_call(['git', 'add', CONSTANTS_PATH5])
     subprocess.check_call(['git', 'commit', '-S', '-m', 'Create new release'])
     subprocess.check_call(['git', 'push'])
 
@@ -486,23 +499,8 @@ if cmd == 'upload' or cmd == 'upload-test' or cmd == 'build-upload':
     )
 
     subprocess.check_call([
-        'mc',
-        'mirror',
-        '--remove',
-        '--overwrite',
-        '--md5',
-        'mirror',
-        'repo-east/unstable',
-    ], cwd=pacur_path)
-
-    subprocess.check_call([
-        'mc',
-        'mirror',
-        '--remove',
-        '--overwrite',
-        '--md5',
-        'mirror',
-        'repo-west/unstable',
+        'sh',
+        'upload-unstable.sh',
     ], cwd=pacur_path)
 
     for name, path in iter_packages():
