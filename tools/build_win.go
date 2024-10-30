@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 )
 
-const signtool = "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.22621.0\\x64\\signtool.exe"
+const signtool = "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.26100.0\\x64\\signtool.exe"
 
 func main() {
 	err := os.RemoveAll("build")
@@ -37,8 +37,8 @@ func main() {
 
 	cmd = exec.Command(signtool,
 		"sign",
-		"/sha1", "055219bfb2cfe0b43a7e653da125b2f74bbe3003",
-		"/tr", "http://timestamp.sectigo.com",
+		"/sha1", "c088a20413edc0fdfe17f5905af624c68a33144c",
+		"/tr", "http://timestamp.digicert.com",
 		"/td", "sha256",
 		"/fd", "sha256",
 		"service.exe",
@@ -67,8 +67,8 @@ func main() {
 
 	cmd = exec.Command(signtool,
 		"sign",
-		"/sha1", "055219bfb2cfe0b43a7e653da125b2f74bbe3003",
-		"/tr", "http://timestamp.sectigo.com",
+		"/sha1", "c088a20413edc0fdfe17f5905af624c68a33144c",
+		"/tr", "http://timestamp.digicert.com",
 		"/td", "sha256",
 		"/fd", "sha256",
 		"service.exe",
@@ -108,8 +108,8 @@ func main() {
 
 	cmd = exec.Command(signtool,
 		"sign",
-		"/sha1", "055219bfb2cfe0b43a7e653da125b2f74bbe3003",
-		"/tr", "http://timestamp.sectigo.com",
+		"/sha1", "c088a20413edc0fdfe17f5905af624c68a33144c",
+		"/tr", "http://timestamp.digicert.com",
 		"/td", "sha256",
 		"/fd", "sha256",
 		"cli.exe",
@@ -138,8 +138,8 @@ func main() {
 
 	cmd = exec.Command(signtool,
 		"sign",
-		"/sha1", "055219bfb2cfe0b43a7e653da125b2f74bbe3003",
-		"/tr", "http://timestamp.sectigo.com",
+		"/sha1", "c088a20413edc0fdfe17f5905af624c68a33144c",
+		"/tr", "http://timestamp.digicert.com",
 		"/td", "sha256",
 		"/fd", "sha256",
 		"cli.exe",
@@ -281,8 +281,8 @@ func main() {
 
 	cmd = exec.Command(signtool,
 		"sign",
-		"/sha1", "055219bfb2cfe0b43a7e653da125b2f74bbe3003",
-		"/tr", "http://timestamp.sectigo.com",
+		"/sha1", "c088a20413edc0fdfe17f5905af624c68a33144c",
+		"/tr", "http://timestamp.digicert.com",
 		"/td", "sha256",
 		"/fd", "sha256",
 		"pritunl.exe",
@@ -361,8 +361,8 @@ func main() {
 
 	cmd = exec.Command(signtool,
 		"sign",
-		"/sha1", "055219bfb2cfe0b43a7e653da125b2f74bbe3003",
-		"/tr", "http://timestamp.sectigo.com",
+		"/sha1", "c088a20413edc0fdfe17f5905af624c68a33144c",
+		"/tr", "http://timestamp.digicert.com",
 		"/td", "sha256",
 		"/fd", "sha256",
 		"pritunl.exe",
