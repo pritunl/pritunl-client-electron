@@ -12,15 +12,28 @@ import (
 )
 
 var GlobalStore = &Store{
-	conns: map[string]*Connection{},
-	stops: map[string]time.Time{},
+	conns:      map[string]*Connection{},
+	conditions: map[string]*Condition{},
+	stops:      map[string]time.Time{},
+}
+
+type Condition struct {
+	AuthReconnect bool `json:"auth_reconnect"`
+}
+
+type StoreData struct {
+	Id string `json:"id"`
+	*Data
+	*Condition
 }
 
 type Store struct {
-	dnsForced bool
-	lock      sync.RWMutex
-	conns     map[string]*Connection
-	stops     map[string]time.Time
+	dnsForced      bool
+	lock           sync.RWMutex
+	conditionsLock sync.Mutex
+	conns          map[string]*Connection
+	conditions     map[string]*Condition
+	stops          map[string]time.Time
 }
 
 func (s *Store) cleanState() {
@@ -184,6 +197,30 @@ func (s *Store) GetData(prflId string) (prfl *Data) {
 	return
 }
 
+func (s *Store) SetAuthConnect(prflId string) {
+	s.conditionsLock.Lock()
+	defer s.conditionsLock.Unlock()
+
+	condition := s.conditions[prflId]
+	if condition != nil {
+		condition.AuthReconnect = true
+	} else {
+		s.conditions[prflId] = &Condition{
+			AuthReconnect: true,
+		}
+	}
+}
+
+func (s *Store) UnsetAuthConnect(prflId string) {
+	s.conditionsLock.Lock()
+	defer s.conditionsLock.Unlock()
+
+	condition := s.conditions[prflId]
+	if condition != nil {
+		condition.AuthReconnect = false
+	}
+}
+
 func (s *Store) GetAll() (conns map[string]*Connection) {
 	s.lock.RLock()
 	defer s.lock.RUnlock()
@@ -198,15 +235,32 @@ func (s *Store) GetAll() (conns map[string]*Connection) {
 	return
 }
 
-func (s *Store) GetAllData() (prfls map[string]*Data) {
+func (s *Store) GetAllData() (prfls map[string]*StoreData) {
 	s.lock.RLock()
 	defer s.lock.RUnlock()
 
-	prfls = map[string]*Data{}
+	prfls = map[string]*StoreData{}
 
 	s.cleanState()
 	for _, conn := range s.conns {
-		prfls[conn.Id] = conn.Data
+		prfls[conn.Id] = &StoreData{
+			Id:   conn.Id,
+			Data: conn.Data,
+		}
+	}
+
+	s.conditionsLock.Lock()
+	defer s.conditionsLock.Unlock()
+	for prflId, condition := range s.conditions {
+		data := prfls[prflId]
+		if data != nil {
+			data.Condition = condition
+		} else {
+			prfls[prflId] = &StoreData{
+				Id:        prflId,
+				Condition: condition,
+			}
+		}
 	}
 
 	return
