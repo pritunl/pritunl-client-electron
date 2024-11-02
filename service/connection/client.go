@@ -155,6 +155,8 @@ func (c *Client) Start(prov Provider) (err error) {
 	c.prov = prov
 	c.startTime = time.Now()
 
+	GlobalStore.UnsetAuthConnect(c.conn.Id)
+
 	err = c.prov.PreConnect()
 	if err != nil {
 		c.conn.State.Close()
@@ -609,6 +611,12 @@ func (c *Client) authorize(host string, ssoToken string,
 		if !c.conn.State.IsInteractive() {
 			logrus.WithFields(c.conn.Fields(nil)).Info(
 				"connection: Stopping non-interactive single sign-on")
+
+			GlobalStore.SetAuthConnect(c.conn.Id)
+			evt2 := &event.Event{
+				Type: "wakeup",
+			}
+			evt2.Init()
 
 			c.conn.State.NoReconnect("client_auth_error")
 			c.conn.Data.SendProfileEvent("sso_interactive")
