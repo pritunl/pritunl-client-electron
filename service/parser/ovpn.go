@@ -163,6 +163,7 @@ func (o *Ovpn) Export() string {
 
 	if o.DisableGateway {
 		output += "pull-filter ignore \"redirect-gateway\"\n"
+		output += "pull-filter ignore \"route-ipv6 2000::/3\"\n"
 	}
 
 	if o.DisableDns {
