@@ -56,7 +56,7 @@ func SyncSystemProfiles() (err error) {
 				update = true
 				waiter.Add(1)
 
-				go func() {
+				go func(sPrfl *sprofile.Sprofile) {
 					ready := conn.Ready()
 					if !ready {
 						logrus.WithFields(logrus.Fields{
@@ -69,14 +69,14 @@ func SyncSystemProfiles() (err error) {
 					}
 
 					waiter.Done()
-				}()
+				}(sPrfl)
 			} else if conn.Profile.Mode != sPrfl.LastMode &&
 				!(conn.Profile.Mode == "ovpn" && sPrfl.LastMode == "") {
 
 				update = true
 				waiter.Add(1)
 
-				go func() {
+				go func(sPrfl *sprofile.Sprofile) {
 					conn.Stop()
 
 					conn, err = ImportSystemProfile(sPrfl)
@@ -89,7 +89,7 @@ func SyncSystemProfiles() (err error) {
 					})
 
 					waiter.Done()
-				}()
+				}(sPrfl)
 			}
 		} else if conn != nil {
 			update = true
