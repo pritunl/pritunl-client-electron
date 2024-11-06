@@ -169,8 +169,12 @@ func RestartProfiles() (err error) {
 	defer restartLock.Unlock()
 
 	conns := GlobalStore.GetAll()
+	prfls := []*Profile{}
 
 	for _, conn := range conns {
+		if conn.State.IsReconnect() {
+			prfls = append(prfls, conn.Profile)
+		}
 		conn.StopBackground()
 	}
 
@@ -178,7 +182,27 @@ func RestartProfiles() (err error) {
 		conn.StopWait()
 	}
 
-	// TOOD Iter and restart
+	for _, prfl := range prfls {
+		go func(prfl *Profile) {
+			newConn, e := NewConnection(prfl)
+			if e != nil {
+				logrus.WithFields(logrus.Fields{
+					"profile_id": prfl.Id,
+					"error":      e,
+				}).Error("profile: Failed to init connection in restart all")
+				return
+			}
+
+			e = newConn.Start(Options{})
+			if e != nil {
+				logrus.WithFields(logrus.Fields{
+					"profile_id": prfl.Id,
+					"error":      e,
+				}).Error("profile: Failed to start connection in restart all")
+				return
+			}
+		}(prfl)
+	}
 
 	return
 }
