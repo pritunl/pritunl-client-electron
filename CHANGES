@@ -1,6 +1,12 @@
 Pritunl Client Changelog
 ========================
 
+<%= version %>
+
+Fix reconnect after wakeup
+Notification for authenticated reconnections
+Fix disable gateway for IPv6
+
 Version 1.3.4066.51 2024-10-30
 ------------------------------
 
