@@ -385,6 +385,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   addChangeListener: () => (/* binding */ addChangeListener),
 /* harmony export */   args: () => (/* binding */ args),
+/* harmony export */   authConn: () => (/* binding */ authConn),
 /* harmony export */   authPath: () => (/* binding */ authPath),
 /* harmony export */   dataPath: () => (/* binding */ dataPath),
 /* harmony export */   deviceAuthPath: () => (/* binding */ deviceAuthPath),
@@ -465,6 +466,14 @@ if (args.get("frameless") === "true") {
     frameless = true;
 }
 const dataPath = args.get('dataPath');
+let authConn;
+if (args.get("authConn")) {
+    let authConnStr = args.get("authConn").split(":");
+    authConn = {
+        profile: authConnStr[0],
+        mode: authConnStr[1],
+    };
+}
 let state = {};
 function syncState() {
     _utils_RequestUtils__WEBPACK_IMPORTED_MODULE_0__.get("/state")
@@ -6158,8 +6167,17 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const css = {
+    box: {
+        paddingTop: "31px",
+    },
     message: {
         margin: '0 0 6px 0',
+    },
+    toast: {
+        margin: '0 20px 10px 0',
+    },
+    toastHeader: {
+        fontWeight: "bold",
     },
     label: {
         marginBottom: '0',
@@ -6239,12 +6257,9 @@ const css = {
         overflow: "hidden",
         whiteSpace: "nowrap",
     },
-    body: {
-        paddingTop: "31px"
-    },
+    body: {},
     regBox: {
-        padding: "40px 20px 0 0",
-        marginBottom: "-15px",
+        padding: "0 20px 10px 0",
     },
     reg: {
         textAlign: "center",
@@ -6275,8 +6290,7 @@ class Profile extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
                 ...this.state,
                 disabled: true,
             });
-            let profile = this.state.profile ||
-                this.props.profile;
+            let profile = this.props.profile;
             profile.delete().then(() => {
                 this.setState({
                     ...this.state,
@@ -6286,7 +6300,6 @@ class Profile extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
             });
         };
         this.state = {
-            profile: null,
             open: false,
             message: '',
             disabled: false,
@@ -6301,8 +6314,7 @@ class Profile extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
         _Constants__WEBPACK_IMPORTED_MODULE_2__.removeChangeListener(this.onChange);
     }
     render() {
-        let profile = this.state.profile ||
-            this.props.profile;
+        let profile = this.props.profile;
         let statusLabel = "Online For";
         let statusVal = profile.formattedUptime();
         if (statusVal === "") {
@@ -6386,7 +6398,12 @@ class Profile extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
         }
         return react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", { className: "bp5-card layout vertical", style: css.card },
             header,
-            react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", { hidden: this.props.minimal && !this.state.open },
+            react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", { style: css.box, hidden: this.props.minimal && !this.state.open },
+                react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", { style: css.toast, hidden: !profile.auth_reconnect, className: "bp5-toast bp5-intent-primary bp5-overlay-content" },
+                    react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", { className: "bp5-toast-message" },
+                        react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", { style: css.toastHeader }, "Connection Lost"),
+                        react__WEBPACK_IMPORTED_MODULE_0__.createElement("br", null),
+                        "Authentication required to reconnect")),
                 react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", { className: "layout vertical", style: css.regBox, hidden: !profile.registration_key },
                     react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", { className: "bp5-card layout vertical", style: css.reg },
                         react__WEBPACK_IMPORTED_MODULE_0__.createElement("h3", { className: "bp5-text-intent-danger", style: css.regTitle }, "Device Registration Required"),
@@ -7858,6 +7875,7 @@ class ProfilesStore extends _EventEmitter__WEBPACK_IMPORTED_MODULE_1__["default"
             prfl.timestamp = prflState.timestamp;
             prfl.server_addr = prflState.server_addr;
             prfl.client_addr = prflState.client_addr;
+            prfl.auth_reconnect = prflState.auth_reconnect;
             this._profiles[index] = prfl;
         }
     }

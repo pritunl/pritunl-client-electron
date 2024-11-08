@@ -20538,6 +20538,14 @@ if (args.get("frameless") === "true") {
     frameless = true;
 }
 const dataPath = args.get('dataPath');
+let authConn;
+if (args.get("authConn")) {
+    let authConnStr = args.get("authConn").split(":");
+    authConn = {
+        profile: authConnStr[0],
+        mode: authConnStr[1],
+    };
+}
 let state = {};
 function syncState() {
     get("/state")
@@ -25321,6 +25329,7 @@ class ProfilesStore extends EventEmitter {
             prfl.timestamp = prflState.timestamp;
             prfl.server_addr = prflState.server_addr;
             prfl.client_addr = prflState.client_addr;
+            prfl.auth_reconnect = prflState.auth_reconnect;
             this._profiles[index] = prfl;
         }
     }
@@ -27888,8 +27897,17 @@ class ProfileSettings extends react.Component {
 
 
 const Profile_css = {
+    box: {
+        paddingTop: "31px",
+    },
     message: {
         margin: '0 0 6px 0',
+    },
+    toast: {
+        margin: '0 20px 10px 0',
+    },
+    toastHeader: {
+        fontWeight: "bold",
     },
     label: {
         marginBottom: '0',
@@ -27969,12 +27987,9 @@ const Profile_css = {
         overflow: "hidden",
         whiteSpace: "nowrap",
     },
-    body: {
-        paddingTop: "31px"
-    },
+    body: {},
     regBox: {
-        padding: "40px 20px 0 0",
-        marginBottom: "-15px",
+        padding: "0 20px 10px 0",
     },
     reg: {
         textAlign: "center",
@@ -28005,8 +28020,7 @@ class Profile extends react.Component {
                 ...this.state,
                 disabled: true,
             });
-            let profile = this.state.profile ||
-                this.props.profile;
+            let profile = this.props.profile;
             profile.delete().then(() => {
                 this.setState({
                     ...this.state,
@@ -28016,7 +28030,6 @@ class Profile extends react.Component {
             });
         };
         this.state = {
-            profile: null,
             open: false,
             message: '',
             disabled: false,
@@ -28031,8 +28044,7 @@ class Profile extends react.Component {
         Constants_removeChangeListener(this.onChange);
     }
     render() {
-        let profile = this.state.profile ||
-            this.props.profile;
+        let profile = this.props.profile;
         let statusLabel = "Online For";
         let statusVal = profile.formattedUptime();
         if (statusVal === "") {
@@ -28116,7 +28128,12 @@ class Profile extends react.Component {
         }
         return react.createElement("div", { className: "bp5-card layout vertical", style: Profile_css.card },
             header,
-            react.createElement("div", { hidden: this.props.minimal && !this.state.open },
+            react.createElement("div", { style: Profile_css.box, hidden: this.props.minimal && !this.state.open },
+                react.createElement("div", { style: Profile_css.toast, hidden: !profile.auth_reconnect, className: "bp5-toast bp5-intent-primary bp5-overlay-content" },
+                    react.createElement("span", { className: "bp5-toast-message" },
+                        react.createElement("span", { style: Profile_css.toastHeader }, "Connection Lost"),
+                        react.createElement("br", null),
+                        "Authentication required to reconnect")),
                 react.createElement("div", { className: "layout vertical", style: Profile_css.regBox, hidden: !profile.registration_key },
                     react.createElement("div", { className: "bp5-card layout vertical", style: Profile_css.reg },
                         react.createElement("h3", { className: "bp5-text-intent-danger", style: Profile_css.regTitle }, "Device Registration Required"),
