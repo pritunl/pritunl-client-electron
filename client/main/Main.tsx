@@ -439,10 +439,17 @@ function getTrayIcon(state: boolean): string {
 		disconnTray = path.join(__dirname, "..", "img",
 			"tray_disconnected_osxTemplate.png")
 	} else if (process.platform === "win32") {
-		connTray = path.join(__dirname, "..", "img",
-			"tray_connected_win.png")
-		disconnTray = path.join(__dirname, "..", "img",
-			"tray_disconnected_win.png")
+		if (electron.nativeTheme.shouldUseDarkColors) {
+			connTray = path.join(__dirname, "..", "img",
+				"tray_connected_win_light.png")
+			disconnTray = path.join(__dirname, "..", "img",
+				"tray_disconnected_win_light.png")
+		} else {
+			connTray = path.join(__dirname, "..", "img",
+				"tray_connected_win_dark.png")
+			disconnTray = path.join(__dirname, "..", "img",
+				"tray_disconnected_win_dark.png")
+		}
 	} else if (process.platform === "linux") {
 		connTray = path.join(__dirname, "..", "img",
 			"tray_connected_linux_light.png")
