@@ -15583,8 +15583,14 @@ function getTrayIcon(state) {
         disconnTray = external_path_default().join(__dirname, "..", "img", "tray_disconnected_osxTemplate.png");
     }
     else if ((external_process_default()).platform === "win32") {
-        connTray = external_path_default().join(__dirname, "..", "img", "tray_connected_win.png");
-        disconnTray = external_path_default().join(__dirname, "..", "img", "tray_disconnected_win.png");
+        if ((external_electron_default()).nativeTheme.shouldUseDarkColors) {
+            connTray = external_path_default().join(__dirname, "..", "img", "tray_connected_win_light.png");
+            disconnTray = external_path_default().join(__dirname, "..", "img", "tray_disconnected_win_light.png");
+        }
+        else {
+            connTray = external_path_default().join(__dirname, "..", "img", "tray_connected_win_dark.png");
+            disconnTray = external_path_default().join(__dirname, "..", "img", "tray_disconnected_win_dark.png");
+        }
     }
     else if ((external_process_default()).platform === "linux") {
         connTray = external_path_default().join(__dirname, "..", "img", "tray_connected_linux_light.png");
