@@ -192,6 +192,7 @@ export default class Profile extends React.Component<Props, State> {
 			statusLabel = "Status"
 			statusVal = profile.formattedStatus()
 		}
+		let open = this.state.open || !!profile.registration_key
 
 		let fieldsLeft: PageInfos.Field[] = [
 			{
@@ -249,9 +250,9 @@ export default class Profile extends React.Component<Props, State> {
 		let header: JSX.Element;
 		if (this.props.minimal) {
 			header = <button
-				className={(this.state.open ? "bp5-card-header " : "") +
+				className={(open ? "bp5-card-header " : "") +
 					"layout horizontal tab-toggle"}
-				style={this.state.open ? css.headerOpen : css.headerClosed}
+				style={open ? css.headerOpen : css.headerClosed}
 				onClick={(evt): void => {
 					let target = evt.target as HTMLElement;
 
@@ -261,7 +262,7 @@ export default class Profile extends React.Component<Props, State> {
 
 						this.setState({
 							...this.state,
-							open: !this.state.open,
+							open: !open,
 						})
 					}
 				}}
@@ -274,11 +275,11 @@ export default class Profile extends React.Component<Props, State> {
 				<ProfileConnect
 					profile={this.props.profile}
 					minimal={true}
-					hidden={!this.props.minimal || this.state.open}
+					hidden={!this.props.minimal || open}
 				/>
 				<div
 					style={css.deleteButtonBox}
-					hidden={this.props.minimal && !this.state.open}
+					hidden={this.props.minimal && !open}
 				>
 					<ConfirmButton
 						className="bp5-minimal bp5-intent-danger bp5-icon-trash"
@@ -306,7 +307,7 @@ export default class Profile extends React.Component<Props, State> {
 				<div className="flex tab-toggle"/>
 				<div
 					style={css.deleteButtonBox}
-					hidden={this.props.minimal && !this.state.open}
+					hidden={this.props.minimal && !open}
 				>
 					<ConfirmButton
 						className="bp5-minimal bp5-intent-danger bp5-icon-trash"
@@ -326,7 +327,7 @@ export default class Profile extends React.Component<Props, State> {
 
 		return <div className="bp5-card layout vertical" style={css.card}>
 			{header}
-			<div hidden={this.props.minimal && !this.state.open}>
+			<div style={css.box} hidden={this.props.minimal && !open}>
 				<div
 					className="layout vertical"
 					style={css.regBox}
