@@ -1063,7 +1063,7 @@ func (c *Client) Disconnected() {
 	if c.conn.State.IsReconnect() {
 		logrus.WithFields(c.conn.Fields(nil)).Info(
 			"profile: Disconnected with restart")
-		c.conn.Restart()
+		go c.conn.Restart()
 	} else {
 		logrus.WithFields(c.conn.Fields(nil)).Info(
 			"profile: Disconnected without restart")
