@@ -209,6 +209,17 @@ func (w *Wg) Connect(data *ConnData) (err error) {
 
 	w.conn.Data.ValidateAuthToken()
 
+	logrus.WithFields(w.conn.Fields(logrus.Fields{
+		"ping_interval":  data.Configuration.PingInterval,
+		"ping_timeout":   data.Configuration.PingTimeout,
+		"port":           data.Configuration.Port,
+		"mtu":            data.Configuration.Mtu,
+		"web_port":       data.Configuration.WebPort,
+		"web_no_ssl":     data.Configuration.WebNoSsl,
+		"dns_servers":    data.Configuration.DnsServers,
+		"search_domains": data.Configuration.SearchDomains,
+	})).Info("connection: WireGuard configure")
+
 	return
 }
 
