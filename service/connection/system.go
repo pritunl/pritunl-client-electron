@@ -57,15 +57,43 @@ func SyncSystemProfiles() (err error) {
 				waiter.Add(1)
 
 				go func(sPrfl *sprofile.Sprofile) {
+					defer func() {
+						panc := recover()
+						if panc != nil {
+							logrus.WithFields(logrus.Fields{
+								"trace": string(debug.Stack()),
+								"panic": panc,
+							}).Error("handlers: Profile start panic")
+						}
+					}()
+
 					ready := conn.Ready()
 					if !ready {
 						logrus.WithFields(logrus.Fields{
 							"profile_id": conn.Id,
 						}).Info("profile: Profile not ready, waiting")
 					} else {
-						go conn.Start(Options{
-							Interactive: sPrfl.Interactive,
-						})
+						go func() {
+							defer func() {
+								panc := recover()
+								if panc != nil {
+									logrus.WithFields(logrus.Fields{
+										"trace": string(debug.Stack()),
+										"panic": panc,
+									}).Error("handlers: Profile start panic")
+								}
+							}()
+
+							err := conn.Start(Options{
+								Interactive: sPrfl.Interactive,
+							})
+							if err != nil {
+								logrus.WithFields(logrus.Fields{
+									"profile_id": sPrfl.Id,
+									"error":      err,
+								}).Error("profile: Failed to start sprofile")
+							}
+						}()
 					}
 
 					waiter.Done()
@@ -77,6 +105,16 @@ func SyncSystemProfiles() (err error) {
 				waiter.Add(1)
 
 				go func(sPrfl *sprofile.Sprofile) {
+					defer func() {
+						panc := recover()
+						if panc != nil {
+							logrus.WithFields(logrus.Fields{
+								"trace": string(debug.Stack()),
+								"panic": panc,
+							}).Error("handlers: Profile stop panic")
+						}
+					}()
+
 					conn.Stop()
 
 					conn, err = ImportSystemProfile(sPrfl)
@@ -84,9 +122,27 @@ func SyncSystemProfiles() (err error) {
 						return
 					}
 
-					go conn.Start(Options{
-						Interactive: sPrfl.Interactive,
-					})
+					go func() {
+						defer func() {
+							panc := recover()
+							if panc != nil {
+								logrus.WithFields(logrus.Fields{
+									"trace": string(debug.Stack()),
+									"panic": panc,
+								}).Error("handlers: Profile start panic")
+							}
+						}()
+
+						err := conn.Start(Options{
+							Interactive: sPrfl.Interactive,
+						})
+						if err != nil {
+							logrus.WithFields(logrus.Fields{
+								"profile_id": sPrfl.Id,
+								"error":      err,
+							}).Error("profile: Failed to start sprofile")
+						}
+					}()
 
 					waiter.Done()
 				}(sPrfl)
