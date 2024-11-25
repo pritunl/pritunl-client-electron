@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"math/rand"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -302,6 +303,12 @@ func (w *Wg) WatchConnection() (err error) {
 				w.conn.State.Close()
 				return
 			}
+		}
+
+		time.Sleep(time.Duration(rand.Intn(2000)) * time.Millisecond)
+		if w.conn.State.IsStopFast() {
+			w.conn.State.Close()
+			return
 		}
 
 		var data *PingData
