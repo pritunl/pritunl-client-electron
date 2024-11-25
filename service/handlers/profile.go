@@ -145,9 +145,15 @@ func profilePost(c *gin.Context) {
 			}
 		}()
 
-		conn.Start(connection.Options{
+		err := conn.Start(connection.Options{
 			Interactive: true,
 		})
+		if err != nil {
+			logrus.WithFields(logrus.Fields{
+				"profile_id": prfl.Id,
+				"error":      err,
+			}).Error("profile: Failed to start profile")
+		}
 	}()
 
 	c.JSON(200, nil)
