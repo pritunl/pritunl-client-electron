@@ -766,7 +766,7 @@ func GetRootDir() (pth string) {
 
 func TunTapPath() string {
 	if constants.Development {
-		pth := filepath.Join(GetRootDir(), "..", "tuntap_win", "tuntap")
+		pth := filepath.Join(GetRootDir(), "..", "tuntap_win", "tuntap_amd64")
 
 		exists, _ := ExistsDir(pth)
 		if exists {
@@ -780,7 +780,7 @@ func TunTapPath() string {
 func TapCtlPath() string {
 	if constants.Development {
 		pth := filepath.Join(GetRootDir(), "..",
-			"openvpn_win", "openvpn", "tapctl.exe")
+			"openvpn_win", "openvpn_amd64", "tapctl.exe")
 
 		exists, _ := ExistsFile(pth)
 		if exists {
