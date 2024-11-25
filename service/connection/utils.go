@@ -5,6 +5,7 @@ import (
 	"net"
 	"regexp"
 	"runtime"
+	"runtime/debug"
 	"strconv"
 	"strings"
 	"sync"
@@ -184,6 +185,16 @@ func RestartProfiles() (err error) {
 
 	for _, prfl := range prfls {
 		go func(prfl *Profile) {
+			defer func() {
+				panc := recover()
+				if panc != nil {
+					logrus.WithFields(logrus.Fields{
+						"trace": string(debug.Stack()),
+						"panic": panc,
+					}).Error("handlers: Profile start panic")
+				}
+			}()
+
 			newConn, e := NewConnection(prfl)
 			if e != nil {
 				logrus.WithFields(logrus.Fields{
