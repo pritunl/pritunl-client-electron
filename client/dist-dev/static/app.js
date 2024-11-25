@@ -6321,6 +6321,7 @@ class Profile extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
             statusLabel = "Status";
             statusVal = profile.formattedStatus();
         }
+        let open = this.state.open || !!profile.registration_key;
         let fieldsLeft = [
             {
                 label: 'User',
@@ -6371,34 +6372,34 @@ class Profile extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
         }
         let header;
         if (this.props.minimal) {
-            header = react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", { className: (this.state.open ? "bp5-card-header " : "") +
-                    "layout horizontal tab-toggle", style: this.state.open ? css.headerOpen : css.headerClosed, onClick: (evt) => {
+            header = react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", { className: (open ? "bp5-card-header " : "") +
+                    "layout horizontal tab-toggle", style: open ? css.headerOpen : css.headerClosed, onClick: (evt) => {
                     let target = evt.target;
                     if (this.props.minimal &&
                         target.className && target.className.indexOf &&
                         target.className.indexOf('tab-toggle') !== -1) {
                         this.setState({
                             ...this.state,
-                            open: !this.state.open,
+                            open: !open,
                         });
                     }
                 } },
                 react__WEBPACK_IMPORTED_MODULE_0__.createElement("h3", { className: "tab-toggle", style: css.headerLabel }, profile.formattedNameShort() || 'Profile'),
                 react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", { className: "flex tab-toggle" }),
-                react__WEBPACK_IMPORTED_MODULE_0__.createElement(_ProfileConnect__WEBPACK_IMPORTED_MODULE_5__["default"], { profile: this.props.profile, minimal: true, hidden: !this.props.minimal || this.state.open }),
-                react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", { style: css.deleteButtonBox, hidden: this.props.minimal && !this.state.open },
+                react__WEBPACK_IMPORTED_MODULE_0__.createElement(_ProfileConnect__WEBPACK_IMPORTED_MODULE_5__["default"], { profile: this.props.profile, minimal: true, hidden: !this.props.minimal || open }),
+                react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", { style: css.deleteButtonBox, hidden: this.props.minimal && !open },
                     react__WEBPACK_IMPORTED_MODULE_0__.createElement(_ConfirmButton__WEBPACK_IMPORTED_MODULE_3__["default"], { className: "bp5-minimal bp5-intent-danger bp5-icon-trash", style: css.deleteButton, safe: true, progressClassName: "bp5-intent-danger", dialogClassName: "bp5-intent-danger bp5-icon-delete", dialogLabel: "Delete Profile", confirmMsg: "Permanently delete this profile", items: [profile.formattedName()], disabled: this.state.disabled, onConfirm: this.onDelete })));
         }
         else {
             header = react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", { className: "bp5-card-header layout horizontal tab-toggle", style: css.header },
                 react__WEBPACK_IMPORTED_MODULE_0__.createElement("h3", { className: "tab-toggle", style: css.headerLabel }, profile.formattedNameShort() || 'Profile'),
                 react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", { className: "flex tab-toggle" }),
-                react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", { style: css.deleteButtonBox, hidden: this.props.minimal && !this.state.open },
+                react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", { style: css.deleteButtonBox, hidden: this.props.minimal && !open },
                     react__WEBPACK_IMPORTED_MODULE_0__.createElement(_ConfirmButton__WEBPACK_IMPORTED_MODULE_3__["default"], { className: "bp5-minimal bp5-intent-danger bp5-icon-trash", style: css.deleteButton, safe: true, progressClassName: "bp5-intent-danger", dialogClassName: "bp5-intent-danger bp5-icon-delete", dialogLabel: "Delete Profile", confirmMsg: "Permanently delete this profile", items: [profile.formattedName()], disabled: this.state.disabled, onConfirm: this.onDelete })));
         }
         return react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", { className: "bp5-card layout vertical", style: css.card },
             header,
-            react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", { style: css.box, hidden: this.props.minimal && !this.state.open },
+            react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", { style: css.box, hidden: this.props.minimal && !open },
                 react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", { style: css.toast, hidden: !profile.auth_reconnect, className: "bp5-toast bp5-intent-primary bp5-overlay-content" },
                     react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", { className: "bp5-toast-message" },
                         react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", { style: css.toastHeader }, "Connection Lost"),

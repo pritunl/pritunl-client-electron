@@ -28051,6 +28051,7 @@ class Profile extends react.Component {
             statusLabel = "Status";
             statusVal = profile.formattedStatus();
         }
+        let open = this.state.open || !!profile.registration_key;
         let fieldsLeft = [
             {
                 label: 'User',
@@ -28101,34 +28102,34 @@ class Profile extends react.Component {
         }
         let header;
         if (this.props.minimal) {
-            header = react.createElement("button", { className: (this.state.open ? "bp5-card-header " : "") +
-                    "layout horizontal tab-toggle", style: this.state.open ? Profile_css.headerOpen : Profile_css.headerClosed, onClick: (evt) => {
+            header = react.createElement("button", { className: (open ? "bp5-card-header " : "") +
+                    "layout horizontal tab-toggle", style: open ? Profile_css.headerOpen : Profile_css.headerClosed, onClick: (evt) => {
                     let target = evt.target;
                     if (this.props.minimal &&
                         target.className && target.className.indexOf &&
                         target.className.indexOf('tab-toggle') !== -1) {
                         this.setState({
                             ...this.state,
-                            open: !this.state.open,
+                            open: !open,
                         });
                     }
                 } },
                 react.createElement("h3", { className: "tab-toggle", style: Profile_css.headerLabel }, profile.formattedNameShort() || 'Profile'),
                 react.createElement("div", { className: "flex tab-toggle" }),
-                react.createElement(ProfileConnect, { profile: this.props.profile, minimal: true, hidden: !this.props.minimal || this.state.open }),
-                react.createElement("div", { style: Profile_css.deleteButtonBox, hidden: this.props.minimal && !this.state.open },
+                react.createElement(ProfileConnect, { profile: this.props.profile, minimal: true, hidden: !this.props.minimal || open }),
+                react.createElement("div", { style: Profile_css.deleteButtonBox, hidden: this.props.minimal && !open },
                     react.createElement(ConfirmButton, { className: "bp5-minimal bp5-intent-danger bp5-icon-trash", style: Profile_css.deleteButton, safe: true, progressClassName: "bp5-intent-danger", dialogClassName: "bp5-intent-danger bp5-icon-delete", dialogLabel: "Delete Profile", confirmMsg: "Permanently delete this profile", items: [profile.formattedName()], disabled: this.state.disabled, onConfirm: this.onDelete })));
         }
         else {
             header = react.createElement("div", { className: "bp5-card-header layout horizontal tab-toggle", style: Profile_css.header },
                 react.createElement("h3", { className: "tab-toggle", style: Profile_css.headerLabel }, profile.formattedNameShort() || 'Profile'),
                 react.createElement("div", { className: "flex tab-toggle" }),
-                react.createElement("div", { style: Profile_css.deleteButtonBox, hidden: this.props.minimal && !this.state.open },
+                react.createElement("div", { style: Profile_css.deleteButtonBox, hidden: this.props.minimal && !open },
                     react.createElement(ConfirmButton, { className: "bp5-minimal bp5-intent-danger bp5-icon-trash", style: Profile_css.deleteButton, safe: true, progressClassName: "bp5-intent-danger", dialogClassName: "bp5-intent-danger bp5-icon-delete", dialogLabel: "Delete Profile", confirmMsg: "Permanently delete this profile", items: [profile.formattedName()], disabled: this.state.disabled, onConfirm: this.onDelete })));
         }
         return react.createElement("div", { className: "bp5-card layout vertical", style: Profile_css.card },
             header,
-            react.createElement("div", { style: Profile_css.box, hidden: this.props.minimal && !this.state.open },
+            react.createElement("div", { style: Profile_css.box, hidden: this.props.minimal && !open },
                 react.createElement("div", { style: Profile_css.toast, hidden: !profile.auth_reconnect, className: "bp5-toast bp5-intent-primary bp5-overlay-content" },
                     react.createElement("span", { className: "bp5-toast-message" },
                         react.createElement("span", { style: Profile_css.toastHeader }, "Connection Lost"),
