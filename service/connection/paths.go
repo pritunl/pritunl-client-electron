@@ -34,15 +34,15 @@ func GetBashPath() string {
 func GetWgPath() string {
 	switch runtime.GOOS {
 	case "windows":
-		path, _ := exec.LookPath(filepath.Join(utils.GetWinDrive(),
-			"Program Files", "WireGuard", "wg.exe"))
+		path := filepath.Join(utils.GetWinDrive(),
+			"Program Files", "WireGuard", "wg.exe")
 		exists, _ := utils.Exists(path)
 		if exists {
 			return path
 		}
 
-		path, _ = exec.LookPath(filepath.Join(utils.GetWinDrive(),
-			"Program Files (x86)", "WireGuard", "wg.exe"))
+		path = filepath.Join(utils.GetWinDrive(),
+			"Program Files (x86)", "WireGuard", "wg.exe")
 		exists, _ = utils.Exists(path)
 		if exists {
 			return path
@@ -74,15 +74,15 @@ func GetWgPath() string {
 func GetWgQuickPath() string {
 	switch runtime.GOOS {
 	case "windows":
-		path, _ := exec.LookPath(filepath.Join(utils.GetWinDrive(),
-			"Program Files", "WireGuard", "wg-quick.exe"))
+		path := filepath.Join(utils.GetWinDrive(),
+			"Program Files", "WireGuard", "wg-quick.exe")
 		exists, _ := utils.Exists(path)
 		if exists {
 			return path
 		}
 
-		path, _ = exec.LookPath(filepath.Join(utils.GetWinDrive(),
-			"Program Files (x86)", "WireGuard", "wg-quick.exe"))
+		path = filepath.Join(utils.GetWinDrive(),
+			"Program Files (x86)", "WireGuard", "wg-quick.exe")
 		exists, _ = utils.Exists(path)
 		if exists {
 			return path
@@ -98,7 +98,14 @@ func GetWgQuickPath() string {
 		return filepath.Join(string(os.PathSeparator), "Applications",
 			"Pritunl.app", "Contents", "Resources", "wg-quick")
 	case "linux":
-		path, _ := exec.LookPath("wg-quick")
+		path := filepath.Join(string(os.PathSeparator),
+			"usr", "bin", "wg-quick")
+		exists, _ := utils.Exists(path)
+		if exists {
+			return path
+		}
+
+		path, _ = exec.LookPath("wg-quick")
 		if path != "" {
 			return path
 		}
@@ -114,15 +121,15 @@ func GetWgQuickPath() string {
 func GetWgUtilPath() string {
 	switch runtime.GOOS {
 	case "windows":
-		path, _ := exec.LookPath(filepath.Join(utils.GetWinDrive(),
-			"Program Files", "WireGuard", "wireguard.exe"))
+		path := filepath.Join(utils.GetWinDrive(),
+			"Program Files", "WireGuard", "wireguard.exe")
 		exists, _ := utils.Exists(path)
 		if exists {
 			return path
 		}
 
-		path, _ = exec.LookPath(filepath.Join(utils.GetWinDrive(),
-			"Program Files (x86)", "WireGuard", "wireguard.exe"))
+		path = filepath.Join(utils.GetWinDrive(),
+			"Program Files (x86)", "WireGuard", "wireguard.exe")
 		exists, _ = utils.Exists(path)
 		if exists {
 			return path
