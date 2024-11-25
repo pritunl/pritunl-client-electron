@@ -47,6 +47,8 @@ type WgConf struct {
 	Hostname6     string   `json:"hostname6"`
 	Gateway       string   `json:"gateway"`
 	Gateway6      string   `json:"gateway6"`
+	PingInterval  int      `json:"ping_interval"`
+	PingTimeout   int      `json:"ping_timeout"`
 	Port          int      `json:"port"`
 	Mtu           int      `json:"mtu"`
 	WebPort       int      `json:"web_port"`
@@ -214,13 +216,21 @@ func (w *Wg) WatchConnection() (err error) {
 
 	time.Sleep(1 * time.Second)
 
+	interval := w.conn.Data.PingIntervalWg
+	if interval == 0 {
+		interval = 15
+	} else if interval < 5 {
+		interval = 5
+	}
+	interval = interval * 2
+
 	for i := 0; i < 40; i++ {
 		if w.conn.State.IsStop() {
 			w.conn.State.Close()
 			return
 		}
 
-		if i%10 == 0 {
+		if i%interval == 0 {
 			go w.ping()
 		}
 
@@ -286,7 +296,7 @@ func (w *Wg) WatchConnection() (err error) {
 			return
 		}
 
-		for i := 0; i < 20; i++ {
+		for i := 0; i < interval; i++ {
 			time.Sleep(500 * time.Millisecond)
 			if w.conn.State.IsStopFast() {
 				w.conn.State.Close()
@@ -563,6 +573,8 @@ func (w *Wg) confWg(data *WgConf) (err error) {
 	w.conn.Data.ServerAddr = data.Hostname
 	w.conn.Data.GatewayAddr = data.Gateway
 	w.conn.Data.GatewayAddr6 = data.Gateway6
+	w.conn.Data.PingIntervalWg = data.PingInterval
+	w.conn.Data.PingTimeoutWg = data.PingTimeout
 	w.conn.Data.WebPort = data.WebPort
 	w.conn.Data.WebNoSsl = data.WebNoSsl
 	w.conn.Data.DnsServers = data.DnsServers
