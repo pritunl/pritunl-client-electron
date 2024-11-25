@@ -54,6 +54,8 @@ type Data struct {
 	DnsServers       []string    `json:"dns_servers"`
 	SearchDomains    []string    `json:"search_domains"`
 	MacAddr          string      `json:"mac_addr"`
+	PingIntervalWg   int         `json:"ping_interval_wg"`
+	PingTimeoutWg    int         `json:"ping_timeout_wg"`
 	WebPort          int         `json:"web_port"`
 	WebNoSsl         bool        `json:"web_no_ssl"`
 	RegistrationKey  string      `json:"registration_key"`
