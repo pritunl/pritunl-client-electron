@@ -1,6 +1,10 @@
 Pritunl Client Changelog
 ========================
 
+<%= version %>
+
+Improve device registration prompt
+
 Version 1.3.4083.88 2024-11-16
 ------------------------------
 
