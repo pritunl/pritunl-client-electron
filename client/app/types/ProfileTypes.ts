@@ -61,6 +61,9 @@ export interface Profile {
 	server_box_public_key?: string
 	registration_key?: string
 	sync_time?: number
+	ovpn_data?: string
+	key_data?: string
+
 	status?: string
 	timestamp?: number
 	server_addr?: string
