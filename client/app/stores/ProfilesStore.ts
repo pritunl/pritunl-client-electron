@@ -154,6 +154,7 @@ class ProfilesStore extends EventEmitter {
 			prfl.timestamp = prflState.timestamp
 			prfl.server_addr = prflState.server_addr
 			prfl.client_addr = prflState.client_addr
+			prfl.auth_reconnect = prflState.auth_reconnect
 
 			this._profiles[index] = prfl
 		}
