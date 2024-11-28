@@ -21,7 +21,6 @@ interface Props {
 }
 
 interface State {
-	profile: ProfileTypes.Profile;
 	open: boolean;
 	message: string;
 	disabled: boolean;
@@ -141,7 +140,6 @@ export default class Profile extends React.Component<Props, State> {
 	constructor(props: Props, context: any) {
 		super(props, context);
 		this.state = {
-			profile: null,
 			open: false,
 			message: '',
 			disabled: false,
@@ -170,8 +168,7 @@ export default class Profile extends React.Component<Props, State> {
 			disabled: true,
 		})
 
-		let profile: ProfileTypes.Profile = this.state.profile ||
-			this.props.profile
+		let profile: ProfileTypes.Profile = this.props.profile
 
 		profile.delete().then((): void => {
 			this.setState({
@@ -183,8 +180,7 @@ export default class Profile extends React.Component<Props, State> {
 	}
 
 	render(): JSX.Element {
-		let profile: ProfileTypes.Profile = this.state.profile ||
-			this.props.profile;
+		let profile: ProfileTypes.Profile = this.props.profile;
 
 		let statusLabel = "Online For"
 		let statusVal = profile.formattedUptime()
