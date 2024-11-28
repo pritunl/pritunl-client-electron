@@ -29,8 +29,17 @@ interface State {
 }
 
 const css = {
+	box: {
+		paddingTop: "31px",
+	} as React.CSSProperties,
 	message: {
 		margin: '0 0 6px 0',
+	} as React.CSSProperties,
+	toast: {
+		margin: '0 20px 10px 0',
+	} as React.CSSProperties,
+	toastHeader: {
+		fontWeight: "bold",
 	} as React.CSSProperties,
 	label: {
 		marginBottom: '0',
@@ -113,11 +122,9 @@ const css = {
 		whiteSpace: "nowrap",
 	} as React.CSSProperties,
 	body: {
-		paddingTop: "31px"
 	} as React.CSSProperties,
 	regBox: {
-		padding: "40px 20px 0 0",
-		marginBottom: "-15px",
+		padding: "0 20px 10px 0",
 	} as React.CSSProperties,
 	reg: {
 		textAlign: "center",
@@ -324,6 +331,16 @@ export default class Profile extends React.Component<Props, State> {
 		return <div className="bp5-card layout vertical" style={css.card}>
 			{header}
 			<div style={css.box} hidden={this.props.minimal && !open}>
+				<div
+					style={css.toast}
+					hidden={!profile.auth_reconnect}
+					className="bp5-toast bp5-intent-primary bp5-overlay-content"
+				>
+					<span className="bp5-toast-message">
+						<span style={css.toastHeader}>Connection Lost</span><br/>
+						Authentication required to reconnect
+					</span>
+				</div>
 				<div
 					className="layout vertical"
 					style={css.regBox}
