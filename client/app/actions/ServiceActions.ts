@@ -9,6 +9,7 @@ import * as Alert from "../Alert";
 
 export function connect(prfl: ProfileTypes.ProfileData,
 	noLoading?: boolean): Promise<void> {
+
 	let loader: Loader
 	if (!noLoading) {
 		loader = new Loader().loading()
@@ -44,6 +45,7 @@ export function connect(prfl: ProfileTypes.ProfileData,
 
 export function disconnect(prfl: ProfileTypes.ProfileData,
 	noLoading?: boolean): Promise<void> {
+
 	let loader: Loader
 	if (!noLoading) {
 		loader = new Loader().loading()
