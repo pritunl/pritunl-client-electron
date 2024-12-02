@@ -1,6 +1,6 @@
 {
   "name": "pritunl",
-  "version": "1.3.4083.88",
+  "version": "1.3.4099.99",
   "main": "dist/static/main.js",
   "build": {
     "appId": "com.pritunl.client"
