@@ -68,8 +68,7 @@ export interface Profile {
 	timestamp?: number
 	server_addr?: string
 	client_addr?: string
-	ovpn_data?: string
-	key_data?: string
+	auth_reconnect?: boolean
 
 	formattedName(): string
 	formattedNameShort(): string
