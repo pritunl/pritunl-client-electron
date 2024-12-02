@@ -385,7 +385,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   addChangeListener: () => (/* binding */ addChangeListener),
 /* harmony export */   args: () => (/* binding */ args),
-/* harmony export */   authConn: () => (/* binding */ authConn),
 /* harmony export */   authPath: () => (/* binding */ authPath),
 /* harmony export */   dataPath: () => (/* binding */ dataPath),
 /* harmony export */   deviceAuthPath: () => (/* binding */ deviceAuthPath),
@@ -466,14 +465,6 @@ if (args.get("frameless") === "true") {
     frameless = true;
 }
 const dataPath = args.get('dataPath');
-let authConn;
-if (args.get("authConn")) {
-    let authConnStr = args.get("authConn").split(":");
-    authConn = {
-        profile: authConnStr[0],
-        mode: authConnStr[1],
-    };
-}
 let state = {};
 function syncState() {
     _utils_RequestUtils__WEBPACK_IMPORTED_MODULE_0__.get("/state")

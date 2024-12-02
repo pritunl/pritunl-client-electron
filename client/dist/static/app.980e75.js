@@ -20538,14 +20538,6 @@ if (args.get("frameless") === "true") {
     frameless = true;
 }
 const dataPath = args.get('dataPath');
-let authConn;
-if (args.get("authConn")) {
-    let authConnStr = args.get("authConn").split(":");
-    authConn = {
-        profile: authConnStr[0],
-        mode: authConnStr[1],
-    };
-}
 let state = {};
 function syncState() {
     get("/state")
