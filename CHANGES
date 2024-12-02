@@ -4,6 +4,7 @@ Pritunl Client Changelog
 <%= version %>
 
 Improve device registration prompt
+Fix reconnection issues
 
 Version 1.3.4083.88 2024-11-16
 ------------------------------
