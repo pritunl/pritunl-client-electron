@@ -18,6 +18,7 @@ import (
 	"github.com/pritunl/pritunl-client-electron/service/config"
 	"github.com/pritunl/pritunl-client-electron/service/connection"
 	"github.com/pritunl/pritunl-client-electron/service/constants"
+	"github.com/pritunl/pritunl-client-electron/service/event"
 	"github.com/pritunl/pritunl-client-electron/service/logger"
 	"github.com/pritunl/pritunl-client-electron/service/router"
 	"github.com/pritunl/pritunl-client-electron/service/setup"
@@ -211,11 +212,19 @@ func main() {
 		<-sig
 	}
 
+	evt := &event.Event{
+		Id:   utils.Uuid(),
+		Type: "shutdown",
+	}
+	evt.Init()
+
+	time.Sleep(500 * time.Millisecond)
+
 	constants.Interrupt = true
 
 	routr.Shutdown()
 
-	time.Sleep(250 * time.Millisecond)
+	time.Sleep(100 * time.Millisecond)
 
 	connection.SetShutdown()
 
