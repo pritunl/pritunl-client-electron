@@ -14767,7 +14767,7 @@ function connect() {
         catch (err) {
         }
         if (!token) {
-            if (authAttempts > 10) {
+            if (authAttempts > 20) {
                 if (!dialogShown) {
                     dialogShown = true;
                     external_electron_default().dialog.showMessageBox(null, {
@@ -14817,7 +14817,7 @@ function connect() {
                     return;
                 }
                 reconnected = true;
-                if (connAttempts > 10) {
+                if (connAttempts > 30) {
                     if (!dialogShown) {
                         dialogShown = true;
                         external_electron_default().dialog.showMessageBox(null, {
@@ -15558,6 +15558,11 @@ function init() {
                     send("awake");
                     let main = new Main();
                     main.run();
+                }
+                else if (event.type === "shutdown") {
+                    if (external_process_default().argv.indexOf("--no-shutdown") === -1) {
+                        external_electron_default().app.quit();
+                    }
                 }
                 else if (event.type === "sso_auth") {
                     openLink(event.data.url);
