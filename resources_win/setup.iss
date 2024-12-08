@@ -48,20 +48,21 @@ Source: "..\service\service_arm64.exe"; DestDir: "{app}"; DestName: "pritunl-ser
 Source: "..\cli\cli_arm64.exe"; DestDir: "{app}"; DestName: "pritunl-client.exe"; Flags: ignoreversion; Check: IsArm64
 
 [Code]
-procedure ServiceStop();
+procedure StopApplication();
 var ResultCode: Integer;
 begin
+    Exec('taskkill.exe', '/F /IM pritunl.exe', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
     Exec('sc.exe', 'stop pritunl', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
     Sleep(3000);
 end;
 function PrepareToInstall(var NeedsRestart: Boolean): String;
 begin
-    ServiceStop();
-    Result := True;
+    StopApplication();
+    Result := '';
 end;
 function InitializeUninstall(): Boolean;
 begin
-    ServiceStop();
+    StopApplication();
     Result := True;
 end;
 
