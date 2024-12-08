@@ -22,7 +22,6 @@ OutputBaseFilename={#MyAppName}
 LicenseFile=license.txt
 SetupIconFile=..\client\www\img\logo.ico
 CloseApplications=force
-CloseApplicationsFilter=pritunl.exe,pritunl-client.exe
 UninstallDisplayName=Pritunl Client
 UninstallDisplayIcon={app}\{#MyAppExeName}
 Compression=lzma
@@ -50,8 +49,10 @@ Source: "..\cli\cli_arm64.exe"; DestDir: "{app}"; DestName: "pritunl-client.exe"
 [Code]
 procedure StopApplication();
 var ResultCode: Integer;
+var PritunlPath: string;
 begin
-    Exec('taskkill.exe', '/F /IM pritunl.exe', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+    PritunlPath := ExpandConstant('{pf}') + '\Pritunl\pritunl.exe';
+    Exec('taskkill.exe', '/F /IM pritunl.exe /FI "MODULES eq ' + PritunlPath + '"', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
     Exec('sc.exe', 'stop pritunl', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
     Sleep(3000);
 end;
