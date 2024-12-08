@@ -21,6 +21,8 @@ OutputDir=..\build\
 OutputBaseFilename={#MyAppName}
 LicenseFile=license.txt
 SetupIconFile=..\client\www\img\logo.ico
+CloseApplications=force
+CloseApplicationsFilter=pritunl.exe,pritunl-client.exe,openvpn.exe
 UninstallDisplayName=Pritunl Client
 UninstallDisplayIcon={app}\{#MyAppExeName}
 Compression=lzma
@@ -40,25 +42,21 @@ Source: "..\tuntap_win\tuntap_amd64\*"; DestDir: "{app}\tuntap"; Flags: ignoreve
 Source: "..\openvpn_win\openvpn_amd64\*"; DestDir: "{app}\openvpn"; Flags: ignoreversion recursesubdirs createallsubdirs; Check: not IsArm64
 Source: "..\tuntap_win\tuntap_arm64\*"; DestDir: "{app}\tuntap"; Flags: ignoreversion recursesubdirs createallsubdirs; Check: IsArm64
 Source: "..\openvpn_win\openvpn_arm64\*"; DestDir: "{app}\openvpn"; Flags: ignoreversion recursesubdirs createallsubdirs; Check: IsArm64
-Source: "..\service\service_amd64.exe"; DestDir: "{app}"; DestName: "pritunl-service.exe"; Flags: ignoreversion; Check: not IsArm64
+Source: "..\service\service_amd64.exe"; DestDir: "{app}"; DestName: "pritunl-service.exe"; Flags: ignoreversion; Check: not IsArm64; BeforeInstall: ServiceStop
 Source: "..\cli\cli_amd64.exe"; DestDir: "{app}"; DestName: "pritunl-client.exe"; Flags: ignoreversion; Check: not IsArm64
-Source: "..\service\service_arm64.exe"; DestDir: "{app}"; DestName: "pritunl-service.exe"; Flags: ignoreversion; Check: IsArm64
+Source: "..\service\service_arm64.exe"; DestDir: "{app}"; DestName: "pritunl-service.exe"; Flags: ignoreversion; Check: IsArm64; BeforeInstall: ServiceStop
 Source: "..\cli\cli_arm64.exe"; DestDir: "{app}"; DestName: "pritunl-client.exe"; Flags: ignoreversion; Check: IsArm64
 
 [Code]
-function InitializeSetup(): Boolean;
+procedure ServiceStop();
 var ResultCode: Integer;
 begin
-    Exec('taskkill.exe', '/F /IM pritunl.exe', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
-    Exec('sc.exe', 'stop pritunl', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
-    Result := True;
-end;
-function InitializeUninstall(): Boolean;
-var ResultCode: Integer;
-begin
-    Exec('taskkill.exe', '/F /IM pritunl.exe', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
     Exec('sc.exe', 'stop pritunl', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
     Sleep(3000);
+end;
+function InitializeUninstall(): Boolean;
+begin
+    ServiceStop();
     Result := True;
 end;
 
