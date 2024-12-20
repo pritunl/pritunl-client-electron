@@ -415,6 +415,10 @@ function init() {
 
 					let main = new Main()
 					main.run()
+				} else if (event.type === "shutdown") {
+					if (process.argv.indexOf("--no-shutdown") === -1) {
+						electron.app.quit()
+					}
 				} else if (event.type === "sso_auth") {
 					Utils.openLink(event.data.url)
 				} else if (event.type === "tpm_open") {
