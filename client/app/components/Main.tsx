@@ -209,19 +209,35 @@ export default class Main extends React.Component<{}, State> {
 		if (Constants.state.upgrade && !upgradeShown) {
 			upgradeShown = true
 
-			let updateElm: JSX.Element = <div>
-				<div>Update available, download the latest release below</div>
-				<button
-					className="bp5-button bp5-intent-primary bp5-icon-download"
-					type="button"
-					style={css.updateButton}
-					onClick={(): void => {
-						Electron.ipcRenderer.send("control", "download-update")
-					}}
-				>Download Update</button>
-			</div>
+			if (Constants.state.security) {
+					let updateElm: JSX.Element = <div>
+					<div><b>Important security update available, download the latest release below</b></div>
+					<button
+						className="bp5-button bp5-intent-primary bp5-icon-download"
+						type="button"
+						style={css.updateButton}
+						onClick={(): void => {
+							Electron.ipcRenderer.send("control", "download-update")
+						}}
+					>Download Update</button>
+				</div>
 
-			Alert.info(updateElm, 0)
+				Alert.error(updateElm, 0)
+			} else {
+				let updateElm: JSX.Element = <div>
+					<div>Update available, download the latest release below</div>
+					<button
+						className="bp5-button bp5-intent-primary bp5-icon-download"
+						type="button"
+						style={css.updateButton}
+						onClick={(): void => {
+							Electron.ipcRenderer.send("control", "download-update")
+						}}
+					>Download Update</button>
+				</div>
+
+				Alert.info(updateElm, 0)
+			}
 		}
 
 		let themeLabel = ""
