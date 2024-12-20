@@ -10,16 +10,18 @@ import (
 )
 
 type stateData struct {
-	Wg      bool   `json:"wg"`
-	Version string `json:"version"`
-	Upgrade bool   `json:"upgrade"`
+	Wg       bool   `json:"wg"`
+	Version  string `json:"version"`
+	Upgrade  bool   `json:"upgrade"`
+	Security bool   `json:"security"`
 }
 
 func stateGet(c *gin.Context) {
 	data := &stateData{
-		Wg:      false,
-		Version: constants.Version,
-		Upgrade: update.Upgrade,
+		Wg:       false,
+		Version:  constants.Version,
+		Upgrade:  update.Upgrade,
+		Security: update.Security,
 	}
 
 	switch runtime.GOOS {
