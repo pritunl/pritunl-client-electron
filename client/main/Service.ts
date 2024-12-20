@@ -103,7 +103,7 @@ export function connect(): Promise<void> {
 		}
 
 		if (!Auth.token) {
-			if (authAttempts > 10) {
+			if (authAttempts > 20) {
 				if (!dialogShown) {
 					dialogShown = true
 					electron.dialog.showMessageBox(null, {
@@ -155,7 +155,7 @@ export function connect(): Promise<void> {
 				}
 				reconnected = true
 
-				if (connAttempts > 10) {
+				if (connAttempts > 30) {
 					if (!dialogShown) {
 						dialogShown = true
 						electron.dialog.showMessageBox(null, {
