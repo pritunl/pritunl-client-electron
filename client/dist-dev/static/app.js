@@ -5616,12 +5616,23 @@ class Main extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
     render() {
         if (_Constants__WEBPACK_IMPORTED_MODULE_4__.state.upgrade && !upgradeShown) {
             upgradeShown = true;
-            let updateElm = react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", null,
-                react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", null, "Update available, download the latest release below"),
-                react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", { className: "bp5-button bp5-intent-primary bp5-icon-download", type: "button", style: css.updateButton, onClick: () => {
-                        electron__WEBPACK_IMPORTED_MODULE_1__.ipcRenderer.send("control", "download-update");
-                    } }, "Download Update"));
-            _Alert__WEBPACK_IMPORTED_MODULE_13__.info(updateElm, 0);
+            if (_Constants__WEBPACK_IMPORTED_MODULE_4__.state.security) {
+                let updateElm = react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", null,
+                    react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", null,
+                        react__WEBPACK_IMPORTED_MODULE_0__.createElement("b", null, "Important security update available, download the latest release below")),
+                    react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", { className: "bp5-button bp5-intent-primary bp5-icon-download", type: "button", style: css.updateButton, onClick: () => {
+                            electron__WEBPACK_IMPORTED_MODULE_1__.ipcRenderer.send("control", "download-update");
+                        } }, "Download Update"));
+                _Alert__WEBPACK_IMPORTED_MODULE_13__.error(updateElm, 0);
+            }
+            else {
+                let updateElm = react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", null,
+                    react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", null, "Update available, download the latest release below"),
+                    react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", { className: "bp5-button bp5-intent-primary bp5-icon-download", type: "button", style: css.updateButton, onClick: () => {
+                            electron__WEBPACK_IMPORTED_MODULE_1__.ipcRenderer.send("control", "download-update");
+                        } }, "Download Update"));
+                _Alert__WEBPACK_IMPORTED_MODULE_13__.info(updateElm, 0);
+            }
         }
         let themeLabel = "";
         let themeIcon;

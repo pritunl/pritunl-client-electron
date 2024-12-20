@@ -33351,12 +33351,23 @@ class Main extends react.Component {
     render() {
         if (state.upgrade && !upgradeShown) {
             upgradeShown = true;
-            let updateElm = react.createElement("div", null,
-                react.createElement("div", null, "Update available, download the latest release below"),
-                react.createElement("button", { className: "bp5-button bp5-intent-primary bp5-icon-download", type: "button", style: Main_css.updateButton, onClick: () => {
-                        external_electron_namespaceObject.ipcRenderer.send("control", "download-update");
-                    } }, "Download Update"));
-            info(updateElm, 0);
+            if (state.security) {
+                let updateElm = react.createElement("div", null,
+                    react.createElement("div", null,
+                        react.createElement("b", null, "Important security update available, download the latest release below")),
+                    react.createElement("button", { className: "bp5-button bp5-intent-primary bp5-icon-download", type: "button", style: Main_css.updateButton, onClick: () => {
+                            external_electron_namespaceObject.ipcRenderer.send("control", "download-update");
+                        } }, "Download Update"));
+                error(updateElm, 0);
+            }
+            else {
+                let updateElm = react.createElement("div", null,
+                    react.createElement("div", null, "Update available, download the latest release below"),
+                    react.createElement("button", { className: "bp5-button bp5-intent-primary bp5-icon-download", type: "button", style: Main_css.updateButton, onClick: () => {
+                            external_electron_namespaceObject.ipcRenderer.send("control", "download-update");
+                        } }, "Download Update"));
+                info(updateElm, 0);
+            }
         }
         let themeLabel = "";
         let themeIcon;
