@@ -14,7 +14,8 @@ import (
 )
 
 var (
-	Upgrade bool
+	Upgrade  bool
+	Security bool
 
 	lastCheck time.Time
 	client    = &http.Client{
@@ -30,7 +31,8 @@ var (
 )
 
 type updateRespData struct {
-	Upgrade bool `json:"upgrade"`
+	Upgrade  bool `json:"upgrade"`
+	Security bool `json:"security"`
 }
 
 func Check() (err error) {
@@ -79,6 +81,7 @@ func Check() (err error) {
 	}
 
 	Upgrade = data.Upgrade
+	Security = data.Security
 	lastCheck = time.Now()
 
 	return
