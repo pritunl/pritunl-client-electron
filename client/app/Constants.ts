@@ -69,6 +69,7 @@ export interface State {
 	wg?: boolean
 	version?: string
 	upgrade?: boolean
+	security?: boolean
 }
 
 function syncState(): void {
