@@ -322,11 +322,12 @@ func (w *Wg) WatchConnection() (err error) {
 			return
 		}
 
+		start := time.Now()
 		var data *PingData
-		var retry bool
-		for i := 0; i < 4; i++ {
-			data, retry, err = w.ping()
-			if !retry {
+		var final bool
+		for i := 0; i < 8; i++ {
+			data, final, err = w.ping()
+			if err == nil || final || time.Since(start) > 15*time.Second {
 				break
 			}
 
@@ -402,7 +403,7 @@ func (w *Wg) updateHandshake() (err error) {
 	return
 }
 
-func (w *Wg) ping() (data *PingData, retry bool, err error) {
+func (w *Wg) ping() (data *PingData, final bool, err error) {
 	scheme := "https"
 	if w.conn.Data.WebNoSsl {
 		scheme = "http"
@@ -427,8 +428,8 @@ func (w *Wg) ping() (data *PingData, retry bool, err error) {
 	defer res.Body.Close()
 
 	if res.StatusCode != 200 {
-		if res.StatusCode < 400 || res.StatusCode >= 500 {
-			retry = true
+		if res.StatusCode >= 400 && res.StatusCode < 500 {
+			final = true
 		}
 
 		err = utils.LogRequestError(res,
