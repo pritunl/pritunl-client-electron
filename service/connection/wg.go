@@ -23,6 +23,10 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+var (
+	lastRetryLogged = time.Time{}
+)
+
 type Wg struct {
 	conn          *Connection
 	lock          sync.Mutex
@@ -329,6 +333,13 @@ func (w *Wg) WatchConnection() (err error) {
 			data, final, err = w.ping()
 			if err == nil || final || time.Since(start) > 15*time.Second {
 				break
+			}
+
+			if time.Since(lastRetryLogged) > 30*time.Minute {
+				lastRetryLogged = time.Now()
+				logrus.WithFields(w.conn.Fields(logrus.Fields{
+					"error": err,
+				})).Error("connection: Retrying keep alive")
 			}
 
 			if w.conn.State.IsStop() {
