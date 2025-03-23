@@ -51,7 +51,16 @@ procedure StopApplication();
 var ResultCode: Integer;
 begin
     Exec('sc.exe', 'stop pritunl', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
-    Sleep(3500);
+    Sleep(3000);
+    Exec(
+        'powershell.exe',
+        '-NoProfile -ExecutionPolicy Bypass -Command "Get-CimInstance Win32_Process | Where-Object { $_.Name -eq ''pritunl.exe'' -and $_.ExecutablePath -like ''*\Program Files (x86)\Pritunl\pritunl.exe'' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force }"',
+        '',
+        SW_HIDE,
+        ewWaitUntilTerminated,
+        ResultCode
+    );
+    Sleep(500);
 end;
 function PrepareToInstall(var NeedsRestart: Boolean): String;
 begin
