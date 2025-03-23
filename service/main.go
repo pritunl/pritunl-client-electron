@@ -153,17 +153,21 @@ func main() {
 	routr.Init()
 
 	go func() {
-		retryCount := 0
+		defer func() {
+			panc := recover()
+			if panc != nil {
+				logrus.WithFields(logrus.Fields{
+					"trace": string(debug.Stack()),
+					"panic": panc,
+				}).Error("utils: Main router panic")
+			}
+
+			time.Sleep(1 * time.Second)
+		}()
 
 		for {
 			if constants.Interrupt {
 				return
-			}
-
-			if retryCount > 2 {
-				logrus.Error("main: Failed to recover server, closing")
-				time.Sleep(5 * time.Second)
-				panic(err)
 			}
 
 			err = routr.Run()
@@ -177,14 +181,6 @@ func main() {
 			} else {
 				logrus.Error("main: Unexpected server close")
 			}
-
-			if retryCount == 0 {
-				go func() {
-					time.Sleep(60 * time.Second)
-					retryCount = 0
-				}()
-			}
-			retryCount += 1
 
 			newRoutr := &router.Router{}
 			newRoutr.Init()
