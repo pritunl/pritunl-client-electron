@@ -23,16 +23,16 @@ import (
 )
 
 var (
-	clientInsecure = &http.Client{
+	clientSyncInsecure = &http.Client{
 		Transport: &http.Transport{
-			TLSHandshakeTimeout: 10 * time.Second,
+			TLSHandshakeTimeout: 5 * time.Second,
 			TLSClientConfig: &tls.Config{
 				InsecureSkipVerify: true,
 				MinVersion:         tls.VersionTLS12,
 				MaxVersion:         tls.VersionTLS13,
 			},
 		},
-		Timeout: 10 * time.Second,
+		Timeout: 5 * time.Second,
 	}
 )
 
@@ -494,7 +494,7 @@ func (s *Sprofile) syncProfile(host string) (updated bool, err error) {
 	req.Header.Set("Auth-Signature", sig)
 	req.Header.Set("User-Agent", "pritunl")
 
-	res, err := clientInsecure.Do(req)
+	res, err := clientSyncInsecure.Do(req)
 	if err != nil {
 		err = &errortypes.RequestError{
 			errors.Wrap(err, "sprofile: Sync profile connection error"),
