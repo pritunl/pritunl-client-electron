@@ -525,12 +525,21 @@ func (w *Wg) writeWgConf(data *WgConf) (err error) {
 		templData.Mtu = data.Mtu
 	}
 
-	if !w.conn.Profile.DisableDns && data.DnsServers != nil &&
-		len(data.DnsServers) > 0 &&
-		(runtime.GOOS != "darwin" || config.Config.DisableWgDns) {
+	if !w.conn.Profile.DisableDns && len(data.DnsServers) > 0 &&
+		runtime.GOOS != "darwin" {
 
 		templData.HasDns = true
 		templData.DnsServers = strings.Join(data.DnsServers, ",")
+	}
+
+	if !w.conn.Profile.DisableDns && len(data.SearchDomains) > 0 &&
+		runtime.GOOS != "darwin" {
+
+		templData.HasDns = true
+		if templData.DnsServers != "" {
+			templData.DnsServers += ","
+		}
+		templData.DnsServers += strings.Join(data.SearchDomains, ",")
 	}
 
 	output := &bytes.Buffer{}
