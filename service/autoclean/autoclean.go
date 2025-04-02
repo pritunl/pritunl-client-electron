@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"runtime/debug"
+	"sync"
 	"time"
 
 	"github.com/dropbox/godropbox/errors"
@@ -16,6 +17,10 @@ import (
 
 const (
 	pathSep = string(os.PathSeparator)
+)
+
+var (
+	cleanLock = sync.Mutex{}
 )
 
 func clean() (err error) {
@@ -47,6 +52,9 @@ func clean() (err error) {
 
 // Check for Pritunl.app and uninstall if missing
 func CheckAndClean() (err error) {
+	cleanLock.Lock()
+	defer cleanLock.Unlock()
+
 	root := utils.GetRootDir()
 	if runtime.GOOS != "darwin" ||
 		root != "/Applications/Pritunl.app/Contents/Resources" {
@@ -89,8 +97,8 @@ func CheckAndCleanWatch() {
 			}
 		}()
 
-		for i := 0; i < 30; i++ {
-			time.Sleep(10 * time.Second)
+		for i := 0; i < 200; i++ {
+			time.Sleep(3 * time.Second)
 
 			err := CheckAndClean()
 			if err != nil {
