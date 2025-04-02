@@ -85,6 +85,7 @@ func Register(engine *gin.Engine) {
 	engine.POST("/tpm/callback", tpmCallbackPost)
 	engine.GET("/ping", pingGet)
 	engine.POST("/stop", stopPost)
+	engine.POST("/cleanup", cleanupPost)
 	engine.POST("/restart", restartPost)
 	engine.GET("/status", statusGet)
 	engine.GET("/state", stateGet)

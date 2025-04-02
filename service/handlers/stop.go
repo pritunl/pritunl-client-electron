@@ -20,3 +20,9 @@ func stopPost(c *gin.Context) {
 
 	c.JSON(200, nil)
 }
+
+func cleanupPost(c *gin.Context) {
+	autoclean.CheckAndCleanWatch()
+
+	c.JSON(200, nil)
+}
