@@ -9,6 +9,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/pritunl/pritunl-client-electron/service/autoclean"
 	"github.com/pritunl/pritunl-client-electron/service/config"
 	"github.com/pritunl/pritunl-client-electron/service/connection"
 	"github.com/pritunl/pritunl-client-electron/service/event"
@@ -20,6 +21,7 @@ var (
 	lastRestart    = time.Now()
 	lastDnsRefresh = time.Now()
 	restartLock    = sync.Mutex{}
+	LastPing       = time.Now()
 )
 
 type ConnState struct {
@@ -90,6 +92,10 @@ func wakeWatch() {
 	update := false
 
 	for {
+		if runtime.GOOS == "darwin" && curTime.Sub(LastPing) > 40*time.Second {
+			_ = autoclean.CheckAndClean()
+		}
+
 		if !connection.GlobalStore.IsActive() {
 			if update {
 				if connection.GlobalStore.IsConnected() {
