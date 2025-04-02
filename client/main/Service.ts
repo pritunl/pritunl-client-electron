@@ -49,7 +49,7 @@ export function sync(): Promise<boolean> {
 					} else {
 						resolve(false)
 					}
-				} {
+				} else {
 					resolve(false)
 				}
 			}, (err) => {
@@ -77,7 +77,35 @@ export function wakeup(): Promise<boolean> {
 			.then((resp: Request.Response) => {
 				if (resp.status === 200) {
 					resolve(true)
-				} {
+				} else {
+					resolve(false)
+				}
+			}, (err) => {
+				Logger.error(err)
+				resolve(false)
+			})
+	})
+}
+
+export function cleanup(): Promise<boolean> {
+	return new Promise<boolean>(async (resolve) => {
+		try {
+			await Auth.load()
+		} catch(err) {
+			Logger.error(err)
+			resolve(false)
+			return
+		}
+
+		RequestUtils
+			.post("/cleanup")
+			.set("Auth-Token", Auth.token)
+			.set("User-Agent", "pritunl")
+			.end()
+			.then((resp: Request.Response) => {
+				if (resp.status === 200) {
+					resolve(true)
+				} else {
 					resolve(false)
 				}
 			}, (err) => {

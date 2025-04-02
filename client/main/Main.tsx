@@ -526,6 +526,7 @@ electron.app.on("activate", (): void => {
 })
 
 electron.app.on("quit", (): void => {
+	Service.cleanup()
 	try {
 		electron.app.quit()
 	} catch (error) {
