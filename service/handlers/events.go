@@ -11,6 +11,7 @@ import (
 	"github.com/pritunl/pritunl-client-electron/service/connection"
 	"github.com/pritunl/pritunl-client-electron/service/event"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
+	"github.com/pritunl/pritunl-client-electron/service/watch"
 	"github.com/sirupsen/logrus"
 )
 
@@ -102,6 +103,8 @@ func eventsGet(c *gin.Context) {
 				return
 			}
 		case <-ticker.C:
+			watch.LastPing = time.Now()
+
 			err = conn.WriteControl(websocket.PingMessage, []byte{},
 				time.Now().Add(writeTimeout))
 			if err != nil {
