@@ -340,6 +340,7 @@ func (o *Ovpn) Connect(data *ConnData) (err error) {
 		o.conn.State.AddPath(downPath)
 
 		args = append(args, "--script-security", "2",
+			"--ignore-script-errors",
 			"--up", upPath,
 			"--down", downPath,
 		)
