@@ -6,7 +6,9 @@ import (
 	"path/filepath"
 	"runtime"
 
+	"github.com/dropbox/godropbox/errors"
 	"github.com/pritunl/pritunl-client-electron/service/constants"
+	"github.com/pritunl/pritunl-client-electron/service/platform"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
 )
 
@@ -165,6 +167,39 @@ func GetWgConfDir() (dir1 string, dir2 string, err error) {
 	default:
 		panic("paths: WG util path not implemented")
 	}
+}
+
+func GetOvpnConfPath() (pth string, err error) {
+	if runtime.GOOS == "windows" {
+		pth = filepath.Join(utils.GetWinDrive(),
+			"ProgramData", "Pritunl", "Temp")
+		err = platform.MkdirSecure(pth)
+		if err != nil {
+			err = &utils.IoError{
+				errors.Wrap(
+					err, "utils: Failed to create temp directory"),
+			}
+			return
+		}
+	} else {
+		pth = filepath.Join(string(filepath.Separator), "etc", "openvpn")
+		exists, _ := utils.ExistsDir(pth)
+		if exists {
+			return
+		}
+
+		pth = filepath.Join(string(filepath.Separator), "tmp", "pritunl")
+		err = platform.MkdirSecure(pth)
+		if err != nil {
+			err = &utils.IoError{
+				errors.Wrap(
+					err, "utils: Failed to create temp directory"),
+			}
+			return
+		}
+	}
+
+	return
 }
 
 func GetOvpnDir() (pth string) {

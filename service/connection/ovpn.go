@@ -430,7 +430,7 @@ func (o *Ovpn) Disconnect() {
 func (o *Ovpn) write(data *ConnData) (
 	pth string, err error) {
 
-	rootDir, err := utils.GetTempDir()
+	rootDir, err := GetOvpnConfPath()
 	if err != nil {
 		return
 	}
@@ -468,7 +468,7 @@ func (o *Ovpn) write(data *ConnData) (
 }
 
 func (o *Ovpn) writeManagementPass() (pth string, err error) {
-	rootDir, err := utils.GetTempDir()
+	rootDir, err := GetOvpnConfPath()
 	if err != nil {
 		return
 	}
@@ -498,7 +498,7 @@ func (o *Ovpn) writeManagementPass() (pth string, err error) {
 }
 
 func (o *Ovpn) writeAuth(authToken string) (pth string, err error) {
-	rootDir, err := utils.GetTempDir()
+	rootDir, err := GetOvpnConfPath()
 	if err != nil {
 		return
 	}
@@ -653,7 +653,7 @@ func (o *Ovpn) writeAuth(authToken string) (pth string, err error) {
 }
 
 func (o *Ovpn) writeUp() (pth string, err error) {
-	rootDir, err := utils.GetTempDir()
+	rootDir, err := GetOvpnConfPath()
 	if err != nil {
 		return
 	}
@@ -714,7 +714,7 @@ func (o *Ovpn) writeUp() (pth string, err error) {
 }
 
 func (o *Ovpn) writeDown() (pth string, err error) {
-	rootDir, err := utils.GetTempDir()
+	rootDir, err := GetOvpnConfPath()
 	if err != nil {
 		return
 	}
@@ -772,7 +772,7 @@ func (o *Ovpn) writeDown() (pth string, err error) {
 }
 
 func (o *Ovpn) writeBlock() (pth string, err error) {
-	rootDir, err := utils.GetTempDir()
+	rootDir, err := GetOvpnConfPath()
 	if err != nil {
 		return
 	}
