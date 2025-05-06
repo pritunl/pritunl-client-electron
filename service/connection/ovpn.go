@@ -342,10 +342,6 @@ func (o *Ovpn) Connect(data *ConnData) (err error) {
 		args = append(args, "--script-security", "2",
 			"--up", upPath,
 			"--down", downPath,
-			"--route-pre-down", blockPath,
-			"--tls-verify", blockPath,
-			"--ipchange", blockPath,
-			"--route-up", blockPath,
 		)
 		break
 	default:
