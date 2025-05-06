@@ -338,12 +338,6 @@ func (o *Ovpn) Connect(data *ConnData) (err error) {
 			return
 		}
 		o.conn.State.AddPath(downPath)
-
-		args = append(args, "--script-security", "2",
-			"--ignore-script-errors",
-			"--up", upPath,
-			"--down", downPath,
-		)
 		break
 	default:
 		panic("profile: Not implemented")
