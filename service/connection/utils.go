@@ -3,6 +3,7 @@ package connection
 import (
 	"fmt"
 	"net"
+	"os/user"
 	"regexp"
 	"runtime"
 	"runtime/debug"
@@ -282,4 +283,22 @@ func GetPublicAddress6() (addr6 string, err error) {
 	cachedPublicAddr6 = addr6
 
 	return
+}
+
+func NetworkManagerSupport() bool {
+	if runtime.GOOS != "linux" {
+		return false
+	}
+
+	_, err := user.Lookup(NmOvpnUser)
+	if err != nil {
+		return false
+	}
+
+	_, err = user.LookupGroup(NmOvpnUser)
+	if err != nil {
+		return false
+	}
+
+	return true
 }

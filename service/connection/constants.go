@@ -14,6 +14,7 @@ const (
 	SingleSignOnTimeout = 90 * time.Second
 	OvpnMode            = "ovpn"
 	WgMode              = "wg"
+	NmOvpnUser          = "nm-openvpn"
 )
 
 var (

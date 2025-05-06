@@ -325,24 +325,32 @@ func (o *Ovpn) Connect(data *ConnData) (err error) {
 		)
 		break
 	case "linux":
-		upPath, e := o.writeUp()
-		if e != nil {
-			err = e
-			return
-		}
-		o.conn.State.AddPath(upPath)
+		upPath := ""
+		downPath := ""
+		upResolvPath := "/etc/openvpn/update-resolv-conf"
 
-		downPath, e := o.writeDown()
-		if e != nil {
-			err = e
-			return
-		}
-		o.conn.State.AddPath(downPath)
+		exists, _ := utils.ExistsFile(upResolvPath)
+		if exists {
+			upPath = upResolvPath
+			downPath = upResolvPath
+		} else {
+			upPath, err = o.writeUp()
+			if err != nil {
+				return
+			}
+			o.conn.State.AddPath(upPath)
 
-		// args = append(args, "--script-security", "2",
-		// 	"--up", upPath,
-		// 	"--down", downPath,
-		// )
+			downPath, err = o.writeDown()
+			if err != nil {
+				return
+			}
+			o.conn.State.AddPath(downPath)
+		}
+
+		args = append(args, "--script-security", "2",
+			"--up", upPath,
+			"--down", downPath,
+		)
 		break
 	default:
 		panic("profile: Not implemented")
@@ -431,8 +439,13 @@ func (o *Ovpn) write(data *ConnData) (
 		return
 	}
 
-	pth = filepath.Join(rootDir, o.conn.Id)
-	prflData := o.parsedPrfl.Export()
+	chown := ""
+	if NetworkManagerSupport() {
+		chown = NmOvpnUser
+	}
+
+	pth = filepath.Join(rootDir, o.conn.Id+".conf")
+	prflData := o.parsedPrfl.Export(chown)
 
 	if runtime.GOOS == "windows" {
 		o.managementPort = ManagementPortAcquire()
