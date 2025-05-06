@@ -69,7 +69,7 @@ type Ovpn struct {
 	DisableDns     bool
 }
 
-func (o *Ovpn) Export() string {
+func (o *Ovpn) Export(chown string) string {
 	output := ""
 
 	if o.EnvId != "" {
@@ -78,6 +78,12 @@ func (o *Ovpn) Export() string {
 	if o.EnvName != "" {
 		output += fmt.Sprintf("setenv UV_NAME %s\n", o.EnvName)
 	}
+
+	if chown != "" {
+		output += fmt.Sprintf("user %s\n", chown)
+		output += fmt.Sprintf("group %s\n", chown)
+	}
+
 	output += "client\n"
 	output += fmt.Sprintf("dev %s\n", o.Dev)
 	output += fmt.Sprintf("dev-type %s\n", o.DevType)
