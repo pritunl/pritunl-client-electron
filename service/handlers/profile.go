@@ -8,36 +8,40 @@ import (
 	"github.com/pritunl/pritunl-client-electron/service/connection"
 	"github.com/pritunl/pritunl-client-electron/service/errortypes"
 	"github.com/pritunl/pritunl-client-electron/service/sprofile"
+	"github.com/pritunl/pritunl-client-electron/service/types"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
 	"github.com/sirupsen/logrus"
 )
 
+// TODO Add SyncHosts on client
+
 type profileData struct {
-	Id                 string   `json:"id"`
-	Mode               string   `json:"mode"`
-	OrgId              string   `json:"org_id"`
-	UserId             string   `json:"user_id"`
-	ServerId           string   `json:"server_id"`
-	SyncHosts          []string `json:"sync_hosts"`
-	SyncToken          string   `json:"sync_token"`
-	SyncSecret         string   `json:"sync_secret"`
-	Data               string   `json:"data"`
-	Username           string   `json:"username"`
-	Password           string   `json:"password"`
-	DynamicFirewall    bool     `json:"dynamic_firewall"`
-	GeoSort            string   `json:"geo_sort"`
-	ForceConnect       bool     `json:"force_connect"`
-	DeviceAuth         bool     `json:"device_auth"`
-	DisableGateway     bool     `json:"disable_gateway"`
-	DisableDns         bool     `json:"disable_dns"`
-	RestrictClient     bool     `json:"restrict_client"`
-	ForceDns           bool     `json:"force_dns"`
-	SsoAuth            bool     `json:"sso_auth"`
-	ServerPublicKey    string   `json:"server_public_key"`
-	ServerBoxPublicKey string   `json:"server_box_public_key"`
-	TokenTtl           int      `json:"token_ttl"`
-	Reconnect          bool     `json:"reconnect"`
-	Timeout            bool     `json:"timeout"`
+	Id                 string                      `json:"id"`
+	Mode               string                      `json:"mode"`
+	OrgId              string                      `json:"org_id"`
+	UserId             string                      `json:"user_id"`
+	ServerId           string                      `json:"server_id"`
+	SyncHosts          []string                    `json:"sync_hosts"`
+	SyncToken          string                      `json:"sync_token"`
+	SyncSecret         string                      `json:"sync_secret"`
+	Data               string                      `json:"data"`
+	Username           string                      `json:"username"`
+	Password           string                      `json:"password"`
+	RemotesData        map[string]types.RemoteData `json:"remotes_data"`
+	DynamicFirewall    bool                        `json:"dynamic_firewall"`
+	GeoSort            string                      `json:"geo_sort"`
+	ForceConnect       bool                        `json:"force_connect"`
+	DeviceAuth         bool                        `json:"device_auth"`
+	DisableGateway     bool                        `json:"disable_gateway"`
+	DisableDns         bool                        `json:"disable_dns"`
+	RestrictClient     bool                        `json:"restrict_client"`
+	ForceDns           bool                        `json:"force_dns"`
+	SsoAuth            bool                        `json:"sso_auth"`
+	ServerPublicKey    string                      `json:"server_public_key"`
+	ServerBoxPublicKey string                      `json:"server_box_public_key"`
+	TokenTtl           int                         `json:"token_ttl"`
+	Reconnect          bool                        `json:"reconnect"`
+	Timeout            bool                        `json:"timeout"`
 }
 
 func profilesGet(c *gin.Context) {
@@ -113,6 +117,7 @@ func profilePost(c *gin.Context) {
 		Data:               data.Data,
 		Username:           data.Username,
 		Password:           data.Password,
+		RemotesData:        data.RemotesData,
 		DynamicFirewall:    data.DynamicFirewall,
 		GeoSort:            data.GeoSort,
 		ForceConnect:       data.ForceConnect,

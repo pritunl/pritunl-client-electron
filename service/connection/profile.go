@@ -4,38 +4,40 @@ import (
 	"strings"
 
 	"github.com/pritunl/pritunl-client-electron/service/sprofile"
+	"github.com/pritunl/pritunl-client-electron/service/types"
 	"github.com/sirupsen/logrus"
 )
 
 type Profile struct {
-	conn               *Connection `json:"-"`
-	Id                 string      `json:"id"`
-	Mode               string      `json:"mode"`
-	OrgId              string      `json:"org_id"`
-	UserId             string      `json:"user_id"`
-	ServerId           string      `json:"server_id"`
-	SyncHosts          []string    `json:"sync_hosts"`
-	SyncToken          string      `json:"sync_token"`
-	SyncSecret         string      `json:"sync_secret"`
-	Data               string      `json:"data"`
-	Username           string      `json:"username"`
-	Password           string      `json:"password"`
-	DynamicFirewall    bool        `json:"dynamic_firewall"`
-	GeoSort            string      `json:"geo_sort"`
-	ForceConnect       bool        `json:"force_connect"`
-	DeviceAuth         bool        `json:"device_auth"`
-	DisableGateway     bool        `json:"disable_gateway"`
-	DisableDns         bool        `json:"disable_dns"`
-	RestrictClient     bool        `json:"restrict_client"`
-	ForceDns           bool        `json:"force_dns"`
-	SsoAuth            bool        `json:"sso_auth"`
-	ServerPublicKey    string      `json:"server_public_key"`
-	ServerBoxPublicKey string      `json:"server_box_public_key"`
-	RegistrationKey    string      `json:"registration_key"`
-	TokenTtl           int         `json:"token_ttl"`
-	Reconnect          bool        `json:"reconnect"`
-	Timeout            bool        `json:"timeout"`
-	SystemProfile      bool        `json:"-"`
+	conn               *Connection                 `json:"-"`
+	Id                 string                      `json:"id"`
+	Mode               string                      `json:"mode"`
+	OrgId              string                      `json:"org_id"`
+	UserId             string                      `json:"user_id"`
+	ServerId           string                      `json:"server_id"`
+	SyncHosts          []string                    `json:"sync_hosts"`
+	SyncToken          string                      `json:"sync_token"`
+	SyncSecret         string                      `json:"sync_secret"`
+	Data               string                      `json:"data"`
+	Username           string                      `json:"username"`
+	Password           string                      `json:"password"`
+	RemotesData        map[string]types.RemoteData `json:"remotes_data"`
+	DynamicFirewall    bool                        `json:"dynamic_firewall"`
+	GeoSort            string                      `json:"geo_sort"`
+	ForceConnect       bool                        `json:"force_connect"`
+	DeviceAuth         bool                        `json:"device_auth"`
+	DisableGateway     bool                        `json:"disable_gateway"`
+	DisableDns         bool                        `json:"disable_dns"`
+	RestrictClient     bool                        `json:"restrict_client"`
+	ForceDns           bool                        `json:"force_dns"`
+	SsoAuth            bool                        `json:"sso_auth"`
+	ServerPublicKey    string                      `json:"server_public_key"`
+	ServerBoxPublicKey string                      `json:"server_box_public_key"`
+	RegistrationKey    string                      `json:"registration_key"`
+	TokenTtl           int                         `json:"token_ttl"`
+	Reconnect          bool                        `json:"reconnect"`
+	Timeout            bool                        `json:"timeout"`
+	SystemProfile      bool                        `json:"-"`
 }
 
 func (p *Profile) Fields() logrus.Fields {
@@ -110,6 +112,7 @@ func (p *Profile) ImportSystemProfile(sprfl *sprofile.Sprofile) {
 	p.Data = sprfl.OvpnData
 	p.Username = "pritunl"
 	p.Password = sprfl.Password
+	p.RemotesData = sprfl.RemotesData
 	p.DynamicFirewall = sprfl.DynamicFirewall
 	p.GeoSort = sprfl.GeoSort
 	p.ForceConnect = sprfl.ForceConnect
