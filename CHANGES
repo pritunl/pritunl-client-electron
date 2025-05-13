@@ -1,6 +1,10 @@
 Pritunl Client Changelog
 ========================
 
+<%= version %>
+
+Fix compatibility issues with Ubuntu 25.04
+
 Version 1.3.4220.57 2025-04-02
 ------------------------------
 
