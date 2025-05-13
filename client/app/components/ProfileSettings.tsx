@@ -303,6 +303,10 @@ export default class ProfileSettings extends React.Component<Props, State> {
 							value: profile.restrict_client,
 						},
 						{
+							label: 'Remotes Data',
+							value: JSON.stringify(profile.remotes_data),
+						},
+						{
 							label: 'Dynamic Firewall',
 							value: profile.dynamic_firewall,
 						},

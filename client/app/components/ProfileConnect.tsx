@@ -264,6 +264,7 @@ export default class ProfileConnect extends React.Component<Props, State> {
 			sync_secret: prfl.sync_secret,
 			username: username,
 			password: password,
+			remotes_data: prfl.remotes_data,
 			dynamic_firewall: prfl.dynamic_firewall,
 			geo_sort: prfl.geo_sort,
 			force_connect: prfl.force_connect,
