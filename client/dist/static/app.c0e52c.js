@@ -13376,8 +13376,21 @@ var react_dom = __webpack_require__(2483);
 /** Alignment along the horizontal axis. */
 var Alignment = {
     CENTER: "center",
+    END: "end",
+    /**
+     * @deprecated use `Alignment.START` instead.
+     */
     LEFT: "left",
+    /**
+     * @deprecated use `Alignment.END` instead.
+     */
     RIGHT: "right",
+    START: "start",
+};
+var TextAlignment = {
+    CENTER: "center",
+    END: "end",
+    START: "start",
 };
 
 ;// ./node_modules/@blueprintjs/core/lib/esm/common/elevation.js
@@ -13396,7 +13409,7 @@ var Alignment = {
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-// tslint:disable:object-literal-sort-keys
+/* eslint-disable sort-keys */
 var Elevation = {
     ZERO: 0,
     ONE: 1,
@@ -13421,7 +13434,7 @@ var Elevation = {
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-// tslint:disable:object-literal-sort-keys
+/* eslint-disable sort-keys */
 /**
  * The four basic intents.
  */
@@ -13709,6 +13722,7 @@ var SECTION_HEADER_SUB_TITLE = "".concat(SECTION_HEADER, "-sub-title");
 var SECTION_HEADER_DIVIDER = "".concat(SECTION_HEADER, "-divider");
 var SECTION_HEADER_TABS = "".concat(SECTION_HEADER, "-tabs");
 var SECTION_HEADER_RIGHT = "".concat(SECTION_HEADER, "-right");
+var SECTION_HEADER_COLLAPSE_CARET = "".concat(SECTION_HEADER, "-collapse-caret");
 var SECTION_CARD = "".concat(SECTION, "-card");
 var NAVBAR = "".concat(NS, "-navbar");
 var NAVBAR_GROUP = "".concat(NAVBAR, "-group");
@@ -13734,9 +13748,9 @@ var PANEL_STACK_HEADER = "".concat(PANEL_STACK, "-header");
 var PANEL_STACK_HEADER_BACK = "".concat(PANEL_STACK, "-header-back");
 var PANEL_STACK_VIEW = "".concat(PANEL_STACK, "-view");
 var PANEL_STACK2 = "".concat(NS, "-panel-stack2");
-var PANEL_STACK2_HEADER = "".concat(PANEL_STACK, "-header");
-var PANEL_STACK2_HEADER_BACK = "".concat(PANEL_STACK, "-header-back");
-var PANEL_STACK2_VIEW = "".concat(PANEL_STACK, "-view");
+var PANEL_STACK2_HEADER = "".concat(PANEL_STACK2, "-header");
+var PANEL_STACK2_HEADER_BACK = "".concat(PANEL_STACK2, "-header-back");
+var PANEL_STACK2_VIEW = "".concat(PANEL_STACK2, "-view");
 var POPOVER = "".concat(NS, "-popover");
 var POPOVER_ARROW = "".concat(POPOVER, "-arrow");
 var POPOVER_BACKDROP = "".concat(POPOVER, "-backdrop");
@@ -13825,9 +13839,13 @@ function getClassNamespace() {
 /** Return CSS class for alignment. */
 function alignmentClass(alignment) {
     switch (alignment) {
+        // eslint-disable-next-line @typescript-eslint/no-deprecated
         case Alignment.LEFT:
+        case Alignment.START:
             return ALIGN_LEFT;
+        // eslint-disable-next-line @typescript-eslint/no-deprecated
         case Alignment.RIGHT:
+        case Alignment.END:
             return ALIGN_RIGHT;
         default:
             return undefined;
@@ -13856,6 +13874,35 @@ function positionClass(position) {
         return undefined;
     }
     return "".concat(NS, "-position-").concat(position);
+}
+function sizeClass(size, legacyProps) {
+    var _a;
+    if (size === "small") {
+        return SMALL;
+    }
+    if (size === "large") {
+        return LARGE;
+    }
+    var _b = legacyProps.large, large = _b === void 0 ? false : _b, _c = legacyProps.small, small = _c === void 0 ? false : _c;
+    return _a = {},
+        _a[LARGE] = large,
+        _a[SMALL] = small,
+        _a;
+}
+function variantClass(variant, legacyProps) {
+    var _a;
+    // variant takes precedence over minimal and outlined
+    if (variant === "outlined") {
+        return OUTLINED;
+    }
+    if (variant === "minimal") {
+        return MINIMAL;
+    }
+    var _b = legacyProps.minimal, minimal = _b === void 0 ? false : _b, _c = legacyProps.outlined, outlined = _c === void 0 ? false : _c;
+    return _a = {},
+        _a[MINIMAL] = minimal,
+        _a[OUTLINED] = outlined,
+        _a;
 }
 
 ;// ./node_modules/@blueprintjs/core/lib/esm/common/interactionMode.js
@@ -14041,12 +14088,23 @@ var CLAMP_MIN_MAX = ns + " clamp: max cannot be less than min";
 var ALERT_WARN_CANCEL_PROPS = ns + " <Alert> cancelButtonText and onCancel should be set together.";
 var ALERT_WARN_CANCEL_ESCAPE_KEY = ns + " <Alert> canEscapeKeyCancel enabled without onCancel or onClose handler.";
 var ALERT_WARN_CANCEL_OUTSIDE_CLICK = ns + " <Alert> canOutsideClickCancel enabled without onCancel or onClose handler.";
+var ALIGN_INDICATOR_LEFT = ns + " alignIndicator=\"left\" is deprecated. Please use alignIndicator=\"start\" instead.";
+var ALIGN_INDICATOR_RIGHT = ns + " alignIndicator=\"right\" is deprecated. Please use alignIndicator=\"end\" instead.";
+var ALIGN_INDICATOR_CENTER = ns + "alignIndicator=\"center\" is not supported on control components and will be ignored.";
+var ALIGN_TEXT_LEFT = ns + " alignText=\"left\" is deprecated. Please use alignText=\"start\" instead.";
+var ALIGN_TEXT_RIGHT = ns + " alignText=\"right\" is deprecated. Please use alignText=\"end\" instead.";
+var BUTTON_WARN_MINIMAL = ns + " <Button> minimal is deprecated. Please use variant=\"minimal\".";
+var BUTTON_GROUP_WARN_MINIMAL = ns + " <ButtonGroup> minimal is deprecated. Please use variant=\"minimal\".";
+var BUTTON_WARN_OUTLINED = ns + " <Button> outlined is deprecated. Please use variant=\"outlined\".";
+var BUTTON_GROUP_WARN_OUTLINED = ns + " <ButtonGroup> outlined is deprecated. Please use variant=\"outlined\".";
 var HOTKEYS_HOTKEY_CHILDREN = ns + " <Hotkeys> only accepts <Hotkey> children.";
 var HOTKEYS_PROVIDER_NOT_FOUND = ns +
     " useHotkeys() was used outside of a <HotkeysProvider> context. These hotkeys will not be shown in the hotkeys help dialog.";
 var HOTKEYS_TARGET_CHILDREN_LOCAL_HOTKEYS = ns +
     " <HotkeysTarget2> was configured with local hotkeys, but you did not use the generated event handlers to bind their event handlers. Try using a render function as the child of this component.";
 var INPUT_WARN_LEFT_ELEMENT_LEFT_ICON_MUTEX = ns + " <InputGroup> leftElement and leftIcon prop are mutually exclusive, with leftElement taking priority.";
+var NAVBAR_GROUP_ALIGN_CENTER = ns +
+    " <NavbarGroup> does not support align=\"center\". Only \"left\" or \"right\" alignment is allowed, and align=\"center\" will be ignored.";
 var NUMERIC_INPUT_MIN_MAX = ns + " <NumericInput> requires min to be no greater than max if both are defined.";
 var NUMERIC_INPUT_MINOR_STEP_SIZE_BOUND = ns + " <NumericInput> requires minorStepSize to be no greater than stepSize.";
 var NUMERIC_INPUT_MAJOR_STEP_SIZE_BOUND = ns + " <NumericInput> requires stepSize to be no greater than majorStepSize.";
@@ -14096,6 +14154,19 @@ var OVERLAY2_REQUIRES_OVERLAY_PROVDER = ns +
 var OVERLAY_CHILD_REF_AND_REFS_MUTEX = ns + " <Overlay2> cannot use childRef and childRefs props simultaneously";
 var OVERLAY_WITH_MULTIPLE_CHILDREN_REQUIRES_CHILD_REFS = ns + " <Overlay2> requires childRefs prop when rendering multiple child elements";
 var OVERLAY_CHILD_REQUIRES_KEY = ns + " <Overlay2> requires each child element to have a unique key prop when childRefs is used";
+function logDeprecatedSizeWarning(component, props) {
+    var large = props.large, small = props.small;
+    if (large && small) {
+        console.warn(ns +
+            " <".concat(component, "> large and small props are mutually exclusive. Please use size=\"large\" or size=\"small\" instead."));
+    }
+    else if (large) {
+        console.warn(ns + " <".concat(component, "> large is deprecated. Please use size=\"large\" instead."));
+    }
+    else if (small) {
+        console.warn(ns + " <".concat(component, "> small is deprecated. Please use size=\"small\" instead."));
+    }
+}
 
 ;// ./node_modules/@blueprintjs/core/lib/esm/common/utils/jsUtils.js
 /*
@@ -14202,7 +14273,7 @@ function isEmptyString(val) {
  * An abstract component that Blueprint components can extend
  * in order to add some common functionality like runtime props validation.
  */
-// eslint-disable-next-line @typescript-eslint/ban-types
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 var AbstractPureComponent = /** @class */ (function (_super) {
     (0,tslib_es6/* __extends */.C6)(AbstractPureComponent, _super);
     function AbstractPureComponent(props) {
@@ -14313,6 +14384,7 @@ var INVALID_PROPS = [
     "current",
     "elementRef", // not used anymore in Blueprint v5.x, but kept for backcompat if consumers use this naming pattern
     "ellipsizeText", // ButtonProps
+    "endIcon",
     "fill",
     "icon",
     "iconSize",
@@ -14333,11 +14405,13 @@ var INVALID_PROPS = [
     "rightElement",
     "rightIcon",
     "round",
+    "selectedValue",
     "size",
     "small",
     "tagName",
     "text",
     "textClassName", // ButtonProps
+    "variant",
 ];
 /**
  * Typically applied to HTMLElements to filter out disallowed props. When applied to a Component,
@@ -14466,15 +14540,16 @@ function isReactNodeArray(child) {
  * @param element JSX element in question
  * @param ComponentType desired component type of element
  */
-// eslint-disable-next-line @typescript-eslint/ban-types
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 function isElementOfType(element, ComponentType) {
     return (element != null &&
         element.type != null &&
         element.type.displayName != null &&
         element.type.displayName === ComponentType.displayName);
 }
-function isReact18() {
-    return react.version.startsWith("18");
+function isReact18OrHigher() {
+    var majorVersion = parseInt(react.version.split(".")[0], 10);
+    return majorVersion >= 18;
 }
 
 ;// ./node_modules/@babel/runtime/helpers/esm/extends.js
@@ -15810,11 +15885,9 @@ function elementIsTextInput(elem) {
  */
 function getActiveElement(element, options) {
     var _a;
-    if (element == null) {
-        return document.activeElement;
-    }
-    var rootNode = ((_a = element.getRootNode(options)) !== null && _a !== void 0 ? _a : document);
-    return rootNode.activeElement;
+    var rootNode = ((_a = element === null || element === void 0 ? void 0 : element.getRootNode(options)) !== null && _a !== void 0 ? _a : document);
+    var activeElement = rootNode.activeElement;
+    return activeElement instanceof HTMLElement ? activeElement : null;
 }
 /**
  * Throttle an event on an EventTarget by wrapping it in a
@@ -15853,11 +15926,11 @@ function throttleReactEventCallback(callback, options) {
  * the throttled function.
  */
 /* istanbul ignore next */
-// eslint-disable-next-line @typescript-eslint/ban-types
+// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 function throttle(method) {
     return throttleImpl(method);
 }
-// eslint-disable-next-line @typescript-eslint/ban-types
+// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 function throttleImpl(onAnimationFrameRequested, onBeforeIsRunningCheck, onAfterIsRunningCheck) {
     var isRunning = false;
     var func = function () {
@@ -15888,6 +15961,35 @@ function clickElementOnKeyPress(keys) {
             e.target.dispatchEvent(new MouseEvent("click", (0,tslib_es6/* __assign */.Cl)((0,tslib_es6/* __assign */.Cl)({}, e), { view: undefined })));
         }
     };
+}
+/**
+ * Selector for all possible focusable items.
+ *
+ * Derived from this SO question: {@link https://stackoverflow.com/questions/1599660/which-html-elements-can-receive-focus}
+ *
+ * Note: Order may not be correct if children elements use tabindex values > 0.
+ */
+var SELECTOR_FOCUSABLE = [
+    'a[href]:not([tabindex="-1"])',
+    'button:not([disabled]):not([tabindex="-1"])',
+    'details:not([tabindex="-1"])',
+    'input:not([disabled]):not([tabindex="-1"])',
+    'select:not([disabled]):not([tabindex="-1"])',
+    'textarea:not([disabled]):not([tabindex="-1"])',
+    '[tabindex]:not([tabindex="-1"])',
+].join(",");
+/**
+ * Gets all focusable elements within the given element.
+ *
+ * Selector derived from this SO question: {@link https://stackoverflow.com/questions/1599660/which-html-elements-can-receive-focus}
+ *
+ * Note: Order may not be correct if children elements use tabindex values > 0.
+ *
+ * @param {HTMLElement} element - The element to search within.
+ * @returns {HTMLElement[]} An array of focusable elements.
+ */
+function getFocusableElements(element) {
+    return Array.from(element.querySelectorAll(SELECTOR_FOCUSABLE));
 }
 
 ;// ./node_modules/@blueprintjs/core/lib/esm/context/overlays/overlaysProvider.js
@@ -15952,7 +16054,6 @@ var shim = __webpack_require__(422);
  * limitations under the License.
  */
 
-// tslint:disable-next-line no-submodule-imports
 
 
 var globalStack = [];
@@ -16146,6 +16247,7 @@ function usePrevious(value) {
  */
 
 
+
 /**
  * Returns the keyboard-focusable elements inside a given container element, ignoring focus traps
  * rendered by Overlay/Overlay2.
@@ -16153,19 +16255,8 @@ function usePrevious(value) {
 function getKeyboardFocusableElements(container) {
     var containerElement = getRef(container);
     var focusableElements = containerElement != null
-        ? Array.from(
-        // Order may not be correct if children elements use tabindex values > 0.
-        // Selectors derived from this SO question:
-        // https://stackoverflow.com/questions/1599660/which-html-elements-can-receive-focus
-        containerElement.querySelectorAll([
-            'a[href]:not([tabindex="-1"])',
-            'button:not([disabled]):not([tabindex="-1"])',
-            'details:not([tabindex="-1"])',
-            'input:not([disabled]):not([tabindex="-1"])',
-            'select:not([disabled]):not([tabindex="-1"])',
-            'textarea:not([disabled]):not([tabindex="-1"])',
-            '[tabindex]:not([tabindex="-1"])',
-        ].join(",")))
+        ? // Note: Order may not be correct if children elements use tabindex values > 0.
+            getFocusableElements(containerElement)
         : [];
     return focusableElements.filter(function (el) { return !el.classList.contains(OVERLAY_START_FOCUS_TRAP) && !el.classList.contains(OVERLAY_END_FOCUS_TRAP); });
 }
@@ -16250,7 +16341,7 @@ var PORTAL_LEGACY_CONTEXT_TYPES = {
  * @see https://blueprintjs.com/docs/#core/components/portal
  */
 function Portal(
-// eslint-disable-next-line deprecation/deprecation
+// eslint-disable-next-line @typescript-eslint/no-deprecated
 _a, legacyContext) {
     var _b;
     var className = _a.className, stopPropagationEvents = _a.stopPropagationEvents, container = _a.container, onChildrenMount = _a.onChildrenMount, children = _a.children;
@@ -16318,8 +16409,8 @@ _a, legacyContext) {
 }
 Portal.displayName = "".concat(DISPLAYNAME_PREFIX, ".Portal");
 // only use legacy context in React 16 or 17
-if (!isReact18()) {
-    // eslint-disable-next-line deprecation/deprecation
+if (!isReact18OrHigher()) {
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
     Portal.contextTypes = PORTAL_LEGACY_CONTEXT_TYPES;
 }
 function maybeRemoveClass(classList, className) {
@@ -16372,6 +16463,20 @@ function handleStopProgation(e) {
 
 
 
+var OVERLAY2_DEFAULT_PROPS = {
+    autoFocus: true,
+    backdropProps: {},
+    canEscapeKeyClose: true,
+    canOutsideClickClose: true,
+    enforceFocus: true,
+    hasBackdrop: true,
+    isOpen: false,
+    lazy: hasDOMEnvironment(),
+    shouldReturnFocusOnClose: true,
+    transitionDuration: 300,
+    transitionName: OVERLAY,
+    usePortal: true,
+};
 /**
  * Overlay2 component.
  *
@@ -16784,20 +16889,8 @@ var Overlay2 = react.forwardRef(function (props, forwardedRef) {
         return transitionGroup;
     }
 });
-Overlay2.defaultProps = {
-    autoFocus: true,
-    backdropProps: {},
-    canEscapeKeyClose: true,
-    canOutsideClickClose: true,
-    enforceFocus: true,
-    hasBackdrop: true,
-    isOpen: false,
-    lazy: hasDOMEnvironment(),
-    shouldReturnFocusOnClose: true,
-    transitionDuration: 300,
-    transitionName: OVERLAY,
-    usePortal: true,
-};
+// eslint-disable-next-line @typescript-eslint/no-deprecated
+Overlay2.defaultProps = OVERLAY2_DEFAULT_PROPS;
 Overlay2.displayName = "".concat(DISPLAYNAME_PREFIX, ".Overlay2");
 function useOverlay2Validation(_a) {
     var childRef = _a.childRef, childRefs = _a.childRefs, children = _a.children;
@@ -16983,14 +17076,17 @@ Cross.displayName = "Blueprint5.Icon.Cross";
  */
 var ButtonGroup = react.forwardRef(function (props, ref) {
     var _a;
-    var alignText = props.alignText, className = props.className, fill = props.fill, minimal = props.minimal, outlined = props.outlined, large = props.large, vertical = props.vertical, htmlProps = (0,tslib_es6/* __rest */.Tt)(props, ["alignText", "className", "fill", "minimal", "outlined", "large", "vertical"]);
+    var alignText = props.alignText, className = props.className, fill = props.fill, 
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
+    minimal = props.minimal, 
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
+    outlined = props.outlined, 
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
+    large = props.large, _b = props.size, size = _b === void 0 ? "medium" : _b, _c = props.variant, variant = _c === void 0 ? "solid" : _c, vertical = props.vertical, htmlProps = (0,tslib_es6/* __rest */.Tt)(props, ["alignText", "className", "fill", "minimal", "outlined", "large", "size", "variant", "vertical"]);
     var buttonGroupClasses = classnames_default()(BUTTON_GROUP, (_a = {},
         _a[FILL] = fill,
-        _a[LARGE] = large,
-        _a[MINIMAL] = minimal,
-        _a[OUTLINED] = outlined,
         _a[VERTICAL] = vertical,
-        _a), alignmentClass(alignText), className);
+        _a), alignmentClass(alignText), sizeClass(size, { large: large }), variantClass(variant, { minimal: minimal, outlined: outlined }), className);
     return (react.createElement("div", (0,tslib_es6/* __assign */.Cl)({}, htmlProps, { ref: ref, className: buttonGroupClasses }), props.children));
 });
 ButtonGroup.displayName = "".concat(DISPLAYNAME_PREFIX, ".ButtonGroup");
@@ -17018,8 +17114,80 @@ ButtonGroup.displayName = "".concat(DISPLAYNAME_PREFIX, ".ButtonGroup");
 function keyboardUtils_isKeyboardClick(event) {
     return event.key === "Enter" || event.key === " ";
 }
+var ARROW_KEYS = (/* unused pure expression or super */ null && (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"]));
 function isArrowKey(event) {
-    return ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].indexOf(event.key) >= 0;
+    return ARROW_KEYS.includes(event.key);
+}
+/** Direction multiplier */
+function getArrowKeyDirection(event, 
+/** Keys that result in a return of -1 */
+negativeKeys, 
+/** Keys that result in a return of 1 */
+positiveKeys) {
+    if (negativeKeys.includes(event.key)) {
+        return -1;
+    }
+    else if (positiveKeys.includes(event.key)) {
+        return 1;
+    }
+    return undefined;
+}
+
+;// ./node_modules/@blueprintjs/core/lib/esm/accessibility/useInteractiveAttributes.js
+/* !
+ * (c) Copyright 2024 Palantir Technologies Inc. All rights reserved.
+ */
+
+
+var DEFAULT_OPTIONS = { defaultTabIndex: undefined, disabledTabIndex: -1 };
+function useInteractiveAttributes(interactive, props, ref, options) {
+    if (options === void 0) { options = DEFAULT_OPTIONS; }
+    var defaultTabIndex = options.defaultTabIndex, disabledTabIndex = options.disabledTabIndex;
+    var active = props.active, onClick = props.onClick, onFocus = props.onFocus, onKeyDown = props.onKeyDown, onKeyUp = props.onKeyUp, onBlur = props.onBlur, _a = props.tabIndex, tabIndex = _a === void 0 ? defaultTabIndex : _a;
+    // the current key being pressed
+    var _b = react.useState(), currentKeyPressed = _b[0], setCurrentKeyPressed = _b[1];
+    // whether the button is in "active" state
+    var _c = react.useState(false), isActive = _c[0], setIsActive = _c[1];
+    // our local ref for the interactive element, merged with the consumer's own ref in this hook's return value
+    var elementRef = react.useRef(null);
+    var handleBlur = react.useCallback(function (e) {
+        if (isActive) {
+            setIsActive(false);
+        }
+        onBlur === null || onBlur === void 0 ? void 0 : onBlur(e);
+    }, [isActive, onBlur]);
+    var handleKeyDown = react.useCallback(function (e) {
+        if (keyboardUtils_isKeyboardClick(e)) {
+            e.preventDefault();
+            if (e.key !== currentKeyPressed) {
+                setIsActive(true);
+            }
+        }
+        setCurrentKeyPressed(e.key);
+        onKeyDown === null || onKeyDown === void 0 ? void 0 : onKeyDown(e);
+    }, [currentKeyPressed, onKeyDown]);
+    var handleKeyUp = react.useCallback(function (e) {
+        var _a;
+        if (keyboardUtils_isKeyboardClick(e)) {
+            setIsActive(false);
+            (_a = elementRef.current) === null || _a === void 0 ? void 0 : _a.click();
+        }
+        setCurrentKeyPressed(undefined);
+        onKeyUp === null || onKeyUp === void 0 ? void 0 : onKeyUp(e);
+    }, [onKeyUp, elementRef]);
+    var resolvedActive = interactive && (active || isActive);
+    return [
+        resolvedActive,
+        {
+            onBlur: handleBlur,
+            onClick: interactive ? onClick : undefined,
+            onFocus: interactive ? onFocus : undefined,
+            onKeyDown: handleKeyDown,
+            onKeyUp: handleKeyUp,
+            ref: mergeRefs(elementRef, ref),
+            tabIndex: interactive ? tabIndex : disabledTabIndex,
+        },
+    ];
 }
 
 // EXTERNAL MODULE: ./node_modules/pascal-case/dist.es2015/index.js
@@ -17046,10 +17214,12 @@ function snakeCase(input, options) {
 var _a;
 var BlueprintIcons_16;
 (function (BlueprintIcons_16) {
+    BlueprintIcons_16["AddChild"] = "add-child";
     BlueprintIcons_16["AddClip"] = "add-clip";
     BlueprintIcons_16["AddColumnLeft"] = "add-column-left";
     BlueprintIcons_16["AddColumnRight"] = "add-column-right";
     BlueprintIcons_16["AddLocation"] = "add-location";
+    BlueprintIcons_16["AddParent"] = "add-parent";
     BlueprintIcons_16["AddRowBottom"] = "add-row-bottom";
     BlueprintIcons_16["AddRowTop"] = "add-row-top";
     BlueprintIcons_16["AddToArtifact"] = "add-to-artifact";
@@ -17070,6 +17240,7 @@ var BlueprintIcons_16;
     BlueprintIcons_16["Ammunition"] = "ammunition";
     BlueprintIcons_16["Anchor"] = "anchor";
     BlueprintIcons_16["Annotation"] = "annotation";
+    BlueprintIcons_16["Announcement"] = "announcement";
     BlueprintIcons_16["Antenna"] = "antenna";
     BlueprintIcons_16["AppHeader"] = "app-header";
     BlueprintIcons_16["Application"] = "application";
@@ -17080,6 +17251,7 @@ var BlueprintIcons_16;
     BlueprintIcons_16["ArrayDate"] = "array-date";
     BlueprintIcons_16["ArrayFloatingPoint"] = "array-floating-point";
     BlueprintIcons_16["ArrayNumeric"] = "array-numeric";
+    BlueprintIcons_16["ArrayObject"] = "array-object";
     BlueprintIcons_16["ArrayString"] = "array-string";
     BlueprintIcons_16["ArrayTimestamp"] = "array-timestamp";
     BlueprintIcons_16["Array"] = "array";
@@ -17091,6 +17263,7 @@ var BlueprintIcons_16;
     BlueprintIcons_16["ArrowTopLeft"] = "arrow-top-left";
     BlueprintIcons_16["ArrowTopRight"] = "arrow-top-right";
     BlueprintIcons_16["ArrowUp"] = "arrow-up";
+    BlueprintIcons_16["ArrowsArc"] = "arrows-arc";
     BlueprintIcons_16["ArrowsHorizontal"] = "arrows-horizontal";
     BlueprintIcons_16["ArrowsVertical"] = "arrows-vertical";
     BlueprintIcons_16["Asterisk"] = "asterisk";
@@ -17105,6 +17278,7 @@ var BlueprintIcons_16;
     BlueprintIcons_16["Barcode"] = "barcode";
     BlueprintIcons_16["BinaryNumber"] = "binary-number";
     BlueprintIcons_16["Blank"] = "blank";
+    BlueprintIcons_16["BlockPromote"] = "block-promote";
     BlueprintIcons_16["BlockedPerson"] = "blocked-person";
     BlueprintIcons_16["Bold"] = "bold";
     BlueprintIcons_16["Book"] = "book";
@@ -17113,6 +17287,7 @@ var BlueprintIcons_16;
     BlueprintIcons_16["Briefcase"] = "briefcase";
     BlueprintIcons_16["BringData"] = "bring-data";
     BlueprintIcons_16["BringForward"] = "bring-forward";
+    BlueprintIcons_16["BritishPound"] = "british-pound";
     BlueprintIcons_16["Bug"] = "bug";
     BlueprintIcons_16["Buggy"] = "buggy";
     BlueprintIcons_16["Build"] = "build";
@@ -17162,6 +17337,7 @@ var BlueprintIcons_16;
     BlueprintIcons_16["Compressed"] = "compressed";
     BlueprintIcons_16["Confirm"] = "confirm";
     BlueprintIcons_16["Console"] = "console";
+    BlueprintIcons_16["Construction"] = "construction";
     BlueprintIcons_16["Contrast"] = "contrast";
     BlueprintIcons_16["Control"] = "control";
     BlueprintIcons_16["CreditCard"] = "credit-card";
@@ -17171,18 +17347,22 @@ var BlueprintIcons_16;
     BlueprintIcons_16["Crown"] = "crown";
     BlueprintIcons_16["CssStyle"] = "css-style";
     BlueprintIcons_16["CubeAdd"] = "cube-add";
+    BlueprintIcons_16["CubeEdit"] = "cube-edit";
     BlueprintIcons_16["CubeRemove"] = "cube-remove";
     BlueprintIcons_16["Cube"] = "cube";
+    BlueprintIcons_16["Cubes"] = "cubes";
     BlueprintIcons_16["CurlyBraces"] = "curly-braces";
     BlueprintIcons_16["CurvedRangeChart"] = "curved-range-chart";
     BlueprintIcons_16["Cut"] = "cut";
     BlueprintIcons_16["Cycle"] = "cycle";
     BlueprintIcons_16["Dashboard"] = "dashboard";
+    BlueprintIcons_16["DataCloud"] = "data-cloud";
     BlueprintIcons_16["DataConnection"] = "data-connection";
     BlueprintIcons_16["DataLineage"] = "data-lineage";
     BlueprintIcons_16["DataSearch"] = "data-search";
     BlueprintIcons_16["DataSync"] = "data-sync";
     BlueprintIcons_16["Database"] = "database";
+    BlueprintIcons_16["DeleteClip"] = "delete-clip";
     BlueprintIcons_16["Delete"] = "delete";
     BlueprintIcons_16["Delta"] = "delta";
     BlueprintIcons_16["DeriveColumn"] = "derive-column";
@@ -17194,6 +17374,8 @@ var BlueprintIcons_16;
     BlueprintIcons_16["DirectionRight"] = "direction-right";
     BlueprintIcons_16["Disable"] = "disable";
     BlueprintIcons_16["Divide"] = "divide";
+    BlueprintIcons_16["DocumentCode"] = "document-code";
+    BlueprintIcons_16["DocumentLocked"] = "document-locked";
     BlueprintIcons_16["DocumentOpen"] = "document-open";
     BlueprintIcons_16["DocumentShare"] = "document-share";
     BlueprintIcons_16["Document"] = "document";
@@ -17239,11 +17421,14 @@ var BlueprintIcons_16;
     BlueprintIcons_16["FastForward"] = "fast-forward";
     BlueprintIcons_16["FeedSubscribed"] = "feed-subscribed";
     BlueprintIcons_16["Feed"] = "feed";
+    BlueprintIcons_16["FighterJet"] = "fighter-jet";
     BlueprintIcons_16["Film"] = "film";
     BlueprintIcons_16["FilterKeep"] = "filter-keep";
     BlueprintIcons_16["FilterList"] = "filter-list";
     BlueprintIcons_16["FilterOpen"] = "filter-open";
     BlueprintIcons_16["FilterRemove"] = "filter-remove";
+    BlueprintIcons_16["FilterSortAsc"] = "filter-sort-asc";
+    BlueprintIcons_16["FilterSortDesc"] = "filter-sort-desc";
     BlueprintIcons_16["Filter"] = "filter";
     BlueprintIcons_16["Flag"] = "flag";
     BlueprintIcons_16["Flame"] = "flame";
@@ -17278,6 +17463,7 @@ var BlueprintIcons_16;
     BlueprintIcons_16["Geolocation"] = "geolocation";
     BlueprintIcons_16["Geosearch"] = "geosearch";
     BlueprintIcons_16["Geotime"] = "geotime";
+    BlueprintIcons_16["GiftBox"] = "gift-box";
     BlueprintIcons_16["GitBranch"] = "git-branch";
     BlueprintIcons_16["GitCommit"] = "git-commit";
     BlueprintIcons_16["GitMerge"] = "git-merge";
@@ -17286,6 +17472,7 @@ var BlueprintIcons_16;
     BlueprintIcons_16["GitPush"] = "git-push";
     BlueprintIcons_16["GitRepo"] = "git-repo";
     BlueprintIcons_16["Glass"] = "glass";
+    BlueprintIcons_16["GlobeNetworkAdd"] = "globe-network-add";
     BlueprintIcons_16["GlobeNetwork"] = "globe-network";
     BlueprintIcons_16["Globe"] = "globe";
     BlueprintIcons_16["GraphRemove"] = "graph-remove";
@@ -17315,6 +17502,7 @@ var BlueprintIcons_16;
     BlueprintIcons_16["Helicopter"] = "helicopter";
     BlueprintIcons_16["Help"] = "help";
     BlueprintIcons_16["HelperManagement"] = "helper-management";
+    BlueprintIcons_16["Hexagon"] = "hexagon";
     BlueprintIcons_16["HighPriority"] = "high-priority";
     BlueprintIcons_16["HighVoltagePole"] = "high-voltage-pole";
     BlueprintIcons_16["Highlight"] = "highlight";
@@ -17396,6 +17584,7 @@ var BlueprintIcons_16;
     BlueprintIcons_16["Lightbulb"] = "lightbulb";
     BlueprintIcons_16["Lightning"] = "lightning";
     BlueprintIcons_16["Link"] = "link";
+    BlueprintIcons_16["LinkedSquares"] = "linked-squares";
     BlueprintIcons_16["ListColumns"] = "list-columns";
     BlueprintIcons_16["ListDetailView"] = "list-detail-view";
     BlueprintIcons_16["List"] = "list";
@@ -17447,11 +17636,13 @@ var BlueprintIcons_16;
     BlueprintIcons_16["NewTextBox"] = "new-text-box";
     BlueprintIcons_16["Ninja"] = "ninja";
     BlueprintIcons_16["NotEqualTo"] = "not-equal-to";
+    BlueprintIcons_16["NotificationsAdd"] = "notifications-add";
     BlueprintIcons_16["NotificationsSnooze"] = "notifications-snooze";
     BlueprintIcons_16["NotificationsUpdated"] = "notifications-updated";
     BlueprintIcons_16["Notifications"] = "notifications";
     BlueprintIcons_16["NumberedList"] = "numbered-list";
     BlueprintIcons_16["Numerical"] = "numerical";
+    BlueprintIcons_16["ObjectView"] = "object-view";
     BlueprintIcons_16["Office"] = "office";
     BlueprintIcons_16["Offline"] = "offline";
     BlueprintIcons_16["OilField"] = "oil-field";
@@ -17461,9 +17652,12 @@ var BlueprintIcons_16;
     BlueprintIcons_16["OpenApplication"] = "open-application";
     BlueprintIcons_16["Outdated"] = "outdated";
     BlueprintIcons_16["Output"] = "output";
+    BlueprintIcons_16["Package"] = "package";
+    BlueprintIcons_16["PageBreak"] = "page-break";
     BlueprintIcons_16["PageLayout"] = "page-layout";
     BlueprintIcons_16["PanelStats"] = "panel-stats";
     BlueprintIcons_16["PanelTable"] = "panel-table";
+    BlueprintIcons_16["Panel"] = "panel";
     BlueprintIcons_16["Paperclip"] = "paperclip";
     BlueprintIcons_16["Paragraph"] = "paragraph";
     BlueprintIcons_16["PasteVariable"] = "paste-variable";
@@ -17475,9 +17669,12 @@ var BlueprintIcons_16;
     BlueprintIcons_16["Person"] = "person";
     BlueprintIcons_16["PhoneCall"] = "phone-call";
     BlueprintIcons_16["PhoneForward"] = "phone-forward";
+    BlueprintIcons_16["PhoneSearch"] = "phone-search";
     BlueprintIcons_16["Phone"] = "phone";
     BlueprintIcons_16["PieChart"] = "pie-chart";
+    BlueprintIcons_16["Pill"] = "pill";
     BlueprintIcons_16["Pin"] = "pin";
+    BlueprintIcons_16["Pistol"] = "pistol";
     BlueprintIcons_16["PivotTable"] = "pivot-table";
     BlueprintIcons_16["Pivot"] = "pivot";
     BlueprintIcons_16["Play"] = "play";
@@ -17519,9 +17716,13 @@ var BlueprintIcons_16;
     BlueprintIcons_16["Ring"] = "ring";
     BlueprintIcons_16["RocketSlant"] = "rocket-slant";
     BlueprintIcons_16["Rocket"] = "rocket";
+    BlueprintIcons_16["RootFolder"] = "root-folder";
+    BlueprintIcons_16["RotateCcw"] = "rotate-ccw";
+    BlueprintIcons_16["RotateCw"] = "rotate-cw";
     BlueprintIcons_16["RotateDocument"] = "rotate-document";
     BlueprintIcons_16["RotatePage"] = "rotate-page";
     BlueprintIcons_16["Route"] = "route";
+    BlueprintIcons_16["RunHistory"] = "run-history";
     BlueprintIcons_16["Satellite"] = "satellite";
     BlueprintIcons_16["Saved"] = "saved";
     BlueprintIcons_16["ScatterPlot"] = "scatter-plot";
@@ -17531,6 +17732,9 @@ var BlueprintIcons_16;
     BlueprintIcons_16["Search"] = "search";
     BlueprintIcons_16["SegmentedControl"] = "segmented-control";
     BlueprintIcons_16["Select"] = "select";
+    BlueprintIcons_16["SelectionBoxAdd"] = "selection-box-add";
+    BlueprintIcons_16["SelectionBoxEdit"] = "selection-box-edit";
+    BlueprintIcons_16["SelectionBox"] = "selection-box";
     BlueprintIcons_16["Selection"] = "selection";
     BlueprintIcons_16["SendBackward"] = "send-backward";
     BlueprintIcons_16["SendMessage"] = "send-message";
@@ -17543,6 +17747,8 @@ var BlueprintIcons_16;
     BlueprintIcons_16["SeriesDerived"] = "series-derived";
     BlueprintIcons_16["SeriesFiltered"] = "series-filtered";
     BlueprintIcons_16["SeriesSearch"] = "series-search";
+    BlueprintIcons_16["ServerInstall"] = "server-install";
+    BlueprintIcons_16["Server"] = "server";
     BlueprintIcons_16["Settings"] = "settings";
     BlueprintIcons_16["Shapes"] = "shapes";
     BlueprintIcons_16["Share"] = "share";
@@ -17587,9 +17793,11 @@ var BlueprintIcons_16;
     BlueprintIcons_16["Strikethrough"] = "strikethrough";
     BlueprintIcons_16["Style"] = "style";
     BlueprintIcons_16["Subscript"] = "subscript";
+    BlueprintIcons_16["SubtractRightJoin"] = "subtract-right-join";
     BlueprintIcons_16["Superscript"] = "superscript";
     BlueprintIcons_16["SwapHorizontal"] = "swap-horizontal";
     BlueprintIcons_16["SwapVertical"] = "swap-vertical";
+    BlueprintIcons_16["Sweep"] = "sweep";
     BlueprintIcons_16["Switch"] = "switch";
     BlueprintIcons_16["SymbolCircle"] = "symbol-circle";
     BlueprintIcons_16["SymbolCross"] = "symbol-cross";
@@ -17600,7 +17808,12 @@ var BlueprintIcons_16;
     BlueprintIcons_16["SymbolTriangleUp"] = "symbol-triangle-up";
     BlueprintIcons_16["Syringe"] = "syringe";
     BlueprintIcons_16["TableSync"] = "table-sync";
+    BlueprintIcons_16["TagAdd"] = "tag-add";
+    BlueprintIcons_16["TagPromote"] = "tag-promote";
+    BlueprintIcons_16["TagRefresh"] = "tag-refresh";
+    BlueprintIcons_16["TagUndo"] = "tag-undo";
     BlueprintIcons_16["Tag"] = "tag";
+    BlueprintIcons_16["Tags"] = "tags";
     BlueprintIcons_16["TakeAction"] = "take-action";
     BlueprintIcons_16["Tank"] = "tank";
     BlueprintIcons_16["Target"] = "target";
@@ -17608,10 +17821,14 @@ var BlueprintIcons_16;
     BlueprintIcons_16["Team"] = "team";
     BlueprintIcons_16["Temperature"] = "temperature";
     BlueprintIcons_16["TextHighlight"] = "text-highlight";
+    BlueprintIcons_16["ThAdd"] = "th-add";
     BlueprintIcons_16["ThDerived"] = "th-derived";
     BlueprintIcons_16["ThDisconnect"] = "th-disconnect";
     BlueprintIcons_16["ThFiltered"] = "th-filtered";
+    BlueprintIcons_16["ThListAdd"] = "th-list-add";
     BlueprintIcons_16["ThList"] = "th-list";
+    BlueprintIcons_16["ThVirtualAdd"] = "th-virtual-add";
+    BlueprintIcons_16["ThVirtual"] = "th-virtual";
     BlueprintIcons_16["Th"] = "th";
     BlueprintIcons_16["ThirdParty"] = "third-party";
     BlueprintIcons_16["ThumbsDown"] = "thumbs-down";
@@ -17667,16 +17884,21 @@ var BlueprintIcons_16;
     BlueprintIcons_16["WidgetHeader"] = "widget-header";
     BlueprintIcons_16["Widget"] = "widget";
     BlueprintIcons_16["Wind"] = "wind";
+    BlueprintIcons_16["WrenchRedo"] = "wrench-redo";
+    BlueprintIcons_16["WrenchSnooze"] = "wrench-snooze";
+    BlueprintIcons_16["WrenchTime"] = "wrench-time";
     BlueprintIcons_16["Wrench"] = "wrench";
     BlueprintIcons_16["ZoomIn"] = "zoom-in";
     BlueprintIcons_16["ZoomOut"] = "zoom-out";
     BlueprintIcons_16["ZoomToFit"] = "zoom-to-fit";
 })(BlueprintIcons_16 || (BlueprintIcons_16 = {}));
 var BLUEPRINT_ICONS_16_CODEPOINTS = (_a = {},
+    _a[BlueprintIcons_16.AddChild] = "62365",
     _a[BlueprintIcons_16.AddClip] = "61697",
     _a[BlueprintIcons_16.AddColumnLeft] = "61698",
     _a[BlueprintIcons_16.AddColumnRight] = "61699",
     _a[BlueprintIcons_16.AddLocation] = "61700",
+    _a[BlueprintIcons_16.AddParent] = "62366",
     _a[BlueprintIcons_16.AddRowBottom] = "61701",
     _a[BlueprintIcons_16.AddRowTop] = "61702",
     _a[BlueprintIcons_16.AddToArtifact] = "61703",
@@ -17697,6 +17919,7 @@ var BLUEPRINT_ICONS_16_CODEPOINTS = (_a = {},
     _a[BlueprintIcons_16.Ammunition] = "62274",
     _a[BlueprintIcons_16.Anchor] = "62256",
     _a[BlueprintIcons_16.Annotation] = "61717",
+    _a[BlueprintIcons_16.Announcement] = "62358",
     _a[BlueprintIcons_16.Antenna] = "61718",
     _a[BlueprintIcons_16.AppHeader] = "61719",
     _a[BlueprintIcons_16.Application] = "61720",
@@ -17707,6 +17930,7 @@ var BLUEPRINT_ICONS_16_CODEPOINTS = (_a = {},
     _a[BlueprintIcons_16.ArrayDate] = "61725",
     _a[BlueprintIcons_16.ArrayFloatingPoint] = "62253",
     _a[BlueprintIcons_16.ArrayNumeric] = "61726",
+    _a[BlueprintIcons_16.ArrayObject] = "62356",
     _a[BlueprintIcons_16.ArrayString] = "61727",
     _a[BlueprintIcons_16.ArrayTimestamp] = "61728",
     _a[BlueprintIcons_16.Array] = "61729",
@@ -17718,6 +17942,7 @@ var BLUEPRINT_ICONS_16_CODEPOINTS = (_a = {},
     _a[BlueprintIcons_16.ArrowTopLeft] = "61735",
     _a[BlueprintIcons_16.ArrowTopRight] = "61736",
     _a[BlueprintIcons_16.ArrowUp] = "61737",
+    _a[BlueprintIcons_16.ArrowsArc] = "62343",
     _a[BlueprintIcons_16.ArrowsHorizontal] = "61738",
     _a[BlueprintIcons_16.ArrowsVertical] = "61739",
     _a[BlueprintIcons_16.Asterisk] = "61740",
@@ -17732,6 +17957,7 @@ var BLUEPRINT_ICONS_16_CODEPOINTS = (_a = {},
     _a[BlueprintIcons_16.Barcode] = "61746",
     _a[BlueprintIcons_16.BinaryNumber] = "62295",
     _a[BlueprintIcons_16.Blank] = "61747",
+    _a[BlueprintIcons_16.BlockPromote] = "62322",
     _a[BlueprintIcons_16.BlockedPerson] = "61748",
     _a[BlueprintIcons_16.Bold] = "61749",
     _a[BlueprintIcons_16.Book] = "61750",
@@ -17740,6 +17966,7 @@ var BLUEPRINT_ICONS_16_CODEPOINTS = (_a = {},
     _a[BlueprintIcons_16.Briefcase] = "61753",
     _a[BlueprintIcons_16.BringData] = "61754",
     _a[BlueprintIcons_16.BringForward] = "62292",
+    _a[BlueprintIcons_16.BritishPound] = "62342",
     _a[BlueprintIcons_16.Bug] = "62254",
     _a[BlueprintIcons_16.Buggy] = "61755",
     _a[BlueprintIcons_16.Build] = "61756",
@@ -17789,6 +18016,7 @@ var BLUEPRINT_ICONS_16_CODEPOINTS = (_a = {},
     _a[BlueprintIcons_16.Compressed] = "61795",
     _a[BlueprintIcons_16.Confirm] = "61796",
     _a[BlueprintIcons_16.Console] = "61797",
+    _a[BlueprintIcons_16.Construction] = "62357",
     _a[BlueprintIcons_16.Contrast] = "61798",
     _a[BlueprintIcons_16.Control] = "61799",
     _a[BlueprintIcons_16.CreditCard] = "61800",
@@ -17798,18 +18026,22 @@ var BLUEPRINT_ICONS_16_CODEPOINTS = (_a = {},
     _a[BlueprintIcons_16.Crown] = "61802",
     _a[BlueprintIcons_16.CssStyle] = "62315",
     _a[BlueprintIcons_16.CubeAdd] = "61803",
+    _a[BlueprintIcons_16.CubeEdit] = "62339",
     _a[BlueprintIcons_16.CubeRemove] = "61804",
     _a[BlueprintIcons_16.Cube] = "61805",
+    _a[BlueprintIcons_16.Cubes] = "62323",
     _a[BlueprintIcons_16.CurlyBraces] = "62296",
     _a[BlueprintIcons_16.CurvedRangeChart] = "61806",
     _a[BlueprintIcons_16.Cut] = "61807",
     _a[BlueprintIcons_16.Cycle] = "61808",
     _a[BlueprintIcons_16.Dashboard] = "61809",
+    _a[BlueprintIcons_16.DataCloud] = "62353",
     _a[BlueprintIcons_16.DataConnection] = "61810",
     _a[BlueprintIcons_16.DataLineage] = "61811",
     _a[BlueprintIcons_16.DataSearch] = "62319",
     _a[BlueprintIcons_16.DataSync] = "62316",
     _a[BlueprintIcons_16.Database] = "61812",
+    _a[BlueprintIcons_16.DeleteClip] = "62371",
     _a[BlueprintIcons_16.Delete] = "61813",
     _a[BlueprintIcons_16.Delta] = "61814",
     _a[BlueprintIcons_16.DeriveColumn] = "61815",
@@ -17821,6 +18053,8 @@ var BLUEPRINT_ICONS_16_CODEPOINTS = (_a = {},
     _a[BlueprintIcons_16.DirectionRight] = "61820",
     _a[BlueprintIcons_16.Disable] = "61821",
     _a[BlueprintIcons_16.Divide] = "62247",
+    _a[BlueprintIcons_16.DocumentCode] = "62368",
+    _a[BlueprintIcons_16.DocumentLocked] = "62369",
     _a[BlueprintIcons_16.DocumentOpen] = "61822",
     _a[BlueprintIcons_16.DocumentShare] = "61823",
     _a[BlueprintIcons_16.Document] = "61824",
@@ -17866,11 +18100,14 @@ var BLUEPRINT_ICONS_16_CODEPOINTS = (_a = {},
     _a[BlueprintIcons_16.FastForward] = "61861",
     _a[BlueprintIcons_16.FeedSubscribed] = "61862",
     _a[BlueprintIcons_16.Feed] = "61863",
+    _a[BlueprintIcons_16.FighterJet] = "62340",
     _a[BlueprintIcons_16.Film] = "61864",
     _a[BlueprintIcons_16.FilterKeep] = "61865",
     _a[BlueprintIcons_16.FilterList] = "61866",
     _a[BlueprintIcons_16.FilterOpen] = "61867",
     _a[BlueprintIcons_16.FilterRemove] = "61868",
+    _a[BlueprintIcons_16.FilterSortAsc] = "62350",
+    _a[BlueprintIcons_16.FilterSortDesc] = "62351",
     _a[BlueprintIcons_16.Filter] = "61869",
     _a[BlueprintIcons_16.Flag] = "61870",
     _a[BlueprintIcons_16.Flame] = "61871",
@@ -17905,6 +18142,7 @@ var BLUEPRINT_ICONS_16_CODEPOINTS = (_a = {},
     _a[BlueprintIcons_16.Geolocation] = "61896",
     _a[BlueprintIcons_16.Geosearch] = "61897",
     _a[BlueprintIcons_16.Geotime] = "62276",
+    _a[BlueprintIcons_16.GiftBox] = "62370",
     _a[BlueprintIcons_16.GitBranch] = "61898",
     _a[BlueprintIcons_16.GitCommit] = "61899",
     _a[BlueprintIcons_16.GitMerge] = "61900",
@@ -17913,6 +18151,7 @@ var BLUEPRINT_ICONS_16_CODEPOINTS = (_a = {},
     _a[BlueprintIcons_16.GitPush] = "61903",
     _a[BlueprintIcons_16.GitRepo] = "61904",
     _a[BlueprintIcons_16.Glass] = "61905",
+    _a[BlueprintIcons_16.GlobeNetworkAdd] = "62338",
     _a[BlueprintIcons_16.GlobeNetwork] = "61906",
     _a[BlueprintIcons_16.Globe] = "61907",
     _a[BlueprintIcons_16.GraphRemove] = "61908",
@@ -17942,6 +18181,7 @@ var BLUEPRINT_ICONS_16_CODEPOINTS = (_a = {},
     _a[BlueprintIcons_16.Helicopter] = "61931",
     _a[BlueprintIcons_16.Help] = "61932",
     _a[BlueprintIcons_16.HelperManagement] = "61933",
+    _a[BlueprintIcons_16.Hexagon] = "62324",
     _a[BlueprintIcons_16.HighPriority] = "61934",
     _a[BlueprintIcons_16.HighVoltagePole] = "62259",
     _a[BlueprintIcons_16.Highlight] = "61935",
@@ -18023,6 +18263,7 @@ var BLUEPRINT_ICONS_16_CODEPOINTS = (_a = {},
     _a[BlueprintIcons_16.Lightbulb] = "61995",
     _a[BlueprintIcons_16.Lightning] = "61996",
     _a[BlueprintIcons_16.Link] = "61997",
+    _a[BlueprintIcons_16.LinkedSquares] = "62341",
     _a[BlueprintIcons_16.ListColumns] = "61998",
     _a[BlueprintIcons_16.ListDetailView] = "61999",
     _a[BlueprintIcons_16.List] = "62000",
@@ -18074,11 +18315,13 @@ var BLUEPRINT_ICONS_16_CODEPOINTS = (_a = {},
     _a[BlueprintIcons_16.NewTextBox] = "62041",
     _a[BlueprintIcons_16.Ninja] = "62042",
     _a[BlueprintIcons_16.NotEqualTo] = "62043",
+    _a[BlueprintIcons_16.NotificationsAdd] = "62360",
     _a[BlueprintIcons_16.NotificationsSnooze] = "62044",
     _a[BlueprintIcons_16.NotificationsUpdated] = "62045",
     _a[BlueprintIcons_16.Notifications] = "62046",
     _a[BlueprintIcons_16.NumberedList] = "62047",
     _a[BlueprintIcons_16.Numerical] = "62048",
+    _a[BlueprintIcons_16.ObjectView] = "62352",
     _a[BlueprintIcons_16.Office] = "62049",
     _a[BlueprintIcons_16.Offline] = "62050",
     _a[BlueprintIcons_16.OilField] = "62051",
@@ -18088,9 +18331,12 @@ var BLUEPRINT_ICONS_16_CODEPOINTS = (_a = {},
     _a[BlueprintIcons_16.OpenApplication] = "62251",
     _a[BlueprintIcons_16.Outdated] = "62055",
     _a[BlueprintIcons_16.Output] = "62320",
+    _a[BlueprintIcons_16.Package] = "62325",
+    _a[BlueprintIcons_16.PageBreak] = "62373",
     _a[BlueprintIcons_16.PageLayout] = "62056",
     _a[BlueprintIcons_16.PanelStats] = "62057",
     _a[BlueprintIcons_16.PanelTable] = "62058",
+    _a[BlueprintIcons_16.Panel] = "62337",
     _a[BlueprintIcons_16.Paperclip] = "62059",
     _a[BlueprintIcons_16.Paragraph] = "62060",
     _a[BlueprintIcons_16.PasteVariable] = "62278",
@@ -18102,9 +18348,12 @@ var BLUEPRINT_ICONS_16_CODEPOINTS = (_a = {},
     _a[BlueprintIcons_16.Person] = "62066",
     _a[BlueprintIcons_16.PhoneCall] = "62279",
     _a[BlueprintIcons_16.PhoneForward] = "62280",
+    _a[BlueprintIcons_16.PhoneSearch] = "62359",
     _a[BlueprintIcons_16.Phone] = "62067",
     _a[BlueprintIcons_16.PieChart] = "62068",
+    _a[BlueprintIcons_16.Pill] = "62326",
     _a[BlueprintIcons_16.Pin] = "62069",
+    _a[BlueprintIcons_16.Pistol] = "62364",
     _a[BlueprintIcons_16.PivotTable] = "62070",
     _a[BlueprintIcons_16.Pivot] = "62071",
     _a[BlueprintIcons_16.Play] = "62072",
@@ -18146,9 +18395,13 @@ var BLUEPRINT_ICONS_16_CODEPOINTS = (_a = {},
     _a[BlueprintIcons_16.Ring] = "62102",
     _a[BlueprintIcons_16.RocketSlant] = "62103",
     _a[BlueprintIcons_16.Rocket] = "62104",
+    _a[BlueprintIcons_16.RootFolder] = "62367",
+    _a[BlueprintIcons_16.RotateCcw] = "62345",
+    _a[BlueprintIcons_16.RotateCw] = "62344",
     _a[BlueprintIcons_16.RotateDocument] = "62105",
     _a[BlueprintIcons_16.RotatePage] = "62106",
     _a[BlueprintIcons_16.Route] = "62107",
+    _a[BlueprintIcons_16.RunHistory] = "62355",
     _a[BlueprintIcons_16.Satellite] = "62108",
     _a[BlueprintIcons_16.Saved] = "62109",
     _a[BlueprintIcons_16.ScatterPlot] = "62110",
@@ -18158,6 +18411,9 @@ var BLUEPRINT_ICONS_16_CODEPOINTS = (_a = {},
     _a[BlueprintIcons_16.Search] = "62114",
     _a[BlueprintIcons_16.SegmentedControl] = "62115",
     _a[BlueprintIcons_16.Select] = "62116",
+    _a[BlueprintIcons_16.SelectionBoxAdd] = "62362",
+    _a[BlueprintIcons_16.SelectionBoxEdit] = "62363",
+    _a[BlueprintIcons_16.SelectionBox] = "62361",
     _a[BlueprintIcons_16.Selection] = "62117",
     _a[BlueprintIcons_16.SendBackward] = "62293",
     _a[BlueprintIcons_16.SendMessage] = "62118",
@@ -18170,6 +18426,8 @@ var BLUEPRINT_ICONS_16_CODEPOINTS = (_a = {},
     _a[BlueprintIcons_16.SeriesDerived] = "62124",
     _a[BlueprintIcons_16.SeriesFiltered] = "62125",
     _a[BlueprintIcons_16.SeriesSearch] = "62126",
+    _a[BlueprintIcons_16.ServerInstall] = "62327",
+    _a[BlueprintIcons_16.Server] = "62328",
     _a[BlueprintIcons_16.Settings] = "62127",
     _a[BlueprintIcons_16.Shapes] = "62128",
     _a[BlueprintIcons_16.Share] = "62129",
@@ -18214,9 +18472,11 @@ var BLUEPRINT_ICONS_16_CODEPOINTS = (_a = {},
     _a[BlueprintIcons_16.Strikethrough] = "62163",
     _a[BlueprintIcons_16.Style] = "62164",
     _a[BlueprintIcons_16.Subscript] = "62265",
+    _a[BlueprintIcons_16.SubtractRightJoin] = "62354",
     _a[BlueprintIcons_16.Superscript] = "62266",
     _a[BlueprintIcons_16.SwapHorizontal] = "62165",
     _a[BlueprintIcons_16.SwapVertical] = "62166",
+    _a[BlueprintIcons_16.Sweep] = "62372",
     _a[BlueprintIcons_16.Switch] = "62167",
     _a[BlueprintIcons_16.SymbolCircle] = "62168",
     _a[BlueprintIcons_16.SymbolCross] = "62169",
@@ -18227,7 +18487,12 @@ var BLUEPRINT_ICONS_16_CODEPOINTS = (_a = {},
     _a[BlueprintIcons_16.SymbolTriangleUp] = "62173",
     _a[BlueprintIcons_16.Syringe] = "62174",
     _a[BlueprintIcons_16.TableSync] = "62318",
+    _a[BlueprintIcons_16.TagAdd] = "62329",
+    _a[BlueprintIcons_16.TagPromote] = "62330",
+    _a[BlueprintIcons_16.TagRefresh] = "62331",
+    _a[BlueprintIcons_16.TagUndo] = "62332",
     _a[BlueprintIcons_16.Tag] = "62175",
+    _a[BlueprintIcons_16.Tags] = "62333",
     _a[BlueprintIcons_16.TakeAction] = "62176",
     _a[BlueprintIcons_16.Tank] = "62177",
     _a[BlueprintIcons_16.Target] = "62178",
@@ -18235,10 +18500,14 @@ var BLUEPRINT_ICONS_16_CODEPOINTS = (_a = {},
     _a[BlueprintIcons_16.Team] = "62290",
     _a[BlueprintIcons_16.Temperature] = "62180",
     _a[BlueprintIcons_16.TextHighlight] = "62181",
+    _a[BlueprintIcons_16.ThAdd] = "62346",
     _a[BlueprintIcons_16.ThDerived] = "62182",
     _a[BlueprintIcons_16.ThDisconnect] = "62183",
     _a[BlueprintIcons_16.ThFiltered] = "62184",
+    _a[BlueprintIcons_16.ThListAdd] = "62347",
     _a[BlueprintIcons_16.ThList] = "62185",
+    _a[BlueprintIcons_16.ThVirtualAdd] = "62349",
+    _a[BlueprintIcons_16.ThVirtual] = "62348",
     _a[BlueprintIcons_16.Th] = "62186",
     _a[BlueprintIcons_16.ThirdParty] = "62187",
     _a[BlueprintIcons_16.ThumbsDown] = "62188",
@@ -18294,6 +18563,9 @@ var BLUEPRINT_ICONS_16_CODEPOINTS = (_a = {},
     _a[BlueprintIcons_16.WidgetHeader] = "62234",
     _a[BlueprintIcons_16.Widget] = "62235",
     _a[BlueprintIcons_16.Wind] = "62236",
+    _a[BlueprintIcons_16.WrenchRedo] = "62334",
+    _a[BlueprintIcons_16.WrenchSnooze] = "62335",
+    _a[BlueprintIcons_16.WrenchTime] = "62336",
     _a[BlueprintIcons_16.Wrench] = "62237",
     _a[BlueprintIcons_16.ZoomIn] = "62238",
     _a[BlueprintIcons_16.ZoomOut] = "62239",
@@ -18362,7 +18634,6 @@ function wrapWithTimer(taskDescription, task) {
             switch (_a.label) {
                 case 0:
                     shouldMeasure = loaderUtils_isNodeEnv("development") && typeof performance !== "undefined";
-                    /* eslint-disable no-console */
                     if (shouldMeasure) {
                         start = performance.now();
                         console.info("Started '".concat(taskDescription, "'..."));
@@ -18572,13 +18843,13 @@ var singleton = new Icons();
 // eslint-disable-next-line prefer-arrow-callback
 var Icon = react.forwardRef(function (props, ref) {
     var _a, _b;
-    var autoLoad = props.autoLoad, className = props.className, color = props.color, icon = props.icon, intent = props.intent, tagName = props.tagName, svgProps = props.svgProps, title = props.title, htmlTitle = props.htmlTitle, htmlProps = (0,tslib_es6/* __rest */.Tt)(props, ["autoLoad", "className", "color", "icon", "intent", "tagName", "svgProps", "title", "htmlTitle"]);
+    var _c = props.autoLoad, autoLoad = _c === void 0 ? true : _c, className = props.className, color = props.color, icon = props.icon, intent = props.intent, _d = props.tagName, tagName = _d === void 0 ? "span" : _d, svgProps = props.svgProps, title = props.title, htmlTitle = props.htmlTitle, htmlProps = (0,tslib_es6/* __rest */.Tt)(props, ["autoLoad", "className", "color", "icon", "intent", "tagName", "svgProps", "title", "htmlTitle"]);
     // Preserve Blueprint v4.x behavior: iconSize prop takes predecence, then size prop, then fall back to default value
-    // eslint-disable-next-line deprecation/deprecation
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
     var size = (_b = (_a = props.iconSize) !== null && _a !== void 0 ? _a : props.size) !== null && _b !== void 0 ? _b : iconTypes/* IconSize */.l.STANDARD;
-    var _c = react.useState(function () {
+    var _e = react.useState(function () {
         return typeof icon === "string" ? Icons.getPaths(icon, size) : undefined;
-    }), iconPaths = _c[0], setIconPaths = _c[1];
+    }), iconPaths = _e[0], setIconPaths = _e[1];
     react.useEffect(function () {
         var shouldCancelIconLoading = false;
         if (typeof icon === "string") {
@@ -18623,7 +18894,7 @@ var Icon = react.forwardRef(function (props, ref) {
             : size === iconTypes/* IconSize */.l.LARGE
                 ? ICON_LARGE
                 : undefined;
-        return react.createElement(tagName, (0,tslib_es6/* __assign */.Cl)((0,tslib_es6/* __assign */.Cl)({ "aria-hidden": title ? undefined : true }, removeNonHTMLProps(htmlProps)), { className: classnames_default()(ICON, sizeClass, iconClass(icon), classes_intentClass(intent), className), "data-icon": icon, ref: ref, title: htmlTitle }));
+        return react.createElement(tagName || "span", (0,tslib_es6/* __assign */.Cl)((0,tslib_es6/* __assign */.Cl)({ "aria-hidden": title ? undefined : true }, removeNonHTMLProps(htmlProps)), { className: classnames_default()(ICON, sizeClass, iconClass(icon), classes_intentClass(intent), className), "data-icon": icon, ref: ref, title: htmlTitle }));
     }
     else {
         var pathElements = iconPaths.map(function (d, i) { return react.createElement("path", { d: d, key: i, fillRule: "evenodd" }); });
@@ -18635,15 +18906,40 @@ var Icon = react.forwardRef(function (props, ref) {
             className: classnames_default()(classes_intentClass(intent), className), color: color, htmlTitle: htmlTitle, iconName: icon, ref: ref, size: size, svgProps: svgProps, tagName: tagName, title: title }, removeNonHTMLProps(htmlProps))));
     }
 });
-Icon.defaultProps = {
-    autoLoad: true,
-    tagName: "span",
-};
 Icon.displayName = "".concat(DISPLAYNAME_PREFIX, ".Icon");
+
+;// ./node_modules/@blueprintjs/core/lib/esm/hooks/useValidateProps.js
+/* !
+ * (c) Copyright 2025 Palantir Technologies Inc. All rights reserved.
+ */
+
+
+/**
+ * Custom hook for validating component props during development.
+ * This hook runs validation checks only in non-production environments,
+ * following the same pattern as AbstractComponent.
+ *
+ * @param validator - Function that performs the validation checks
+ * @param dependencies - Optional array of dependencies that trigger validation when changed
+ *
+ * @example
+ * useValidateProps(() => {
+ *     if (value < 0) console.warn("Value must be positive");
+ * }, [value]);
+ */
+function useValidateProps(validator, dependencies) {
+    if (dependencies === void 0) { dependencies = []; }
+    react.useEffect(function () {
+        if (!isNodeEnv("production")) {
+            validator();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, dependencies);
+}
 
 ;// ./node_modules/@blueprintjs/core/lib/esm/components/spinner/spinner.js
 /*
- * Copyright 2015 Palantir Technologies, Inc. All rights reserved.
+ * Copyright 2025 Palantir Technologies, Inc. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18657,6 +18953,7 @@ Icon.displayName = "".concat(DISPLAYNAME_PREFIX, ".Icon");
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 
 
 
@@ -18685,67 +18982,52 @@ var MIN_STROKE_WIDTH = 16;
  *
  * @see https://blueprintjs.com/docs/#core/components/spinner
  */
-var Spinner = /** @class */ (function (_super) {
-    (0,tslib_es6/* __extends */.C6)(Spinner, _super);
-    function Spinner() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    Spinner.prototype.componentDidUpdate = function (prevProps) {
-        if (prevProps.value !== this.props.value) {
-            // IE/Edge: re-render after changing value to force SVG update
-            this.forceUpdate();
-        }
-    };
-    Spinner.prototype.render = function () {
-        var _a;
-        var _b = this.props, className = _b.className, intent = _b.intent, value = _b.value, _c = _b.tagName, tagName = _c === void 0 ? "div" : _c, htmlProps = (0,tslib_es6/* __rest */.Tt)(_b, ["className", "intent", "value", "tagName"]);
-        var size = this.getSize();
-        var classes = classnames_default()(SPINNER, classes_intentClass(intent), (_a = {}, _a[SPINNER_NO_SPIN] = value != null, _a), className);
-        // keep spinner track width consistent at all sizes (down to about 10px).
-        var strokeWidth = Math.min(MIN_STROKE_WIDTH, (STROKE_WIDTH * SpinnerSize.LARGE) / size);
-        var strokeOffset = PATH_LENGTH - PATH_LENGTH * (value == null ? 0.25 : clamp(value, 0, 1));
-        // multiple DOM elements around SVG are necessary to properly isolate animation:
-        // - SVG elements in IE do not support anim/trans so they must be set on a parent HTML element.
-        // - SPINNER_ANIMATION isolates svg from parent display and is always centered inside root element.
-        return react.createElement(tagName, (0,tslib_es6/* __assign */.Cl)({ "aria-label": "loading", "aria-valuemax": 100, "aria-valuemin": 0, "aria-valuenow": value === undefined ? undefined : value * 100, className: classes, role: "progressbar" }, htmlProps), react.createElement(tagName, { className: SPINNER_ANIMATION }, react.createElement("svg", { width: size, height: size, strokeWidth: strokeWidth.toFixed(2), viewBox: this.getViewBox(strokeWidth) },
-            react.createElement("path", { className: SPINNER_TRACK, d: spinner_SPINNER_TRACK }),
-            react.createElement("path", { className: SPINNER_HEAD, d: spinner_SPINNER_TRACK, pathLength: PATH_LENGTH, strokeDasharray: "".concat(PATH_LENGTH, " ").concat(PATH_LENGTH), strokeDashoffset: strokeOffset }))));
-    };
-    Spinner.prototype.validateProps = function (_a) {
-        var _b = _a.className, className = _b === void 0 ? "" : _b, size = _a.size;
-        if (size != null && (className.indexOf(SMALL) >= 0 || className.indexOf(LARGE) >= 0)) {
+var Spinner = function (props) {
+    var _a;
+    var _b = props.className, className = _b === void 0 ? "" : _b, intent = props.intent, value = props.value, _c = props.tagName, tagName = _c === void 0 ? "div" : _c, size = props.size, htmlProps = (0,tslib_es6/* __rest */.Tt)(props, ["className", "intent", "value", "tagName", "size"]);
+    useValidateProps(function () {
+        var isSizePropSet = size != null;
+        var isSizeClassSet = className.indexOf(SMALL) >= 0 || className.indexOf(LARGE) >= 0;
+        if (isSizePropSet && isSizeClassSet) {
             console.warn(SPINNER_WARN_CLASSES_SIZE);
         }
-    };
-    /**
-     * Resolve size to a pixel value.
-     * Size can be set by className, props, default, or minimum constant.
-     */
-    Spinner.prototype.getSize = function () {
-        var _a = this.props, _b = _a.className, className = _b === void 0 ? "" : _b, size = _a.size;
-        if (size == null) {
-            // allow Classes constants to determine default size.
-            if (className.indexOf(SMALL) >= 0) {
-                return SpinnerSize.SMALL;
-            }
-            else if (className.indexOf(LARGE) >= 0) {
-                return SpinnerSize.LARGE;
-            }
-            return SpinnerSize.STANDARD;
+    }, [className, size]);
+    var sizePx = getSize(size, className);
+    // keep spinner track width consistent at all sizes (down to about 10px).
+    var strokeWidth = Math.min(MIN_STROKE_WIDTH, (STROKE_WIDTH * SpinnerSize.LARGE) / sizePx);
+    var strokeOffset = PATH_LENGTH - PATH_LENGTH * (value == null ? 0.25 : clamp(value, 0, 1));
+    var classes = classnames_default()(SPINNER, classes_intentClass(intent), (_a = {}, _a[SPINNER_NO_SPIN] = value != null, _a), className);
+    // multiple DOM elements around SVG are necessary to properly isolate animation:
+    // - SVG elements in IE do not support anim/trans so they must be set on a parent HTML element.
+    // - SPINNER_ANIMATION isolates svg from parent display and is always centered inside root element.
+    return react.createElement(tagName, (0,tslib_es6/* __assign */.Cl)({ "aria-label": "loading", "aria-valuemax": 100, "aria-valuemin": 0, "aria-valuenow": value === undefined ? undefined : value * 100, className: classes, role: "progressbar" }, htmlProps), react.createElement(tagName, { className: SPINNER_ANIMATION }, react.createElement("svg", { width: sizePx, height: sizePx, strokeWidth: strokeWidth.toFixed(2), viewBox: getViewBox(strokeWidth) },
+        react.createElement("path", { className: SPINNER_TRACK, d: spinner_SPINNER_TRACK }),
+        react.createElement("path", { className: SPINNER_HEAD, d: spinner_SPINNER_TRACK, pathLength: PATH_LENGTH, strokeDasharray: "".concat(PATH_LENGTH, " ").concat(PATH_LENGTH), strokeDashoffset: strokeOffset }))));
+};
+Spinner.displayName = "".concat(DISPLAYNAME_PREFIX, ".Spinner");
+/**
+ * Resolve size to a pixel value.
+ * Size can be set by className, props, default, or minimum constant.
+ */
+var getSize = function (size, className) {
+    if (size == null) {
+        if (className.indexOf(SMALL) >= 0) {
+            return SpinnerSize.SMALL;
         }
-        return Math.max(MIN_SIZE, size);
-    };
-    /** Compute viewbox such that stroked track sits exactly at edge of image frame. */
-    Spinner.prototype.getViewBox = function (strokeWidth) {
-        var radius = R + strokeWidth / 2;
-        var viewBoxX = (50 - radius).toFixed(2);
-        var viewBoxWidth = (radius * 2).toFixed(2);
-        return "".concat(viewBoxX, " ").concat(viewBoxX, " ").concat(viewBoxWidth, " ").concat(viewBoxWidth);
-    };
-    Spinner.displayName = "".concat(DISPLAYNAME_PREFIX, ".Spinner");
-    return Spinner;
-}(AbstractPureComponent));
-
+        else if (className.indexOf(LARGE) >= 0) {
+            return SpinnerSize.LARGE;
+        }
+        return SpinnerSize.STANDARD;
+    }
+    return Math.max(MIN_SIZE, size);
+};
+/** Compute viewbox such that stroked track sits exactly at edge of image frame. */
+var getViewBox = function (strokeWidth) {
+    var radius = R + strokeWidth / 2;
+    var viewBoxX = (50 - radius).toFixed(2);
+    var viewBoxWidth = (radius * 2).toFixed(2);
+    return "".concat(viewBoxX, " ").concat(viewBoxX, " ").concat(viewBoxWidth, " ").concat(viewBoxWidth);
+};
 
 ;// ./node_modules/@blueprintjs/core/lib/esm/hooks/useIsomorphicLayoutEffect.js
 /*
@@ -18799,11 +19081,11 @@ var useIsomorphicLayoutEffect = hasDOMEnvironment() ? react.useLayoutEffect : re
  */
 var Text = react.forwardRef(function (_a, forwardedRef) {
     var _b;
-    var children = _a.children, _c = _a.tagName, tagName = _c === void 0 ? "div" : _c, title = _a.title, className = _a.className, ellipsize = _a.ellipsize, htmlProps = (0,tslib_es6/* __rest */.Tt)(_a, ["children", "tagName", "title", "className", "ellipsize"]);
+    var children = _a.children, _c = _a.tagName, tagName = _c === void 0 ? "div" : _c, title = _a.title, className = _a.className, _d = _a.ellipsize, ellipsize = _d === void 0 ? false : _d, htmlProps = (0,tslib_es6/* __rest */.Tt)(_a, ["children", "tagName", "title", "className", "ellipsize"]);
     var contentMeasuringRef = react.useRef();
     var textRef = react.useMemo(function () { return mergeRefs(contentMeasuringRef, forwardedRef); }, [forwardedRef]);
-    var _d = react.useState(""), textContent = _d[0], setTextContent = _d[1];
-    var _e = react.useState(), isContentOverflowing = _e[0], setIsContentOverflowing = _e[1];
+    var _e = react.useState(""), textContent = _e[0], setTextContent = _e[1];
+    var _f = react.useState(), isContentOverflowing = _f[0], setIsContentOverflowing = _f[1];
     // try to be conservative about running this effect, since querying scrollWidth causes the browser to reflow / recalculate styles,
     // which can be very expensive for long lists (for example, in long Menus)
     useIsomorphicLayoutEffect(function () {
@@ -18817,9 +19099,6 @@ var Text = react.forwardRef(function (_a, forwardedRef) {
             _b[TEXT_OVERFLOW_ELLIPSIS] = ellipsize,
             _b), className), ref: textRef, title: title !== null && title !== void 0 ? title : (isContentOverflowing ? textContent : undefined) }), children);
 });
-Text.defaultProps = {
-    ellipsize: false,
-};
 Text.displayName = "".concat(DISPLAYNAME_PREFIX, ".Text");
 
 ;// ./node_modules/@blueprintjs/core/lib/esm/components/button/buttons.js
@@ -18863,89 +19142,52 @@ Button.displayName = "".concat(DISPLAYNAME_PREFIX, ".Button");
  * @see https://blueprintjs.com/docs/#core/components/button
  */
 var AnchorButton = react.forwardRef(function (props, ref) {
-    var href = props.href, _a = props.tabIndex, tabIndex = _a === void 0 ? 0 : _a;
-    var commonProps = useSharedButtonAttributes(props, ref);
-    return (react.createElement("a", (0,tslib_es6/* __assign */.Cl)({ role: "button" }, removeNonHTMLProps(props), commonProps, { "aria-disabled": commonProps.disabled, href: commonProps.disabled ? undefined : href, tabIndex: commonProps.disabled ? -1 : tabIndex }), renderButtonContents(props)));
+    var href = props.href;
+    var commonProps = useSharedButtonAttributes(props, ref, {
+        defaultTabIndex: 0,
+        disabledTabIndex: -1,
+    });
+    return (react.createElement("a", (0,tslib_es6/* __assign */.Cl)({ role: "button" }, removeNonHTMLProps(props), commonProps, { "aria-disabled": commonProps.disabled, href: commonProps.disabled ? undefined : href }), renderButtonContents(props)));
 });
 AnchorButton.displayName = "".concat(DISPLAYNAME_PREFIX, ".AnchorButton");
 /**
  * Most of the button logic lives in this shared hook.
  */
-function useSharedButtonAttributes(props, ref) {
+function useSharedButtonAttributes(props, ref, options) {
     var _a;
-    var _b = props.active, active = _b === void 0 ? false : _b, alignText = props.alignText, fill = props.fill, large = props.large, _c = props.loading, loading = _c === void 0 ? false : _c, minimal = props.minimal, onBlur = props.onBlur, onKeyDown = props.onKeyDown, onKeyUp = props.onKeyUp, outlined = props.outlined, small = props.small, tabIndex = props.tabIndex;
+    var alignText = props.alignText, fill = props.fill, 
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
+    large = props.large, _b = props.loading, loading = _b === void 0 ? false : _b, 
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
+    minimal = props.minimal, 
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
+    outlined = props.outlined, _c = props.size, size = _c === void 0 ? "medium" : _c, 
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
+    small = props.small, _d = props.variant, variant = _d === void 0 ? "solid" : _d;
     var disabled = props.disabled || loading;
-    // the current key being pressed
-    var _d = react.useState(), currentKeyPressed = _d[0], setCurrentKeyPressed = _d[1];
-    // whether the button is in "active" state
-    var _e = react.useState(false), isActive = _e[0], setIsActive = _e[1];
-    // our local ref for the button element, merged with the consumer's own ref (if supplied) in this hook's return value
-    var buttonRef = react.useRef(null);
-    var handleBlur = react.useCallback(function (e) {
-        if (isActive) {
-            setIsActive(false);
-        }
-        onBlur === null || onBlur === void 0 ? void 0 : onBlur(e);
-    }, [isActive, onBlur]);
-    var handleKeyDown = react.useCallback(function (e) {
-        if (keyboardUtils_isKeyboardClick(e)) {
-            e.preventDefault();
-            if (e.key !== currentKeyPressed) {
-                setIsActive(true);
-            }
-        }
-        setCurrentKeyPressed(e.key);
-        onKeyDown === null || onKeyDown === void 0 ? void 0 : onKeyDown(e);
-    }, [currentKeyPressed, onKeyDown]);
-    var handleKeyUp = react.useCallback(function (e) {
-        var _a;
-        if (keyboardUtils_isKeyboardClick(e)) {
-            setIsActive(false);
-            (_a = buttonRef.current) === null || _a === void 0 ? void 0 : _a.click();
-        }
-        setCurrentKeyPressed(undefined);
-        onKeyUp === null || onKeyUp === void 0 ? void 0 : onKeyUp(e);
-    }, [onKeyUp]);
+    var _e = useInteractiveAttributes(!disabled, props, ref, options), active = _e[0], interactiveProps = _e[1];
     var className = classnames_default()(BUTTON, (_a = {},
-        _a[ACTIVE] = !disabled && (active || isActive),
+        _a[ACTIVE] = active,
         _a[DISABLED] = disabled,
         _a[FILL] = fill,
-        _a[LARGE] = large,
         _a[LOADING] = loading,
-        _a[MINIMAL] = minimal,
-        _a[OUTLINED] = outlined,
-        _a[SMALL] = small,
-        _a), alignmentClass(alignText), classes_intentClass(props.intent), props.className);
-    return {
-        className: className,
-        disabled: disabled,
-        onBlur: handleBlur,
-        onClick: disabled ? undefined : props.onClick,
-        onFocus: disabled ? undefined : props.onFocus,
-        onKeyDown: handleKeyDown,
-        onKeyUp: handleKeyUp,
-        ref: mergeRefs(buttonRef, ref),
-        tabIndex: disabled ? -1 : tabIndex,
-    };
+        _a), alignmentClass(alignText), classes_intentClass(props.intent), sizeClass(size, { large: large, small: small }), variantClass(variant, { minimal: minimal, outlined: outlined }), props.className);
+    return (0,tslib_es6/* __assign */.Cl)((0,tslib_es6/* __assign */.Cl)({}, interactiveProps), { className: className, disabled: disabled });
 }
 /**
  * Shared rendering code for button contents.
  */
 function renderButtonContents(props) {
-    var children = props.children, ellipsizeText = props.ellipsizeText, icon = props.icon, loading = props.loading, rightIcon = props.rightIcon, text = props.text, textClassName = props.textClassName;
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
+    var children = props.children, ellipsizeText = props.ellipsizeText, endIcon = props.endIcon, icon = props.icon, loading = props.loading, rightIcon = props.rightIcon, text = props.text, textClassName = props.textClassName;
     var hasTextContent = !isReactNodeEmpty(text) || !isReactNodeEmpty(children);
     return (react.createElement(react.Fragment, null,
-        loading && react.createElement(Spinner, { key: "loading", className: BUTTON_SPINNER, size: SpinnerSize.SMALL }),
-        react.createElement(Icon, { key: "leftIcon", icon: icon }),
-        hasTextContent && (react.createElement(Text, { key: "text", className: classnames_default()(BUTTON_TEXT, textClassName), ellipsize: ellipsizeText, tagName: "span" },
+        loading && react.createElement(Spinner, { className: BUTTON_SPINNER, size: SpinnerSize.SMALL }),
+        react.createElement(Icon, { icon: icon }),
+        hasTextContent && (react.createElement(Text, { className: classnames_default()(BUTTON_TEXT, textClassName), ellipsize: ellipsizeText, tagName: "span" },
             text,
-            children)
-        // <span key="text" className={classNames(Classes.BUTTON_TEXT, textClassName)}>
-        //     {text}
-        //     {children}
-        // </span>
-        ),
-        react.createElement(Icon, { key: "rightIcon", icon: rightIcon })));
+            children)),
+        react.createElement(Icon, { icon: endIcon !== null && endIcon !== void 0 ? endIcon : rightIcon })));
 }
 
 ;// ./node_modules/@blueprintjs/core/lib/esm/components/toast/toast.js
@@ -18969,7 +19211,6 @@ function renderButtonContents(props) {
  * @fileoverview This component is DEPRECATED, and the code is frozen.
  * All changes & bugfixes should be made to Toast2 instead.
  */
-/* eslint-disable deprecation/deprecation, @blueprintjs/no-deprecated-components */
 
 
 
@@ -19007,7 +19248,7 @@ var Toast = /** @class */ (function (_super) {
         return (react.createElement("div", { className: classnames_default()(TOAST, classes_intentClass(intent), className), onBlur: this.startTimeout, onFocus: this.clearTimeouts, onMouseEnter: this.clearTimeouts, onMouseLeave: this.startTimeout, tabIndex: 0 },
             react.createElement(Icon, { icon: icon }),
             react.createElement("span", { className: TOAST_MESSAGE, role: "alert" }, message),
-            react.createElement(ButtonGroup, { minimal: true },
+            react.createElement(ButtonGroup, { variant: "minimal" },
                 this.maybeRenderActionButton(),
                 isCloseButtonShown && (react.createElement(Button, { "aria-label": "Close", icon: react.createElement(Cross, null), onClick: this.handleCloseClick })))));
     };
@@ -19130,8 +19371,8 @@ function useTimeout(callback, delay) {
  * @see https://blueprintjs.com/docs/#core/components/toast2
  */
 var Toast2 = react.forwardRef(function (props, ref) {
-    var action = props.action, className = props.className, icon = props.icon, intent = props.intent, isCloseButtonShown = props.isCloseButtonShown, message = props.message, onDismiss = props.onDismiss, timeout = props.timeout;
-    var _a = react.useState(false), isTimeoutStarted = _a[0], setIsTimeoutStarted = _a[1];
+    var action = props.action, className = props.className, icon = props.icon, intent = props.intent, _a = props.isCloseButtonShown, isCloseButtonShown = _a === void 0 ? true : _a, message = props.message, onDismiss = props.onDismiss, _b = props.timeout, timeout = _b === void 0 ? 5000 : _b;
+    var _c = react.useState(false), isTimeoutStarted = _c[0], setIsTimeoutStarted = _c[1];
     var startTimeout = react.useCallback(function () { return setIsTimeoutStarted(true); }, []);
     var clearTimeout = react.useCallback(function () { return setIsTimeoutStarted(false); }, []);
     // Per docs: "Providing a value less than or equal to 0 will disable the timeout (this is discouraged)."
@@ -19167,16 +19408,10 @@ var Toast2 = react.forwardRef(function (props, ref) {
         onBlur: startTimeout, onFocus: clearTimeout, onMouseEnter: clearTimeout, onMouseLeave: startTimeout, ref: ref, tabIndex: 0 },
         react.createElement(Icon, { icon: icon }),
         react.createElement("span", { className: TOAST_MESSAGE, role: "alert" }, message),
-        react.createElement(ButtonGroup, { minimal: true },
+        react.createElement(ButtonGroup, { variant: "minimal" },
             action && react.createElement(AnchorButton, (0,tslib_es6/* __assign */.Cl)({}, action, { intent: undefined, onClick: handleActionClick })),
             isCloseButtonShown && react.createElement(Button, { "aria-label": "Close", icon: react.createElement(Cross, null), onClick: handleCloseClick }))));
 });
-Toast2.defaultProps = {
-    className: "",
-    isCloseButtonShown: true,
-    message: "",
-    timeout: 5000,
-};
 Toast2.displayName = "".concat(DISPLAYNAME_PREFIX, ".Toast2");
 
 ;// ./node_modules/@blueprintjs/core/lib/esm/components/toast/overlayToaster.js
@@ -19206,6 +19441,7 @@ Toast2.displayName = "".concat(DISPLAYNAME_PREFIX, ".Toast2");
 
 
 
+var OVERLAY_TOASTER_DELAY_MS = 50;
 /**
  * OverlayToaster component.
  *
@@ -19219,6 +19455,13 @@ var OverlayToaster = /** @class */ (function (_super) {
             toastRefs: {},
             toasts: [],
         };
+        // Queue of toasts to be displayed. If toasts are shown too quickly back to back, it can result in cut off toasts.
+        // The queue ensures that toasts are only displayed in QUEUE_TIMEOUT_MS increments.
+        _this.queue = {
+            cancel: undefined,
+            isRunning: false,
+            toasts: [],
+        };
         // auto-incrementing identifier for un-keyed toasts
         _this.toastId = 0;
         _this.toastRefs = {};
@@ -19228,6 +19471,16 @@ var OverlayToaster = /** @class */ (function (_super) {
                 refs[toast.key] = react.createRef();
                 return refs;
             }, {});
+        };
+        _this.handleQueueTimeout = function () {
+            var nextToast = _this.queue.toasts.shift();
+            if (nextToast != null) {
+                _this.immediatelyShowToast(nextToast);
+                _this.startQueueTimeout();
+            }
+            else {
+                _this.queue.isRunning = false;
+            }
         };
         _this.renderToast = function (toast) {
             return react.createElement(Toast2, (0,tslib_es6/* __assign */.Cl)({}, toast, { onDismiss: _this.getDismissHandler(toast) }));
@@ -19254,6 +19507,8 @@ var OverlayToaster = /** @class */ (function (_super) {
         }
         var containerElement = document.createElement("div");
         container.appendChild(containerElement);
+        // TODO(React 18): Replace deprecated ReactDOM methods. See: https://github.com/palantir/blueprint/issues/7166
+        // eslint-disable-next-line @typescript-eslint/no-deprecated
         var toaster = react_dom.render(react.createElement(OverlayToaster, (0,tslib_es6/* __assign */.Cl)({}, props, { usePortal: false })), containerElement);
         if (toaster == null) {
             throw new Error(TOASTER_CREATE_NULL);
@@ -19274,11 +19529,15 @@ var OverlayToaster = /** @class */ (function (_super) {
             console.warn(TOASTER_WARN_INLINE);
         }
         var container = (_a = options === null || options === void 0 ? void 0 : options.container) !== null && _a !== void 0 ? _a : document.body;
+        // TODO(React 18): Replace deprecated ReactDOM methods. See: https://github.com/palantir/blueprint/issues/7166
+        // eslint-disable-next-line @typescript-eslint/no-deprecated
         var domRenderer = (_b = options === null || options === void 0 ? void 0 : options.domRenderer) !== null && _b !== void 0 ? _b : react_dom.render;
         var toasterComponentRoot = document.createElement("div");
         container.appendChild(toasterComponentRoot);
         return new Promise(function (resolve, reject) {
             try {
+                // TODO(React 18): Replace deprecated ReactDOM methods. See: https://github.com/palantir/blueprint/issues/7166
+                // eslint-disable-next-line @typescript-eslint/no-deprecated
                 domRenderer(react.createElement(OverlayToaster, (0,tslib_es6/* __assign */.Cl)({}, props, { ref: handleRef, usePortal: false })), toasterComponentRoot);
             }
             catch (error) {
@@ -19306,20 +19565,56 @@ var OverlayToaster = /** @class */ (function (_super) {
         });
     };
     OverlayToaster.prototype.show = function (props, key) {
-        var _this = this;
+        var options = this.createToastOptions(props, key);
+        var wasExistingToastUpdated = this.maybeUpdateExistingToast(options, key);
+        if (wasExistingToastUpdated) {
+            return options.key;
+        }
+        if (this.queue.isRunning) {
+            // If a toast has been shown recently, push to the queued toasts to prevent toasts from being shown too
+            // quickly for the animations to keep up
+            this.queue.toasts.push(options);
+        }
+        else {
+            // If we have not recently shown a toast, we can immediately show the given toast
+            this.immediatelyShowToast(options);
+            this.startQueueTimeout();
+        }
+        return options.key;
+    };
+    OverlayToaster.prototype.maybeUpdateExistingToast = function (options, key) {
+        if (key == null) {
+            return false;
+        }
+        var isExistingQueuedToast = this.queue.toasts.some(function (toast) { return toast.key === key; });
+        if (isExistingQueuedToast) {
+            this.queue.toasts = this.queue.toasts.map(function (t) { return (t.key === key ? options : t); });
+            return true;
+        }
+        var isExistingShownToast = this.state.toasts.some(function (toast) { return toast.key === key; });
+        if (isExistingShownToast) {
+            this.updateToastsInState(function (toasts) { return toasts.map(function (t) { return (t.key === key ? options : t); }); });
+            return true;
+        }
+        return false;
+    };
+    OverlayToaster.prototype.immediatelyShowToast = function (options) {
         if (this.props.maxToasts) {
             // check if active number of toasts are at the maxToasts limit
             this.dismissIfAtLimit();
         }
-        var options = this.createToastOptions(props, key);
+        this.updateToastsInState(function (toasts) { return (0,tslib_es6/* __spreadArray */.fX)([options], toasts, true); });
+    };
+    OverlayToaster.prototype.startQueueTimeout = function () {
+        this.queue.isRunning = true;
+        this.queue.cancel = this.setTimeout(this.handleQueueTimeout, OVERLAY_TOASTER_DELAY_MS);
+    };
+    OverlayToaster.prototype.updateToastsInState = function (getNewToasts) {
+        var _this = this;
         this.setState(function (prevState) {
-            var toasts = key === undefined || _this.isNewToastKey(key)
-                ? // prepend a new toast
-                 (0,tslib_es6/* __spreadArray */.fX)([options], prevState.toasts, true) : // update a specific toast
-                prevState.toasts.map(function (t) { return (t.key === key ? options : t); });
-            return { toasts: toasts, toastRefs: _this.getToastRefs(toasts) };
+            var toasts = getNewToasts(prevState.toasts);
+            return { toastRefs: _this.getToastRefs(toasts), toasts: toasts };
         });
-        return options.key;
     };
     OverlayToaster.prototype.dismiss = function (key, timeoutExpired) {
         var _this = this;
@@ -19333,12 +19628,15 @@ var OverlayToaster = /** @class */ (function (_super) {
                 }
                 return !matchesKey;
             });
-            return { toasts: toasts, toastRefs: _this.getToastRefs(toasts) };
+            return { toastRefs: _this.getToastRefs(toasts), toasts: toasts };
         });
     };
     OverlayToaster.prototype.clear = function () {
+        var _a, _b;
+        (_b = (_a = this.queue).cancel) === null || _b === void 0 ? void 0 : _b.call(_a);
+        this.queue = { cancel: undefined, isRunning: false, toasts: [] };
         this.state.toasts.forEach(function (t) { var _a; return (_a = t.onDismiss) === null || _a === void 0 ? void 0 : _a.call(t, false); });
-        this.setState({ toasts: [], toastRefs: {} });
+        this.setState({ toastRefs: {}, toasts: [] });
     };
     OverlayToaster.prototype.getToasts = function () {
         return this.state.toasts;
@@ -19370,7 +19668,8 @@ var OverlayToaster = /** @class */ (function (_super) {
      */
     OverlayToaster.prototype.renderChildren = function () {
         return react.Children.map(this.props.children, function (child) {
-            // eslint-disable-next-line deprecation/deprecation
+            // TODO(React 18): Replace deprecated ReactDOM methods. See: https://github.com/palantir/blueprint/issues/7166
+            // eslint-disable-next-line @typescript-eslint/no-deprecated
             if (isElementOfType(child, Toast)) {
                 return react.createElement(Toast2, (0,tslib_es6/* __assign */.Cl)({}, child.props));
             }
@@ -19378,9 +19677,6 @@ var OverlayToaster = /** @class */ (function (_super) {
                 return child;
             }
         });
-    };
-    OverlayToaster.prototype.isNewToastKey = function (key) {
-        return this.state.toasts.every(function (toast) { return toast.key !== key; });
     };
     OverlayToaster.prototype.dismissIfAtLimit = function () {
         if (this.state.toasts.length === this.props.maxToasts) {
@@ -19430,9 +19726,8 @@ var OverlayToaster = /** @class */ (function (_super) {
 
 // merges with declaration of `Toaster` type in `toasterTypes.ts`
 // kept for backwards-compatibility with v4.x
-// eslint-disable-next-line @typescript-eslint/no-redeclare
 var Toaster = {
-    // eslint-disable-next-line deprecation/deprecation
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
     create: deprecatedToasterCreate,
 };
 /** @deprecated use OverlayToaster.create() instead */
@@ -24617,6 +24912,7 @@ function New(self) {
             user_id: this.user_id,
             user: this.user,
             pre_connect_msg: this.pre_connect_msg,
+            remotes_data: this.remotes_data,
             dynamic_firewall: this.dynamic_firewall,
             geo_sort: this.geo_sort,
             force_connect: this.force_connect,
@@ -24653,6 +24949,7 @@ function New(self) {
         this.user_id = data.user_id;
         this.user = data.user;
         this.pre_connect_msg = data.pre_connect_msg;
+        this.remotes_data = data.remotes_data;
         this.dynamic_firewall = data.dynamic_firewall;
         this.geo_sort = data.geo_sort;
         this.force_connect = data.force_connect;
@@ -24689,6 +24986,7 @@ function New(self) {
             user_id: this.user_id,
             user: this.user,
             pre_connect_msg: this.pre_connect_msg,
+            remotes_data: this.remotes_data,
             dynamic_firewall: this.dynamic_firewall,
             geo_sort: this.geo_sort,
             force_connect: this.force_connect,
@@ -24724,6 +25022,7 @@ function New(self) {
         this.user_id = data.user_id || this.user_id;
         this.user = data.user || this.user;
         this.pre_connect_msg = data.pre_connect_msg;
+        this.remotes_data = data.remotes_data;
         this.dynamic_firewall = data.dynamic_firewall;
         this.geo_sort = data.geo_sort;
         this.force_connect = data.force_connect;
@@ -25927,11 +26226,11 @@ var Dialog = /** @class */ (function (_super) {
         return _this;
     }
     Dialog.prototype.render = function () {
-        var _a, _b;
-        var _c = this.props, className = _c.className, children = _c.children, containerRef = _c.containerRef, style = _c.style, title = _c.title, _d = _c.role, role = _d === void 0 ? "dialog" : _d, overlayProps = (0,tslib_es6/* __rest */.Tt)(_c, ["className", "children", "containerRef", "style", "title", "role"]);
+        var _a;
+        var _b = this.props, className = _b.className, children = _b.children, containerRef = _b.containerRef, style = _b.style, title = _b.title, _c = _b.role, role = _c === void 0 ? "dialog" : _c, overlayProps = (0,tslib_es6/* __rest */.Tt)(_b, ["className", "children", "containerRef", "style", "title", "role"]);
         return (react.createElement(Overlay2, (0,tslib_es6/* __assign */.Cl)({}, overlayProps, { className: OVERLAY_SCROLL_CONTAINER, childRef: this.childRef, hasBackdrop: true }),
-            react.createElement("div", { className: DIALOG_CONTAINER, ref: containerRef === undefined ? this.childRef : mergeRefs(containerRef, this.childRef) },
-                react.createElement("div", { className: classnames_default()(DIALOG, className), role: role, "aria-modal": (_a = overlayProps.enforceFocus) !== null && _a !== void 0 ? _a : (_b = Overlay2.defaultProps) === null || _b === void 0 ? void 0 : _b.enforceFocus, "aria-labelledby": this.props["aria-labelledby"] || (title ? this.titleId : undefined), "aria-describedby": this.props["aria-describedby"], style: style },
+            react.createElement("div", { className: DIALOG_CONTAINER, ref: mergeRefs(containerRef, this.childRef) },
+                react.createElement("div", { className: classnames_default()(DIALOG, className), role: role, "aria-modal": (_a = overlayProps.enforceFocus) !== null && _a !== void 0 ? _a : OVERLAY2_DEFAULT_PROPS.enforceFocus, "aria-labelledby": this.props["aria-labelledby"] || (title ? this.titleId : undefined), "aria-describedby": this.props["aria-describedby"], style: style },
                     this.maybeRenderHeader(),
                     children))));
     };
@@ -25949,7 +26248,7 @@ var Dialog = /** @class */ (function (_super) {
         // show close button if prop is undefined or null
         // this gives us a behavior as if the default value were `true`
         if (this.props.isCloseButtonShown !== false) {
-            return (react.createElement(Button, { "aria-label": "Close", className: DIALOG_CLOSE_BUTTON, icon: react.createElement(SmallCross, { size: iconTypes/* IconSize */.l.STANDARD }), minimal: true, onClick: this.props.onClose }));
+            return (react.createElement(Button, { "aria-label": "Close", className: DIALOG_CLOSE_BUTTON, icon: react.createElement(SmallCross, { size: iconTypes/* IconSize */.l.STANDARD }), onClick: this.props.onClose, variant: "minimal" }));
         }
         else {
             return undefined;
@@ -27310,6 +27609,7 @@ class ProfileConnect extends react.Component {
             sync_secret: prfl.sync_secret,
             username: username,
             password: password,
+            remotes_data: prfl.remotes_data,
             dynamic_firewall: prfl.dynamic_firewall,
             geo_sort: prfl.geo_sort,
             force_connect: prfl.force_connect,
@@ -27754,6 +28054,10 @@ class ProfileSettings extends react.Component {
                         {
                             label: 'Restrict Client',
                             value: profile.restrict_client,
+                        },
+                        {
+                            label: 'Remotes Data',
+                            value: JSON.stringify(profile.remotes_data),
                         },
                         {
                             label: 'Dynamic Firewall',
@@ -28713,7 +29017,7 @@ var AsyncControllableInput = /** @class */ (function (_super) {
             if (nextProps.value === nextState.nextValue) {
                 // parent has processed and accepted our update
                 if (nextState.hasPendingUpdate) {
-                    return { value: nextProps.value, hasPendingUpdate: false };
+                    return { hasPendingUpdate: false, value: nextProps.value };
                 }
                 else {
                     return { value: nextState.nextValue };
@@ -28727,12 +29031,12 @@ var AsyncControllableInput = /** @class */ (function (_super) {
                     return { hasPendingUpdate: true };
                 }
                 // accept controlled update overriding user action
-                return { value: nextProps.value, nextValue: nextProps.value, hasPendingUpdate: false };
+                return { hasPendingUpdate: false, nextValue: nextProps.value, value: nextProps.value };
             }
         }
         else {
             // accept controlled update, could be confirming or denying user action
-            return { value: nextProps.value, nextValue: nextProps.value, hasPendingUpdate: false };
+            return { hasPendingUpdate: false, nextValue: nextProps.value, value: nextProps.value };
         }
     };
     AsyncControllableInput.prototype.render = function () {
@@ -28778,7 +29082,7 @@ var AsyncControllableInput = /** @class */ (function (_super) {
 
 
 
-var NON_HTML_PROPS = ["onValueChange"];
+var NON_HTML_PROPS = ["inputSize", "onValueChange"];
 /**
  * Input group component.
  *
@@ -28805,17 +29109,19 @@ var InputGroup = /** @class */ (function (_super) {
     }
     InputGroup.prototype.render = function () {
         var _a;
-        var _b = this.props, _c = _b.asyncControl, asyncControl = _c === void 0 ? false : _c, className = _b.className, disabled = _b.disabled, fill = _b.fill, inputClassName = _b.inputClassName, inputRef = _b.inputRef, intent = _b.intent, large = _b.large, readOnly = _b.readOnly, round = _b.round, small = _b.small, _d = _b.tagName, tagName = _d === void 0 ? "div" : _d;
+        var _b = this.props, _c = _b.asyncControl, asyncControl = _c === void 0 ? false : _c, className = _b.className, disabled = _b.disabled, fill = _b.fill, inputClassName = _b.inputClassName, inputRef = _b.inputRef, inputSize = _b.inputSize, intent = _b.intent, 
+        // eslint-disable-next-line @typescript-eslint/no-deprecated
+        large = _b.large, readOnly = _b.readOnly, round = _b.round, _d = _b.size, size = _d === void 0 ? "medium" : _d, 
+        // eslint-disable-next-line @typescript-eslint/no-deprecated
+        small = _b.small, _e = _b.tagName, tagName = _e === void 0 ? "div" : _e;
         var inputGroupClasses = classnames_default()(INPUT_GROUP, classes_intentClass(intent), (_a = {},
             _a[DISABLED] = disabled,
             _a[READ_ONLY] = readOnly,
             _a[FILL] = fill,
-            _a[LARGE] = large,
-            _a[SMALL] = small,
             _a[ROUND] = round,
-            _a), className);
+            _a), sizeClass(size, { large: large, small: small }), className);
         var style = (0,tslib_es6/* __assign */.Cl)((0,tslib_es6/* __assign */.Cl)({}, this.props.style), { paddingLeft: this.state.leftElementWidth, paddingRight: this.state.rightElementWidth });
-        var inputProps = (0,tslib_es6/* __assign */.Cl)((0,tslib_es6/* __assign */.Cl)({ type: "text" }, removeNonHTMLProps(this.props, NON_HTML_PROPS, true)), { "aria-disabled": disabled, className: classnames_default()(INPUT, inputClassName), onChange: this.handleInputChange, style: style });
+        var inputProps = (0,tslib_es6/* __assign */.Cl)((0,tslib_es6/* __assign */.Cl)({ type: "text" }, removeNonHTMLProps(this.props, NON_HTML_PROPS, true)), { "aria-disabled": disabled, className: classnames_default()(INPUT, inputClassName), onChange: this.handleInputChange, size: inputSize !== null && inputSize !== void 0 ? inputSize : (typeof size === "number" ? size : undefined), style: style });
         var inputElement = asyncControl ? (react.createElement(AsyncControllableInput, (0,tslib_es6/* __assign */.Cl)({}, inputProps, { inputRef: inputRef }))) : (react.createElement("input", (0,tslib_es6/* __assign */.Cl)({}, inputProps, { ref: inputRef })));
         return react.createElement(tagName, { className: inputGroupClasses }, this.maybeRenderLeftElement(), inputElement, this.maybeRenderRightElement());
     };
@@ -29158,13 +29464,7 @@ var NumericInput = /** @class */ (function (_super) {
             if (_this.props.disabled || _this.props.readOnly) {
                 return;
             }
-            var direction;
-            if (e.key === "ArrowUp") {
-                direction = IncrementDirection.UP;
-            }
-            else if (e.key === "ArrowDown") {
-                direction = IncrementDirection.DOWN;
-            }
+            var direction = getArrowKeyDirection(e, ["ArrowDown"], ["ArrowUp"]);
             if (direction !== undefined) {
                 // when the input field has focus, some key combinations will modify
                 // the field's selection range. we'll actually want to select all
@@ -29202,7 +29502,7 @@ var NumericInput = /** @class */ (function (_super) {
             if (_this.props.allowNumericCharactersOnly && !isValidNumericKeyboardEvent(e, _this.props.locale)) {
                 e.preventDefault();
             }
-            // eslint-disable-next-line deprecation/deprecation
+            // eslint-disable-next-line @typescript-eslint/no-deprecated
             (_b = (_a = _this.props).onKeyPress) === null || _b === void 0 ? void 0 : _b.call(_a, e);
         };
         _this.handleInputPaste = function (e) {
@@ -29265,9 +29565,9 @@ var NumericInput = /** @class */ (function (_super) {
         return toLocaleString(clampedValue, locale);
     };
     NumericInput.prototype.render = function () {
-        var _a;
-        var _b = this.props, buttonPosition = _b.buttonPosition, className = _b.className, fill = _b.fill, large = _b.large, small = _b.small;
-        var containerClasses = classnames_default()(NUMERIC_INPUT, (_a = {}, _a[LARGE] = large, _a[SMALL] = small, _a), className);
+        // eslint-disable-next-line @typescript-eslint/no-deprecated
+        var _a = this.props, buttonPosition = _a.buttonPosition, className = _a.className, fill = _a.fill, large = _a.large, _b = _a.size, size = _b === void 0 ? "medium" : _b, small = _a.small;
+        var containerClasses = classnames_default()(NUMERIC_INPUT, sizeClass(size, { large: large, small: small }), className);
         var buttons = this.renderButtons();
         return (react.createElement(ControlGroup, { className: containerClasses, fill: fill },
             buttonPosition === Position.LEFT && buttons,
@@ -29345,7 +29645,13 @@ var NumericInput = /** @class */ (function (_super) {
     NumericInput.prototype.renderInput = function () {
         var inputGroupHtmlProps = removeNonHTMLProps(this.props, numericInput_NON_HTML_PROPS, true);
         var valueAsNumber = this.getCurrentValueAsNumber();
-        return (react.createElement(InputGroup, (0,tslib_es6/* __assign */.Cl)({ asyncControl: this.props.asyncControl, autoComplete: "off", id: this.numericInputId, role: this.props.allowNumericCharactersOnly ? "spinbutton" : undefined }, inputGroupHtmlProps, { "aria-valuemax": this.props.max, "aria-valuemin": this.props.min, "aria-valuenow": valueAsNumber, intent: this.state.currentImeInputInvalid ? Intent.DANGER : this.props.intent, inputClassName: this.props.inputClassName, inputRef: this.inputRef, large: this.props.large, leftElement: this.props.leftElement, leftIcon: this.props.leftIcon, onFocus: this.handleInputFocus, onBlur: this.handleInputBlur, onCompositionEnd: this.handleCompositionEnd, onCompositionUpdate: this.handleCompositionUpdate, onKeyDown: this.handleInputKeyDown, onKeyPress: this.handleInputKeyPress, onPaste: this.handleInputPaste, onValueChange: this.handleInputChange, rightElement: this.props.rightElement, small: this.props.small, value: this.state.value })));
+        return (react.createElement(InputGroup, (0,tslib_es6/* __assign */.Cl)({ asyncControl: this.props.asyncControl, autoComplete: "off", id: this.numericInputId, role: this.props.allowNumericCharactersOnly ? "spinbutton" : undefined }, inputGroupHtmlProps, { "aria-valuemax": this.props.max, "aria-valuemin": this.props.min, "aria-valuenow": valueAsNumber, intent: this.state.currentImeInputInvalid ? Intent.DANGER : this.props.intent, inputClassName: this.props.inputClassName, inputRef: this.inputRef, inputSize: this.props.inputSize, 
+            // eslint-disable-next-line @typescript-eslint/no-deprecated
+            large: this.props.large, leftElement: this.props.leftElement, leftIcon: this.props.leftIcon, onFocus: this.handleInputFocus, onBlur: this.handleInputBlur, onCompositionEnd: this.handleCompositionEnd, onCompositionUpdate: this.handleCompositionUpdate, onKeyDown: this.handleInputKeyDown, 
+            // eslint-disable-next-line @typescript-eslint/no-deprecated
+            onKeyPress: this.handleInputKeyPress, onPaste: this.handleInputPaste, onValueChange: this.handleInputChange, rightElement: this.props.rightElement, size: this.props.size, 
+            // eslint-disable-next-line @typescript-eslint/no-deprecated
+            small: this.props.small, value: this.state.value })));
     };
     // Callbacks - Buttons
     // ===================
@@ -29431,6 +29737,7 @@ var NumericInput = /** @class */ (function (_super) {
         minorStepSize: 0.1,
         selectAllOnFocus: false,
         selectAllOnIncrement: false,
+        size: "medium",
         small: false,
         stepSize: 1,
     };
@@ -29622,24 +29929,12 @@ class ConfigView extends react.Component {
  *
  * @see https://blueprintjs.com/docs/#core/components/menu
  */
-var Menu = /** @class */ (function (_super) {
-    (0,tslib_es6/* __extends */.C6)(Menu, _super);
-    function Menu() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    Menu.prototype.render = function () {
-        var _a;
-        var _b = this.props, className = _b.className, children = _b.children, large = _b.large, small = _b.small, ulRef = _b.ulRef, htmlProps = (0,tslib_es6/* __rest */.Tt)(_b, ["className", "children", "large", "small", "ulRef"]);
-        var classes = classnames_default()(className, MENU, (_a = {},
-            _a[LARGE] = large,
-            _a[SMALL] = small,
-            _a));
-        return (react.createElement("ul", (0,tslib_es6/* __assign */.Cl)({ role: "menu" }, htmlProps, { className: classes, ref: ulRef }), children));
-    };
-    Menu.displayName = "".concat(DISPLAYNAME_PREFIX, ".Menu");
-    return Menu;
-}(AbstractPureComponent));
-
+var Menu = function (props) {
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
+    var className = props.className, children = props.children, large = props.large, _a = props.size, size = _a === void 0 ? "medium" : _a, small = props.small, ulRef = props.ulRef, htmlProps = (0,tslib_es6/* __rest */.Tt)(props, ["className", "children", "large", "size", "small", "ulRef"]);
+    return (react.createElement("ul", (0,tslib_es6/* __assign */.Cl)({ role: "menu" }, htmlProps, { className: classnames_default()(className, MENU, sizeClass(size, { large: large, small: small })), ref: ulRef }), children));
+};
+Menu.displayName = "".concat(DISPLAYNAME_PREFIX, ".Menu");
 
 ;// ./node_modules/@blueprintjs/core/lib/esm/components/menu/menuDivider.js
 /*
@@ -29661,33 +29956,17 @@ var Menu = /** @class */ (function (_super) {
 
 
 
-
 /**
  * Menu divider component.
  *
  * @see https://blueprintjs.com/docs/#core/components/menu.menu-divider
  */
-var MenuDivider = /** @class */ (function (_super) {
-    (0,tslib_es6/* __extends */.C6)(MenuDivider, _super);
-    function MenuDivider() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    MenuDivider.prototype.render = function () {
-        var _a = this.props, className = _a.className, title = _a.title, titleId = _a.titleId;
-        if (title == null) {
-            // simple divider
-            return react.createElement("li", { className: classnames_default()(MENU_DIVIDER, className), role: "separator" });
-        }
-        else {
-            // section header with title
-            return (react.createElement("li", { className: classnames_default()(MENU_HEADER, className), role: "separator" },
-                react.createElement(H6, { id: titleId }, title)));
-        }
-    };
-    MenuDivider.displayName = "".concat(DISPLAYNAME_PREFIX, ".MenuDivider");
-    return MenuDivider;
-}(react.Component));
-
+var MenuDivider = function (_a) {
+    var className = _a.className, title = _a.title, titleId = _a.titleId;
+    var dividerClasses = classnames_default()(title ? MENU_HEADER : MENU_DIVIDER, className);
+    return (react.createElement("li", { className: dividerClasses, role: "separator" }, title && react.createElement(H6, { id: titleId }, title)));
+};
+MenuDivider.displayName = "".concat(DISPLAYNAME_PREFIX, ".MenuDivider");
 
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/components/small-tick.js
 /*
@@ -30380,7 +30659,7 @@ function mergeByName(modifiers) {
 
 
 
-var DEFAULT_OPTIONS = {
+var createPopper_DEFAULT_OPTIONS = {
   placement: 'bottom',
   modifiers: [],
   strategy: 'absolute'
@@ -30405,7 +30684,7 @@ function popperGenerator(generatorOptions) {
       _generatorOptions$def = _generatorOptions.defaultModifiers,
       defaultModifiers = _generatorOptions$def === void 0 ? [] : _generatorOptions$def,
       _generatorOptions$def2 = _generatorOptions.defaultOptions,
-      defaultOptions = _generatorOptions$def2 === void 0 ? DEFAULT_OPTIONS : _generatorOptions$def2;
+      defaultOptions = _generatorOptions$def2 === void 0 ? createPopper_DEFAULT_OPTIONS : _generatorOptions$def2;
   return function createPopper(reference, popper, options) {
     if (options === void 0) {
       options = defaultOptions;
@@ -30414,7 +30693,7 @@ function popperGenerator(generatorOptions) {
     var state = {
       placement: 'bottom',
       orderedModifiers: [],
-      options: Object.assign({}, DEFAULT_OPTIONS, defaultOptions),
+      options: Object.assign({}, createPopper_DEFAULT_OPTIONS, defaultOptions),
       modifiersData: {},
       elements: {
         reference: reference,
@@ -32418,7 +32697,7 @@ var Tooltip = /** @class */ (function (_super) {
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-// tslint:disable object-literal-sort-keys
+/* eslint-disable sort-keys */
 // adapted from https://popper.js.org/docs/v2/modifiers/community-modifiers/
 var matchReferenceWidthModifier = {
     enabled: true,
@@ -32659,7 +32938,7 @@ var Popover = /** @class */ (function (_super) {
                     _b[ACTIVE] = isOpen && !isControlled && !isHoverInteractionKind,
                     _b)), ref: ref }, targetEventHandlers);
             var childTargetProps = {
-                "aria-expanded": isOpen,
+                "aria-expanded": isHoverInteractionKind ? undefined : isOpen,
                 "aria-haspopup": _this.props.interactionKind === PopoverInteractionKind.HOVER_TARGET_ONLY
                     ? undefined
                     : (_d = _this.props.popupKind) !== null && _d !== void 0 ? _d : "menu",
@@ -32729,7 +33008,7 @@ var Popover = /** @class */ (function (_super) {
                     ? true
                     : _this.props.shouldReturnFocusOnClose;
             return (react.createElement(Overlay2, { autoFocus: autoFocus !== null && autoFocus !== void 0 ? autoFocus : defaultAutoFocus, backdropClassName: POPOVER_BACKDROP, backdropProps: backdropProps, canEscapeKeyClose: canEscapeKeyClose, canOutsideClickClose: interactionKind === PopoverInteractionKind.CLICK, childRef: _this.transitionContainerElement, enforceFocus: enforceFocus, hasBackdrop: hasBackdrop, isOpen: isOpen, lazy: _this.props.lazy, onClose: _this.handleOverlayClose, onClosed: _this.props.onClosed, onClosing: _this.props.onClosing, onOpened: _this.props.onOpened, onOpening: _this.props.onOpening, transitionDuration: _this.props.transitionDuration, transitionName: POPOVER, usePortal: usePortal, portalClassName: _this.props.portalClassName, portalContainer: _this.props.portalContainer, 
-                // eslint-disable-next-line deprecation/deprecation
+                // eslint-disable-next-line @typescript-eslint/no-deprecated
                 portalStopPropagationEvents: _this.props.portalStopPropagationEvents, shouldReturnFocusOnClose: shouldReturnFocusOnClose },
                 react.createElement("div", { className: POPOVER_TRANSITION_CONTAINER, 
                     // We need to attach a ref that notifies both react-popper and our Popover component about the DOM
@@ -33078,8 +33357,8 @@ function popover_noop() {
  */
 var MenuItem = react.forwardRef(function (props, ref) {
     var _a, _b;
-    var active = props.active, className = props.className, children = props.children, disabled = props.disabled, icon = props.icon, intent = props.intent, labelClassName = props.labelClassName, labelElement = props.labelElement, multiline = props.multiline, popoverProps = props.popoverProps, _c = props.roleStructure, roleStructure = _c === void 0 ? "menuitem" : _c, selected = props.selected, shouldDismissPopover = props.shouldDismissPopover, submenuProps = props.submenuProps, text = props.text, textClassName = props.textClassName, _d = props.tagName, tagName = _d === void 0 ? "a" : _d, htmlTitle = props.htmlTitle, htmlProps = (0,tslib_es6/* __rest */.Tt)(props, ["active", "className", "children", "disabled", "icon", "intent", "labelClassName", "labelElement", "multiline", "popoverProps", "roleStructure", "selected", "shouldDismissPopover", "submenuProps", "text", "textClassName", "tagName", "htmlTitle"]);
-    var _e = roleStructure === "listoption" // "listoption": parent has listbox role, or is a <select>
+    var _c = props.active, active = _c === void 0 ? false : _c, className = props.className, children = props.children, _d = props.disabled, disabled = _d === void 0 ? false : _d, icon = props.icon, intent = props.intent, labelClassName = props.labelClassName, labelElement = props.labelElement, _e = props.multiline, multiline = _e === void 0 ? false : _e, _f = props.popoverProps, popoverProps = _f === void 0 ? {} : _f, _g = props.roleStructure, roleStructure = _g === void 0 ? "menuitem" : _g, selected = props.selected, _h = props.shouldDismissPopover, shouldDismissPopover = _h === void 0 ? true : _h, submenuProps = props.submenuProps, _j = props.text, text = _j === void 0 ? "" : _j, textClassName = props.textClassName, _k = props.tagName, tagName = _k === void 0 ? "a" : _k, htmlTitle = props.htmlTitle, htmlProps = (0,tslib_es6/* __rest */.Tt)(props, ["active", "className", "children", "disabled", "icon", "intent", "labelClassName", "labelElement", "multiline", "popoverProps", "roleStructure", "selected", "shouldDismissPopover", "submenuProps", "text", "textClassName", "tagName", "htmlTitle"]);
+    var _l = roleStructure === "listoption" // "listoption": parent has listbox role, or is a <select>
         ? [
             "option",
             undefined, // target should have no role
@@ -33102,7 +33381,7 @@ var MenuItem = react.forwardRef(function (props, ref) {
                         undefined, // needs no role prop, li is listitem by default
                         undefined,
                         undefined, // don't set aria-selected prop
-                    ], liRole = _e[0], targetRole = _e[1], ariaSelected = _e[2];
+                    ], liRole = _l[0], targetRole = _l[1], ariaSelected = _l[2];
     var isSelectable = roleStructure === "listoption";
     var isSelected = isSelectable && selected;
     var hasIcon = icon != null;
@@ -33131,22 +33410,13 @@ var MenuItem = react.forwardRef(function (props, ref) {
     var liClasses = classnames_default()((_b = {}, _b[MENU_SUBMENU] = hasSubmenu, _b));
     return (react.createElement("li", { className: liClasses, ref: ref, role: liRole, "aria-selected": ariaSelected }, children == null ? (target) : (react.createElement(Popover, (0,tslib_es6/* __assign */.Cl)({ autoFocus: false, captureDismiss: false, disabled: disabled, enforceFocus: false, hoverCloseDelay: 0, interactionKind: "hover", modifiers: SUBMENU_POPOVER_MODIFIERS, targetProps: { role: targetRole, tabIndex: 0 }, placement: "right-start", usePortal: false }, popoverProps, { content: react.createElement(Menu, (0,tslib_es6/* __assign */.Cl)({}, submenuProps), children), minimal: true, popoverClassName: classnames_default()(MENU_SUBMENU, popoverProps === null || popoverProps === void 0 ? void 0 : popoverProps.popoverClassName) }), target))));
 });
-MenuItem.defaultProps = {
-    active: false,
-    disabled: false,
-    multiline: false,
-    popoverProps: {},
-    selected: undefined,
-    shouldDismissPopover: true,
-    text: "",
-};
 MenuItem.displayName = "".concat(DISPLAYNAME_PREFIX, ".MenuItem");
 var SUBMENU_POPOVER_MODIFIERS = {
     // 20px padding - scrollbar width + a bit
-    flip: { options: { rootBoundary: "viewport", padding: 20 }, enabled: true },
+    flip: { enabled: true, options: { padding: 20, rootBoundary: "viewport" } },
     // shift popover up 5px so MenuItems align
-    offset: { options: { offset: [-5, 0] }, enabled: true },
-    preventOverflow: { options: { rootBoundary: "viewport", padding: 20 }, enabled: true },
+    offset: { enabled: true, options: { offset: [-5, 0] } },
+    preventOverflow: { enabled: true, options: { padding: 20, rootBoundary: "viewport" } },
 };
 // props to ignore when disabled
 var DISABLED_PROPS = {

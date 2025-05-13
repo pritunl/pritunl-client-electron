@@ -363,11 +363,11 @@
 .bp5-datepicker .rdp-day.rdp-day_today{
   font-weight:400;
 }
-.bp5-datepicker .rdp-day:not([disabled]):not(.rdp-day_selected):hover, .bp5-datepicker .rdp-day:not([disabled]):not(.rdp-day_selected):focus{
+.bp5-datepicker .rdp-day:not([disabled], .rdp-day_selected):hover, .bp5-datepicker .rdp-day:not([disabled], .rdp-day_selected):focus{
   background:rgba(143, 153, 168, 0.15);
   color:#1c2127;
 }
-.bp5-datepicker .rdp-day:not([disabled]):not(.rdp-day_selected):active{
+.bp5-datepicker .rdp-day:not([disabled], .rdp-day_selected):active{
   background:rgba(143, 153, 168, 0.3);
 }
 .bp5-datepicker .rdp-day.rdp-day_disabled{
@@ -405,12 +405,14 @@
   width:calc(100% - 10px);
 }
 
-.bp5-datepicker-month-select select, .bp5-datepicker-year-select select{
+.bp5-datepicker-month-select select,
+.bp5-datepicker-year-select select{
   font-weight:600;
   padding-left:5px;
   padding-right:16px;
 }
-.bp5-datepicker-month-select select + .bp5-icon, .bp5-datepicker-year-select select + .bp5-icon{
+.bp5-datepicker-month-select select + .bp5-icon,
+.bp5-datepicker-year-select select + .bp5-icon{
   right:2px;
 }
 
@@ -429,11 +431,11 @@
 .bp5-dark .bp5-datepicker .rdp-day.rdp-day_outside{
   color:rgba(171, 179, 191, 0.6);
 }
-.bp5-dark .bp5-datepicker .rdp-day:not([disabled]):not(.rdp-day_selected):hover, .bp5-dark .bp5-datepicker .rdp-day:not([disabled]):not(.rdp-day_selected):focus{
+.bp5-dark .bp5-datepicker .rdp-day:not([disabled], .rdp-day_selected):hover, .bp5-dark .bp5-datepicker .rdp-day:not([disabled], .rdp-day_selected):focus{
   background:rgba(143, 153, 168, 0.15);
   color:#ffffff;
 }
-.bp5-dark .bp5-datepicker .rdp-day:not([disabled]):not(.rdp-day_selected):active{
+.bp5-dark .bp5-datepicker .rdp-day:not([disabled], .rdp-day_selected):active{
   background:rgba(143, 153, 168, 0.3);
 }
 .bp5-dark .bp5-datepicker .rdp-day.rdp-day_selected{
@@ -556,7 +558,7 @@
   border-radius:0;
   color:#215db0;
 }
-.bp5-daterangepicker.bp5-datepicker .rdp-day_hovered:not(.rdp-day_selected):not(.rdp-day_range_start):not(.rdp-day_range_middle):not(.rdp-day_range_end){
+.bp5-daterangepicker.bp5-datepicker .rdp-day_hovered:not(.rdp-day_selected):not(.rdp-day_range_start, .rdp-day_range_middle, .rdp-day_range_end){
   background-color:rgba(45, 114, 210, 0.1);
 }
 .bp5-daterangepicker.bp5-datepicker .rdp-day_range_middle{
@@ -568,11 +570,11 @@
   background-color:rgba(45, 114, 210, 0.2);
   color:#215db0;
 }
-.bp5-daterangepicker.bp5-datepicker .rdp-day_range_start:not(.rdp-day_range_end):not(.rdp-day_hovered_end){
+.bp5-daterangepicker.bp5-datepicker .rdp-day_range_start:not(.rdp-day_range_end, .rdp-day_hovered_end){
   border-bottom-right-radius:0;
   border-top-right-radius:0;
 }
-.bp5-daterangepicker.bp5-datepicker .rdp-day_range_end:not(.rdp-day_range_start):not(.rdp_day_hovered_start){
+.bp5-daterangepicker.bp5-datepicker .rdp-day_range_end:not(.rdp-day_range_start, .rdp_day_hovered_start){
   border-bottom-left-radius:0;
   border-top-left-radius:0;
 }
@@ -587,7 +589,7 @@
 .bp5-daterangepicker.bp5-datepicker-highlight-current-day .rdp-day.rdp-day_today{
   border:1px solid rgba(17, 20, 24, 0.15);
 }
-.bp5-daterangepicker.bp5-daterangepicker-reverse-month-and-year.bp5-daterangepicker-contiguous .rdp-caption_dropdowns{
+.bp5-daterangepicker.bp5-daterangepicker-reverse-month-and-year.bp5-daterangepicker-contiguous.rdp-caption_dropdowns{
   flex-direction:row-reverse;
 }
 
@@ -599,7 +601,7 @@
 .bp5-dark .bp5-daterangepicker.bp5-datepicker .rdp-day_hovered{
   color:#f6f7f9;
 }
-.bp5-dark .bp5-daterangepicker.bp5-datepicker .rdp-day_hovered:not(.rdp-day_selected):not(.rdp-day_range_start):not(.rdp-day_range_middle):not(.rdp-day_range_end){
+.bp5-dark .bp5-daterangepicker.bp5-datepicker .rdp-day_hovered:not(.rdp-day_selected, .rdp-day_range_start, .rdp-day_range_middle, .rdp-day_range_end){
   background-color:rgba(45, 114, 210, 0.2);
 }
 .bp5-dark .bp5-daterangepicker.bp5-datepicker .rdp-day_range_middle{

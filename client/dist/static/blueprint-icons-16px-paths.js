@@ -1,7 +1,7 @@
 "use strict";
 (global["webpackChunkpritunl"] = global["webpackChunkpritunl"] || []).push([[672],{
 
-/***/ 3541:
+/***/ 4347:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 // ESM COMPAT FLAG
@@ -10,10 +10,12 @@ __webpack_require__.r(__webpack_exports__);
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
   Add: () => (/* reexport */ add),
+  AddChild: () => (/* reexport */ add_child),
   AddClip: () => (/* reexport */ add_clip),
   AddColumnLeft: () => (/* reexport */ add_column_left),
   AddColumnRight: () => (/* reexport */ add_column_right),
   AddLocation: () => (/* reexport */ add_location),
+  AddParent: () => (/* reexport */ add_parent),
   AddRowBottom: () => (/* reexport */ add_row_bottom),
   AddRowTop: () => (/* reexport */ add_row_top),
   AddToArtifact: () => (/* reexport */ add_to_artifact),
@@ -33,6 +35,7 @@ __webpack_require__.d(__webpack_exports__, {
   Ammunition: () => (/* reexport */ ammunition),
   Anchor: () => (/* reexport */ paths_anchor),
   Annotation: () => (/* reexport */ annotation),
+  Announcement: () => (/* reexport */ announcement),
   Antenna: () => (/* reexport */ antenna),
   AppHeader: () => (/* reexport */ app_header),
   Application: () => (/* reexport */ application),
@@ -44,6 +47,7 @@ __webpack_require__.d(__webpack_exports__, {
   ArrayDate: () => (/* reexport */ array_date),
   ArrayFloatingPoint: () => (/* reexport */ array_floating_point),
   ArrayNumeric: () => (/* reexport */ array_numeric),
+  ArrayObject: () => (/* reexport */ array_object),
   ArrayString: () => (/* reexport */ array_string),
   ArrayTimestamp: () => (/* reexport */ array_timestamp),
   ArrowBottomLeft: () => (/* reexport */ arrow_bottom_left),
@@ -54,6 +58,7 @@ __webpack_require__.d(__webpack_exports__, {
   ArrowTopLeft: () => (/* reexport */ arrow_top_left),
   ArrowTopRight: () => (/* reexport */ arrow_top_right),
   ArrowUp: () => (/* reexport */ arrow_up),
+  ArrowsArc: () => (/* reexport */ arrows_arc),
   ArrowsHorizontal: () => (/* reexport */ arrows_horizontal),
   ArrowsVertical: () => (/* reexport */ arrows_vertical),
   Asterisk: () => (/* reexport */ asterisk),
@@ -68,6 +73,7 @@ __webpack_require__.d(__webpack_exports__, {
   Barcode: () => (/* reexport */ barcode),
   BinaryNumber: () => (/* reexport */ binary_number),
   Blank: () => (/* reexport */ blank),
+  BlockPromote: () => (/* reexport */ block_promote),
   BlockedPerson: () => (/* reexport */ blocked_person),
   Bold: () => (/* reexport */ bold),
   Book: () => (/* reexport */ book),
@@ -76,6 +82,7 @@ __webpack_require__.d(__webpack_exports__, {
   Briefcase: () => (/* reexport */ briefcase),
   BringData: () => (/* reexport */ bring_data),
   BringForward: () => (/* reexport */ bring_forward),
+  BritishPound: () => (/* reexport */ british_pound),
   Bug: () => (/* reexport */ bug),
   Buggy: () => (/* reexport */ buggy),
   Build: () => (/* reexport */ build),
@@ -125,6 +132,7 @@ __webpack_require__.d(__webpack_exports__, {
   Compressed: () => (/* reexport */ compressed),
   Confirm: () => (/* reexport */ paths_confirm),
   Console: () => (/* reexport */ console),
+  Construction: () => (/* reexport */ construction),
   Contrast: () => (/* reexport */ contrast),
   Control: () => (/* reexport */ control),
   CreditCard: () => (/* reexport */ credit_card),
@@ -135,18 +143,22 @@ __webpack_require__.d(__webpack_exports__, {
   CssStyle: () => (/* reexport */ css_style),
   Cube: () => (/* reexport */ cube),
   CubeAdd: () => (/* reexport */ cube_add),
+  CubeEdit: () => (/* reexport */ cube_edit),
   CubeRemove: () => (/* reexport */ cube_remove),
+  Cubes: () => (/* reexport */ cubes),
   CurlyBraces: () => (/* reexport */ curly_braces),
   CurvedRangeChart: () => (/* reexport */ curved_range_chart),
   Cut: () => (/* reexport */ cut),
   Cycle: () => (/* reexport */ cycle),
   Dashboard: () => (/* reexport */ dashboard),
+  DataCloud: () => (/* reexport */ data_cloud),
   DataConnection: () => (/* reexport */ data_connection),
   DataLineage: () => (/* reexport */ data_lineage),
   DataSearch: () => (/* reexport */ data_search),
   DataSync: () => (/* reexport */ data_sync),
   Database: () => (/* reexport */ database),
   Delete: () => (/* reexport */ paths_delete),
+  DeleteClip: () => (/* reexport */ delete_clip),
   Delta: () => (/* reexport */ delta),
   DeriveColumn: () => (/* reexport */ derive_column),
   Desktop: () => (/* reexport */ desktop),
@@ -158,6 +170,8 @@ __webpack_require__.d(__webpack_exports__, {
   Disable: () => (/* reexport */ disable),
   Divide: () => (/* reexport */ divide),
   Document: () => (/* reexport */ paths_document),
+  DocumentCode: () => (/* reexport */ document_code),
+  DocumentLocked: () => (/* reexport */ document_locked),
   DocumentOpen: () => (/* reexport */ document_open),
   DocumentShare: () => (/* reexport */ document_share),
   Dollar: () => (/* reexport */ dollar),
@@ -202,12 +216,15 @@ __webpack_require__.d(__webpack_exports__, {
   FastForward: () => (/* reexport */ fast_forward),
   Feed: () => (/* reexport */ feed),
   FeedSubscribed: () => (/* reexport */ feed_subscribed),
+  FighterJet: () => (/* reexport */ fighter_jet),
   Film: () => (/* reexport */ film),
   Filter: () => (/* reexport */ filter),
   FilterKeep: () => (/* reexport */ filter_keep),
   FilterList: () => (/* reexport */ filter_list),
   FilterOpen: () => (/* reexport */ filter_open),
   FilterRemove: () => (/* reexport */ filter_remove),
+  FilterSortAsc: () => (/* reexport */ filter_sort_asc),
+  FilterSortDesc: () => (/* reexport */ filter_sort_desc),
   Flag: () => (/* reexport */ flag),
   Flame: () => (/* reexport */ flame),
   Flash: () => (/* reexport */ flash),
@@ -241,6 +258,7 @@ __webpack_require__.d(__webpack_exports__, {
   Geolocation: () => (/* reexport */ geolocation),
   Geosearch: () => (/* reexport */ geosearch),
   Geotime: () => (/* reexport */ geotime),
+  GiftBox: () => (/* reexport */ gift_box),
   GitBranch: () => (/* reexport */ git_branch),
   GitCommit: () => (/* reexport */ git_commit),
   GitMerge: () => (/* reexport */ git_merge),
@@ -251,6 +269,7 @@ __webpack_require__.d(__webpack_exports__, {
   Glass: () => (/* reexport */ glass),
   Globe: () => (/* reexport */ globe),
   GlobeNetwork: () => (/* reexport */ globe_network),
+  GlobeNetworkAdd: () => (/* reexport */ globe_network_add),
   Graph: () => (/* reexport */ graph),
   GraphRemove: () => (/* reexport */ graph_remove),
   GreaterThan: () => (/* reexport */ greater_than),
@@ -278,6 +297,7 @@ __webpack_require__.d(__webpack_exports__, {
   Helicopter: () => (/* reexport */ helicopter),
   Help: () => (/* reexport */ help),
   HelperManagement: () => (/* reexport */ helper_management),
+  Hexagon: () => (/* reexport */ hexagon),
   HighPriority: () => (/* reexport */ high_priority),
   HighVoltagePole: () => (/* reexport */ high_voltage_pole),
   Highlight: () => (/* reexport */ highlight),
@@ -359,6 +379,7 @@ __webpack_require__.d(__webpack_exports__, {
   Lightbulb: () => (/* reexport */ lightbulb),
   Lightning: () => (/* reexport */ lightning),
   Link: () => (/* reexport */ paths_link),
+  LinkedSquares: () => (/* reexport */ linked_squares),
   List: () => (/* reexport */ list),
   ListColumns: () => (/* reexport */ list_columns),
   ListDetailView: () => (/* reexport */ list_detail_view),
@@ -411,10 +432,12 @@ __webpack_require__.d(__webpack_exports__, {
   Ninja: () => (/* reexport */ ninja),
   NotEqualTo: () => (/* reexport */ not_equal_to),
   Notifications: () => (/* reexport */ notifications),
+  NotificationsAdd: () => (/* reexport */ notifications_add),
   NotificationsSnooze: () => (/* reexport */ notifications_snooze),
   NotificationsUpdated: () => (/* reexport */ notifications_updated),
   NumberedList: () => (/* reexport */ numbered_list),
   Numerical: () => (/* reexport */ numerical),
+  ObjectView: () => (/* reexport */ object_view),
   Office: () => (/* reexport */ office),
   Offline: () => (/* reexport */ offline),
   OilField: () => (/* reexport */ oil_field),
@@ -424,7 +447,10 @@ __webpack_require__.d(__webpack_exports__, {
   OpenApplication: () => (/* reexport */ open_application),
   Outdated: () => (/* reexport */ outdated),
   Output: () => (/* reexport */ output),
+  Package: () => (/* reexport */ paths_package),
+  PageBreak: () => (/* reexport */ page_break),
   PageLayout: () => (/* reexport */ page_layout),
+  Panel: () => (/* reexport */ panel),
   PanelStats: () => (/* reexport */ panel_stats),
   PanelTable: () => (/* reexport */ panel_table),
   Paperclip: () => (/* reexport */ paperclip),
@@ -439,8 +465,11 @@ __webpack_require__.d(__webpack_exports__, {
   Phone: () => (/* reexport */ phone),
   PhoneCall: () => (/* reexport */ phone_call),
   PhoneForward: () => (/* reexport */ phone_forward),
+  PhoneSearch: () => (/* reexport */ phone_search),
   PieChart: () => (/* reexport */ pie_chart),
+  Pill: () => (/* reexport */ pill),
   Pin: () => (/* reexport */ pin),
+  Pistol: () => (/* reexport */ pistol),
   Pivot: () => (/* reexport */ pivot),
   PivotTable: () => (/* reexport */ pivot_table),
   Play: () => (/* reexport */ play),
@@ -482,9 +511,13 @@ __webpack_require__.d(__webpack_exports__, {
   Ring: () => (/* reexport */ ring),
   Rocket: () => (/* reexport */ rocket),
   RocketSlant: () => (/* reexport */ rocket_slant),
+  RootFolder: () => (/* reexport */ root_folder),
+  RotateCcw: () => (/* reexport */ rotate_ccw),
+  RotateCw: () => (/* reexport */ rotate_cw),
   RotateDocument: () => (/* reexport */ rotate_document),
   RotatePage: () => (/* reexport */ rotate_page),
   Route: () => (/* reexport */ route),
+  RunHistory: () => (/* reexport */ run_history),
   Satellite: () => (/* reexport */ satellite),
   Saved: () => (/* reexport */ saved),
   ScatterPlot: () => (/* reexport */ scatter_plot),
@@ -495,6 +528,9 @@ __webpack_require__.d(__webpack_exports__, {
   SegmentedControl: () => (/* reexport */ segmented_control),
   Select: () => (/* reexport */ paths_select),
   Selection: () => (/* reexport */ selection),
+  SelectionBox: () => (/* reexport */ selection_box),
+  SelectionBoxAdd: () => (/* reexport */ selection_box_add),
+  SelectionBoxEdit: () => (/* reexport */ selection_box_edit),
   SendBackward: () => (/* reexport */ send_backward),
   SendMessage: () => (/* reexport */ send_message),
   SendTo: () => (/* reexport */ send_to),
@@ -506,6 +542,8 @@ __webpack_require__.d(__webpack_exports__, {
   SeriesDerived: () => (/* reexport */ series_derived),
   SeriesFiltered: () => (/* reexport */ series_filtered),
   SeriesSearch: () => (/* reexport */ series_search),
+  Server: () => (/* reexport */ server),
+  ServerInstall: () => (/* reexport */ server_install),
   Settings: () => (/* reexport */ settings),
   Shapes: () => (/* reexport */ shapes),
   Share: () => (/* reexport */ share),
@@ -550,9 +588,11 @@ __webpack_require__.d(__webpack_exports__, {
   Strikethrough: () => (/* reexport */ strikethrough),
   Style: () => (/* reexport */ style),
   Subscript: () => (/* reexport */ subscript),
+  SubtractRightJoin: () => (/* reexport */ subtract_right_join),
   Superscript: () => (/* reexport */ superscript),
   SwapHorizontal: () => (/* reexport */ swap_horizontal),
   SwapVertical: () => (/* reexport */ swap_vertical),
+  Sweep: () => (/* reexport */ sweep),
   Switch: () => (/* reexport */ paths_switch),
   SymbolCircle: () => (/* reexport */ symbol_circle),
   SymbolCross: () => (/* reexport */ symbol_cross),
@@ -564,6 +604,11 @@ __webpack_require__.d(__webpack_exports__, {
   Syringe: () => (/* reexport */ syringe),
   TableSync: () => (/* reexport */ table_sync),
   Tag: () => (/* reexport */ tag),
+  TagAdd: () => (/* reexport */ tag_add),
+  TagPromote: () => (/* reexport */ tag_promote),
+  TagRefresh: () => (/* reexport */ tag_refresh),
+  TagUndo: () => (/* reexport */ tag_undo),
+  Tags: () => (/* reexport */ tags),
   TakeAction: () => (/* reexport */ take_action),
   Tank: () => (/* reexport */ tank),
   Target: () => (/* reexport */ target),
@@ -572,10 +617,14 @@ __webpack_require__.d(__webpack_exports__, {
   Temperature: () => (/* reexport */ temperature),
   TextHighlight: () => (/* reexport */ text_highlight),
   Th: () => (/* reexport */ th),
+  ThAdd: () => (/* reexport */ th_add),
   ThDerived: () => (/* reexport */ th_derived),
   ThDisconnect: () => (/* reexport */ th_disconnect),
   ThFiltered: () => (/* reexport */ th_filtered),
   ThList: () => (/* reexport */ th_list),
+  ThListAdd: () => (/* reexport */ th_list_add),
+  ThVirtual: () => (/* reexport */ th_virtual),
+  ThVirtualAdd: () => (/* reexport */ th_virtual_add),
   ThirdParty: () => (/* reexport */ third_party),
   ThumbsDown: () => (/* reexport */ thumbs_down),
   ThumbsUp: () => (/* reexport */ thumbs_up),
@@ -631,6 +680,9 @@ __webpack_require__.d(__webpack_exports__, {
   WidgetHeader: () => (/* reexport */ widget_header),
   Wind: () => (/* reexport */ wind),
   Wrench: () => (/* reexport */ wrench),
+  WrenchRedo: () => (/* reexport */ wrench_redo),
+  WrenchSnooze: () => (/* reexport */ wrench_snooze),
+  WrenchTime: () => (/* reexport */ wrench_time),
   ZoomIn: () => (/* reexport */ zoom_in),
   ZoomOut: () => (/* reexport */ zoom_out),
   ZoomToFit: () => (/* reexport */ zoom_to_fit)
@@ -638,6 +690,9 @@ __webpack_require__.d(__webpack_exports__, {
 
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/add.js
 /* harmony default export */ const add = (["M10.99 6.99h-2v-2c0-.55-.45-1-1-1s-1 .45-1 1v2h-2c-.55 0-1 .45-1 1s.45 1 1 1h2v2c0 .55.45 1 1 1s1-.45 1-1v-2h2c.55 0 1-.45 1-1s-.45-1-1-1zm-3-7c-4.42 0-8 3.58-8 8s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.68 6-6 6z"]);
+
+;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/add-child.js
+/* harmony default export */ const add_child = (["M2 2v6h1v2H.8a.8.8 0 01-.8-.8V.8A.8.8 0 01.8 0h14.4a.8.8 0 01.8.8v8.4a.8.8 0 01-.8.8H13V8h1V2H2zm7 9h2c.55 0 1 .45 1 1s-.45 1-1 1H9v2c0 .55-.45 1-1 1s-1-.45-1-1v-2H5c-.55 0-1-.45-1-1s.45-1 1-1h2V9c0-.55.45-1 1-1s1 .45 1 1v2z"]);
 
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/add-clip.js
 /* harmony default export */ const add_clip = (["M12 0a1 1 0 00-1 1v2H9a1 1 0 000 2h2v2a1 1 0 102 0V5h2a1 1 0 100-2h-2V1a1 1 0 00-1-1zM0 4a1 1 0 011-1h3.5a1 1 0 010 2H2v2a1 1 0 01-2 0V4zm1 12a1 1 0 01-1-1v-3a1 1 0 112 0v2h2.5a1 1 0 110 2H1zm11 0a1 1 0 001-1v-3a1 1 0 10-2 0v2H9a1 1 0 100 2h3zm-5.5-4a2.5 2.5 0 100-5 2.5 2.5 0 000 5z"]);
@@ -650,6 +705,9 @@ __webpack_require__.d(__webpack_exports__, {
 
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/add-location.js
 /* harmony default export */ const add_location = (["M8 0a1 1 0 110 2 6 6 0 106 6 1 1 0 012 0 8 8 0 11-8-8zm0 5a3 3 0 110 6 3 3 0 010-6zm5-5a1 1 0 011 1v.999L15 2a1 1 0 010 2h-1v1a1 1 0 01-2 0V4h-1a1 1 0 010-2h1V1a1 1 0 011-1z"]);
+
+;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/add-parent.js
+/* harmony default export */ const add_parent = (["M7 5H5c-.55 0-1-.45-1-1s.45-1 1-1h2V1c0-.55.45-1 1-1s1 .45 1 1v2h2c.55 0 1 .45 1 1s-.45 1-1 1H9v2c0 .55-.45 1-1 1s-1-.45-1-1V5zm7 9V8h-1V6h2.2a.8.8 0 01.8.8v8.4a.8.8 0 01-.8.8H.8a.8.8 0 01-.8-.8V6.8A.8.8 0 01.8 6H3v2H2v6h12z"]);
 
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/add-row-bottom.js
 /* harmony default export */ const add_row_bottom = (["M6 11h1v1c0 .55.45 1 1 1s1-.45 1-1v-1h1c.55 0 1-.45 1-1s-.45-1-1-1H9V8c0-.55-.45-1-1-1s-1 .45-1 1v1H6c-.55 0-1 .45-1 1s.45 1 1 1zm9-11H1C.45 0 0 .45 0 1v14c0 .55.45 1 1 1h14c.55 0 1-.45 1-1V1c0-.55-.45-1-1-1zm-1 14H2V6h12v8zm0-9H2V2h12v3z"]);
@@ -708,6 +766,9 @@ __webpack_require__.d(__webpack_exports__, {
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/annotation.js
 /* harmony default export */ const annotation = (["M15.52 2.77c.3-.29.48-.7.48-1.15C16 .73 15.27 0 14.38 0c-.45 0-.85.18-1.15.48l-1.34 1.34 2.3 2.3 1.33-1.35zM7.4 10.9l6.21-6.21-2.3-2.3L5.1 8.6l2.3 2.3zM14 14H2V2h6.34l2-2H1C.45 0 0 .45 0 1v14c0 .55.45 1 1 1h14c.55 0 1-.45 1-1V5.66l-2 2V14zM3 13l3.58-1.29-2.29-2.27L3 13z"]);
 
+;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/announcement.js
+/* harmony default export */ const announcement = (["M7 5c-.363-.017-4.16-.009-6.005-.003a.998.998 0 00-.995 1V9a1 1 0 001 1h2v5.057c0 .53.413.946.943.946h.082c.553-.002.999-.451.996-1.004L5 10h2l3.228 3.924c.596.724 1.772.303 1.772-.636V1.762c0-.936-1.17-1.359-1.768-.64L7 5zm8 3c0 1.018-.616 2.046-1.457 2.67-.237.176-.543-.012-.543-.306V5.769c0-.296.31-.484.55-.312C14.384 6.055 15 6.991 15 8z"]);
+
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/antenna.js
 /* harmony default export */ const antenna = (["M2.673 10.758a1.396 1.396 0 01.093.234c.127.442.012.932-.362 1.212-.441.332-1.075.246-1.349-.233a8 8 0 1114.014-.225c-.259.488-.889.594-1.341.277-.382-.269-.513-.755-.4-1.2a1.259 1.259 0 01.085-.238 6 6 0 10-10.74.173zm2.464-1.862a1.783 1.783 0 01.076.404c.03.415-.096.831-.43 1.078-.444.328-1.08.237-1.314-.264a5.003 5.003 0 01-.24-.62l-.004-.011a5 5 0 119.574-.08l-.003.011c-.063.213-.14.422-.23.625-.226.504-.861.606-1.31.285-.338-.241-.47-.654-.448-1.07a1.737 1.737 0 01.07-.405 2.99 2.99 0 00-.216-2.233 3 3 0 00-5.525 2.28zM8 7a1 1 0 011 1v3.586l2.707 2.707a1 1 0 01-1.414 1.414L8 13.414l-2.293 2.293a1 1 0 01-1.414-1.414L7 11.586V8a1 1 0 011-1z"]);
 
@@ -741,6 +802,9 @@ __webpack_require__.d(__webpack_exports__, {
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/array-numeric.js
 /* harmony default export */ const array_numeric = (["M15 0a1 1 0 01.993.883L16 1v14a1 1 0 01-.883.993L15 16h-3a1 1 0 01-.117-1.993L12 14h2V2h-2a1 1 0 01-.993-.883L11 1a1 1 0 01.883-.993L12 0h3zM4 0a1 1 0 01.117 1.993L4 2H2v12h2a1 1 0 01.993.883L5 15a1 1 0 01-.883.993L4 16H1a1 1 0 01-.993-.883L0 15V1A1 1 0 01.883.007L1 0h3zm6.904 5c.256 0 .483.037.68.112a1.343 1.343 0 01.812.788c.072.184.108.385.108.604 0 .23-.05.441-.152.636a1.314 1.314 0 01-.456.492v.016l.08.04c.055.031.111.072.168.124.085.077.163.172.232.284a1.673 1.673 0 01.24.872c0 .25-.043.477-.128.68a1.518 1.518 0 01-.896.852 1.937 1.937 0 01-.68.116c-.427 0-.792-.101-1.096-.304a1.362 1.362 0 01-.584-.864c-.01-.053.01-.088.064-.104l.696-.16.033-.002c.03.002.051.022.063.058.059.16.155.296.288.408.133.112.312.168.536.168.256 0 .453-.076.592-.228a.827.827 0 00.208-.58c0-.277-.08-.495-.24-.652-.16-.157-.376-.236-.648-.236h-.232l-.035-.005c-.03-.01-.045-.035-.045-.075v-.632l.005-.035c.01-.03.035-.045.075-.045h.216l.138-.009a.734.734 0 00.438-.207c.144-.144.216-.336.216-.576a.745.745 0 00-.192-.532c-.128-.136-.307-.204-.536-.204-.203 0-.363.05-.48.152a.815.815 0 00-.248.408c-.016.048-.048.067-.096.056l-.68-.16-.034-.012c-.028-.016-.038-.044-.03-.084a1.347 1.347 0 01.516-.828c.136-.104.296-.185.48-.244A1.98 1.98 0 0110.904 5zm-6.152.088l.035.005c.03.01.045.035.045.075v5.28l-.005.035c-.01.03-.035.045-.075.045h-.736l-.035-.005c-.03-.01-.045-.035-.045-.075V6.16H3.92l-.832.584-.032.016C3.02 6.773 3 6.751 3 6.696V5.88l.006-.04a.157.157 0 01.05-.072l.872-.632.04-.027a.236.236 0 01.104-.021h.68zM7.344 5c.256 0 .483.04.68.12.197.08.364.188.5.324s.24.296.312.48c.072.184.108.383.108.596 0 .245-.045.47-.136.676-.09.205-.216.404-.376.596l-1.584 1.92v.016h2.016l.035.005c.03.01.045.035.045.075v.64l-.005.035c-.01.03-.035.045-.075.045H5.808l-.035-.005c-.03-.01-.045-.035-.045-.075v-.6l.004-.04a.132.132 0 01.036-.064l1.92-2.392.1-.133a1.95 1.95 0 00.156-.267.985.985 0 00.096-.432.736.736 0 00-.188-.512c-.125-.139-.303-.208-.532-.208-.219 0-.39.061-.512.184a.826.826 0 00-.224.496c-.01.053-.04.075-.088.064L5.792 6.4l-.034-.012c-.028-.016-.038-.044-.03-.084a1.425 1.425 0 01.94-1.192A1.88 1.88 0 017.344 5z"]);
 
+;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/array-object.js
+/* harmony default export */ const array_object = (["M4 0a1 1 0 01.117 1.993L4 2H2v12h2a1 1 0 01.993.883L5 15a1 1 0 01-.883.993L4 16H1a1 1 0 01-.993-.883L0 15V1A1 1 0 01.883.007L1 0h3zM15 0a1 1 0 01.993.883L16 1v14a1 1 0 01-.883.993L15 16h-3a1 1 0 01-.117-1.993L12 14h2V2h-2a1 1 0 01-.993-.883L11 1a1 1 0 01.883-.993L12 0h3z", "M6.5 3c-.646 0-1.151.205-1.416.725-.117.23-.16.477-.176.692a5.382 5.382 0 00-.001.622c.017.421.028 1.808-.04 2.024a.48.48 0 01-.126.214.827.827 0 01-.362.184C4.156 7.523 4 7.745 4 8c0 .255.156.477.379.539.192.053.3.124.362.184a.48.48 0 01.126.214c.068.216.057 1.603.04 2.024a5.38 5.38 0 000 .622c.017.215.06.461.177.692.265.52.77.725 1.416.725.276 0 .5-.249.5-.556 0-.306-.224-.555-.5-.555-.467 0-.533-.135-.544-.159l-.001-.001a.655.655 0 01-.051-.24 4.251 4.251 0 01.005-.558c.015-.34.036-1.93-.097-2.358A1.643 1.643 0 005.505 8c.146-.174.244-.371.307-.573.133-.427.112-2.017.097-2.358a.655.655 0 01.046-.798V4.27c.012-.024.078-.159.545-.159.276 0 .5-.249.5-.555C7 3.249 6.776 3 6.5 3zM9.5 3c.646 0 1.152.205 1.416.725.117.23.16.477.176.692.017.213.009.434.001.622-.017.421-.027 1.808.04 2.024.027.09.067.157.126.214.063.06.17.13.362.184.223.062.379.284.379.539 0 .255-.156.477-.379.539a.827.827 0 00-.362.184.481.481 0 00-.126.214c-.067.216-.057 1.603-.04 2.024.008.188.016.409 0 .622-.017.215-.06.461-.177.692-.264.52-.77.725-1.416.725-.276 0-.5-.249-.5-.556 0-.306.224-.555.5-.555.467 0 .533-.135.544-.159l.001-.001a.655.655 0 00.051-.24c.01-.132.006-.284-.002-.478l-.003-.08c-.015-.34-.036-1.93.097-2.358.063-.202.16-.399.307-.573a1.64 1.64 0 01-.307-.573c-.133-.427-.112-2.017-.097-2.358l.003-.08c.008-.194.012-.346.002-.478a.655.655 0 00-.05-.24l-.002-.001c-.011-.024-.077-.159-.544-.159-.276 0-.5-.249-.5-.555C9 3.249 9.224 3 9.5 3z"]);
+
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/array-string.js
 /* harmony default export */ const array_string = (["M15 0a1 1 0 01.993.883L16 1v14a1 1 0 01-.883.993L15 16h-3a1 1 0 01-.117-1.993L12 14h2V2h-2a1 1 0 01-.993-.883L11 1a1 1 0 01.883-.993L12 0h3zM4 0a1 1 0 01.117 1.993L4 2H2v12h2a1 1 0 01.993.883L5 15a1 1 0 01-.883.993L4 16H1a1 1 0 01-.993-.883L0 15V1A1 1 0 01.883.007L1 0h3zm1.61 5c.514 0 .962.212 1.343.637.382.425.573.997.573 1.716 0 .838-.258 1.588-.773 2.252-.514.663-1.327 1.2-2.437 1.609v-.465l.233-.095a3.09 3.09 0 001.274-1.017c.366-.505.55-1.03.55-1.577a.478.478 0 00-.057-.26c-.018-.037-.043-.056-.074-.056s-.08.025-.149.075c-.198.142-.446.214-.744.214-.36 0-.675-.145-.944-.433A1.453 1.453 0 014 6.572c0-.422.155-.79.465-1.102.31-.313.692-.47 1.144-.47zm4.474 0c.514 0 .963.212 1.344.637.381.425.572.997.572 1.716 0 .838-.257 1.588-.772 2.252-.515.663-1.327 1.2-2.437 1.609v-.465l.233-.095a3.09 3.09 0 001.274-1.017c.366-.505.549-1.03.549-1.577a.478.478 0 00-.056-.26c-.019-.037-.044-.056-.075-.056-.03 0-.08.025-.149.075-.198.142-.446.214-.744.214-.36 0-.674-.145-.944-.433a1.453 1.453 0 01-.405-1.028c0-.422.155-.79.466-1.102.31-.313.691-.47 1.144-.47z"]);
 
@@ -770,6 +834,9 @@ __webpack_require__.d(__webpack_exports__, {
 
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/arrow-up.js
 /* harmony default export */ const arrow_up = (["M13.7 6.3l-5-5C8.5 1.1 8.3 1 8 1s-.5.1-.7.3l-5 5c-.2.2-.3.4-.3.7 0 .6.5 1 1 1 .3 0 .5-.1.7-.3L7 4.4V14c0 .6.4 1 1 1s1-.4 1-1V4.4l3.3 3.3c.2.2.4.3.7.3.6 0 1-.4 1-1 0-.3-.1-.5-.3-.7z"]);
+
+;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/arrows-arc.js
+/* harmony default export */ const arrows_arc = (["M3.396.146a.5.5 0 01.708 0l3.182 3.182a.5.5 0 11-.708.708L4.246 1.704v.002c-.008 1.795-.014 3.149.184 4.315.233 1.367.747 2.455 1.923 3.625 1.182 1.176 2.216 1.686 3.546 1.919 1.149.201 2.507.196 4.39.188h.007l-2.332-2.331a.5.5 0 11.708-.708l3.182 3.182a.5.5 0 010 .708l-3.182 3.182a.5.5 0 11-.708-.708l2.325-2.324c-1.866.008-3.325.013-4.563-.204-1.545-.27-2.761-.885-4.079-2.196C4.323 9.037 3.712 7.76 3.445 6.19c-.213-1.25-.208-2.7-.199-4.478L.922 4.036a.5.5 0 11-.708-.708L3.396.146z"]);
 
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/arrows-horizontal.js
 /* harmony default export */ const arrows_horizontal = (["M15.7 7.3l-4-4c-.2-.2-.4-.3-.7-.3-.6 0-1 .5-1 1 0 .3.1.5.3.7L12.6 7H3.4l2.3-2.3c.2-.2.3-.4.3-.7 0-.5-.4-1-1-1-.3 0-.5.1-.7.3l-4 4c-.2.2-.3.4-.3.7s.1.5.3.7l4 4c.2.2.4.3.7.3.6 0 1-.4 1-1 0-.3-.1-.5-.3-.7L3.4 9h9.2l-2.3 2.3c-.2.2-.3.4-.3.7 0 .6.4 1 1 1 .3 0 .5-.1.7-.3l4-4c.2-.2.3-.4.3-.7s-.1-.5-.3-.7z"]);
@@ -814,6 +881,9 @@ __webpack_require__.d(__webpack_exports__, {
 var p = [];
 /* harmony default export */ const blank = (p);
 
+;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/block-promote.js
+/* harmony default export */ const block_promote = (["M3 2h10a1 1 0 011 1v4h1a1 1 0 110 2h-1v4a1 1 0 01-1 1H3a1 1 0 01-1-1V9H1a1 1 0 110-2h1V3a1 1 0 011-1zm5.854 3.146a.5.5 0 10-.708.708L10.293 8l-2.147 2.146a.5.5 0 00.708.708l2.5-2.5a.5.5 0 000-.708l-2.5-2.5zm-4.208 0a.5.5 0 000 .708L6.793 8l-2.147 2.146a.5.5 0 00.708.708l2.5-2.5a.498.498 0 00.144-.306.503.503 0 00-.001-.106.498.498 0 00-.143-.296l-2.5-2.5a.5.5 0 00-.708 0z"]);
+
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/blocked-person.js
 /* harmony default export */ const blocked_person = (["M9.39 12.69c-1.2-.53-1.04-.85-1.08-1.29-.01-.07-.01-.13-.02-.2.41-.37.75-.87.97-1.44 0 0 .01-.03.01-.04.05-.13.09-.26.13-.39.27-.06.43-.36.5-.63.01-.03.03-.08.05-.12C8.18 7.8 6.94 6.04 6.94 4c0-.32.04-.62.09-.92-.17-.03-.35-.08-.51-.08-.65 0-1.37.2-1.88.59-.5.38-.87.92-1.05 1.51-.04.14-.07.27-.09.41-.09.48-.14 1.23-.14 1.74v.06c-.19.08-.36.27-.4.68-.03.31.1.59.16.7.06.28.23.59.51.64.04.14.08.27.13.39 0 .01.01.02.01.02v.01c.22.59.57 1.1.99 1.46 0 .06-.01.12-.01.17-.04.44.08.76-1.12 1.29-1.2.53-3.01 1.1-3.38 1.95C-.12 15.5.03 16 .03 16h12.96s.15-.5-.22-1.36c-.37-.85-2.18-1.42-3.38-1.95zM11.97 0C9.75 0 7.94 1.79 7.94 4s1.8 4 4.03 4S16 6.21 16 4s-1.8-4-4.03-4zM9.96 4c0-1.1.9-2 2.01-2 .37 0 .72.11 1.02.28l-2.75 2.73c-.17-.3-.28-.64-.28-1.01zm2.01 2c-.37 0-.72-.11-1.02-.28l2.75-2.73c.18.3.28.64.28 1.01.01 1.1-.9 2-2.01 2z"]);
 
@@ -837,6 +907,9 @@ var p = [];
 
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/bring-forward.js
 /* harmony default export */ const bring_forward = (["M8.697.29a.99.99 0 00-.7-.29c-.27 0-.53.11-.71.29L4.29 3.28A1.003 1.003 0 005.71 4.7l1.288-1.29L7 7H1a1 1 0 000 2h6v2H1a1 1 0 00-1 1v2a1 1 0 001 1h14a1 1 0 001-1v-2a1 1 0 00-1-1H9V9h6a1 1 0 100-2H9V3.414h-.003V3.41l1.29 1.29c.179.18.429.29.699.29a1.003 1.003 0 00.71-1.71L8.696.29z"]);
+
+;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/british-pound.js
+/* harmony default export */ const british_pound = (["M7.2 1.428A4 4 0 005 5v2H4a1 1 0 000 2h1v1.5c0 1.133-.229 1.79-.457 2.133-.21.315-.413.367-.543.367H3v2h10v-2H6.591c.27-.684.409-1.522.409-2.5V9h3a1 1 0 100-2H7V5a2 2 0 013.732-1l1.732-1a4 4 0 00-4.666-1.815"]);
 
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/bug.js
 /* harmony default export */ const bug = (["M5 3a3 3 0 016 0 5.022 5.022 0 011.425 1.67L13 4.382V3a1 1 0 112 0v2a1 1 0 01-.553.894l-1.46.731c.008.124.013.249.013.375v1h2a1 1 0 110 2h-2a5 5 0 01-.21 1.439l1.581.633A1 1 0 0115 13v2a1 1 0 11-2 0v-1.323l-1.167-.467A4.99 4.99 0 018 15a4.99 4.99 0 01-3.833-1.79L3 13.677V15a1 1 0 11-2 0v-2a1 1 0 01.629-.928l1.581-.633A5 5 0 013 10H1a1 1 0 110-2h2V7c0-.126.005-.251.014-.375l-1.461-.73A1 1 0 011 5V3a1 1 0 012 0v1.382l.575.288A5.023 5.023 0 015 3zm0 6v1a3 3 0 106 0V7a3 3 0 00-6 0v2z"]);
@@ -985,6 +1058,9 @@ var p = [];
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/console.js
 /* harmony default export */ const console = (["M15 15H1c-.55 0-1-.45-1-1V2c0-.55.45-1 1-1h14c.55 0 1 .45 1 1v12c0 .55-.45 1-1 1zM14 5H2v8h12V5zM4 6c.28 0 .53.11.71.29l2 2c.18.18.29.43.29.71s-.11.53-.29.71l-2 2a1.003 1.003 0 01-1.42-1.42L4.59 9l-1.3-1.29A1.003 1.003 0 014 6zm5 4h3c.55 0 1 .45 1 1s-.45 1-1 1H9c-.55 0-1-.45-1-1s.45-1 1-1z"]);
 
+;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/construction.js
+/* harmony default export */ const construction = (["M5 0a1 1 0 011 1v2h4V1a1 1 0 012 0v2h2.038c.216 0 .453 0 .65.022.202.022.584.086.894.396.31.31.374.692.396.893.022.198.022.435.022.65v4.077c0 .216 0 .453-.022.65-.022.202-.085.584-.396.894-.31.31-.692.374-.893.396a6.245 6.245 0 01-.65.022H12v4a1 1 0 11-2 0v-4H6v4a1 1 0 11-2 0v-4H1.962c-.216 0-.453 0-.65-.022-.202-.022-.584-.086-.894-.396-.31-.31-.374-.692-.396-.893A6.244 6.244 0 010 9V5v-.038c0-.216 0-.453.022-.65.022-.202.086-.584.396-.894.31-.31.692-.374.893-.396C1.51 3 1.746 3 1.961 3H4V1a1 1 0 011-1zm0 5h-.882l1.776 3.553.224.447h1.764L6.106 5.447 5.882 5H5zm3.118 0l1.776 3.553.224.447h1.764l-1.776-3.553L9.882 5H8.118zm4 0l1.776 3.553.106.211V5h-1.882zM3.882 9L2.106 5.447 2 5.237V9h1.882z"]);
+
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/contrast.js
 /* harmony default export */ const contrast = (["M15.2 6.4h-1.44c-.13-.47-.32-.92-.56-1.34L14.26 4c.31-.31.31-.82 0-1.13l-1.13-1.13a.803.803 0 00-1.13 0L10.94 2.8c-.42-.24-.86-.42-1.34-.56V.8c0-.44-.36-.8-.8-.8H7.2c-.44 0-.8.36-.8.8v1.44c-.5.14-.96.34-1.4.59l-1-1c-.3-.3-.79-.3-1.09 0L1.83 2.91c-.3.3-.3.79 0 1.09l1 1c-.25.44-.45.9-.59 1.4H.8c-.44 0-.8.36-.8.8v1.6c0 .44.36.8.8.8h1.44c.13.47.32.92.56 1.34L1.74 12c-.31.31-.31.82 0 1.13l1.13 1.13c.31.31.82.31 1.13 0l1.06-1.06c.42.24.86.42 1.34.56v1.44c0 .44.36.8.8.8h1.6c.44 0 .8-.36.8-.8v-1.44c.5-.14.96-.33 1.4-.59l1 1c.3.3.79.3 1.09 0l1.09-1.09c.3-.3.3-.79 0-1.09l-1-1c.25-.43.45-.9.59-1.4h1.44c.44 0 .8-.36.8-.8V7.2a.818.818 0 00-.81-.8zM8 12c-2.21 0-4-1.79-4-4s1.79-4 4-4v8z"]);
 
@@ -1015,8 +1091,14 @@ var p = [];
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/cube-add.js
 /* harmony default export */ const cube_add = (["M14 2h1a1 1 0 010 2h-1v1a1 1 0 01-2 0V4h-1a1 1 0 010-2h1V1a1 1 0 012 0v1zM9.136.65a3.001 3.001 0 00.992 5.222c.018.058.038.115.059.172L8 7.41 1.806 3.54 7.504.283a1 1 0 01.992 0l.64.365zM15 7.235v4.184a1 1 0 01-.504.868L8.5 15.714V8.277l2.187-1.367A2.994 2.994 0 0013 8c.768 0 1.47-.289 2-.764zM1.056 4.25L7.5 8.277v7.437l-5.996-3.426A1 1 0 011 11.42V4.58a1 1 0 01.056-.33z"]);
 
+;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/cube-edit.js
+/* harmony default export */ const cube_edit = (["M8.74 9.203L6.8 7.263l5.022-5.021 1.94 1.94zM5 11.008l1.093-3.033 1.942 1.941zM13.657.4c.251-.243.597-.4.975-.4.763 0 1.376.62 1.368 1.367 0 .385-.15.723-.401.974l-1.132 1.132-1.942-1.94zM8.496.284L10.96 1.69 6.301 6.349l-4.495-2.81L7.504.284a1 1 0 01.992 0", "M1.056 4.25l4.52 2.824-.193.193a1 1 0 00-.256.44L4.059 10.67a1 1 0 001.28 1.28l2.161-.777v4.542l-5.996-3.426A1 1 0 011 11.42V4.58a1 1 0 01.056-.33M8.5 15.714v-4.912a1 1 0 00.314-.258l5.655-5.655.05-.054.46-.46q.021.101.021.205v6.84a1 1 0 01-.504.868z"]);
+
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/cube-remove.js
 /* harmony default export */ const cube_remove = (["M10.365 5.933L8 7.41 1.806 3.54 7.504.283a1 1 0 01.992 0l.64.365a3.001 3.001 0 001.228 5.283zM15 6v5.42a1 1 0 01-.504.868L8.5 15.714V8.277L12.143 6H15zM1.056 4.25L7.5 8.277v7.437l-5.996-3.426A1 1 0 011 11.42V4.58a1 1 0 01.056-.33zM11 2h4a1 1 0 010 2h-4a1 1 0 010-2z"]);
+
+;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/cubes.js
+/* harmony default export */ const cubes = (["M3.978.124a1.12 1.12 0 011.145.073l2.368 1.616c.318.217.509.582.509.973v.668l-.749.305A2.02 2.02 0 006 5.632v.952l-.313-.213a2.12 2.12 0 00-2.164-.138l-2.521 1.29-.493-.336A1.178 1.178 0 010 6.214V2.883c0-.443.245-.848.632-1.046L3.978.124zm3.65 4.561l3.955-1.612a.983.983 0 01.819.035l3.045 1.552c.339.173.553.526.553.912v4.796c0 .417-.249.792-.629.947l-3.954 1.612a.983.983 0 01-.819-.035L7.553 11.34A1.022 1.022 0 017 10.428V5.632c0-.417.249-.792.629-.947z", "M6 7.795v2.633c0 .755.418 1.456 1.099 1.803l.901.46v.426c0 .443-.245.848-.632 1.047l-3.346 1.713a1.12 1.12 0 01-1.145-.074L.509 14.188A1.178 1.178 0 010 13.214v-3.33c0-.444.245-.85.632-1.047l3.346-1.713a1.12 1.12 0 011.145.073L6 7.795z"]);
 
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/curly-braces.js
 /* harmony default export */ const curly_braces = (["M3.62 3.056C4.102 2.25 5 2 6 2a1 1 0 010 2c-.44 0-.615.065-.67.097a.717.717 0 00-.03.17c-.012.153-.005.342.01.612l.008.118c.03.48.074 1.18-.112 1.854-.113.412-.305.801-.596 1.149.29.348.483.737.596 1.149.186.674.142 1.375.112 1.854l-.007.118a4.68 4.68 0 00-.01.613.716.716 0 00.028.169c.056.032.23.097.671.097a1 1 0 110 2c-1 0-1.897-.25-2.38-1.056a2.389 2.389 0 01-.313-1.05 6.495 6.495 0 01.007-.89l.002-.023c.033-.573.056-.96-.038-1.301-.072-.26-.224-.535-.725-.786a1 1 0 010-1.788c.501-.251.653-.526.725-.786.094-.34.071-.728.038-1.301l-.002-.023a6.495 6.495 0 01-.007-.89c.025-.313.097-.692.312-1.05zm1.687 8.828s.007.004.016.015c-.013-.008-.016-.015-.016-.015zm0-7.768s.003-.006.016-.015c-.009.011-.016.015-.016.015zM12.38 3.056C11.898 2.25 11 2 10 2a1 1 0 000 2c.44 0 .615.065.67.097a.72.72 0 01.03.17c.012.153.005.342-.01.612l-.008.118c-.03.48-.074 1.18.112 1.854.113.412.305.801.595 1.149-.29.348-.482.737-.595 1.149-.186.674-.142 1.375-.112 1.854l.007.118c.016.27.023.46.01.613a.719.719 0 01-.028.169c-.056.032-.23.097-.671.097a1 1 0 100 2c1 0 1.897-.25 2.38-1.056.216-.358.288-.737.313-1.05.025-.31.008-.629-.007-.89l-.002-.023c-.033-.573-.056-.96.038-1.301.072-.26.224-.535.725-.786a1 1 0 000-1.788c-.501-.251-.653-.526-.725-.786-.094-.34-.071-.728-.038-1.301l.002-.023c.015-.261.032-.58.007-.89a2.389 2.389 0 00-.312-1.05zm-1.687 8.828s-.007.004-.016.015c.013-.008.016-.015.016-.015zm0-7.768s-.003-.006-.016-.015c.009.011.016.015.016.015z"]);
@@ -1032,6 +1114,9 @@ var p = [];
 
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/dashboard.js
 /* harmony default export */ const dashboard = (["M5 4c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1zM4 7c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1zm4-2c.55 0 1-.45 1-1s-.45-1-1-1-1 .45-1 1 .45 1 1 1zm-2 6c0 1.1.9 2 2 2s2-.9 2-2c0-.53-2-5-2-5s-2 4.47-2 5zM8 0C3.58 0 0 3.58 0 8s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6zm4-9c0-.55-.45-1-1-1s-1 .45-1 1 .45 1 1 1 1-.45 1-1zm0 2c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"]);
+
+;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/data-cloud.js
+/* harmony default export */ const data_cloud = (["M12 4c-.03 0-.07 0-.1.01A5 5 0 002 5c0 .11.01.22.02.33A3.51 3.51 0 000 8.5C0 10.43 1.57 12 3.5 12H7V9c0-.71.551-1.1.806-1.25.32-.19.719-.326 1.123-.427C9.753 7.117 10.839 7 12 7c1.162 0 2.247.117 3.071.323.32.08.636.182.913.315A4 4 0 0012 4z", "M12 10.5c1.133 0 2.176-.114 2.95-.308.383-.096.728-.218.99-.372l.06-.037V12c0 .552-1.79 1-4 1s-4-.448-4-1V9.783l.06.037c.262.154.607.276.99.372.774.194 1.817.308 2.95.308z", "M15.94 12.82l.06-.037V15c0 .552-1.79 1-4 1s-4-.448-4-1v-2.217l.06.037c.262.154.607.276.99.372.774.194 1.817.308 2.95.308 1.133 0 2.176-.114 2.95-.308.383-.096.728-.218.99-.372zM8 9c0 .552 1.79 1 4 1s4-.448 4-1-1.79-1-4-1-4 .448-4 1z"]);
 
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/data-connection.js
 /* harmony default export */ const data_connection = (["M1 9.52c.889.641 2.308 1.133 4.003 1.354L5 11a5.994 5.994 0 002.664 4.988c-.217.008-.44.012-.664.012-3.215 0-5.846-.85-5.993-1.906L1 14V9.52zM11 6c2.762 0 5 2.238 5 5s-2.238 5-5 5-5-2.238-5-5 2.238-5 5-5zm1 1l-4 5h2.5l-.5 3 4-5h-2.5l.5-3zm1-3.48v1.822a6.002 6.002 0 00-7.9 4.556l-.248-.03c-2.168-.28-3.733-.966-3.845-1.774L1 8V3.52C2.22 4.4 4.44 5 7 5s4.78-.6 6-1.48zM7 0c3.31 0 6 .9 6 2s-2.69 2-6 2c-3.32 0-6-.9-6-2s2.68-2 6-2z"]);
@@ -1050,6 +1135,9 @@ var p = [];
 
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/delete.js
 /* harmony default export */ const paths_delete = (["M11.99 4.99a1.003 1.003 0 00-1.71-.71l-2.29 2.3L5.7 4.29a.965.965 0 00-.71-.3 1.003 1.003 0 00-.71 1.71l2.29 2.29-2.29 2.29A1.003 1.003 0 005.7 11.7l2.29-2.29 2.29 2.29a1.003 1.003 0 001.42-1.42L9.41 7.99 11.7 5.7c.18-.18.29-.43.29-.71zm-4-5c-4.42 0-8 3.58-8 8s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.68 6-6 6z"]);
+
+;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/delete-clip.js
+/* harmony default export */ const delete_clip = (["M15.707.293a1 1 0 010 1.414L13.914 3.5l1.793 1.793a1 1 0 01-1.414 1.414L12.5 4.914l-1.793 1.793a1 1 0 01-1.414-1.414L11.086 3.5 9.293 1.707A1 1 0 1110.707.293L12.5 2.086 14.293.293a1 1 0 011.414 0zM0 4a1 1 0 011-1h3.5a1 1 0 010 2H2v2a1 1 0 01-2 0V4zm1 12a1 1 0 01-1-1v-3a1 1 0 112 0v2h2.5a1 1 0 110 2H1zm11 0a1 1 0 001-1v-3a1 1 0 10-2 0v2H9a1 1 0 100 2h3zM9 9.5a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"]);
 
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/delta.js
 /* harmony default export */ const delta = (["M8 0L0 16h16L8 0zM7 5l5 10H2L7 5z"]);
@@ -1083,6 +1171,12 @@ var p = [];
 
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/document.js
 /* harmony default export */ const paths_document = (["M9 0H3c-.55 0-1 .45-1 1v14c0 .55.45 1 1 1h10c.55 0 1-.45 1-1V5L9 0zm3 14H4V2h4v4h4v8z"]);
+
+;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/document-code.js
+/* harmony default export */ const document_code = (["M10 0H3c-.55 0-1 .45-1 1v14c0 .55.45 1 1 1h2.752l-.876-.876-.079-.078c-.302-.3-.66-.656-.797-1.046V2h5v3h3v3.171a3.021 3.021 0 012-.002V4l-4-4zm5.71 13.71l-2 2a1.003 1.003 0 01-1.42-1.42l1.3-1.29-1.3-1.29a1.003 1.003 0 011.42-1.42l2 2c.18.18.29.43.29.71 0 .28-.11.53-.29.71zM10 15c0-.28-.11-.53-.29-.71L8.41 13l1.3-1.29a1.003 1.003 0 00-1.42-1.42l-2 2c-.18.18-.29.43-.29.71 0 .28.11.53.29.71l2 2A1.003 1.003 0 0010 15z"]);
+
+;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/document-locked.js
+/* harmony default export */ const document_locked = (["M3 0h7l4 4v3.533A4.006 4.006 0 0012 7V5H9V2H4v12h3v1.405c0 .204.024.403.07.595H3c-.55 0-1-.45-1-1V1c0-.55.45-1 1-1zm11 12h.48c.275 0 .52.175.52.45v2.955c0 .27-.245.595-.52.595h-5c-.275 0-.48-.325-.48-.595V12.45c0-.275.205-.45.48-.45H10v-1.025C10 9.885 10.895 9 12 9s2 .885 2 1.975V12zm-3-1.015V12h2v-1.015A.993.993 0 0012 10c-.55 0-1 .44-1 .985z"]);
 
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/document-open.js
 /* harmony default export */ const document_open = (["M6 12c0 .55.45 1 1 1s1-.45 1-1V8c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1s.45 1 1 1h1.59L1.3 12.29c-.19.18-.3.43-.3.71a1.003 1.003 0 001.71.71L6 10.41V12zm4-12H4c-.55 0-1 .45-1 1v4h2V2h4v4h4v8H5.24l-1.8 1.8c.16.12.35.2.56.2h10c.55 0 1-.45 1-1V5l-5-5z"]);
@@ -1216,6 +1310,9 @@ var p = [];
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/feed-subscribed.js
 /* harmony default export */ const feed_subscribed = (["M3 2c1.06 0 2.08.16 3.06.45.13-.71.52-1.32 1.05-1.76C5.82.25 4.44 0 3 0c-.55 0-1 .45-1 1s.45 1 1 1zM2 12c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm8.32-6.33a.99.99 0 001.4 0l3.98-3.98c.19-.18.3-.42.3-.7 0-.55-.45-.99-1-.99-.28 0-.52.11-.7.29l-3.28 3.28-1.29-1.29a.99.99 0 00-.7-.29 1 1 0 00-1 .99c0 .27.11.52.29.7l2 1.99zm3.73.53l-.93.93-.02-.02c-.17.17-.35.33-.56.45C13.47 9.16 14 11.02 14 13c0 .55.45 1 1 1s1-.45 1-1c0-2.5-.73-4.82-1.95-6.8zM3 8c-.55 0-1 .45-1 1s.45 1 1 1c1.66 0 3 1.34 3 3 0 .55.45 1 1 1s1-.45 1-1c0-2.76-2.24-5-5-5zm5.91-.91l-.03.03-2-2 .03-.03c-.11-.11-.23-.2-.33-.33A8.9 8.9 0 003 4c-.55 0-1 .45-1 1s.45 1 1 1c3.87 0 7 3.13 7 7 0 .55.45 1 1 1s1-.45 1-1c0-1.87-.57-3.61-1.55-5.06-.61-.11-1.13-.42-1.54-.85z"]);
 
+;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/fighter-jet.js
+/* harmony default export */ const fighter_jet = (["M11.693 2.693a.5.5 0 00.654.047L15.44.42c.093-.07.21.047.14.14l-2.32 3.093a.5.5 0 00.047.654l.34.34a.5.5 0 010 .707l-1.47 1.47a.5.5 0 00-.142.423l.93 6.506a.5.5 0 01-.142.424l-.59.59a.5.5 0 01-.54.11L7.275 13.11a.2.2 0 00-.274.185v2.011a.5.5 0 01-.658.475L4.42 15.14a.5.5 0 01-.332-.573l.392-1.962a.2.2 0 00-.055-.18L4 12l-.424-.424a.2.2 0 00-.181-.055l-1.962.392a.5.5 0 01-.573-.332L.22 9.658A.5.5 0 01.693 9h2.01a.2.2 0 00.186-.274l-1.768-4.42a.5.5 0 01.111-.54l.59-.59a.5.5 0 01.424-.14l6.506.929a.5.5 0 00.424-.142l1.47-1.47a.5.5 0 01.707 0z"]);
+
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/film.js
 /* harmony default export */ const film = (["M15 1h-5v2H6V1H1c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h5v-2h4v2h5c.55 0 1-.45 1-1V2c0-.55-.45-1-1-1zM4 13H2v-2h2v2zm0-3H2V8h2v2zm0-3H2V5h2v2zm0-3H2V2h2v2zm6 6H6V5h4v5zm4 3h-2v-2h2v2zm0-3h-2V8h2v2zm0-3h-2V5h2v2zm0-3h-2V2h2v2z"]);
 
@@ -1233,6 +1330,12 @@ var p = [];
 
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/filter-remove.js
 /* harmony default export */ const filter_remove = (["M12 2c0-.55-.45-1-1-1H1a1.003 1.003 0 00-.71 1.71L4 6.41V12a1.003 1.003 0 001.71.71l2-2c.18-.18.29-.43.29-.71V6.41l3.71-3.71c.18-.17.29-.42.29-.7zm2.41 10l1.29-1.29c.19-.18.3-.43.3-.71a1.003 1.003 0 00-1.71-.71L13 10.59 11.71 9.3A.965.965 0 0011 9a1.003 1.003 0 00-.71 1.71l1.3 1.29-1.29 1.29c-.19.18-.3.43-.3.71a1.003 1.003 0 001.71.71l1.29-1.3 1.29 1.29c.18.19.43.3.71.3a1.003 1.003 0 00.71-1.71L14.41 12z"]);
+
+;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/filter-sort-asc.js
+/* harmony default export */ const filter_sort_asc = (["M16 2c0 .28-.11.53-.29.7L12 6.41V10c0 .28-.11.53-.29.71l-2 2A1.003 1.003 0 018 12V6.41l-3.71-3.7A1.003 1.003 0 015 1h10c.55 0 1 .45 1 1zM5 12.005c-.28 0-.53-.11-.71-.29l-.29-.29v3.576c0 .55-.45 1-1 1s-1-.45-1-1v-3.585l-.29.29a1.002 1.002 0 01-1.42-1.418l2-1.998C2.47 8.11 2.72 8 3 8c.28 0 .53.11.71.29l2 1.997c.18.18.29.43.29.71 0 .559-.45 1.008-1 1.008z"]);
+
+;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/filter-sort-desc.js
+/* harmony default export */ const filter_sort_desc = (["M16 2c0 .28-.11.53-.29.7L12 6.41V10c0 .28-.11.53-.29.71l-2 2A1.003 1.003 0 018 12V6.41l-3.71-3.7A1.003 1.003 0 015 1h10c.55 0 1 .45 1 1zM5 11.995c-.28 0-.53.11-.71.29l-.29.29V8.998C4 8.449 3.55 8 3 8S2 8.45 2 9v3.585l-.29-.29a1.002 1.002 0 00-1.42 1.418l2 1.998c.18.18.43.29.71.29.28 0 .53-.11.71-.29l2-1.997c.18-.18.29-.43.29-.71 0-.558-.45-1.008-1-1.008z"]);
 
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/flag.js
 /* harmony default export */ const flag = (["M2.99 2.99c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1s1-.45 1-1v-11c0-.55-.45-1-1-1zm0-3c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1zm2 3.03v7.23c2.07-2.11 5.92 1.75 9 0V3.02c-3 2.07-6.94-2.03-9 0z"]);
@@ -1333,6 +1436,9 @@ var p = [];
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/geotime.js
 /* harmony default export */ const geotime = (["M12.444 6C10.544 6 9 7.494 9 9.331 9 11.175 12.444 16 12.444 16s3.443-4.825 3.443-6.669C15.881 7.494 14.345 6 12.444 6zm.056 5a1.5 1.5 0 11.001-3.001A1.5 1.5 0 0112.5 11z", "M0 6c0-3.315 2.685-6 6-6a6 6 0 015.923 5.036 4.576 4.576 0 00-1.454.433A4.505 4.505 0 006 1.5 4.504 4.504 0 001.5 6a4.504 4.504 0 006.58 3.99c.093.425.265.913.488 1.435A5.98 5.98 0 016 12c-3.315 0-6-2.685-6-6z", "M6.75 3.75v1.942l1.283 1.276a.752.752 0 01-1.065 1.065l-1.5-1.5A.748.748 0 015.25 6V3.75c0-.412.338-.75.75-.75s.75.338.75.75z"]);
 
+;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/gift-box.js
+/* harmony default export */ const gift_box = (["M6.788.915A3.121 3.121 0 001.801 4.54H1a1 1 0 00-1 1v2a1 1 0 001 1h14a1 1 0 001-1v-2a1 1 0 00-1-1h-.8A3.122 3.122 0 009.211.915l-1 .999c-.073.074-.144.15-.212.23a4.141 4.141 0 00-.213-.23l-.999-1zm5.424 3l-.626.626H9.02a2.14 2.14 0 01.606-1.213l.999-1a1.121 1.121 0 111.586 1.587zm-5.233.626a2.14 2.14 0 00-.606-1.213l-.999-1a1.121 1.121 0 10-1.586 1.587l.626.626H6.98zM6 9.54H1v5a1 1 0 001 1h4v-6zm9 0h-5v6h4a1 1 0 001-1v-5zm-8 0h2v6H7v-6z"]);
+
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/git-branch.js
 /* harmony default export */ const git_branch = (["M12 1c-1.66 0-3 1.34-3 3 0 1.25.76 2.32 1.85 2.77A2.02 2.02 0 019 8H7c-.73 0-1.41.2-2 .55V5.82C6.16 5.4 7 4.3 7 3c0-1.66-1.34-3-3-3S1 1.34 1 3c0 1.3.84 2.4 2 2.82v4.37c-1.16.4-2 1.51-2 2.81 0 1.66 1.34 3 3 3s3-1.34 3-3c0-1.04-.53-1.95-1.32-2.49.35-.31.81-.51 1.32-.51h2c1.92 0 3.52-1.35 3.91-3.15A2.996 2.996 0 0012 1zM4 2c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm0 12c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm8-9c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z"]);
 
@@ -1362,6 +1468,9 @@ var p = [];
 
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/globe-network.js
 /* harmony default export */ const globe_network = (["M8 0C3.58 0 0 3.58 0 8s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm5.17 5h-2.44c-.21-1.11-.51-2.03-.91-2.69 1.43.46 2.61 1.43 3.35 2.69zM10 8c0 .73-.05 1.39-.12 2H6.12C6.05 9.39 6 8.73 6 8s.05-1.39.12-2h3.76c.07.61.12 1.27.12 2zM8 2c.67 0 1.36 1.1 1.73 3H6.27C6.64 3.1 7.33 2 8 2zm-1.82.31c-.4.66-.71 1.58-.91 2.69H2.83a6.025 6.025 0 013.35-2.69zM2 8c0-.7.13-1.37.35-2h2.76C5.04 6.62 5 7.28 5 8s.04 1.38.11 2H2.35C2.13 9.37 2 8.7 2 8zm.83 3h2.44c.21 1.11.51 2.03.91 2.69A6.025 6.025 0 012.83 11zM8 14c-.67 0-1.36-1.1-1.73-3h3.46c-.37 1.9-1.06 3-1.73 3zm1.82-.31c.4-.66.7-1.58.91-2.69h2.44a6.025 6.025 0 01-3.35 2.69zM13.65 10h-2.76c.07-.62.11-1.28.11-2s-.04-1.38-.11-2h2.76c.22.63.35 1.3.35 2s-.13 1.37-.35 2z"]);
+
+;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/globe-network-add.js
+/* harmony default export */ const globe_network_add = (["M6.693 5a2.385 2.385 0 00.767 1H6.12C6.05 6.61 6 7.27 6 8s.05 1.39.12 2h3.76c.053-.46.094-.947.111-1.472a2.384 2.384 0 00.964.76c-.017.244-.039.48-.065.712h2.76c.159-.454.27-.93.32-1.422A2.53 2.53 0 0014.5 7v-.5h.5c.28 0 .563-.042.834-.131A7.998 7.998 0 018 16c-4.42 0-8-3.58-8-8A7.998 7.998 0 019.631.166 2.67 2.67 0 009.5 1v.5H9C7.476 1.5 6.5 2.77 6.5 4v.048c-.086.29-.163.608-.23.952h.423zM5.27 5c.2-1.11.51-2.03.91-2.69A6.025 6.025 0 002.83 5h2.44zM2.35 6C2.13 6.63 2 7.3 2 8s.13 1.37.35 2h2.76C5.04 9.38 5 8.72 5 8s.04-1.38.11-2H2.35zm2.92 5H2.83a6.025 6.025 0 003.35 2.69c-.4-.66-.7-1.58-.91-2.69zm1 0c.37 1.9 1.06 3 1.73 3 .67 0 1.36-1.1 1.73-3H6.27zm4.46 0c-.21 1.11-.51 2.03-.91 2.69A6.025 6.025 0 0013.17 11h-2.44z", "M9 5c-.6 0-1-.4-1-1 0-.5.4-1 1-1h2V1c0-.6.4-1 1-1s1 .4 1 1v2h2c.6 0 1 .4 1 1s-.4 1-1 1h-2v2c0 .6-.4 1-1 1s-1-.4-1-1V5H9z"]);
 
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/graph.js
 /* harmony default export */ const graph = (["M14 3c-1.06 0-1.92.83-1.99 1.88l-1.93.97A2.95 2.95 0 008 5c-.56 0-1.08.16-1.52.43L3.97 3.34C3.98 3.23 4 3.12 4 3c0-1.1-.9-2-2-2s-2 .9-2 2 .9 2 2 2c.24 0 .47-.05.68-.13l2.51 2.09C5.08 7.29 5 7.63 5 8c0 .96.46 1.81 1.16 2.35l-.56 1.69c-.91.19-1.6.99-1.6 1.96 0 1.1.9 2 2 2s2-.9 2-2c0-.51-.2-.97-.51-1.32l.56-1.69A2.99 2.99 0 0011 8c0-.12-.02-.24-.04-.36l1.94-.97c.32.21.69.33 1.1.33 1.1 0 2-.9 2-2s-.9-2-2-2z"]);
@@ -1443,6 +1552,9 @@ var p = [];
 
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/helper-management.js
 /* harmony default export */ const helper_management = (["M13 5h-2v2h2V5zm0 6h-2v2h2v-2zm0-3h-2v2h2V8zm2-8H1C.4 0 0 .4 0 1v14c0 .6.4 1 1 1h14c.6 0 1-.4 1-1V1c0-.6-.4-1-1-1zm-1 14H2V2h12v12zm-7-3H5v2h2v-2zm3 0H8v2h2v-2z"]);
+
+;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/hexagon.js
+/* harmony default export */ const hexagon = (["M3.63 14.496l-3.496-6a.984.984 0 010-.992l3.495-6c.182-.312.52-.504.885-.504h6.972c.366 0 .703.192.885.504l3.495 6c.179.307.179.685 0 .992l-3.495 6c-.182.312-.52.504-.885.504H4.514c-.366 0-.703-.192-.885-.504zm6.377-2.996H5.993L3.954 8l2.04-3.5h4.013L12.046 8l-2.04 3.5zM5.106 13h5.788l2.913-5-2.913-5H5.106L2.193 8l2.913 5zM8 9c.563 0 1.02-.448 1.02-1S8.562 7 8 7s-1.02.448-1.02 1S7.438 9 8 9z"]);
 
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/high-priority.js
 /* harmony default export */ const high_priority = (["M9 14v2H7v-2h2zm1-14L9 12H7L6 0h4z"]);
@@ -1687,6 +1799,9 @@ var p = [];
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/link.js
 /* harmony default export */ const paths_link = (["M4.99 11.99c.28 0 .53-.11.71-.29l6-6a1.003 1.003 0 00-1.42-1.42l-6 6a1.003 1.003 0 00.71 1.71zm3.85-2.02L6.4 12.41l-1 1-.01-.01c-.36.36-.85.6-1.4.6-1.1 0-2-.9-2-2 0-.55.24-1.04.6-1.4l-.01-.01 1-1 2.44-2.44c-.33-.1-.67-.16-1.03-.16-1.1 0-2.09.46-2.81 1.19l-.02-.02-1 1 .02.02c-.73.72-1.19 1.71-1.19 2.81 0 2.21 1.79 4 4 4 1.1 0 2.09-.46 2.81-1.19l.02.02 1-1-.02-.02c.73-.72 1.19-1.71 1.19-2.81 0-.35-.06-.69-.15-1.02zm7.15-5.98c0-2.21-1.79-4-4-4-1.1 0-2.09.46-2.81 1.19l-.02-.02-1 1 .02.02c-.72.72-1.19 1.71-1.19 2.81 0 .36.06.69.15 1.02l2.44-2.44 1-1 .01.01c.36-.36.85-.6 1.4-.6 1.1 0 2 .9 2 2 0 .55-.24 1.04-.6 1.4l.01.01-1 1-2.43 2.45c.33.09.67.15 1.02.15 1.1 0 2.09-.46 2.81-1.19l.02.02 1-1-.02-.02a3.92 3.92 0 001.19-2.81z"]);
 
+;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/linked-squares.js
+/* harmony default export */ const linked_squares = (["M2 3v6a1 1 0 010 2h-.75C.56 11 0 10.44 0 9.75v-7.5C0 1.56.56 1 1.25 1h9.5c.69 0 1.25.56 1.25 1.25v7.5c0 .69-.56 1.25-1.25 1.25H8a1 1 0 110-2h2V3H2z", "M14 13V7a1 1 0 110-2h.75c.69 0 1.25.56 1.25 1.25v7.5c0 .69-.56 1.25-1.25 1.25h-9.5C4.56 15 4 14.44 4 13.75v-7.5C4 5.56 4.56 5 5.25 5H8a1 1 0 110 2H6v6h8z"]);
+
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/list.js
 /* harmony default export */ const list = (["M1 3h14c.55 0 1-.45 1-1s-.45-1-1-1H1c-.55 0-1 .45-1 1s.45 1 1 1zm14 10H1c-.55 0-1 .45-1 1s.45 1 1 1h14c.55 0 1-.45 1-1s-.45-1-1-1zm0-4H1c-.55 0-1 .45-1 1s.45 1 1 1h14c.55 0 1-.45 1-1s-.45-1-1-1zm0-4H1c-.55 0-1 .45-1 1s.45 1 1 1h14c.55 0 1-.45 1-1s-.45-1-1-1z"]);
 
@@ -1733,7 +1848,7 @@ var p = [];
 /* harmony default export */ const map_create = (["M14 6.82v6.32l-2.94-1.96c-.02-.01-.04-.02-.05-.03V6.22c-.08-.07-.15-.16-.22-.24-.28-.02-.54-.08-.79-.16v5.32s-.01 0-.01.01L6 13.53V4.86s.01 0 .01-.01l2.05-1.23C8.02 3.42 8 3.21 8 3c0-.98.47-1.84 1.2-2.39l-3.67 2.2L1.56.17A1.003 1.003 0 000 1v11c0 .35.18.65.45.83l4.49 3a.975.975 0 001.07.02l4.46-2.67 3.97 2.65A1.003 1.003 0 0016 15V5.82c-.25.09-.52.14-.8.16-.33.36-.73.67-1.2.84zm-9 6.64l-3-2v-8.6l2.94 1.96c.02.02.04.03.06.04v8.6zM11 4h1v1c0 .55.45 1 1 1s1-.45 1-1V4h1c.55 0 1-.45 1-1s-.45-1-1-1h-1V1c0-.55-.45-1-1-1s-1 .45-1 1v1h-1c-.55 0-1 .45-1 1s.45 1 1 1z"]);
 
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/map-marker.js
-/* harmony default export */ const map_marker = (["M8.46 0C5.42 0 2.95 2.39 2.95 5.33 2.95 8.28 8.46 16 8.46 16s5.51-7.72 5.51-10.67C13.96 2.39 11.5 0 8.46 0zm0 8a2.5 2.5 0 010-5 2.5 2.5 0 010 5z"]);
+/* harmony default export */ const map_marker = (["M8 0C4.96 0 2.49 2.39 2.49 5.33 2.49 8.28 8 16 8 16s5.51-7.72 5.51-10.67C13.5 2.39 11.04 0 8 0zm0 8a2.5 2.5 0 010-5 2.5 2.5 0 010 5z"]);
 
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/maximize.js
 /* harmony default export */ const maximize = (["M5.99 8.99c-.28 0-.53.11-.71.29l-3.29 3.29v-1.59c0-.55-.45-1-1-1s-1 .45-1 1v4c0 .55.45 1 1 1h4c.55 0 1-.45 1-1s-.45-1-1-1H3.41L6.7 10.7a1.003 1.003 0 00-.71-1.71zm9-9h-4c-.55 0-1 .45-1 1s.45 1 1 1h1.59l-3.3 3.3a.99.99 0 00-.29.7 1.003 1.003 0 001.71.71l3.29-3.29V5c0 .55.45 1 1 1s1-.45 1-1V1c0-.56-.45-1.01-1-1.01z"]);
@@ -1843,6 +1958,9 @@ var p = [];
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/notifications.js
 /* harmony default export */ const notifications = (["M8 16c1.1 0 2-.9 2-2H6c0 1.1.9 2 2 2zm6-5c-.55 0-1-.45-1-1V6c0-2.43-1.73-4.45-4.02-4.9 0-.04.02-.06.02-.1 0-.55-.45-1-1-1S7 .45 7 1c0 .04.02.06.02.1A4.992 4.992 0 003 6v4c0 .55-.45 1-1 1s-1 .45-1 1 .45 1 1 1h12c.55 0 1-.45 1-1s-.45-1-1-1z"]);
 
+;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/notifications-add.js
+/* harmony default export */ const notifications_add = (["M8.98 1.1l.007.001-.008.028a3.001 3.001 0 000 5.742A3.001 3.001 0 0013 8.771V10c0 .55.45 1 1 1s1 .45 1 1-.45 1-1 1H2c-.55 0-1-.45-1-1s.45-1 1-1 1-.45 1-1V6c0-2.43 1.73-4.45 4.02-4.9a.148.148 0 00-.01-.05C7.005 1.035 7 1.02 7 1c0-.55.45-1 1-1s1 .45 1 1c0 .02-.005.035-.01.05a.148.148 0 00-.01.05zM8 16c1.1 0 2-.9 2-2H6c0 1.1.9 2 2 2zm6-13h-1V2a1 1 0 10-2 0v1h-1a1 1 0 000 2h1v1a1 1 0 102 0V5h1a1 1 0 100-2z"]);
+
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/notifications-snooze.js
 /* harmony default export */ const notifications_snooze = (["M9 14c0 1.1-.9 2-2 2s-2-.9-2-2zM7 0c.404 0 .755.243.912.59L7.9.6c-.7.6-.9 1.36-.9 1.9 0 .8.267 1.433.8 1.9-.533.6-.795 1.222-.784 1.867l.004.358A2.8 2.8 0 009.82 9.4L12 9.399V10c0 .51.388.935.884.993L13 11c.55 0 1 .45 1 1s-.45 1-1 1H1c-.55 0-1-.45-1-1s.45-1 1-1 1-.45 1-1V6c0-2.43 1.73-4.45 4.02-4.9L6 1c0-.55.45-1 1-1z", "M13 6.702a.632.632 0 00-.632-.632h-1.743l2.208-2.734A.75.75 0 0013 2.864v-.3A.565.565 0 0012.435 2H9.561a.561.561 0 100 1.123h1.814L9.221 5.795A1 1 0 009 6.423v.279c0 .349.283.631.632.631h2.736A.632.632 0 0013 6.702z"]);
 
@@ -1854,6 +1972,9 @@ var p = [];
 
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/numerical.js
 /* harmony default export */ const numerical = (["M2.79 4.61c-.13.17-.29.3-.48.41-.18.11-.39.18-.62.23-.23.04-.46.07-.71.07v1.03h1.74V12h1.26V4h-.94c-.04.23-.12.44-.25.61zm4.37 5.31c.18-.14.37-.28.58-.42l.63-.45c.21-.16.41-.33.61-.51s.37-.38.52-.59c.15-.21.28-.45.37-.7.09-.25.13-.54.13-.85 0-.25-.04-.52-.12-.8-.07-.29-.2-.55-.39-.79a2.18 2.18 0 00-.73-.6c-.29-.15-.66-.23-1.11-.23-.41 0-.77.08-1.08.23-.31.16-.58.37-.79.64-.22.27-.38.59-.49.96-.11.37-.16.77-.16 1.2h1.19c.01-.27.03-.53.08-.77.04-.24.11-.45.21-.62.09-.18.22-.32.38-.42.16-.1.35-.15.59-.15.26 0 .47.05.63.14.15.09.28.21.37.35.09.14.15.29.18.45.03.16.05.31.05.45-.01.31-.08.58-.22.82-.14.23-.32.45-.53.65-.22.21-.46.39-.71.57-.26.18-.51.36-.75.54-.5.36-.89.78-1.17 1.27-.28.49-.43 1.06-.44 1.71h5v-1.15H6.43c.05-.17.14-.33.27-.49.13-.15.29-.29.46-.44zm8.5-1.56c-.23-.35-.54-.57-.95-.65v-.02c.34-.13.6-.34.76-.63.16-.29.24-.63.24-1.02 0-.34-.06-.64-.19-.9s-.3-.47-.51-.64c-.21-.17-.45-.3-.72-.38-.27-.09-.54-.13-.82-.13-.36 0-.68.07-.96.2-.28.13-.53.32-.72.55-.2.23-.36.51-.47.83-.11.32-.18.66-.19 1.04h1.15c-.01-.2.01-.39.06-.58.05-.19.12-.36.22-.51.1-.15.22-.27.37-.36.15-.09.32-.13.53-.13.32 0 .59.1.79.3.21.2.31.46.31.79 0 .23-.05.43-.14.59-.09.16-.21.29-.35.38-.15.09-.32.16-.51.19-.19.04-.38.05-.57.04v.93c.23-.01.45 0 .67.02.22.02.42.08.59.17.18.09.32.23.43.4.11.18.16.41.16.71 0 .44-.13.78-.39 1.02s-.58.36-.97.36c-.45 0-.79-.16-1.02-.47-.23-.31-.33-.7-.32-1.17H11c.01.4.06.77.17 1.1.11.33.26.61.47.85.21.23.46.42.77.54.31.13.67.19 1.08.19.34 0 .66-.05.96-.16.3-.11.57-.27.8-.47.23-.2.41-.45.55-.74.13-.27.2-.6.2-.97 0-.5-.11-.92-.34-1.27z"]);
+
+;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/object-view.js
+/* harmony default export */ const object_view = (["M1 0a1 1 0 00-1 1v3h2V2h2V0H1zM0 15v-3h2v2h2v2H1a1 1 0 01-1-1zM15 16h-3v-2h2v-2h2v3a1 1 0 01-1 1zM16 1v3h-2V2h-2V0h3a1 1 0 011 1zM8 7l4.5-2.5-4.108-2.407a.823.823 0 00-.76 0L3.57 4.394 8 7zM12.955 5c.026.074.04.153.04.234v4.834a.707.707 0 01-.357.614L8.4 13V7.847L12.955 5zM7.594 7.743L3.04 5c-.026.074-.04.227-.04.308v4.656c0 .254.136.488.356.614L7.594 13V7.743z"]);
 
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/office.js
 /* harmony default export */ const office = (["M15 5h-3V1c0-.55-.45-1-1-1H1C.45 0 0 .45 0 1v14c0 .55.45 1 1 1h3v-4h4v4h7c.55 0 1-.45 1-1V6c0-.55-.45-1-1-1zM5 10H2V7h3v3zm0-5H2V2h3v3zm5 5H7V7h3v3zm0-5H7V2h3v3zm4 9h-2v-2h2v2zm0-4h-2V7h2v3z"]);
@@ -1882,8 +2003,17 @@ var p = [];
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/output.js
 /* harmony default export */ const output = (["M8 16c-4.41 0-8-3.582-8-8.005C0 3.572 3.59 0 8 0c.94 0 1.86.16 2.74.48.52.19.79.76.6 1.281-.19.52-.76.79-1.28.6a6.007 6.007 0 00-8.05 5.644 6.007 6.007 0 008.05 5.643.997.997 0 011.28.6.998.998 0 01-.6 1.282c-.88.32-1.8.47-2.74.47z", "M15.71 7.295c.18.18.29.43.29.71 0 .28-.11.53-.29.71l-3 3.002a1.003 1.003 0 01-1.71-.71c0-.28.11-.53.3-.71l1.29-1.291H5c-.55 0-1-.45-1-1.001 0-.55.45-1 1-1h7.59l-1.3-1.291a1.003 1.003 0 011.42-1.42l3 3z"]);
 
+;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/package.js
+/* harmony default export */ const paths_package = (["M9.8.15l5.1 2.6c.7.3 1.1 1 1.1 1.8v6.8c0 .8-.5 1.6-1.3 1.9l-6.9 2.6c-.5.2-1.1.2-1.6 0l-5.1-2.6c-.7-.3-1.1-1-1.1-1.8v-6.8c0-.8.5-1.6 1.3-1.9L8.2.15c.5-.2 1.1-.2 1.6 0zM12 6.193V9.9l-2 .8V6.943l-2 .75v6.018l6-2.261V5.443l-2 .75z"]);
+
+;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/page-break.js
+/* harmony default export */ const page_break = (["M14 0h-2v3H4V0H2v4c0 .55.45 1 1 1h10c.55 0 1-.45 1-1V0zM2 16h2v-3h8v3h2v-4c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v4z"]);
+
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/page-layout.js
 /* harmony default export */ const page_layout = (["M15 .95H1c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h14c.55 0 1-.45 1-1v-12c0-.55-.45-1-1-1zm-9 12H2v-6h4v6zm8 0H7v-6h7v6zm0-7H2v-3h12v3z"]);
+
+;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/panel.js
+/* harmony default export */ const panel = (["M1 16h14c.55 0 1-.45 1-1V1c0-.55-.45-1-1-1H1C.45 0 0 .45 0 1v14c0 .55.45 1 1 1zM2 2h12v12H2V2zm7 11h4V3H9v10z"]);
 
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/panel-stats.js
 /* harmony default export */ const panel_stats = (["M10 4h3v1h-3zM10 6h3v1h-3zM10 8h3v1h-3zM10 10h3v1h-3z", "M15 1H1c-.6 0-1 .4-1 1v11c0 .6.4 1 1 1h14c.6 0 1-.4 1-1V2c0-.6-.4-1-1-1zM8 12H2V3h6v9zm6 0H9V3h5v9z"]);
@@ -1927,11 +2057,20 @@ var p = [];
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/phone-forward.js
 /* harmony default export */ const phone_forward = (["M15.916 12.41c-.06-.06-3.373-2-3.483-2.05a.795.795 0 00-.32-.08c-.15 0-.34.11-.57.32-.23.22-.941 1.19-1.152 1.4-.21.22-.38.32-.52.32a.69.69 0 01-.25-.06c-.1-.04-1.161-.58-3.363-2.52-2.202-1.929-2.492-3.199-2.502-3.549 0-.14.11-.31.32-.52.22-.21.45-.41.7-.6.25-.19.491-.4.701-.62.22-.23.32-.42.32-.57 0-.109-.03-.209-.08-.319-.05-.1-2.051-3.41-2.121-3.48-.15-.15-.741-.08-1.041.08-2.392 1.3-2.582 3.04-2.552 3.73.04.71.49 4.459 4.163 7.948C8.73 16.17 11.903 16 12.113 16c.69 0 2.822-.38 3.723-2.55.13-.32.25-.87.08-1.04z", "M15.71 4.3l-2-2A.965.965 0 0013 2a1.003 1.003 0 00-.71 1.71l.29.29H9c-.55 0-1 .45-1 1s.45 1 1 1h3.59l-.29.29a1.003 1.003 0 001.42 1.42l2-2c.18-.18.29-.43.29-.71 0-.28-.12-.52-.3-.7z"]);
 
+;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/phone-search.js
+/* harmony default export */ const phone_search = (["M3 0h8c.55 0 1 .45 1 1v.598A5.487 5.487 0 009.5 1a5.486 5.486 0 00-4.246 2H4v9h6v-.023a5.41 5.41 0 001.705-.447l.295.294V15c0 .55-.45 1-1 1H3c-.55 0-1-.45-1-1V1c0-.55.45-1 1-1zm3 14c0 .55.45 1 1 1s1-.45 1-1-.45-1-1-1-1 .45-1 1zm5.89-3.7a4.498 4.498 0 01-2.39.7C7.01 11 5 8.99 5 6.5c0-1.415.65-2.676 1.668-3.5.772-.626 1.757-1 2.832-1A4.491 4.491 0 0114 6.5c0 .88-.26 1.69-.7 2.39l2.41 2.4A1.003 1.003 0 0115 13c-.28 0-.53-.11-.7-.29l-2.41-2.41zM12 6.5a2.5 2.5 0 10-5.002 0A2.5 2.5 0 0012 6.5z"]);
+
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/pie-chart.js
 /* harmony default export */ const pie_chart = (["M7 1.08c-3.37.5-5.97 3.4-5.97 6.92 0 3.87 3.13 7 6.98 7 3.52 0 6.42-2.61 6.91-6H7V1.08z", "M8 0v8h8c0-4.42-3.58-8-8-8z"]);
 
+;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/pill.js
+/* harmony default export */ const pill = (["M4 4h3.273c.401 0 .727.326.727.727v6.546a.727.727 0 01-.727.727H4a4 4 0 010-8zm12 4a4 4 0 01-4 4H9.636A.636.636 0 019 11.364V4.636C9 4.285 9.285 4 9.636 4H12a4 4 0 014 4zm-4-2h-1v4h1a2 2 0 100-4z"]);
+
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/pin.js
 /* harmony default export */ const pin = (["M9.41.92c-.51.51-.41 1.5.15 2.56L4.34 7.54C2.8 6.48 1.45 6.05.92 6.58l3.54 3.54-3.54 4.95 4.95-3.54 3.54 3.54c.53-.53.1-1.88-.96-3.42l4.06-5.22c1.06.56 2.04.66 2.55.15L9.41.92z"]);
+
+;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/pistol.js
+/* harmony default export */ const pistol = (["M2.477 7.618c.275.55-.263 1.505-.879 2.6-.634 1.126-1.35 2.4-1.35 3.53 0 .18.19.34.349.442.132.085.29.116.446.116h2.875a.788.788 0 00.788-.789c0-.209.083-.41.231-.557l.13-.13a.673.673 0 00.197-.475c0-.178.07-.35.197-.476l.081-.081a.951.951 0 00.279-.673v-.163c0-.308.25-.558.557-.558h2.787c.615 0 1.114-.499 1.114-1.114V8.175c0-.616.5-1.115 1.115-1.115H14.738c.616 0 1.115-.499 1.115-1.114v-.894c0-.066.026-.13.073-.175A.244.244 0 0016 4.702v-.394a.355.355 0 00-.074-.217.355.355 0 01-.073-.217v-.158a.557.557 0 00-.558-.557h-.278a.279.279 0 01-.279-.278.279.279 0 00-.279-.28h-.115a.394.394 0 00-.279.116l-.163.164a.951.951 0 01-.673.278H2.708a.557.557 0 01-.394-.163.557.557 0 00-.788 0 .557.557 0 01-.395.163H.805a.557.557 0 00-.557.557v1.967c0 .173-.042.342-.106.503-.128.328-.284.874.106.874.09 0 .198-.005.319-.012.628-.033 1.583-.083 1.91.57zm3.657 2.229h2.57c.295 0 .578-.117.787-.326l.15-.15a.279.279 0 00.081-.197v-.537c0-.296-.117-.58-.326-.788l-.15-.15a.279.279 0 00-.197-.081H7.772a.279.279 0 00-.28.278v.195c0 .055.017.108.048.154l.295.443c.169.253-.133.555-.387.386l-.442-.295a.279.279 0 00-.155-.047h-.35a.122.122 0 01-.123-.122c0-.144-.206-.17-.24-.03l-.241.963a.244.244 0 00.237.304zM1.81 5a.25.25 0 00-.208.111l-.167.25a.25.25 0 00.208.389h12.9a.25.25 0 00.207-.111l.167-.25A.25.25 0 0014.71 5H1.811z"]);
 
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/pivot.js
 /* harmony default export */ const pivot = (["M4.57 7.02L.3 11.29c-.19.18-.3.43-.3.71a1.003 1.003 0 001.71.71l4.27-4.27c-.58-.35-1.07-.84-1.41-1.42zM15 8c-.55 0-1 .45-1 1v.59l-2.57-2.57c-.34.58-.83 1.07-1.41 1.41L12.59 11H12c-.55 0-1 .45-1 1s.45 1 1 1h3c.55 0 1-.45 1-1V9c0-.55-.45-1-1-1zm-4-3c0-1.66-1.34-3-3-3S5 3.34 5 5s1.34 3 3 3 3-1.34 3-3zM8 6c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z"]);
@@ -2056,6 +2195,15 @@ var p = [];
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/rocket-slant.js
 /* harmony default export */ const rocket_slant = (["M3.992 10c2-5 5-9 11-9 0 6-4 9-9 11l-2-2zm7.714-4.285a1 1 0 11-1.414-1.414 1 1 0 011.414 1.414zm-6.555-.218L2.992 6l-3 2L3.24 9.195c.542-1.301 1.166-2.556 1.911-3.698zM7.992 16l-1.236-3.232c1.3-.539 2.552-1.158 3.694-1.898L9.992 13l-2 3zm-4.931-4.94L5 13c-.992.991-2.186 1.154-3.001 1-.154-.815.07-1.948 1.06-2.94z"]);
 
+;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/root-folder.js
+/* harmony default export */ const root_folder = (["M2 1v5H1a1 1 0 00-1 1v8a1 1 0 001 1h10a1 1 0 001-1v-3h3a1 1 0 001-1V3c0-.55-.45-1-1-1H9.42L7.71.3A.966.966 0 007 0H3c-.55 0-1 .45-1 1zm6.596 3H14v6h-2V7a1 1 0 00-1-1H4V2h2.584l2.012 2zM7 8h2l-4 6H3l4-6z"]);
+
+;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/rotate-ccw.js
+/* harmony default export */ const rotate_ccw = (["M14.635 7.672a.609.609 0 01-.03.828l-3.462 3.46a.609.609 0 00.861.862l3.461-3.461c.677-.677.716-1.76.091-2.485l-2.652-3.072h1.105a.609.609 0 100-1.217h-2.435a.609.609 0 00-.609.609V5.63a.609.609 0 001.218 0v-.798l2.452 2.84zM10.293 7.293a1 1 0 010 1.414L6.05 12.95a1 1 0 01-1.414 0L.393 8.707a1 1 0 010-1.414L4.636 3.05a1 1 0 011.414 0l4.243 4.243z"]);
+
+;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/rotate-cw.js
+/* harmony default export */ const rotate_cw = (["M1.365 7.672a.609.609 0 00.03.828l3.461 3.46a.609.609 0 11-.86.862L.535 9.36a1.826 1.826 0 01-.091-2.485l2.652-3.072H1.991a.609.609 0 010-1.217h2.435c.336 0 .609.272.609.609V5.63a.609.609 0 11-1.218 0v-.798l-2.452 2.84z", "M15.293 7.293a1 1 0 010 1.414L11.05 12.95a1 1 0 01-1.414 0L5.393 8.707a1 1 0 010-1.414L9.636 3.05a1 1 0 011.414 0l4.243 4.243z"]);
+
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/rotate-document.js
 /* harmony default export */ const rotate_document = (["M12 2h-1.59l.29-.29c.19-.18.3-.43.3-.71A1.003 1.003 0 009.29.29l-2 2C7.11 2.47 7 2.72 7 3c0 .28.11.53.29.71l2 2a1.003 1.003 0 001.42-1.42l-.3-.29H12c.55 0 1 .45 1 1v3c0 .55.45 1 1 1s1-.45 1-1V5c0-1.66-1.34-3-3-3zM5.71 5.29A.997.997 0 005 5H1c-.55 0-1 .45-1 1v9c0 .55.45 1 1 1h7c.55 0 1-.45 1-1V9c0-.28-.11-.53-.29-.71l-3-3zM7 14H2V7h2v2c0 .55.45 1 1 1h2v4z"]);
 
@@ -2064,6 +2212,9 @@ var p = [];
 
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/route.js
 /* harmony default export */ const route = (["M11.669 5.066l.099.189c.113.213.236.434.367.661.226.39.468.78.709 1.151l-.198-.004-.48-.004c-1.745.003-2.369.233-2.369.688 0 .053.226.19 1.038.436l.84.24C13.9 9.064 15 9.83 15 11.63c0 2.123-1.607 3.122-4.027 3.366-.651.065-1.266.075-2.043.05l-.958-.035H5.196l.268-.406c.336-.517.672-1.052.998-1.593h1.636l.572.023c.857.036 1.475.034 2.103-.03 1.526-.153 2.227-.59 2.227-1.375 0-.531-.402-.84-1.66-1.22l-.691-.198c-1.04-.293-1.764-.562-2.222-.946C8.8 8.366 9 7.612 9 6.997a5.03 5.03 0 00-.184-1.334c.645-.395 1.598-.562 2.853-.597zM4 3a4.007 4.007 0 014 3.997C8 9.21 4 15 4 15l-.416-.62C2.56 12.827 0 8.767 0 6.997A4.002 4.002 0 014 3zm0 2a2 2 0 10.001 4.001A2 2 0 004 5zm10-4c1.103 0 1.996.896 2 1.999C16 4.105 14 7 14 7l-.293-.44C13.15 5.707 12 3.838 12 2.999 12 1.896 12.897 1 14 1z"]);
+
+;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/run-history.js
+/* harmony default export */ const run_history = (["M2 8a6 6 0 016-6V0a8 8 0 106 13.291V14a1 1 0 102 0v-3a1 1 0 00-1-1h-3a1 1 0 100 2h.472A5.977 5.977 0 018 14a6 6 0 01-6-6zm14-.07l-2 .02a6.085 6.085 0 00-.218-1.557l1.928-.532a8.072 8.072 0 01.29 2.07zm-1.105-3.992l-1.723 1.016a5.992 5.992 0 00-.965-1.233l1.4-1.427c.496.486.93 1.038 1.288 1.644zm-2.956-2.901l-.986 1.74a5.99 5.99 0 00-1.451-.588l.501-1.936a7.99 7.99 0 011.936.784zM7.555 5.168A1 1 0 006 6v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"]);
 
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/satellite.js
 /* harmony default export */ const satellite = (["M3 9c0-.6.4-1 1-1s1 .4 1 1c0 1.1.9 2 2 2 .6 0 1 .4 1 1s-.4 1-1 1c-2.2 0-4-1.8-4-4zM0 9c0-.6.4-1 1-1s1 .4 1 1c0 2.8 2.2 5 5 5 .6 0 1 .4 1 1s-.4 1-1 1c-3.9 0-7-3.1-7-7zm7 1c-.6 0-1-.4-1-1s.4-1 1-1 1 .4 1 1-.4 1-1 1zm1.3-2.8c-.4-.4-.4-1 0-1.4l4.5-4.5c.4-.4 1-.4 1.4 0l.5.5c.4.4.4 1 0 1.4l-4.5 4.5c-.4.4-1 .4-1.4 0l-.5-.5zM5.2.3c.4-.4 1-.4 1.4 0l2.1 2.1c.4.4.4 1 0 1.4l-.9.9c-.4.4-1 .4-1.4 0L4.3 2.6c-.4-.4-.4-1 0-1.4l.9-.9zm7 7c.4-.4 1-.4 1.4 0l2.1 2.1c.4.4.4 1 0 1.4l-.9.9c-.4.4-1 .4-1.4 0l-2.1-2.1c-.4-.4-.4-1 0-1.4l.9-.9z"]);
@@ -2094,6 +2245,15 @@ var p = [];
 
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/selection.js
 /* harmony default export */ const selection = (["M8 0C3.58 0 0 3.58 0 8s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6zm0-9C6.34 5 5 6.34 5 8s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"]);
+
+;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/selection-box.js
+/* harmony default export */ const selection_box = (["M10 2H6V0h4v2zM0 6v4h2V6H0zm6 10h4v-2H6v2zm8-6V6h2v4h-2zM2 0H1a1 1 0 00-1 1v3h2V2h2V0H2zM0 15v-3h2v2h2v2H1a1 1 0 01-1-1zm14 1h1a1 1 0 001-1v-3h-2v2h-2v2h2zm2-15v3h-2V2h-2V0h3a1 1 0 011 1z"]);
+
+;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/selection-box-add.js
+/* harmony default export */ const selection_box_add = (["M6 2h4V0H6v2zm-6 8V6h2v4H0zM1 0h3v2H2v2H0V1a1 1 0 011-1zM0 14v1a1 1 0 001 1h3v-2H2v-2H0v2zm10 0v2H6v-2h4zm6-8h-2v4h2V6zm-1 10h-3v-2h2v-2h2v3a1 1 0 01-1 1zm1-14V1a1 1 0 00-1-1h-3v2h2v2h2V2zM7 5a1 1 0 012 0v2h2a1 1 0 110 2H9v2a1 1 0 11-2 0V9H5a1 1 0 010-2h2V5z"]);
+
+;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/selection-box-edit.js
+/* harmony default export */ const selection_box_edit = (["M10 2H6V0h4v2zM0 6v4h2V6H0zm6 10h4v-2H6v2zm8-10h2v4h-2V6zM2 0H1a1 1 0 00-1 1v3h2V2h2V0H2zM0 15v-3h2v2h2v2H1a1 1 0 01-1-1zm14 1h1a1 1 0 001-1v-3h-2v2h-2v2h2zM8.72 9.224l-1.943-1.94 5.268-5.265 1.934 1.949-5.26 5.256zm-.685.684L5 11l1.1-3.01 1.935 1.918zM13.657.4c.252-.244.597-.401.975-.401.763 0 1.376.62 1.368 1.367 0 .385-.15.723-.401.974l-1.132 1.132-1.942-1.94L13.657.4z"]);
 
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/send-backward.js
 /* harmony default export */ const send_backward = (["M7.303 15.71c.18.18.43.29.7.29.27 0 .53-.11.71-.29l2.997-2.99a1.003 1.003 0 00-1.42-1.42l-1.288 1.29L9 9h6a1 1 0 100-2H9V5h6a1 1 0 001-1V2a1 1 0 00-1-1H1a1 1 0 00-1 1v2a1 1 0 001 1h6v2H1a1 1 0 100 2h6v3.586h.003v.004l-1.29-1.29a.99.99 0 00-.699-.29 1.003 1.003 0 00-.71 1.71l2.999 2.99z"]);
@@ -2127,6 +2287,12 @@ var p = [];
 
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/series-search.js
 /* harmony default export */ const series_search = (["M9.6 8.94a4.937 4.937 0 001.82.01c.1-.01.22-.04.39-.08l.23-.07c.04-.01.08-.02.11-.04l.22.22-2.7 2.72c-.18.19-.43.3-.71.3s-.53-.11-.71-.3L4.98 8.41l-2.99 3V13h12.94c.55 0 1 .45 1 1s-.45 1-1 1H1c-.55 0-1-.45-1-1V3.99c0-.55.45-1 1-1s1 .45 1 1v4.59l2.28-2.3c.17-.18.42-.29.7-.29s.53.11.7.29l3.28 3.3.64-.64zm6.22-.41c.1.12.17.27.18.44 0 .34-.27.61-.61.61a.57.57 0 01-.43-.18l-2.24-2.25c-.13.08-.26.16-.4.23-.02.01-.05.02-.07.03-.14.06-.27.12-.42.17h-.01c-.14.05-.29.08-.44.11-.04.01-.08.02-.11.02-.15.02-.3.04-.46.04-1.85 0-3.35-1.51-3.35-3.37S8.96 1.01 10.81 1c1.85 0 3.35 1.51 3.35 3.37 0 .16-.02.31-.04.47-.01.04-.01.07-.02.11-.02.15-.05.29-.1.44v.01c-.05.15-.11.28-.17.42-.01.02-.02.05-.03.07-.07.14-.14.27-.23.4l2.25 2.24zm-5.01-1.94c1.22 0 2.21-.99 2.21-2.22 0-1.23-.99-2.22-2.21-2.22S8.6 3.14 8.6 4.37c0 1.22.99 2.22 2.21 2.22z"]);
+
+;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/server.js
+/* harmony default export */ const server = (["M11 0a1 1 0 011 1v10a1 1 0 01-1 1H5a1 1 0 01-1-1V1a1 1 0 011-1h6zm-1 2.667C10 2.3 9.7 2 9.333 2h-.666C8.3 2 8 2.3 8 2.667v.666C8 3.7 8.3 4 8.667 4h.666C9.7 4 10 3.7 10 3.333v-.666zm0 3.666v-.666C10 5.3 9.7 5 9.333 5h-.666C8.3 5 8 5.3 8 5.667v.666C8 6.7 8.3 7 8.667 7h.666C9.7 7 10 6.7 10 6.333zm0 2.334C10 8.3 9.7 8 9.333 8h-.666C8.3 8 8 8.3 8 8.667v.666c0 .367.3.667.667.667h.666C9.7 10 10 9.7 10 9.333v-.666z", "M.446 10.358L3 8.66V11a2 2 0 002 2h6a2 2 0 002-2V8.66l2.554 1.698a.999.999 0 01.189 1.502l-3.436 3.809c-.19.21-.46.331-.745.331H4.438c-.284 0-.555-.12-.745-.331l-3.436-3.81a.999.999 0 01.19-1.5z"]);
+
+;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/server-install.js
+/* harmony default export */ const server_install = (["M14.29 4.296a1.002 1.002 0 011.42 1.419l-3 2.996a1.015 1.015 0 01-1.42 0l-3-2.997a1.002 1.002 0 011.42-1.419L11 5.586V1a1 1 0 012 0v4.584l1.29-1.288z", "M7.583 6.422l3.01 3.006.01.01c.359.34.85.563 1.397.563V11a1 1 0 01-1 1H5a1 1 0 01-1-1V1a1 1 0 011-1h5.268A1.99 1.99 0 0010 1v2.27a2.002 2.002 0 00-2.417 3.152z", "M13 9.736c.152-.087.293-.193.417-.317l.29-.29 1.847 1.23a.999.999 0 01.189 1.5l-3.436 3.81c-.19.21-.46.331-.745.331H4.438c-.284 0-.555-.12-.745-.331l-3.436-3.81a.999.999 0 01.19-1.5L3 8.659V11a2 2 0 002 2h6a2 2 0 002-2V9.736z"]);
 
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/settings.js
 /* harmony default export */ const settings = (["M3 1c0-.55-.45-1-1-1S1 .45 1 1v3h2V1zm0 4H1c-.55 0-1 .45-1 1v2c0 .55.45 1 1 1h2c.55 0 1-.45 1-1V6c0-.55-.45-1-1-1zm12-4c0-.55-.45-1-1-1s-1 .45-1 1v2h2V1zM9 1c0-.55-.45-1-1-1S7 .45 7 1v6h2V1zM1 15c0 .55.45 1 1 1s1-.45 1-1v-5H1v5zM15 4h-2c-.55 0-1 .45-1 1v2c0 .55.45 1 1 1h2c.55 0 1-.45 1-1V5c0-.55-.45-1-1-1zm-2 11c0 .55.45 1 1 1s1-.45 1-1V9h-2v6zM9 8H7c-.55 0-1 .45-1 1v2c0 .55.45 1 1 1h2c.55 0 1-.45 1-1V9c0-.55-.45-1-1-1zm-2 7c0 .55.45 1 1 1s1-.45 1-1v-2H7v2z"]);
@@ -2260,6 +2426,9 @@ var p = [];
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/subscript.js
 /* harmony default export */ const subscript = (["M6.2 4.4a1 1 0 011.6 1.2L5.25 9l2.55 3.4a1 1 0 01-1.6 1.2L4 10.667 1.8 13.6a1 1 0 01-1.6-1.2L2.75 9 .2 5.6a1 1 0 011.6-1.2L4 7.333 6.2 4.4zm6.954 9.544l.016-.014c.18-.14.36-.28.57-.42l.63-.45c.21-.16.41-.33.61-.51s.37-.38.52-.59c.15-.21.28-.45.37-.7.09-.25.13-.54.13-.85 0-.25-.04-.51-.12-.79-.07-.29-.2-.55-.39-.79a2.18 2.18 0 00-.73-.6c-.29-.15-.66-.23-1.11-.23-.4 0-.76.08-1.07.23-.31.16-.58.37-.79.62-.22.27-.38.59-.49.96-.11.37-.16.77-.16 1.2h1.19c.01-.27.03-.53.08-.77.04-.24.11-.45.21-.62.09-.18.22-.32.38-.42.16-.1.35-.15.59-.15.26 0 .47.05.63.14.15.09.28.21.37.35.09.14.15.29.18.45.03.16.05.31.05.45-.01.31-.08.58-.22.82-.14.23-.32.45-.53.65-.22.21-.46.39-.71.57-.26.18-.51.36-.75.54-.5.36-.89.78-1.17 1.27-.28.49-.43 1.06-.44 1.71h4.99v-1.14h-3.55c.05-.17.14-.33.27-.49.126-.145.28-.281.444-.426z"]);
 
+;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/subtract-right-join.js
+/* harmony default export */ const subtract_right_join = (["M6.006 3.101A6.98 6.98 0 004 8c0 1.866.736 3.611 2.002 4.9A5 5 0 116.006 3.1zM16 8a5 5 0 00-6-4.9A6.986 6.986 0 0112 8c0 1.865-.736 3.61-2 4.9A5 5 0 0016 8zm-3 0c0-1.37-.348-2.695-.999-3.873l.154.042A4.002 4.002 0 0115 8l-.005.2a4.002 4.002 0 01-2.84 3.63l-.155.043.162-.305A7.992 7.992 0 0013 8zM8.001 4A4.992 4.992 0 0110 8a4.992 4.992 0 01-1.999 3.999 4.987 4.987 0 01-2.001-4c0-1.598.75-3.022 1.918-3.937L8.001 4zM8 5.354l-.11.13C7.322 6.184 7 7.064 7 8c0 .957.337 1.856.928 2.563l.072.08.072-.08c.542-.648.87-1.458.921-2.325L9 8c0-.956-.337-1.855-.928-2.562L8 5.354z"]);
+
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/superscript.js
 /* harmony default export */ const superscript = (["M13.154 5.944l.016-.014c.18-.14.36-.28.57-.42l.63-.45c.21-.16.41-.33.61-.51s.37-.38.52-.59c.15-.21.28-.45.37-.7.09-.25.13-.54.13-.85 0-.25-.04-.51-.12-.79-.07-.29-.2-.55-.39-.79a2.18 2.18 0 00-.73-.6C14.47.08 14.1 0 13.65 0c-.4 0-.76.08-1.07.23-.31.16-.58.37-.79.62-.22.27-.38.59-.49.96-.11.37-.16.77-.16 1.2h1.19c.01-.27.03-.53.08-.77.04-.24.11-.45.21-.62.09-.18.22-.32.38-.42.16-.1.35-.15.59-.15.26 0 .47.05.63.14.15.09.28.21.37.35.09.14.15.29.18.45.03.16.05.31.05.45-.01.31-.08.58-.22.82-.14.23-.32.45-.53.65-.22.21-.46.39-.71.57-.26.18-.51.36-.75.54-.5.36-.89.78-1.17 1.27-.28.49-.43 1.06-.44 1.71h4.99V6.86h-3.55c.05-.17.14-.33.27-.49.126-.145.28-.281.444-.426zM6.2 4.4a1 1 0 011.6 1.2L5.25 9l2.55 3.4a1 1 0 01-1.6 1.2L4 10.667 1.8 13.6a1 1 0 01-1.6-1.2L2.75 9 .2 5.6a1 1 0 011.6-1.2L4 7.333 6.2 4.4z"]);
 
@@ -2268,6 +2437,9 @@ var p = [];
 
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/swap-vertical.js
 /* harmony default export */ const swap_vertical = (["M9 0h-.02L9 .04V0zM7 16h.02L7 15.95V16zM4.7 1.31c-.18-.18-.43-.29-.7-.29s-.53.11-.71.29l-3 2.99a1.003 1.003 0 001.42 1.42L3 4.43V14c0 .55.45 1 1 1s1-.45 1-1V4.43l1.29 1.29c.18.18.43.29.7.29A1.003 1.003 0 007.7 4.3l-3-2.99zM15 9.99c-.28 0-.53.11-.71.29L13 11.57V2c0-.55-.45-1-1-1s-1 .45-1 1v9.57l-1.29-1.29a.99.99 0 00-.7-.29 1.003 1.003 0 00-.71 1.71l3 2.99c.18.18.43.29.71.29.28 0 .53-.11.71-.29l3-2.99c.18-.18.29-.43.29-.71-.01-.55-.46-1-1.01-1z"]);
+
+;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/sweep.js
+/* harmony default export */ const sweep = (["M10 0a1 1 0 00-1 1v8H6a1 1 0 00-1 1v1h10v-1a1 1 0 00-1-1h-3V1a1 1 0 00-1-1zM3.5 3a.5.5 0 010-1h3a.5.5 0 010 1h-3zm-2 2a.5.5 0 010-1h5a.5.5 0 010 1h-5zm2 2a.5.5 0 010-1h3a.5.5 0 010 1h-3zM3 15c.44 0 1.653-.773 1.939-3h10.037c-.08 1.516-.432 4-1.976 4h-1v-1l-2 1H8v-1l-2 1H3v-1z"]);
 
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/switch.js
 /* harmony default export */ const paths_switch = (["M9.293 2.293l1.414 1.414-4.999 5a3 3 0 11-1.415-1.415l5-5zM13 7a3 3 0 110 6 3 3 0 010-6zM3 9a1 1 0 100 2 1 1 0 000-2zm10 0a1 1 0 100 2 1 1 0 000-2z"]);
@@ -2302,6 +2474,21 @@ var p = [];
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/tag.js
 /* harmony default export */ const tag = (["M1 3a2 2 0 012-2h4.584a2 2 0 011.414.586l5.413 5.412a2 2 0 010 2.829L9.827 14.41a2 2 0 01-2.829 0L1.586 8.998A2 2 0 011 7.584V3zm3.487-.007a1.494 1.494 0 100 2.988 1.494 1.494 0 000-2.988z"]);
 
+;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/tag-add.js
+/* harmony default export */ const tag_add = (["M12 0a1 1 0 011 1v2h2a1 1 0 110 2h-2v2a1 1 0 11-2 0V5H9a1 1 0 010-2h2V1a1 1 0 011-1z", "M7.792 2.406A2 2 0 009 6h1v1a2 2 0 003.594 1.208 2 2 0 01-.183 2.619L8.827 15.41a2 2 0 01-2.829 0L.586 9.998A2 2 0 010 8.584V4a2 2 0 012-2h4.584a2 2 0 011.208.406zm-5.8 3.081a1.494 1.494 0 102.99 0 1.494 1.494 0 00-2.99 0z"]);
+
+;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/tag-promote.js
+/* harmony default export */ const tag_promote = (["M11.29.29c.39-.39 1.03-.39 1.42 0l2.98 2.96c.41.41.41 1.07 0 1.48l-2.98 2.961c-.39.39-1.03.39-1.42 0a.996.996 0 010-1.41l2.3-2.29-2.3-2.29a.996.996 0 010-1.411z", "M13.61 8.231c.57.78.51 1.89-.2 2.6l-4.58 4.581c-.78.78-2.05.78-2.83 0l-5.41-5.41c-.38-.38-.59-.89-.59-1.42V4c0-1.1.9-2 2-2h4.28c.08.15.18.29.31.42L8.18 4 6.59 5.58a2.007 2.007 0 000 2.84c.38.37.87.58 1.41.58.54 0 1.04-.21 1.42-.58l.71-.71A1.998 1.998 0 0012 9.001c.54 0 1.04-.21 1.42-.58l.19-.19zM3.49 6.991c.83 0 1.5-.67 1.5-1.5s-.67-1.5-1.5-1.5-1.5.67-1.5 1.5.67 1.5 1.5 1.5z", "M8.71.29l2.98 2.96c.41.41.41 1.07 0 1.48L8.71 7.692c-.39.39-1.03.39-1.42 0a.996.996 0 010-1.41l2.3-2.29-2.3-2.29a.996.996 0 010-1.411c.39-.39 1.03-.39 1.42 0z"]);
+
+;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/tag-refresh.js
+/* harmony default export */ const tag_refresh = (["M10.29 6.29a1.003 1.003 0 011.42 1.42l-.3.29H13c.55 0 1-.45 1-1s.45-1 1-1 1 .45 1 1c0 1.66-1.34 3-3 3h-1.59l.3.29a1.003 1.003 0 01-1.42 1.42l-2-2A.997.997 0 018 9c0-.28.11-.53.29-.71l2-2zm3.42-.58a1.003 1.003 0 01-1.42-1.42l.3-.29H11c-.55 0-1 .45-1 1s-.45 1-1 1-1-.45-1-1c0-1.66 1.34-3 3-3h1.59l-.3-.29A1.003 1.003 0 0113.71.29l2 2c.18.18.29.43.29.71 0 .28-.11.53-.29.71l-2 2z", "M7.888 2.484A3.985 3.985 0 007 5c0 .854.539 1.585 1.294 1.871l-.711.712A1.997 1.997 0 007 9c0 .548.217 1.052.583 1.417l2 2a1.997 1.997 0 001.671.567L8.827 15.41a2 2 0 01-2.829 0L.586 9.998A2 2 0 010 8.584V4a2 2 0 012-2h4.584a2 2 0 011.304.484zM1.993 5.487a1.494 1.494 0 102.988 0 1.494 1.494 0 00-2.988 0z"]);
+
+;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/tag-undo.js
+/* harmony default export */ const tag_undo = (["M12 1a1 1 0 011-1c1.66 0 3 1.34 3 3s-1.34 3-3 3h-1.59l.3.29a1.003 1.003 0 01-1.42 1.42l-2-2A.997.997 0 018 5c0-.28.11-.53.29-.71l2-2a1.003 1.003 0 011.42 1.42l-.3.29H13c.55 0 1-.45 1-1s-.45-1-1-1a1 1 0 01-1-1z", "M12.932 7.519l.48.48a2 2 0 010 2.828L8.826 15.41a2 2 0 01-2.829 0L.586 9.998A2 2 0 010 8.584V4a2 2 0 012-2h4.584a2 2 0 011.414.586l.291.29-.706.707A1.997 1.997 0 007 5c0 .548.217 1.052.583 1.417l2 2a2.004 2.004 0 003.349-.898zM1.992 5.487a1.494 1.494 0 102.99 0 1.494 1.494 0 00-2.99 0z"]);
+
+;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/tags.js
+/* harmony default export */ const tags = (["M4 0h4.584a2 2 0 011.414.586l5.413 5.412a2 2 0 010 2.829l-4.584 4.584a2 2 0 01-2.829 0L2.586 7.998A2 2 0 012 6.584V2a2 2 0 012-2zm-.007 3.493a1.5 1.5 0 103 0 1.5 1.5 0 00-3 0z", "M.263 5.176L1 3.819v2.765a3 3 0 00.879 2.122l5.412 5.412c.312.312.676.541 1.064.687L4.41 15.93c-1.045.297-2.12-.362-2.4-1.473l-1.942-7.7a2.197 2.197 0 01.196-1.58z"]);
+
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/take-action.js
 /* harmony default export */ const take_action = (["M9 11a1.003 1.003 0 001.71.71l4-4a1.003 1.003 0 00-1.42-1.42l-4 4c-.18.18-.29.43-.29.71zM4 6c.28 0 .53-.11.71-.29l4-4A1.003 1.003 0 007.29.29l-4 4A1.003 1.003 0 004 6zm4 4l5-5-.79-.79.5-.5a1.003 1.003 0 00-1.42-1.42l-.5.5L10 2 5 7l.79.79-5.5 5.5a1.003 1.003 0 001.42 1.42l5.5-5.5L8 10zm7 4H7c-.55 0-1 .45-1 1s.45 1 1 1h8c.55 0 1-.45 1-1s-.45-1-1-1z"]);
 
@@ -2326,6 +2513,9 @@ var p = [];
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/th.js
 /* harmony default export */ const th = (["M15 1H1c-.6 0-1 .5-1 1v12c0 .6.4 1 1 1h14c.6 0 1-.4 1-1V2c0-.5-.4-1-1-1zM6 13H2v-2h4v2zm0-3H2V8h4v2zm0-3H2V5h4v2zm8 6H7v-2h7v2zm0-3H7V8h7v2zm0-3H7V5h7v2z"]);
 
+;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/th-add.js
+/* harmony default export */ const th_add = (["M13 0a1 1 0 00-1 1v1h-1a1 1 0 100 2h1v1a1 1 0 102 0V4h1a1 1 0 100-2h-1V1a1 1 0 00-1-1z", "M8.764 5H7v2h3.764a3.001 3.001 0 005.108-1.129A2.95 2.95 0 0016 5.83V14c0 .6-.4 1-1 1H1c-.6 0-1-.4-1-1V2c0-.5.4-1 1-1h7.764A2.989 2.989 0 008 3c0 .768.289 1.47.764 2zM6 5H2v2h4V5zm0 3H2v2h4V8zm1 2h7V8H7v2zm-1 1H2v2h4v-2zm1 2h7v-2H7v2z"]);
+
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/th-derived.js
 /* harmony default export */ const th_derived = (["M5.6 10l-.3.3c-.2.2-.3.4-.3.7 0 .6.4 1 1 1 .3 0 .5-.1.7-.3l2-2c.2-.2.3-.4.3-.7s-.1-.5-.3-.7l-2-2C6.5 6.1 6.3 6 6 6c-.5 0-1 .4-1 1 0 .3.1.5.3.7l.3.3H1c-.6 0-1 .4-1 1s.4 1 1 1h4.6zM15 1H2c-.5 0-1 .5-1 1v5h2V5h11v2H8.8l.6.6c.1.1.2.3.3.4H14v2H9.7c-.1.1-.2.3-.3.4l-.6.6H14v2H3v-2H1v3c0 .5.5 1 1 1h13c.6 0 1-.5 1-1V2c0-.5-.4-1-1-1z"]);
 
@@ -2337,6 +2527,15 @@ var p = [];
 
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/th-list.js
 /* harmony default export */ const th_list = (["M15 1H1c-.6 0-1 .5-1 1v12c0 .6.4 1 1 1h14c.6 0 1-.4 1-1V2c0-.5-.4-1-1-1zm-1 12H2v-2h12v2zm0-3H2V8h12v2zm0-3H2V5h12v2z"]);
+
+;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/th-list-add.js
+/* harmony default export */ const th_list_add = (["M12 1a1 1 0 112 0v1h1a1 1 0 110 2h-1v1a1 1 0 11-2 0V4h-1a1 1 0 110-2h1V1zM8 3c0 .768.289 1.47.764 2H2v2h8.764c.55.614 1.348 1 2.236 1H2v2h12V8h-1a3.001 3.001 0 002.872-2.129A2.95 2.95 0 0016 5.83V14c0 .6-.4 1-1 1H1c-.6 0-1-.4-1-1V2c0-.5.4-1 1-1h7.764A2.989 2.989 0 008 3zM7 13h7v-2H2v2h5z"]);
+
+;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/th-virtual.js
+/* harmony default export */ const th_virtual = (["M7 8a1 1 0 000-2H4a1 1 0 00-1 1v3a1 1 0 002 0v-.637l2.36 2.357a.962.962 0 001.36-1.358L6.355 8H7z", "M1 1c-.6 0-1 .5-1 1v12a1 1 0 001 1h14c.6 0 1-.4 1-1V2a1 1 0 00-1-1H1zm13 12H2V5h12v8z"]);
+
+;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/th-virtual-add.js
+/* harmony default export */ const th_virtual_add = (["M12 1a.999.999 0 112 0v1h1a.995.995 0 01.83.44.996.996 0 01-.02 1.148A1.004 1.004 0 0115 4h-1v1a.996.996 0 01-.49.86.995.995 0 01-.9.061A1.004 1.004 0 0112 5V4h-1a.996.996 0 01-.83-.44.996.996 0 01.033-1.164A1.004 1.004 0 0111 2h1V1zm2 6.83a3.008 3.008 0 001.872-1.959c.043-.013.086-.027.128-.042V14c0 .6-.4 1-1 1H1a1 1 0 01-1-1V2c0-.5.4-1 1-1h7.764A2.989 2.989 0 008 3c0 .768.289 1.47.764 2H2v8h12V7.83zm-6.64 3.89L5 9.363V10a1 1 0 01-2 0V7a1 1 0 011-1h3a1 1 0 010 2h-.645l2.365 2.362a.962.962 0 01-1.36 1.359z"]);
 
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/third-party.js
 /* harmony default export */ const third_party = (["M4.448 9h.573c.025-.044.051-.088.079-.13A9.43 9.43 0 015.183 8h-.995A10.424 10.424 0 014 6c0-.717.068-1.391.188-2h3.624c.065.33.114.678.146 1.042A3.42 3.42 0 018.46 5c.168 0 .336.013.502.037A11.089 11.089 0 008.829 4h1.755c.148.338.26.696.33 1.068l.176-.028a2.74 2.74 0 01.5 0c.113 0 .225.006.336.018A6.001 6.001 0 000 6a6 6 0 005.672 5.991 4 4 0 01-.202-.441 1.842 1.842 0 01-.24-.26 1.82 1.82 0 01-.26-.55 2 2 0 01-.185-.92l-.012-.025A6.036 6.036 0 014.448 9zM3.171 8H1.416A4.983 4.983 0 011 6c0-.711.148-1.388.416-2h1.755C3.06 4.626 3 5.299 3 6c0 .701.06 1.374.17 2zM2 9H3.4c.18.618.412 1.167.685 1.62A5.015 5.015 0 012 9zm2.448-6h3.104a6.036 6.036 0 00-.325-.795C6.737 1.225 6.246 1 6 1c-.246 0-.737.225-1.227 1.205-.119.238-.228.504-.325.795zm4.15 0H10a5.016 5.016 0 00-2.086-1.62c.273.453.506 1.002.685 1.62zM4.087 1.38A6.834 6.834 0 003.401 3H2a5.015 5.015 0 012.086-1.62zM13.476 16s.118-.385-.172-1.046c-.228-.533-1.172-.915-2.015-1.257a22.113 22.113 0 01-.584-.243c-.808-.356-.816-.588-.825-.872-.002-.041-.003-.084-.007-.128v-.139c.314-.284.573-.669.745-1.115 0 0 .008-.023.008-.03.04-.1.071-.2.095-.3.212-.04.33-.27.377-.485.054-.093.149-.3.125-.547-.024-.307-.15-.453-.29-.515v-.054c0-.392-.04-.961-.11-1.33a2.16 2.16 0 00-.071-.308 2.283 2.283 0 00-.8-1.17C9.558 6.162 9.001 6 8.506 6c-.495 0-1.052.162-1.445.462A2.294 2.294 0 006.19 7.93c-.07.369-.11.946-.11 1.338v.046c-.14.062-.274.208-.306.523a1 1 0 00.126.547c.047.215.173.453.393.492.02.083.05.172.078.253l.016.047c0 .008.008.015.008.015v.008c.172.454.44.846.761 1.115a.804.804 0 01-.004.072c-.002.02-.004.04-.004.06l-.007.105c-.016.287-.028.523-.848.894-.176.078-.37.156-.568.237-.847.345-1.802.735-2.031 1.27C3.41 15.616 3.52 16 3.52 16h9.955zm2.503-1.25h-1.413a4.05 4.05 0 00-.116-.294c-.192-.445-.52-.753-.787-.955-.278-.21-.59-.38-.873-.517a21.373 21.373 0 00-1.122-.483l-.02-.008-.235-.097c.144-.23.266-.476.366-.731.089-.087.162-.177.22-.26.132-.192.217-.391.271-.568.117-.251.24-.64.199-1.105a2.025 2.025 0 00-.299-.925 8.626 8.626 0 00-.116-1.083 3.426 3.426 0 00-.104-.45 3.476 3.476 0 00-.661-1.246A2.18 2.18 0 0111.63 6c.432 0 .92.141 1.264.404.33.256.584.612.7 1.023.028.087.049.182.062.27.062.322.097.82.097 1.163v.048c.123.053.233.181.254.45a.82.82 0 01-.11.478c-.041.189-.144.391-.33.425a1.92 1.92 0 01-.082.262c0 .007-.007.027-.007.027-.151.39-.378.727-.653.976v.121c.004.038.005.075.006.111v.002c.008.247.015.451.722.762.158.07.332.14.51.213.739.299 1.565.634 1.764 1.1.254.579.151.915.151.915z"]);
@@ -2503,6 +2702,15 @@ var p = [];
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/wrench.js
 /* harmony default export */ const wrench = (["M15.83 3.7l-3.06 3.05-2.84-.7-.7-2.83L12.29.17a5.004 5.004 0 00-4.83 1.29 4.967 4.967 0 00-1.12 5.36L.58 12.58c-.36.36-.58.86-.58 1.41 0 1.1.9 2 2 2 .55 0 1.05-.22 1.41-.59l5.77-5.77c1.79.69 3.91.33 5.35-1.12 1.32-1.3 1.74-3.15 1.3-4.81z"]);
 
+;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/wrench-redo.js
+/* harmony default export */ const wrench_redo = (["M7.71 3.71l-2 2a1.003 1.003 0 01-1.42-1.42l.3-.29H3c-.55 0-1 .45-1 1s.45 1 1 1a1 1 0 110 2C1.34 8 0 6.66 0 5s1.34-3 3-3h1.59l-.3-.29A1.003 1.003 0 015.71.29l2 2c.18.18.29.43.29.71 0 .28-.11.53-.29.71zm1.875 8.863l-2.98 2.98a1.526 1.526 0 01-2.158-2.158l2.98-2.98a4.502 4.502 0 016.013-5.977l-3 3.001a1.5 1.5 0 002.12 2.122l3.002-3.001a4.502 4.502 0 01-5.977 6.013z"]);
+
+;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/wrench-snooze.js
+/* harmony default export */ const wrench_snooze = (["M1 0h4a1 1 0 01.775 1.632L3.08 5H5a1 1 0 010 2H1a1 1 0 01-.771-1.636L2.919 2H1a1 1 0 110-2zm8.585 12.573l-2.98 2.98a1.526 1.526 0 01-2.158-2.158l2.98-2.98a4.502 4.502 0 016.013-5.977l-3 3.001a1.5 1.5 0 002.12 2.122l3.002-3.001a4.502 4.502 0 01-5.977 6.013z"]);
+
+;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/wrench-time.js
+/* harmony default export */ const wrench_time = (["M0 3.5C0 1.57 1.57 0 3.5 0S7 1.57 7 3.5 5.43 7 3.5 7 0 5.43 0 3.5zm3-2v2.21l1.56 1.56c.1.09.23.14.36.14.12 0 .25-.05.35-.14.19-.2.19-.51 0-.71L4 3.29V1.5c0-.28-.22-.5-.5-.5s-.5.22-.5.5zm6.585 11.073l-2.98 2.98a1.526 1.526 0 01-2.158-2.158l2.98-2.98a4.502 4.502 0 016.013-5.977l-3 3.001a1.5 1.5 0 002.12 2.122l3.002-3.001a4.502 4.502 0 01-5.977 6.013z"]);
+
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/zoom-in.js
 /* harmony default export */ const zoom_in = (["M7.99 5.99v-2c0-.55-.45-1-1-1s-1 .45-1 1v2h-2c-.55 0-1 .45-1 1s.45 1 1 1h2v2c0 .55.45 1 1 1s1-.45 1-1v-2h2c.55 0 1-.45 1-1s-.45-1-1-1h-2zm7.56 7.44l-2.67-2.68a6.94 6.94 0 001.11-3.76c0-3.87-3.13-7-7-7s-7 3.13-7 7 3.13 7 7 7c1.39 0 2.68-.42 3.76-1.11l2.68 2.67a1.498 1.498 0 102.12-2.12zm-8.56-1.44c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"]);
 
@@ -2513,6 +2721,58 @@ var p = [];
 /* harmony default export */ const zoom_to_fit = (["M11 10a1.003 1.003 0 001.71.71l2-2c.18-.18.29-.43.29-.71 0-.28-.11-.53-.29-.71l-2-2a1.003 1.003 0 00-1.42 1.42L12.59 8 11.3 9.29c-.19.18-.3.43-.3.71zM1 5c.55 0 1-.45 1-1V2h2c.55 0 1-.45 1-1s-.45-1-1-1H1C.45 0 0 .45 0 1v3c0 .55.45 1 1 1zm4 1a1.003 1.003 0 00-1.71-.71l-2 2C1.11 7.47 1 7.72 1 8c0 .28.11.53.29.71l2 2a1.003 1.003 0 001.42-1.42L3.41 8 4.7 6.71c.19-.18.3-.43.3-.71zm1-1c.28 0 .53-.11.71-.29L8 3.41 9.29 4.7c.18.19.43.3.71.3a1.003 1.003 0 00.71-1.71l-2-2C8.53 1.11 8.28 1 8 1s-.53.11-.71.29l-2 2A1.003 1.003 0 006 5zm9 6c-.55 0-1 .45-1 1v2h-2c-.55 0-1 .45-1 1s.45 1 1 1h3c.55 0 1-.45 1-1v-3c0-.55-.45-1-1-1zm0-11h-3c-.55 0-1 .45-1 1s.45 1 1 1h2v2c0 .55.45 1 1 1s1-.45 1-1V1c0-.55-.45-1-1-1zM4 14H2v-2c0-.55-.45-1-1-1s-1 .45-1 1v3c0 .55.45 1 1 1h3c.55 0 1-.45 1-1s-.45-1-1-1zm6-3c-.28 0-.53.11-.71.29L8 12.59 6.71 11.3A.965.965 0 006 11a1.003 1.003 0 00-.71 1.71l2 2c.18.18.43.29.71.29s.53-.11.71-.29l2-2A1.003 1.003 0 0010 11z"]);
 
 ;// ./node_modules/@blueprintjs/icons/lib/esm/generated/16px/paths/index.js
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

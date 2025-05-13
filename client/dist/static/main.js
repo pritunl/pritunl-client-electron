@@ -8130,8 +8130,10 @@ module.exports = (mode, isDir, portable) => {
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
+/* eslint no-unused-vars: ["error", { "varsIgnorePattern": "^WebSocket$" }] */
 
 
+const WebSocket = __webpack_require__(5082);
 const { Duplex } = __webpack_require__(2203);
 
 /**
@@ -10634,7 +10636,7 @@ class Sender {
   /**
    * Sends a frame.
    *
-   * @param {Buffer[]} list The frame to send
+   * @param {(Buffer | String)[]} list The frame to send
    * @param {Function} [cb] Callback
    * @private
    */

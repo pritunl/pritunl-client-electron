@@ -39,11 +39,11 @@ var splitPathsBySizeLoader = function (name, size) { return (0,tslib__WEBPACK_IM
             case 0:
                 key = (0,change_case__WEBPACK_IMPORTED_MODULE_1__/* .pascalCase */ .fL)(name);
                 if (!(size === _iconTypes__WEBPACK_IMPORTED_MODULE_2__/* .IconSize */ .l.STANDARD)) return [3 /*break*/, 2];
-                return [4 /*yield*/, __webpack_require__.e(/* import() | blueprint-icons-16px-paths */ 672).then(__webpack_require__.bind(__webpack_require__, 3541))];
+                return [4 /*yield*/, __webpack_require__.e(/* import() | blueprint-icons-16px-paths */ 672).then(__webpack_require__.bind(__webpack_require__, 4347))];
             case 1:
                 pathsRecord = _a.sent();
                 return [3 /*break*/, 4];
-            case 2: return [4 /*yield*/, __webpack_require__.e(/* import() | blueprint-icons-20px-paths */ 783).then(__webpack_require__.bind(__webpack_require__, 6510))];
+            case 2: return [4 /*yield*/, __webpack_require__.e(/* import() | blueprint-icons-20px-paths */ 783).then(__webpack_require__.bind(__webpack_require__, 7824))];
             case 3:
                 pathsRecord = _a.sent();
                 _a.label = 4;
