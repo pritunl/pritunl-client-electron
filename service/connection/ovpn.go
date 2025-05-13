@@ -325,32 +325,37 @@ func (o *Ovpn) Connect(data *ConnData) (err error) {
 		)
 		break
 	case "linux":
-		upPath := ""
-		downPath := ""
-		upResolvPath := "/etc/openvpn/update-resolv-conf"
-
-		exists, _ := utils.ExistsFile(upResolvPath)
-		if exists {
-			upPath = upResolvPath
-			downPath = upResolvPath
+		if HasAppArmor() {
+			logrus.Info("connection: AppArmor enabled DNS support unavailable")
 		} else {
-			upPath, err = o.writeUp()
-			if err != nil {
-				return
-			}
-			o.conn.State.AddPath(upPath)
+			upPath := ""
+			downPath := ""
+			upResolvPath := "/etc/openvpn/update-resolv-conf"
 
-			downPath, err = o.writeDown()
-			if err != nil {
-				return
+			exists, _ := utils.ExistsFile(upResolvPath)
+			if exists {
+				upPath = upResolvPath
+				downPath = upResolvPath
+			} else {
+				upPath, err = o.writeUp()
+				if err != nil {
+					return
+				}
+				o.conn.State.AddPath(upPath)
+
+				downPath, err = o.writeDown()
+				if err != nil {
+					return
+				}
+				o.conn.State.AddPath(downPath)
 			}
-			o.conn.State.AddPath(downPath)
+
+			args = append(args, "--script-security", "2",
+				"--up", upPath,
+				"--down", downPath,
+			)
 		}
 
-		args = append(args, "--script-security", "2",
-			"--up", upPath,
-			"--down", downPath,
-		)
 		break
 	default:
 		panic("profile: Not implemented")
@@ -439,13 +444,8 @@ func (o *Ovpn) write(data *ConnData) (
 		return
 	}
 
-	chown := ""
-	if NetworkManagerSupport() {
-		chown = NmOvpnUser
-	}
-
-	pth = filepath.Join(rootDir, o.conn.Id+".conf")
-	prflData := o.parsedPrfl.Export(chown)
+	pth = filepath.Join(rootDir, o.conn.Id)
+	prflData := o.parsedPrfl.Export("")
 
 	if runtime.GOOS == "windows" {
 		o.managementPort = ManagementPortAcquire()

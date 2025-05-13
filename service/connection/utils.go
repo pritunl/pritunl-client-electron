@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/dropbox/godropbox/container/set"
+	"github.com/pritunl/pritunl-client-electron/service/command"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
 	"github.com/sirupsen/logrus"
 )
@@ -301,4 +302,19 @@ func NetworkManagerSupport() bool {
 	}
 
 	return true
+}
+
+func HasAppArmor() bool {
+	cmd := command.Command("/usr/sbin/apparmor_status")
+
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return false
+	}
+
+	if strings.Contains(string(output), "openvpn") {
+		return true
+	}
+
+	return false
 }
