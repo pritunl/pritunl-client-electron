@@ -305,6 +305,15 @@ func NetworkManagerSupport() bool {
 }
 
 func HasAppArmor() bool {
+	exists, err := utils.ExistsFile("/usr/sbin/apparmor_status")
+	if err != nil {
+		return false
+	}
+
+	if !exists {
+		return false
+	}
+
 	cmd := command.Command("/usr/sbin/apparmor_status")
 
 	output, err := cmd.CombinedOutput()
