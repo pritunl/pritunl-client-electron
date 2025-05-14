@@ -51,7 +51,7 @@ const css = {
 		marginRight: "5px",
 	} as React.CSSProperties,
 	buttonMinimal: {
-		marginTop: "1px",
+		marginTop: "0",
 		marginRight: "5px",
 	} as React.CSSProperties,
 	dialog: {
