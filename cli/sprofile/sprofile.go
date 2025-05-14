@@ -53,7 +53,7 @@ type Sprofile struct {
 }
 
 type RemoteData struct {
-	Priority string `json:"priority"`
+	Priority int `json:"priority"`
 }
 
 func (s *Sprofile) FormatedName() (name string) {

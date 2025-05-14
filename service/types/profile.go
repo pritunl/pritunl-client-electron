@@ -1,5 +1,5 @@
 package types
 
 type RemoteData struct {
-	Priority string `json:"priority"`
+	Priority int `json:"priority"`
 }
