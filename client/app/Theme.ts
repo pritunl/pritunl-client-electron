@@ -26,28 +26,48 @@ export function save(): Promise<void> {
 }
 
 export function themeVer3(): void {
-	const blueprintTheme3 = document.getElementById(
-		"blueprint3-theme") as HTMLLinkElement
-	const blueprintTheme5 = document.getElementById(
-		"blueprint5-theme") as HTMLLinkElement
-	blueprintTheme3.disabled = false;
-	blueprintTheme5.disabled = true;
-	themeVer = 3;
+  const blueprintTheme3 = document.getElementById(
+    "blueprint3-theme") as HTMLLinkElement
+  const blueprintTheme5 = document.getElementById(
+    "blueprint5-theme") as HTMLLinkElement
+  blueprintTheme3.disabled = false;
+  blueprintTheme5.disabled = true;
+	if (theme === "dark") {
+		document.body.className = 'bp3-theme bp5-dark';
+		document.documentElement.className = 'dark3-scroll';
+	} else {
+		document.body.className = 'bp3-theme';
+		document.documentElement.className = '';
+	}
+  themeVer = 3;
 }
 
 export function themeVer5(): void {
-	const blueprintTheme3 = document.getElementById(
-		"blueprint3-theme") as HTMLLinkElement
-	const blueprintTheme5 = document.getElementById(
-		"blueprint5-theme") as HTMLLinkElement
-	blueprintTheme3.disabled = true;
-	blueprintTheme5.disabled = false;
-	themeVer = 5;
+  const blueprintTheme3 = document.getElementById(
+    "blueprint3-theme") as HTMLLinkElement
+  const blueprintTheme5 = document.getElementById(
+    "blueprint5-theme") as HTMLLinkElement
+  blueprintTheme3.disabled = true;
+  blueprintTheme5.disabled = false;
+	if (theme === "dark") {
+		document.body.className = 'bp5-dark';
+		document.documentElement.className = 'dark5-scroll';
+	} else {
+		document.body.className = '';
+		document.documentElement.className = '';
+	}
+  themeVer = 5;
 }
 
 export function light(): void {
 	theme = 'light';
-	document.body.className = '';
+	if (themeVer === 3) {
+		document.body.className = 'bp3-theme';
+		document.documentElement.className = '';
+	} else {
+		document.body.className = '';
+		document.documentElement.className = '';
+	}
 	callbacks.forEach((callback: Callback): void => {
 		callback();
 	});
@@ -55,7 +75,13 @@ export function light(): void {
 
 export function dark(): void {
 	theme = 'dark';
-	document.body.className = 'bp5-dark';
+	if (themeVer === 3) {
+		document.body.className = 'bp3-theme bp5-dark';
+		document.documentElement.className = 'dark3-scroll';
+	} else {
+		document.body.className = 'bp5-dark';
+		document.documentElement.className = 'dark5-scroll';
+	}
 	callbacks.forEach((callback: Callback): void => {
 		callback();
 	});
