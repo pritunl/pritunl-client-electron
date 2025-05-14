@@ -11,6 +11,7 @@ require (
 	github.com/dropbox/godropbox v0.0.0-20230623171840-436d2007a9fd
 	github.com/gizak/termui/v3 v3.1.0
 	github.com/olekukonko/tablewriter v0.0.5
+	github.com/pritunl/tools v1.2.6
 	github.com/spf13/cobra v1.8.1
 	golang.org/x/term v0.24.0
 )
