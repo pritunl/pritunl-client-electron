@@ -946,16 +946,8 @@ func (c *Client) EncRequest(method string, reqUrl *url.URL,
 		return
 	}
 
-	defer func() {
-		c.requestCancelLock.Lock()
-		if c.requestCancel != nil {
-			c.requestCancel()
-			c.requestCancel = nil
-		}
-		c.requestCancelLock.Unlock()
-	}()
-
 	conx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	req, err := http.NewRequestWithContext(
 		conx,
