@@ -272,6 +272,10 @@ h2 {
   position: absolute;
 }
 
+.bp5-dark:not(.bp3-theme) .bp5-card {
+  background-color:#2f343c;
+}
+
 /*******************************
           Flex Layout
 *******************************/

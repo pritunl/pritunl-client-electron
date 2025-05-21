@@ -3658,6 +3658,14 @@ function themeVer3() {
     const blueprintTheme5 = document.getElementById("blueprint5-theme");
     blueprintTheme3.disabled = false;
     blueprintTheme5.disabled = true;
+    if (theme === "dark") {
+        document.body.className = 'bp3-theme bp5-dark';
+        document.documentElement.className = 'dark3-scroll';
+    }
+    else {
+        document.body.className = 'bp3-theme';
+        document.documentElement.className = '';
+    }
     themeVer = 3;
 }
 function themeVer5() {
@@ -3665,18 +3673,40 @@ function themeVer5() {
     const blueprintTheme5 = document.getElementById("blueprint5-theme");
     blueprintTheme3.disabled = true;
     blueprintTheme5.disabled = false;
+    if (theme === "dark") {
+        document.body.className = 'bp5-dark';
+        document.documentElement.className = 'dark5-scroll';
+    }
+    else {
+        document.body.className = '';
+        document.documentElement.className = '';
+    }
     themeVer = 5;
 }
 function light() {
     theme = 'light';
-    document.body.className = '';
+    if (themeVer === 3) {
+        document.body.className = 'bp3-theme';
+        document.documentElement.className = '';
+    }
+    else {
+        document.body.className = '';
+        document.documentElement.className = '';
+    }
     callbacks.forEach((callback) => {
         callback();
     });
 }
 function dark() {
     theme = 'dark';
-    document.body.className = 'bp5-dark';
+    if (themeVer === 3) {
+        document.body.className = 'bp3-theme bp5-dark';
+        document.documentElement.className = 'dark3-scroll';
+    }
+    else {
+        document.body.className = 'bp5-dark';
+        document.documentElement.className = 'dark5-scroll';
+    }
     callbacks.forEach((callback) => {
         callback();
     });
@@ -6206,7 +6236,7 @@ const css = {
     },
     deleteButton: {},
     deleteButtonBox: {
-        marginTop: "1px",
+        marginTop: "-1px",
     },
     buttons: {},
     editor: {
@@ -6229,33 +6259,35 @@ const css = {
     headerOpen: {
         userSelect: 'none',
         position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
+        top: '0',
+        left: '0',
+        right: '0',
         padding: '4px',
-        height: '39px',
+        height: '36px',
         color: 'inherit',
         border: 'none',
         font: 'inherit',
         cursor: 'pointer',
+        outline: 'none',
     },
     headerClosed: {
         userSelect: 'none',
         position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
+        top: '1px',
+        left: '1px',
+        right: '2px',
         padding: '4px',
-        height: '39px',
+        height: '36px',
         color: 'inherit',
         border: 'none',
         font: 'inherit',
         cursor: 'pointer',
         backgroundColor: 'inherit',
+        outline: 'none',
     },
     headerLabel: {
         fontSize: "1.09em",
-        margin: "5px 34px 0 6px",
+        margin: "4px 34px 0 6px",
         overflow: "hidden",
         whiteSpace: "nowrap",
     },
@@ -6461,7 +6493,7 @@ const css = {
         marginRight: "5px",
     },
     buttonMinimal: {
-        marginTop: "1px",
+        marginTop: "0",
         marginRight: "5px",
     },
     dialog: {
