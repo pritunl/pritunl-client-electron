@@ -215,10 +215,10 @@ func (c *Client) Start(prov Provider) (err error) {
 			}
 		}()
 
-		err = c.prov.WatchConnection()
-		if err != nil {
+		e := c.prov.WatchConnection()
+		if e != nil {
 			logrus.WithFields(c.conn.Fields(logrus.Fields{
-				"error": err,
+				"error": e,
 			})).Error("profile: Watch connection error")
 			c.conn.State.Close()
 			return
