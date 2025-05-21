@@ -240,7 +240,7 @@ func (w *Wg) WatchConnection() (err error) {
 	}
 	interval = interval * 2
 
-	for i := 0; i < 40; i++ {
+	for i := 0; i < 50; i++ {
 		if w.conn.State.IsStop() {
 			w.conn.State.Close()
 			return
@@ -283,6 +283,10 @@ func (w *Wg) WatchConnection() (err error) {
 
 	if w.lastHandshake == 0 {
 		w.conn.Data.SendProfileEvent("handshake_timeout")
+
+		logrus.WithFields(w.conn.Fields(logrus.Fields{
+			"error": err,
+		})).Error("connection: WireGuard handshake timeout")
 
 		w.conn.State.Close()
 		return
