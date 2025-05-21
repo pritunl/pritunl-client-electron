@@ -328,27 +328,19 @@ func (o *Ovpn) Connect(data *ConnData) (err error) {
 		if HasAppArmor() {
 			logrus.Info("connection: AppArmor enabled DNS support unavailable")
 		} else {
-			upPath := ""
-			downPath := ""
-			upResolvPath := "/etc/openvpn/update-resolv-conf"
-
-			exists, _ := utils.ExistsFile(upResolvPath)
-			if exists {
-				upPath = upResolvPath
-				downPath = upResolvPath
-			} else {
-				upPath, err = o.writeUp()
-				if err != nil {
-					return
-				}
-				o.conn.State.AddPath(upPath)
-
-				downPath, err = o.writeDown()
-				if err != nil {
-					return
-				}
-				o.conn.State.AddPath(downPath)
+			upPath, e := o.writeUp()
+			if e != nil {
+				err = e
+				return
 			}
+			o.conn.State.AddPath(upPath)
+
+			downPath, e := o.writeDown()
+			if e != nil {
+				err = e
+				return
+			}
+			o.conn.State.AddPath(downPath)
 
 			args = append(args, "--script-security", "2",
 				"--up", upPath,
