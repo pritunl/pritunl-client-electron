@@ -132,8 +132,8 @@ type SsoEventData struct {
 type Client struct {
 	conn              *Connection
 	prov              Provider
-	requestCancelLock sync.Mutex
-	requestCancel     context.CancelFunc
+	requestCtxLock    sync.Mutex
+	requestCtx        *utils.CancelContext
 	disconnectLock    sync.Mutex
 	disconnect        bool
 	disconnected      bool
@@ -542,7 +542,10 @@ func (c *Client) authorize(host string, ssoToken string,
 		return
 	}
 
-	res, err := c.EncRequest("POST", reqUrl, ciph, reqBx)
+	ctx := c.GetContext()
+	defer ctx.Cancel()
+
+	res, err := c.EncRequest(ctx, "POST", reqUrl, ciph, reqBx)
 	if err != nil {
 		return
 	}
@@ -918,6 +921,23 @@ func (c *Client) DecryptRespBox(ciph *Cipher, respBx *RespBox,
 	return
 }
 
+func (c *Client) GetContext() (ctx *utils.CancelContext) {
+	ctx = utils.NewCancelContext()
+	ctx.OnCancel(func() {
+		c.requestCtxLock.Lock()
+		if c.requestCtx == ctx {
+			c.requestCtx = nil
+		}
+		c.requestCtxLock.Unlock()
+	})
+
+	c.requestCtxLock.Lock()
+	c.requestCtx = ctx
+	c.requestCtxLock.Unlock()
+
+	return
+}
+
 func (c *Client) CancelRequest() {
 	defer func() {
 		panc := recover()
@@ -929,28 +949,26 @@ func (c *Client) CancelRequest() {
 		}
 	}()
 
-	c.requestCancelLock.Lock()
-	defer c.requestCancelLock.Unlock()
+	c.requestCtxLock.Lock()
+	ctx := c.requestCtx
+	c.requestCtxLock.Unlock()
 
-	if c.requestCancel != nil {
-		c.requestCancel()
-		c.requestCancel = nil
+	if ctx != nil {
+		ctx.Cancel()
 	}
 }
 
-func (c *Client) EncRequest(method string, reqUrl *url.URL,
-	ciph *Cipher, reqBx *ReqBox) (resp *http.Response, err error) {
+func (c *Client) EncRequest(ctx context.Context, method string,
+	reqUrl *url.URL, ciph *Cipher, reqBx *ReqBox) (
+	resp *http.Response, err error) {
 
 	encReqData, err := c.encryptReqBox(method, reqUrl.Path, ciph, reqBx)
 	if err != nil {
 		return
 	}
 
-	conx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
 	req, err := http.NewRequestWithContext(
-		conx,
+		ctx,
 		method,
 		reqUrl.String(),
 		bytes.NewBuffer(encReqData.Body),
@@ -968,10 +986,6 @@ func (c *Client) EncRequest(method string, reqUrl *url.URL,
 	req.Header.Set("Auth-Timestamp", encReqData.Timestamp)
 	req.Header.Set("Auth-Nonce", encReqData.Nonce)
 	req.Header.Set("Auth-Signature", encReqData.Signature)
-
-	c.requestCancelLock.Lock()
-	c.requestCancel = cancel
-	c.requestCancelLock.Unlock()
 
 	resp, err = clientInsecure.Do(req)
 	if err != nil {

@@ -436,7 +436,10 @@ func (w *Wg) ping() (data *PingData, final bool, err error) {
 		return
 	}
 
-	res, err := w.conn.Client.EncRequest("PUT", reqUrl, ciph, reqBx)
+	ctx := w.conn.Client.GetContext()
+	defer ctx.Cancel()
+
+	res, err := w.conn.Client.EncRequest(ctx, "PUT", reqUrl, ciph, reqBx)
 	if err != nil {
 		return
 	}
