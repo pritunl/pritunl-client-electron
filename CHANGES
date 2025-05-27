@@ -1,6 +1,10 @@
 Pritunl Client Changelog
 ========================
 
+<%= version %>
+
+Fix connection issues
+
 Version 1.3.4269.93 2025-05-21
 ------------------------------
 
