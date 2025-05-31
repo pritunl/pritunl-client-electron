@@ -310,10 +310,10 @@ func Import(data string, remotes []Remote,
 		case "dev-type":
 			switch strings.ToLower(lines[1]) {
 			case "tun":
-				o.Dev = "tun"
+				o.DevType = "tun"
 				break
 			case "tap":
-				o.Dev = "tap"
+				o.DevType = "tap"
 				break
 			}
 			break
