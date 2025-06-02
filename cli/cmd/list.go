@@ -112,7 +112,7 @@ var ListCmd = &cobra.Command{
 			table.SetBorder(true)
 
 			for _, sprfl := range sprfls {
-				if sprfl.Profile != nil {
+				if sprfl.Profile != nil && sprfl.State {
 					fields := []string{
 						sprfl.Id,
 						sprfl.FormatedName(),
