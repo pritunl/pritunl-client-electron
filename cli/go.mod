@@ -2,7 +2,7 @@ module github.com/pritunl/pritunl-client-electron/cli
 
 go 1.23.0
 
-toolchain go1.24.2
+toolchain go1.23.1
 
 require (
 	github.com/charmbracelet/bubbles v0.21.0
