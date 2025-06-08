@@ -17,9 +17,10 @@ import (
 )
 
 var (
-	cache      = []*Sprofile{}
-	cacheStale = true
-	cacheLock  = sync.Mutex{}
+	cache       = []*Sprofile{}
+	cacheStale  = true
+	cacheLock   = sync.Mutex{}
+	initialized = false
 )
 
 func Activate(prflId, mode, password string) (err error) {
@@ -113,7 +114,7 @@ func Get(prflId string) (prfl *Sprofile) {
 
 func GetAll() (prfls []*Sprofile, err error) {
 	if cacheStale {
-		err = Reload(false)
+		err = Reload()
 		if err != nil {
 			return
 		}
@@ -132,7 +133,7 @@ func GetAll() (prfls []*Sprofile, err error) {
 
 func GetAllClient() (prfls []*SprofileClient, err error) {
 	if cacheStale {
-		err = Reload(false)
+		err = Reload()
 		if err != nil {
 			return
 		}
@@ -160,7 +161,7 @@ func Remove(prflId string) {
 	cacheStale = true
 }
 
-func Reload(init bool) (err error) {
+func Reload() (err error) {
 	cacheLock.Lock()
 	defer cacheLock.Unlock()
 
@@ -218,7 +219,7 @@ func Reload(init bool) (err error) {
 			continue
 		}
 
-		if init {
+		if !initialized {
 			prfl.State = !prfl.Disabled
 		} else {
 			curPrfl := curPrfls[prfl.Id]
@@ -230,6 +231,7 @@ func Reload(init bool) (err error) {
 		prfls = append(prfls, prfl)
 	}
 
+	initialized = true
 	cache = prfls
 	cacheStale = false
 
