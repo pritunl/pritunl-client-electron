@@ -49,7 +49,7 @@ type sprofileData struct {
 }
 
 func sprofilesGet(c *gin.Context) {
-	err := sprofile.Reload(false)
+	err := sprofile.Reload()
 	if err != nil {
 		utils.AbortWithError(c, 500, err)
 		return

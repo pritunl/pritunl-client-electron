@@ -199,7 +199,7 @@ func watchSystemProfiles() {
 	}()
 
 	time.Sleep(1 * time.Second)
-	sprofile.Reload(true)
+	sprofile.Reload()
 
 	for {
 		time.Sleep(2 * time.Second)
