@@ -59,7 +59,7 @@ func Init() (err error) {
 	} else {
 		prflsPath := sprofile.GetPath()
 
-		err = platform.MkdirSecure(prflsPath)
+		err = platform.MkdirLinkedSecure(prflsPath)
 		if err != nil {
 			err = &WriteError{
 				errors.Wrap(
