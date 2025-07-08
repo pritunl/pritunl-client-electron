@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/pritunl/pritunl-client-electron/service/constants"
 	"github.com/sirupsen/logrus"
 )
 
@@ -71,6 +72,8 @@ type Ovpn struct {
 
 func (o *Ovpn) Export(chown string) string {
 	output := ""
+
+	output += fmt.Sprintf("setenv IV_UI_VER %s\n", constants.Version)
 
 	if o.EnvId != "" {
 		output += fmt.Sprintf("setenv UV_ID %s\n", o.EnvId)
