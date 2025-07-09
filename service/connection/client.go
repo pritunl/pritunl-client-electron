@@ -26,6 +26,7 @@ import (
 
 	"github.com/dropbox/godropbox/errors"
 	"github.com/pritunl/pritunl-client-electron/service/config"
+	"github.com/pritunl/pritunl-client-electron/service/constants"
 	"github.com/pritunl/pritunl-client-electron/service/errortypes"
 	"github.com/pritunl/pritunl-client-electron/service/event"
 	"github.com/pritunl/pritunl-client-electron/service/sprofile"
@@ -62,6 +63,7 @@ type ReqBox struct {
 	DeviceKey      string   `json:"device_key"`
 	DeviceHostname string   `json:"device_hostname"`
 	Platform       string   `json:"platform"`
+	Version        string   `json:"platform"`
 	MacAddr        string   `json:"mac_addr"`
 	MacAddrs       []string `json:"mac_addrs"`
 	Token          string   `json:"token"`
@@ -494,6 +496,7 @@ func (c *Client) InitBox() (ciph *Cipher, reqBx *ReqBox, err error) {
 		DeviceName:     c.conn.Data.DeviceName,
 		DeviceHostname: c.conn.Data.Hostname,
 		Platform:       pltfrm,
+		Version:        constants.Version,
 		MacAddr:        c.conn.Data.MacAddr,
 		MacAddrs:       macAddrs,
 		Timestamp:      time.Now().Unix(),
