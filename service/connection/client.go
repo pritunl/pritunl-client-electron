@@ -63,7 +63,7 @@ type ReqBox struct {
 	DeviceKey      string   `json:"device_key"`
 	DeviceHostname string   `json:"device_hostname"`
 	Platform       string   `json:"platform"`
-	Version        string   `json:"platform"`
+	Version        string   `json:"client_ver"`
 	MacAddr        string   `json:"mac_addr"`
 	MacAddrs       []string `json:"mac_addrs"`
 	Token          string   `json:"token"`
