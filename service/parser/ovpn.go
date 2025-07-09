@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/pritunl/pritunl-client-electron/service/constants"
 	"github.com/sirupsen/logrus"
 )
 
@@ -78,6 +79,7 @@ func (o *Ovpn) Export(chown string) string {
 	if o.EnvName != "" {
 		output += fmt.Sprintf("setenv UV_NAME %s\n", o.EnvName)
 	}
+	output += fmt.Sprintf("setenv UV_PRITUNL_VER %s\n", constants.Version)
 
 	if chown != "" {
 		output += fmt.Sprintf("user %s\n", chown)
