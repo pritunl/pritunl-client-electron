@@ -100,7 +100,7 @@ export interface Profile {
 }
 
 export interface RemoteData {
-	priority: string
+	priority: number
 }
 
 export interface Filter {
