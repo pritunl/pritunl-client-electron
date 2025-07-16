@@ -501,10 +501,10 @@ if cmd == 'upload' or cmd == 'upload-test' or cmd == 'build-upload':
         cwd=pacur_path,
     )
 
+    for name, path in iter_packages():
+        post_git_asset(release_id, name, path)
+
     subprocess.check_call([
         'sh',
         'upload-unstable.sh',
     ], cwd=pacur_path)
-
-    for name, path in iter_packages():
-        post_git_asset(release_id, name, path)
