@@ -31,6 +31,7 @@ type Store struct {
 	dnsForced      bool
 	lock           sync.RWMutex
 	conditionsLock sync.Mutex
+	stopsLock      sync.Mutex
 	conns          map[string]*Connection
 	conditions     map[string]*Condition
 	stops          map[string]time.Time
@@ -92,8 +93,8 @@ func (s *Store) IsConnected() bool {
 func (s *Store) SetStop(prflId string) {
 	prflId = utils.FilterStrN(prflId, 128)
 
-	s.lock.RLock()
-	defer s.lock.RUnlock()
+	s.stopsLock.Lock()
+	defer s.stopsLock.Unlock()
 
 	s.stops[prflId] = time.Now()
 }
@@ -101,8 +102,8 @@ func (s *Store) SetStop(prflId string) {
 func (s *Store) IsStop(prflId string) bool {
 	prflId = utils.FilterStrN(prflId, 128)
 
-	s.lock.RLock()
-	defer s.lock.RUnlock()
+	s.stopsLock.Lock()
+	defer s.stopsLock.Unlock()
 
 	stop := s.stops[prflId]
 	if !stop.IsZero() {
@@ -117,26 +118,26 @@ func (s *Store) IsStop(prflId string) bool {
 func (s *Store) Add(prflId string, conn *Connection) {
 	prflId = utils.FilterStrN(prflId, 128)
 
-	s.lock.RLock()
+	s.lock.Lock()
 	c := s.conns[prflId]
 	if c == nil {
 		s.conns[prflId] = conn
-		s.lock.RUnlock()
+		s.lock.Unlock()
 		return
 	}
-	s.lock.RUnlock()
+	s.lock.Unlock()
 
 	logrus.WithFields(c.Fields(nil)).Error(
 		"connection: Overwriting stored connection")
 	c.StopWait()
 
-	s.lock.RLock()
+	s.lock.Lock()
 	c = s.conns[prflId]
 	if c != nil {
 		c.State.SetStop()
 	}
 	s.conns[prflId] = conn
-	s.lock.RUnlock()
+	s.lock.Unlock()
 
 	logrus.WithFields(conn.Fields(nil)).Error(
 		"connection: Overwrote stored connection")
@@ -147,8 +148,8 @@ func (s *Store) Add(prflId string, conn *Connection) {
 func (s *Store) Remove(prflId string, conn *Connection) {
 	prflId = utils.FilterStrN(prflId, 128)
 
-	s.lock.RLock()
-	defer s.lock.RUnlock()
+	s.lock.Lock()
+	defer s.lock.Unlock()
 
 	c := s.conns[prflId]
 	if c == conn {
