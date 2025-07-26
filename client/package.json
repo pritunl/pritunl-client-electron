@@ -1,7 +1,7 @@
 {
   "name": "pritunl",
   "version": "1.3.4275.94",
-  "main": "dist-dev/static/main.js",
+  "main": "dist/static/main.js",
   "scripts": {
     "start": "electron .",
     "dev": "electron . --dev-tools --no-shutdown --gtk-version=3"
