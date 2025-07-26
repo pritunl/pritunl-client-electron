@@ -1,6 +1,10 @@
 Pritunl Client Changelog
 ========================
 
+<%= version %>
+
+Fix race condition causing service crash
+
 Version 1.3.4275.94 2025-05-27
 ------------------------------
 
