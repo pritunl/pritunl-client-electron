@@ -233,3 +233,46 @@ export function resetAll(noLoading?: boolean): Promise<void> {
 			})
 	})
 }
+
+export function resetEnclave(noLoading?: boolean): Promise<void> {
+	let loader: Loader
+	if (!noLoading) {
+		loader = new Loader().loading()
+	}
+
+	return new Promise<void>((resolve): void => {
+		RequestUtils
+			.post("/reset_enclave")
+			.set("Accept", "application/json")
+			.end()
+			.then((resp: Request.Response) => {
+				if (loader) {
+					loader.done()
+				}
+
+				if (resp.status !== 200) {
+					let err = new Errors.RequestError(null,
+						"System: Secure Enclave reset failed", {
+							status: resp.status.toString()
+						})
+					Logger.errorAlert(err)
+					return
+				}
+
+				Alert.success("System: Secure Enclave reset successful")
+
+				resolve()
+			}, (err) => {
+				if (loader) {
+					loader.done()
+				}
+
+				err = new Errors.RequestError(err,
+					"System: Secure Enclave reset failed")
+				Logger.errorAlert(err)
+
+				resolve()
+				return
+			})
+	})
+}
