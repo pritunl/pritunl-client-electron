@@ -442,6 +442,20 @@ export default class Main extends React.Component<{}, State> {
 				}}
 			/>
 			<Blueprint.MenuItem
+				text="Reset Secure Enclave Key"
+				intent="danger"
+				icon="globe-network"
+				hidden={Constants.platform !== "darwin"}
+				onKeyDown={(evt): void => {
+					if (evt.key === "Enter") {
+						ServiceActions.resetEnclave(false)
+					}
+				}}
+				onClick={(): void => {
+					ServiceActions.resetEnclave(false)
+				}}
+			/>
+			<Blueprint.MenuItem
 				text="Developer Tools"
 				intent="warning"
 				icon="code"
