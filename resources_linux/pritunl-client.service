@@ -3,6 +3,8 @@ Description=Pritunl Client Daemon
 
 [Service]
 ExecStart=/usr/bin/pritunl-client-service
+Restart=always
+RestartSec=5
 
 [Install]
 WantedBy=multi-user.target
