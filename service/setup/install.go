@@ -50,6 +50,21 @@ func Install() {
 	cmd.Stderr = os.Stderr
 	cmd.Run()
 
+	cmd = command.Command(
+		"sc.exe",
+		"failure", "pritunl",
+		"reset=0",
+		"actions=restart/10000/restart/10000/restart/10000",
+	)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Run()
+
+	cmd = command.Command("sc.exe", "failureflag", "pritunl", "1")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Run()
+
 	cmd = command.Command("sc.exe", "start", "pritunl")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
