@@ -920,7 +920,7 @@ func (o *Ovpn) killCmd() {
 				}
 				logrus.WithFields(o.conn.Fields(logrus.Fields{
 					"error": err,
-				})).Error("profile: Failed to management interrupt ovpn process")
+				})).Error("profile: Management interrupt failed")
 			}
 		} else {
 			err := o.cmd.Process.Signal(os.Interrupt)
