@@ -6,6 +6,7 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/dropbox/godropbox/container/set"
@@ -29,6 +30,7 @@ const (
 )
 
 var (
+	eventLock    = sync.Mutex{}
 	eventLimiter = map[string]time.Time{}
 	eventLimits  = map[string]time.Duration{
 		"connection_error":  30 * time.Second,
@@ -481,14 +483,16 @@ func (d *Data) GetAuthToken() (authToken *AuthToken, err error) {
 }
 
 func (d *Data) SendProfileEvent(evtType string) {
+	eventLock.Lock()
 	limit := eventLimits[evtType]
 	if limit != 0 {
 		if utils.SinceAbs(eventLimiter[evtType]) < limit {
-			println("skip", evtType)
+			eventLock.Unlock()
 			return
 		}
 		eventLimiter[evtType] = time.Now()
 	}
+	eventLock.Unlock()
 
 	evt := &event.Event{
 		Type: evtType,
