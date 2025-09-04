@@ -14,6 +14,8 @@ import (
 
 	"github.com/dropbox/godropbox/container/set"
 	"github.com/pritunl/pritunl-client-electron/service/command"
+	"github.com/pritunl/pritunl-client-electron/service/config"
+	"github.com/pritunl/pritunl-client-electron/service/tuntap"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
 	"github.com/sirupsen/logrus"
 )
@@ -167,7 +169,7 @@ func ParseAddress(input string) (addr string) {
 	return
 }
 
-func RestartProfiles() (err error) {
+func RestartProfiles(clean bool) (err error) {
 	restartLock.Lock()
 	defer restartLock.Unlock()
 
@@ -183,6 +185,20 @@ func RestartProfiles() (err error) {
 
 	for _, conn := range conns {
 		conn.StopWait()
+	}
+
+	if clean {
+		if config.Config.DisableNetClean {
+			logrus.Info("utils: Network clean disabled")
+		} else {
+			err = tuntap.Clean()
+			if err != nil {
+				logrus.WithFields(logrus.Fields{
+					"error": err,
+				}).Error("utils: Failed to clear interfaces")
+				err = nil
+			}
+		}
 	}
 
 	for _, prfl := range prfls {

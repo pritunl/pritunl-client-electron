@@ -19,7 +19,7 @@ func networkAllReset(c *gin.Context) {
 	utils.ResetNetworking()
 	utils.ClearDNSCache()
 
-	_ = connection.RestartProfiles()
+	_ = connection.RestartProfiles(true)
 
 	c.JSON(200, nil)
 }

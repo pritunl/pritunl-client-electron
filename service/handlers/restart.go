@@ -9,7 +9,7 @@ import (
 func restartPost(c *gin.Context) {
 	logrus.Warn("handlers: Restarting...")
 
-	connection.RestartProfiles()
+	connection.RestartProfiles(false)
 
 	c.JSON(200, nil)
 }

@@ -127,7 +127,7 @@ func wakeWatch() {
 
 				logrus.Warn("watch: Wakeup restarting...")
 
-				connection.RestartProfiles()
+				connection.RestartProfiles(false)
 			} else {
 				restartLock.Unlock()
 			}
