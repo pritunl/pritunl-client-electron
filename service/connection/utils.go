@@ -187,7 +187,7 @@ func RestartProfiles(clean bool) (err error) {
 		conn.StopWait()
 	}
 
-	if clean {
+	if clean && runtime.GOOS == "windows" {
 		if config.Config.DisableNetClean {
 			logrus.Info("utils: Network clean disabled")
 		} else {
