@@ -4289,6 +4289,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   disconnect: () => (/* binding */ disconnect),
 /* harmony export */   resetAll: () => (/* binding */ resetAll),
 /* harmony export */   resetDns: () => (/* binding */ resetDns),
+/* harmony export */   resetEnclave: () => (/* binding */ resetEnclave),
 /* harmony export */   tokenDelete: () => (/* binding */ tokenDelete),
 /* harmony export */   tokenUpdate: () => (/* binding */ tokenUpdate)
 /* harmony export */ });
@@ -4470,6 +4471,39 @@ function resetAll(noLoading) {
                 loader.done();
             }
             err = new _Errors__WEBPACK_IMPORTED_MODULE_1__.RequestError(err, "System: Network reset failed");
+            _Logger__WEBPACK_IMPORTED_MODULE_2__.errorAlert(err);
+            resolve();
+            return;
+        });
+    });
+}
+function resetEnclave(noLoading) {
+    let loader;
+    if (!noLoading) {
+        loader = new _Loader__WEBPACK_IMPORTED_MODULE_3__["default"]().loading();
+    }
+    return new Promise((resolve) => {
+        _utils_RequestUtils__WEBPACK_IMPORTED_MODULE_0__.post("/reset_enclave")
+            .set("Accept", "application/json")
+            .end()
+            .then((resp) => {
+            if (loader) {
+                loader.done();
+            }
+            if (resp.status !== 200) {
+                let err = new _Errors__WEBPACK_IMPORTED_MODULE_1__.RequestError(null, "System: Secure Enclave reset failed", {
+                    status: resp.status.toString()
+                });
+                _Logger__WEBPACK_IMPORTED_MODULE_2__.errorAlert(err);
+                return;
+            }
+            _Alert__WEBPACK_IMPORTED_MODULE_4__.success("System: Secure Enclave reset successful");
+            resolve();
+        }, (err) => {
+            if (loader) {
+                loader.done();
+            }
+            err = new _Errors__WEBPACK_IMPORTED_MODULE_1__.RequestError(err, "System: Secure Enclave reset failed");
             _Logger__WEBPACK_IMPORTED_MODULE_2__.errorAlert(err);
             resolve();
             return;
@@ -5804,10 +5838,12 @@ class Main extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
                 }, onClick: () => {
                     _actions_ServiceActions__WEBPACK_IMPORTED_MODULE_6__.resetAll(false);
                 } }),
-            react__WEBPACK_IMPORTED_MODULE_0__.createElement(_blueprintjs_core__WEBPACK_IMPORTED_MODULE_16__.MenuItem, { text: "Reset Secure Enclave Key", intent: "warning", icon: "globe-network", hidden: true, onKeyDown: (evt) => {
+            react__WEBPACK_IMPORTED_MODULE_0__.createElement(_blueprintjs_core__WEBPACK_IMPORTED_MODULE_16__.MenuItem, { text: "Reset Secure Enclave Key", intent: "danger", icon: "globe-network", hidden: _Constants__WEBPACK_IMPORTED_MODULE_4__.platform !== "darwin", onKeyDown: (evt) => {
                     if (evt.key === "Enter") {
+                        _actions_ServiceActions__WEBPACK_IMPORTED_MODULE_6__.resetEnclave(false);
                     }
                 }, onClick: () => {
+                    _actions_ServiceActions__WEBPACK_IMPORTED_MODULE_6__.resetEnclave(false);
                 } }),
             react__WEBPACK_IMPORTED_MODULE_0__.createElement(_blueprintjs_core__WEBPACK_IMPORTED_MODULE_16__.MenuItem, { text: "Developer Tools", intent: "warning", icon: "code", onClick: () => {
                     electron__WEBPACK_IMPORTED_MODULE_1__.ipcRenderer.send("control", "dev-tools");

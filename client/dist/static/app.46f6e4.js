@@ -24704,6 +24704,39 @@ function resetAll(noLoading) {
         });
     });
 }
+function resetEnclave(noLoading) {
+    let loader;
+    if (!noLoading) {
+        loader = new Loader().loading();
+    }
+    return new Promise((resolve) => {
+        post("/reset_enclave")
+            .set("Accept", "application/json")
+            .end()
+            .then((resp) => {
+            if (loader) {
+                loader.done();
+            }
+            if (resp.status !== 200) {
+                let err = new RequestError(null, "System: Secure Enclave reset failed", {
+                    status: resp.status.toString()
+                });
+                errorAlert(err);
+                return;
+            }
+            success("System: Secure Enclave reset successful");
+            resolve();
+        }, (err) => {
+            if (loader) {
+                loader.done();
+            }
+            err = new RequestError(err, "System: Secure Enclave reset failed");
+            errorAlert(err);
+            resolve();
+            return;
+        });
+    });
+}
 
 // EXTERNAL MODULE: external "util"
 var external_util_ = __webpack_require__(9023);
@@ -33811,10 +33844,12 @@ class Main extends react.Component {
                 }, onClick: () => {
                     resetAll(false);
                 } }),
-            react.createElement(MenuItem, { text: "Reset Secure Enclave Key", intent: "warning", icon: "globe-network", hidden: true, onKeyDown: (evt) => {
+            react.createElement(MenuItem, { text: "Reset Secure Enclave Key", intent: "danger", icon: "globe-network", hidden: platform !== "darwin", onKeyDown: (evt) => {
                     if (evt.key === "Enter") {
+                        resetEnclave(false);
                     }
                 }, onClick: () => {
+                    resetEnclave(false);
                 } }),
             react.createElement(MenuItem, { text: "Developer Tools", intent: "warning", icon: "code", onClick: () => {
                     external_electron_namespaceObject.ipcRenderer.send("control", "dev-tools");
