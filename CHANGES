@@ -1,6 +1,10 @@
 Pritunl Client Changelog
 ========================
 
+<%= version %>
+
+Add reset secure enclave on macos
+
 Version 1.3.4335.94 2025-07-26
 ------------------------------
 
