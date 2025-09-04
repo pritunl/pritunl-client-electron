@@ -1,13 +1,22 @@
 package token
 
-var store = map[string]*Token{}
+import (
+	"sync"
+)
+
+var (
+	store     = map[string]*Token{}
+	storeLock = sync.Mutex{}
+)
 
 func Get(profile, pubKey, pubBoxKey string) *Token {
 	if profile == "" {
 		return nil
 	}
 
+	storeLock.Lock()
 	tokn := store[profile]
+	storeLock.Unlock()
 
 	if tokn != nil && pubKey == tokn.ServerPublicKey &&
 		pubBoxKey == tokn.ServerBoxPublicKey {
@@ -34,7 +43,9 @@ func Update(profile, pubKey, pubBoxKey string, ttl int) (
 			return
 		}
 
+		storeLock.Lock()
 		store[profile] = tokn
+		storeLock.Unlock()
 	}
 
 	tokn.Ttl = ttl
@@ -48,5 +59,7 @@ func Update(profile, pubKey, pubBoxKey string, ttl int) (
 }
 
 func Clear(profile string) {
+	storeLock.Lock()
 	delete(store, profile)
+	storeLock.Unlock()
 }
