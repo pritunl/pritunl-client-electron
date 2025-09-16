@@ -1,4 +1,4 @@
-tsc
+./node_modules/.bin/tsc
 
 # development
 rm -rf dist-dev/static
@@ -23,10 +23,10 @@ cp node_modules/@blueprintjs/icons/lib/css/blueprint-icons-20.woff2 dist-dev/sta
 cp static/RobotoMono-Regular.ttf dist-dev/static/
 cp static/RobotoMono-Medium.ttf dist-dev/static/
 cp -r node_modules/monaco-editor/min/vs dist-dev/static/
-sed -i 's|../../resources/icons/||g' dist-dev/static/blueprint-icons.css
+node -e "fs=require('fs');f='dist-dev/static/blueprint-icons.css';fs.writeFileSync(f,fs.readFileSync(f,'utf8').replace(/..\/..\/resources\/icons\//g,''))"
 
-webpack --config webpack.dev.config
-webpack --config webpack-main.dev.config
+./node_modules/.bin/webpack --config webpack.dev.config
+./node_modules/.bin/webpack --config webpack-main.dev.config
 
 cp index.html dist-dev/index.html
 
@@ -53,10 +53,10 @@ cp node_modules/@blueprintjs/icons/lib/css/blueprint-icons-20.woff2 dist/static/
 cp static/RobotoMono-Regular.ttf dist/static/
 cp static/RobotoMono-Medium.ttf dist/static/
 cp -r node_modules/monaco-editor/min/vs dist/static/
-sed -i 's|../../resources/icons/||g' dist/static/blueprint-icons.css
+node -e "fs=require('fs');f='dist/static/blueprint-icons.css';fs.writeFileSync(f,fs.readFileSync(f,'utf8').replace(/..\/..\/resources\/icons\//g,''))"
 
-webpack --config webpack.config
-webpack --config webpack-main.config
+./node_modules/.bin/webpack --config webpack.config
+./node_modules/.bin/webpack --config webpack-main.config
 
 cp index_dist.html dist/index.html
 
@@ -65,8 +65,8 @@ APP_HASH=`md5sum dist/static/app.js | cut -c1-6`
 mv dist/static/app.js dist/static/app.${APP_HASH}.js
 mv dist/static/app.js.map dist/static/app.${APP_HASH}.js.map
 
-sed -i -e "s|static/app.js.map|static/app.${APP_HASH}.js.map|g" dist/index.html
-sed -i -e "s|static/app.js|static/app.${APP_HASH}.js|g" dist/index.html
+node -e "fs=require('fs');f='dist/index.html';fs.writeFileSync(f,fs.readFileSync(f,'utf8').replace(/static\/app\.js\.map/g,\`static/app.\${process.env.APP_HASH}.js.map\`))" APP_HASH=${APP_HASH}
+node -e "fs=require('fs');f='dist/index.html';fs.writeFileSync(f,fs.readFileSync(f,'utf8').replace(/static\/app\.js/g,\`static/app.\${process.env.APP_HASH}.js\`))" APP_HASH=${APP_HASH}
 
 # orig
 cp -r www/* dist/
