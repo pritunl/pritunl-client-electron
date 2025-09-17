@@ -7,35 +7,30 @@ npm install
 #### locked packages
 
 ```
-webpack
-```
-
-#### lint
-
-```
-npm run lint
+./node_modules/.bin/webpack
 ```
 
 ### development
 
 ```
 sudo ./service
-tsc --watch
-webpack-cli --config webpack.dev.config --progress --color --watch
-webpack-cli --config webpack-main.dev.config --progress --color --watch
+./node_modules/.bin/tsc --watch
+./node_modules/.bin/webpack-cli --config webpack.dev.config --progress --color --watch
+./node_modules/.bin/webpack-cli --config webpack-main.dev.config --progress --color --watch
 ./node_modules/.bin/electron . --dev-tools
 ```
 
 #### production
 
 ```
-npm run build
+sh build.sh
 ```
 
 ### clean
 
 ```
-npm run clean
+rm -rf app/*.js*
+rm -rf app/**/*.js*
 ```
 
 ### internal
@@ -56,7 +51,7 @@ rsync --human-readable --archive --xattrs --progress --delete $NPM_SERVER:/home/
 rsync --human-readable --archive --xattrs --progress --delete --exclude "/node_modules/*" --exclude "/jspm_packages/*" --exclude "app/*.js" --exclude "app/*.js.map" --exclude "app/**/*.js" --exclude "app/**/*.js.map" /home/cloud/go/src/github.com/pritunl/pritunl-client-electron/client/ $NPM_SERVER:/home/cloud/pritunl-client-www/
 
 # npm-server
-npm run build
+sh build.sh
 
 # desktop
 rsync --human-readable --archive --xattrs --progress --delete $NPM_SERVER:/home/cloud/pritunl-client-www/dist/ /home/cloud/go/src/github.com/pritunl/pritunl-client-electron/client/dist/
