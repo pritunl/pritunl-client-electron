@@ -13,3 +13,4 @@ jspm_packages/*
 !dist-dev/**/*.js
 !dist-dev/**/*.map
 !packages/**
+!.eslintrc.js

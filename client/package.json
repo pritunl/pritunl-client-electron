@@ -4,7 +4,9 @@
   "main": "dist-dev/static/main.js",
   "scripts": {
     "start": "electron .",
-    "dev": "electron . --dev-tools --no-shutdown --gtk-version=3"
+    "dev": "electron . --dev-tools --no-shutdown --gtk-version=3",
+    "lint": "eslint . --ext .ts,.tsx",
+    "lint:fix": "eslint . --ext .ts,.tsx --fix"
   },
   "build": {
     "appId": "com.pritunl.client",
@@ -42,7 +44,15 @@
     "@electron/fuses": "1.8.0",
     "@electron/packager": "18.3.6",
     "@electron/rebuild": "4.0.1",
+    "@typescript-eslint/eslint-plugin": "^8.44.0",
+    "@typescript-eslint/eslint-plugin-tslint": "^7.0.2",
+    "@typescript-eslint/parser": "^8.44.0",
     "electron": "37.3.1",
+    "eslint": "^8.57.1",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-jsdoc": "^58.0.0",
+    "eslint-plugin-prefer-arrow": "^1.2.3",
+    "eslint-plugin-unicorn": "^55.0.0",
     "rcedit": "4.0.1",
     "rimraf": "6.0.1",
     "source-map-loader": "5.0.0",
