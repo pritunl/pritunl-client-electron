@@ -54,6 +54,7 @@ type Ovpn struct {
 	RcvBuf            int
 	MssFix            int
 	TunMtu            int
+	Fragment          int
 	RemoteCertTls     string
 	Compress          string
 	CompLzo           string
@@ -145,6 +146,9 @@ func (o *Ovpn) Export(chown string) string {
 	}
 	if o.MssFix > 0 {
 		output += fmt.Sprintf("mssfix %d\n", o.MssFix)
+	}
+	if o.Fragment > 0 {
+		output += fmt.Sprintf("fragment %d\n", o.Fragment)
 	}
 	if o.TunMtu > 0 {
 		output += fmt.Sprintf("tun-mtu %d\n", o.TunMtu)
@@ -586,6 +590,24 @@ func Import(data string, remotes []Remote,
 			}
 
 			o.MssFix = mssFix
+			break
+		case "fragment":
+			if len(lines) != 2 {
+				logrus.WithFields(logrus.Fields{
+					"line": line,
+				}).Warn("parser: Configuration line ignored [41]")
+				continue
+			}
+
+			fragment, e := strconv.Atoi(lines[1])
+			if e != nil {
+				logrus.WithFields(logrus.Fields{
+					"line": line,
+				}).Warn("parser: Configuration line ignored [42]")
+				continue
+			}
+
+			o.Fragment = fragment
 			break
 		case "tun-mtu":
 			if len(lines) != 2 {
