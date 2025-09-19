@@ -24,6 +24,7 @@ export default [
     rules: {
       ...tseslint.configs.recommended.rules,
       ...prettierConfig.rules,
+      "prettier/prettier": "warn",
     },
   },
 ];
