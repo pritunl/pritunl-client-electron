@@ -69,6 +69,9 @@ func Configure() (err error) {
 }
 
 func Get() (adpaters []string, count int, err error) {
+	tapsLock.Lock()
+	defer tapsLock.Unlock()
+
 	toolpath := utils.TapCtlPath()
 
 	output, err := utils.ExecCombinedOutputLogged(
@@ -102,6 +105,9 @@ func Get() (adpaters []string, count int, err error) {
 }
 
 func Clean() (err error) {
+	tapsLock.Lock()
+	defer tapsLock.Unlock()
+
 	toolpath := utils.TapCtlPath()
 
 	adapters, totalCount, err := Get()
@@ -123,6 +129,7 @@ func Clean() (err error) {
 
 	curSize = 0
 	curTotalSize = totalCount
+	taps = []string{}
 
 	return
 }
@@ -230,6 +237,9 @@ func Resize(size int) (err error) {
 }
 
 func Size() int {
+	tapsLock.Lock()
+	defer tapsLock.Unlock()
+
 	return curSize
 }
 
