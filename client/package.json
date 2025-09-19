@@ -5,8 +5,8 @@
   "scripts": {
     "start": "electron .",
     "dev": "electron . --dev-tools --no-shutdown --gtk-version=3",
-    "lint": "eslint . --ext .ts,.tsx",
-    "lint:fix": "eslint . --ext .ts,.tsx --fix"
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix ."
   },
   "build": {
     "appId": "com.pritunl.client",
@@ -49,9 +49,11 @@
     "@typescript-eslint/parser": "^8.44.0",
     "electron": "37.3.1",
     "eslint": "^8.57.1",
+    "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-jsdoc": "^58.0.0",
     "eslint-plugin-prefer-arrow": "^1.2.3",
+    "eslint-plugin-prettier": "^5.5.4",
     "eslint-plugin-unicorn": "^55.0.0",
     "rcedit": "4.0.1",
     "rimraf": "6.0.1",
