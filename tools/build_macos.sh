@@ -67,6 +67,7 @@ codesign --force --timestamp --options=runtime -s "Developer ID Application: Pri
 # Pritunl
 mkdir -p build/macos/Applications
 cd client
+node -e "fs=require('fs');f='package.json';c=fs.readFileSync(f,'utf8');fs.writeFileSync(f,c.replace(/,\s*\"scripts\": \{[^}]*\}/,''))"
 npm install
 ./node_modules/.bin/electron-rebuild
 node package.js
