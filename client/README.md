@@ -13,7 +13,11 @@ npm install
 ### development
 
 ```
+cd service
 sudo ./service
+
+cd client
+sed -i 's|dist/static|dist-dev/static|g' package.json
 ./node_modules/.bin/tsc --watch
 ./node_modules/.bin/webpack-cli --config webpack.dev.config --progress --color --watch
 ./node_modules/.bin/webpack-cli --config webpack-main.dev.config --progress --color --watch
