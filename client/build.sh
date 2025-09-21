@@ -65,8 +65,8 @@ APP_HASH=`md5sum dist/static/app.js | cut -c1-6`
 mv dist/static/app.js dist/static/app.${APP_HASH}.js
 mv dist/static/app.js.map dist/static/app.${APP_HASH}.js.map
 
-node -e "fs=require('fs');f='dist/index.html';fs.writeFileSync(f,fs.readFileSync(f,'utf8').replace(/static\/app\.js\.map/g,\`static/app.\${process.env.APP_HASH}.js.map\`))" APP_HASH=${APP_HASH}
-node -e "fs=require('fs');f='dist/index.html';fs.writeFileSync(f,fs.readFileSync(f,'utf8').replace(/static\/app\.js/g,\`static/app.\${process.env.APP_HASH}.js\`))" APP_HASH=${APP_HASH}
+node -e "fs=require('fs');f='dist/index.html';fs.writeFileSync(f,fs.readFileSync(f,'utf8').replace(/static\/app\.js\.map/g,'static/app.${APP_HASH}.js.map'))"
+node -e "fs=require('fs');f='dist/index.html';fs.writeFileSync(f,fs.readFileSync(f,'utf8').replace(/static\/app\.js/g,'static/app.${APP_HASH}.js'))"
 
 # orig
 cp -r www/* dist/
