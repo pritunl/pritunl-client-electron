@@ -3,6 +3,7 @@ Pritunl Client Changelog
 
 <%= version %>
 
+Interface improvements
 Fix issues causing reconnection to fail
 Fix reset networking on Windows
 
