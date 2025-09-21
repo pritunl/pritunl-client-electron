@@ -5017,10 +5017,10 @@ __webpack_require__.r(__webpack_exports__);
 
 const css = {
     editorBox: {
-        margin: "10px 0",
+        margin: "0",
     },
     editor: {
-        margin: "11px 0 10px 0",
+        margin: "0",
         borderRadius: "3px",
         overflow: "hidden",
         width: "100%",
@@ -5448,8 +5448,8 @@ class Logs extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
                             this.onChangeView(evt.target.value);
                         } }, viewsDom))),
             react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", { className: "layout horizontal flex" },
-                react__WEBPACK_IMPORTED_MODULE_0__.createElement("label", { className: "bp5-label flex", style: css.editor },
-                    react__WEBPACK_IMPORTED_MODULE_0__.createElement(_Editor__WEBPACK_IMPORTED_MODULE_5__["default"], { disabled: this.state.disabled, value: this.state.log, readOnly: true, mode: "text", fontSize: 10, height: "500px", width: "100%" }))));
+                react__WEBPACK_IMPORTED_MODULE_0__.createElement("label", { className: "bp5-label layout horizontal flex", style: css.editor },
+                    react__WEBPACK_IMPORTED_MODULE_0__.createElement(_Editor__WEBPACK_IMPORTED_MODULE_5__["default"], { disabled: this.state.disabled, value: this.state.log, readOnly: true, mode: "text", fontSize: 10, height: "100%", width: "100%" }))));
     }
 }
 
@@ -5913,10 +5913,11 @@ const css = {
         maxWidth: '320px',
     },
     value: {
-        wordWrap: 'break-word',
+        overflowWrap: 'anywhere',
     },
     item: {
         marginBottom: '5px',
+        marginRight: '5px',
     },
     bar: {
         maxWidth: '280px',
@@ -10016,7 +10017,7 @@ function _objectWithoutPropertiesLoose(r, e) {
   if (null == r) return {};
   var t = {};
   for (var n in r) if ({}.hasOwnProperty.call(r, n)) {
-    if (e.includes(n)) continue;
+    if (-1 !== e.indexOf(n)) continue;
     t[n] = r[n];
   }
   return t;

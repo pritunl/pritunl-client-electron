@@ -14568,7 +14568,7 @@ function _objectWithoutPropertiesLoose(r, e) {
   if (null == r) return {};
   var t = {};
   for (var n in r) if ({}.hasOwnProperty.call(r, n)) {
-    if (e.includes(n)) continue;
+    if (-1 !== e.indexOf(n)) continue;
     t[n] = r[n];
   }
   return t;
@@ -27293,10 +27293,11 @@ const PageInfo_css = {
         maxWidth: '320px',
     },
     value: {
-        wordWrap: 'break-word',
+        overflowWrap: 'anywhere',
     },
     item: {
         marginBottom: '5px',
+        marginRight: '5px',
     },
     bar: {
         maxWidth: '280px',
@@ -28619,10 +28620,10 @@ var le={wrapper:{display:"flex",position:"relative",textAlign:"initial"},fullWid
 
 const Editor_css = {
     editorBox: {
-        margin: "10px 0",
+        margin: "0",
     },
     editor: {
-        margin: "11px 0 10px 0",
+        margin: "0",
         borderRadius: "3px",
         overflow: "hidden",
         width: "100%",
@@ -28853,8 +28854,8 @@ class Logs extends react.Component {
                             this.onChangeView(evt.target.value);
                         } }, viewsDom))),
             react.createElement("div", { className: "layout horizontal flex" },
-                react.createElement("label", { className: "bp5-label flex", style: Logs_css.editor },
-                    react.createElement(Editor, { disabled: this.state.disabled, value: this.state.log, readOnly: true, mode: "text", fontSize: 10, height: "500px", width: "100%" }))));
+                react.createElement("label", { className: "bp5-label layout horizontal flex", style: Logs_css.editor },
+                    react.createElement(Editor, { disabled: this.state.disabled, value: this.state.log, readOnly: true, mode: "text", fontSize: 10, height: "100%", width: "100%" }))));
     }
 }
 
