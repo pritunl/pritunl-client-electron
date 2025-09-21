@@ -68,10 +68,7 @@ func Configure() (err error) {
 	return
 }
 
-func Get() (adpaters []string, count int, err error) {
-	tapsLock.Lock()
-	defer tapsLock.Unlock()
-
+func get() (adpaters []string, count int, err error) {
 	toolpath := utils.TapCtlPath()
 
 	output, err := utils.ExecCombinedOutputLogged(
@@ -104,13 +101,10 @@ func Get() (adpaters []string, count int, err error) {
 	return
 }
 
-func Clean() (err error) {
-	tapsLock.Lock()
-	defer tapsLock.Unlock()
-
+func clean() (err error) {
 	toolpath := utils.TapCtlPath()
 
-	adapters, totalCount, err := Get()
+	adapters, totalCount, err := get()
 	if err != nil {
 		return
 	}
@@ -130,6 +124,18 @@ func Clean() (err error) {
 	curSize = 0
 	curTotalSize = totalCount
 	taps = []string{}
+
+	return
+}
+
+func Clean() (err error) {
+	tapsLock.Lock()
+	defer tapsLock.Unlock()
+
+	err = clean()
+	if err != nil {
+		return
+	}
 
 	return
 }
@@ -175,7 +181,7 @@ func Resize(size int) (err error) {
 			if strings.Contains(strings.ToLower(output), "renaming") {
 				if !renameError {
 					renameError = true
-					_ = Clean()
+					_ = clean()
 				}
 			} else {
 				_, _ = utils.ExecCombinedOutputLogged(
@@ -212,7 +218,7 @@ func Resize(size int) (err error) {
 						"create",
 					)
 					if err != nil {
-						_ = Clean()
+						_ = clean()
 						return
 					}
 
