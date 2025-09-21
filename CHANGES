@@ -1,6 +1,10 @@
 Pritunl Client Changelog
 ========================
 
+<%= version %>
+
+Fix issues causing reconnection to fail
+
 Version 1.3.4375.96 2025-09-04
 ------------------------------
 
