@@ -43,10 +43,12 @@ var (
 	itemTitleStyle = lipgloss.NewStyle().
 			Foreground(lipgloss.Color("#4a8cf7")).
 			Bold(true)
-	statusConnectedStyle = lipgloss.NewStyle().
-				Foreground(lipgloss.Color("#10B981"))
-	statusDisconnectedStyle = lipgloss.NewStyle().
-				Foreground(lipgloss.Color("#EF4444"))
+	greenStyle = lipgloss.NewStyle().
+			Foreground(lipgloss.Color("#10B981"))
+	redStyle = lipgloss.NewStyle().
+			Foreground(lipgloss.Color("#EF4444"))
+	yellowSytle = lipgloss.NewStyle().
+			Foreground(lipgloss.Color("#fffb00"))
 )
 
 type ListItem struct {
