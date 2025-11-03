@@ -119,6 +119,20 @@ func (i ListItem) Body(width int) string {
 	))
 	rows = append(rows, row)
 
+	if i.profile.RegistrationKey != "" {
+		row = style.Render(yellowSytle.Render(renderCol(
+			colWidth,
+			"Device Registration Required",
+		)))
+		rows = append(rows, row)
+		row = style.Render(yellowSytle.Render(renderCol(
+			colWidth,
+			"Device Registration Key: %s",
+			i.profile.RegistrationKey,
+		)))
+		rows = append(rows, row)
+	}
+
 	return strings.Join(rows, "\n")
 }
 
@@ -171,6 +185,20 @@ func (i ListItem) BodySplit(width int) string {
 	))
 	rows = append(rows, lipgloss.JoinHorizontal(
 		lipgloss.Left, left, right))
+
+	if i.profile.RegistrationKey != "" {
+		left = style.Render(yellowSytle.Render(renderCol(
+			colWidth,
+			"Device Registration Required",
+		)))
+		right = style.Render(yellowSytle.Render(renderCol(
+			colWidth,
+			"Device Registration Key: %s",
+			i.profile.RegistrationKey,
+		)))
+		rows = append(rows, lipgloss.JoinHorizontal(
+			lipgloss.Left, left, right))
+	}
 
 	return strings.Join(rows, "\n")
 }
