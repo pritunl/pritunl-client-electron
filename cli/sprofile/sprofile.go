@@ -3,6 +3,7 @@ package sprofile
 import (
 	"fmt"
 	"io/ioutil"
+	"math"
 	"net/http"
 	"runtime"
 	"strings"
@@ -89,6 +90,78 @@ func (s *Sprofile) FormatedState() string {
 		return "Disabled"
 	} else {
 		return "Enabled"
+	}
+}
+
+func (s *Sprofile) FormatedStatus() (label, status string) {
+	if s.Profile == nil {
+		return "Status", "Disconnected"
+	}
+
+	if s.Profile.Status == "" {
+		if s.State {
+			return "Status", "Connecting"
+		}
+		return "Status", "Disconnected"
+	}
+
+	switch s.Profile.Status {
+	case "connected":
+		uptime := s.Profile.Uptime()
+		unitItems := []string{}
+
+		if uptime > 86400 {
+			units := int64(math.Floor(float64(uptime) / 86400))
+			uptime -= units * 86400
+			unitStr := fmt.Sprintf("%d day", units)
+			if units > 1 {
+				unitStr += "s"
+			}
+			unitItems = append(unitItems, unitStr)
+		}
+
+		if uptime > 3600 {
+			units := int64(math.Floor(float64(uptime) / 3600))
+			uptime -= units * 3600
+			unitStr := fmt.Sprintf("%d hour", units)
+			if units > 1 {
+				unitStr += "s"
+			}
+			unitItems = append(unitItems, unitStr)
+		}
+
+		if uptime > 60 {
+			units := int64(math.Floor(float64(uptime) / 60))
+			uptime -= units * 60
+			unitStr := fmt.Sprintf("%d min", units)
+			if units > 1 {
+				unitStr += "s"
+			}
+			unitItems = append(unitItems, unitStr)
+		}
+
+		if uptime > 0 {
+			unitStr := fmt.Sprintf("%d sec", uptime)
+			if uptime > 1 {
+				unitStr += "s"
+			}
+			unitItems = append(unitItems, unitStr)
+		}
+
+		return "Online For", strings.Join(unitItems, " ")
+	case "connecting":
+		return "Status", "Connecting"
+	case "authenticating":
+		return "Status", "Authenticating"
+	case "reconnecting":
+		return "Status", "Reconnecting"
+	case "disconnecting":
+		if s.State {
+			return "Status", "Reconnecting"
+		}
+		return "Status", "Disconnecting"
+	default:
+		return "Status", s.Profile.Status
 	}
 }
 
