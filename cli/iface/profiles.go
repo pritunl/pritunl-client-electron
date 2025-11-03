@@ -78,9 +78,9 @@ func (i ListItem) Body(width int) string {
 
 	var statusStyle lipgloss.Style
 	if i.profile.Active {
-		statusStyle = statusConnectedStyle
+		statusStyle = greenStyle
 	} else {
-		statusStyle = statusDisconnectedStyle
+		statusStyle = redStyle
 	}
 
 	row = style.Render(fmt.Sprintf(
@@ -146,9 +146,9 @@ func (i ListItem) BodySplit(width int) string {
 
 	var statusStyle lipgloss.Style
 	if i.profile.Active {
-		statusStyle = statusConnectedStyle
+		statusStyle = greenStyle
 	} else {
-		statusStyle = statusDisconnectedStyle
+		statusStyle = redStyle
 	}
 
 	right := style.Render(fmt.Sprintf(
