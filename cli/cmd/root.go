@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/dropbox/godropbox/errors"
+	"github.com/pritunl/pritunl-client-electron/cli/iface"
 	"github.com/spf13/cobra"
 )
 
@@ -9,10 +10,8 @@ var RootCmd = &cobra.Command{
 	Use:   "pritunl-client",
 	Short: "Pritunl Client Command Line Tool",
 	Run: func(cmd *cobra.Command, args []string) {
-		err := cmd.Help()
-		if err != nil {
-			cobra.CheckErr(errors.Wrap(err, "cmd: Failed to execute help command"))
-		}
+		err := iface.Iface()
+		cobra.CheckErr(err)
 	},
 }
 
