@@ -221,7 +221,7 @@ func Delete(sprflId string) (err error) {
 	return
 }
 
-func GetAll() (sprfls []*Sprofile, err error) {
+func GetAll() (sprfls Sprofiles, err error) {
 	reqUrl := service.GetAddress() + "/sprofile"
 
 	authKey, err := service.GetAuthKey()
