@@ -348,6 +348,80 @@ func PasswordPrompt(sprfl *Sprofile) (pass string, err error) {
 	return
 }
 
+func PasswordPrompts(sprfl *Sprofile) (prompts []Prompt) {
+	passModes := set.NewSet()
+
+	passModesStr := strings.Split(sprfl.PasswordMode, "_")
+	for _, passMode := range passModesStr {
+		passModes.Add(passMode)
+	}
+
+	if passModes.Contains("pin") {
+		prompts = append(prompts, Prompt{
+			Type:        PromptInput,
+			Key:         "pin",
+			Label:       "Pin",
+			Placeholder: "Enter pin...",
+		})
+	}
+
+	if passModes.Contains("duo") {
+		prompts = append(prompts, Prompt{
+			Type:        PromptInput,
+			Key:         "duo",
+			Label:       "Duo Passcode",
+			Placeholder: "Enter passcode...",
+		})
+	}
+
+	if passModes.Contains("onelogin") {
+		prompts = append(prompts, Prompt{
+			Type:        PromptInput,
+			Key:         "onelogin",
+			Label:       "OneLogin Passcode",
+			Placeholder: "Enter passcode...",
+		})
+	}
+
+	if passModes.Contains("okta") {
+		prompts = append(prompts, Prompt{
+			Type:        PromptInput,
+			Key:         "okta",
+			Label:       "Okta Passcode",
+			Placeholder: "Enter passcode...",
+		})
+	}
+
+	if passModes.Contains("otp") {
+		prompts = append(prompts, Prompt{
+			Type:        PromptInput,
+			Key:         "otp",
+			Label:       "Authenticator Passcode",
+			Placeholder: "Enter passcode...",
+		})
+	}
+
+	if passModes.Contains("yubikey") {
+		prompts = append(prompts, Prompt{
+			Type:        PromptInput,
+			Key:         "yubikey",
+			Label:       "YubiKey OTP",
+			Placeholder: "Enter YubiKey...",
+		})
+	}
+
+	if passModes.Contains("password") {
+		prompts = append(prompts, Prompt{
+			Type:        PromptInput,
+			Key:         "password",
+			Label:       "Password",
+			Placeholder: "Enter password...",
+		})
+	}
+
+	return
+}
+
 func Start(sprflId, mode, password string, passwordPrompt bool) (err error) {
 	sprfl, err := Match(sprflId)
 	if err != nil {
