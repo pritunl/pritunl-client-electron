@@ -271,6 +271,7 @@ func (c *Client) connectDirect() (err error) {
 
 func (c *Client) connectPreAuth() (err error) {
 	var evt *event.Event
+	connErrors := []ConnectionError{}
 	final := false
 	var data *ConnData
 
@@ -287,7 +288,16 @@ func (c *Client) connectPreAuth() (err error) {
 		}
 
 		data, final, evt, err = c.authorize(remote.Host, "", time.Time{})
-		if err == nil || final {
+		if err != nil {
+			connErrors = append(connErrors, ConnectionError{
+				Host:  remote.Host,
+				Error: err,
+			})
+			err = nil
+			if final {
+				break
+			}
+		} else {
 			break
 		}
 
@@ -302,17 +312,22 @@ func (c *Client) connectPreAuth() (err error) {
 		return
 	}
 
-	if err != nil {
+	if len(connErrors) > 0 {
 		if evt != nil {
 			evt.Init()
 		} else {
 			c.conn.Data.SendProfileEvent("connection_error")
 		}
 
-		logrus.WithFields(logrus.Fields{
-			"error": err,
-		}).Error("profile: All connection requests failed")
-		err = nil
+		for _, connErr := range connErrors {
+			logrus.WithFields(logrus.Fields{
+				"host":  connErr.Host,
+				"error": connErr.Error,
+			}).Error("profile: Connection request failed")
+		}
+
+		logrus.Error("profile: All connection requests failed, " +
+			"view previous errors for each attempt")
 
 		c.conn.State.Close()
 
