@@ -232,7 +232,7 @@ export default class Logs extends React.Component<{}, State> {
 			</div>
 			<div className="layout horizontal flex">
 				<label
-					className="bp5-label flex"
+					className="bp5-label layout horizontal flex"
 					style={css.editor}
 				>
 					<Editor
@@ -241,7 +241,7 @@ export default class Logs extends React.Component<{}, State> {
 						readOnly={true}
 						mode="text"
 						fontSize={10}
-						height="500px"
+						height="100%"
 						width="100%"
 					/>
 				</label>
