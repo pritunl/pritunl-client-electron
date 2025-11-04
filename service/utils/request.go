@@ -203,7 +203,7 @@ func GetPublicAddress4() (addr4 string, err error) {
 	res, err := client4.Do(req)
 	if err != nil {
 		err = &errortypes.RequestError{
-			errors.Wrap(err, "utils: Request put error"),
+			errors.Wrap(err, "utils: Request get error"),
 		}
 		return
 	}
@@ -255,7 +255,7 @@ func GetPublicAddress6() (addr6 string, err error) {
 	res, err := client6.Do(req)
 	if err != nil {
 		err = &errortypes.RequestError{
-			errors.Wrap(err, "utils: Request put error"),
+			errors.Wrap(err, "utils: Request get error"),
 		}
 		return
 	}
