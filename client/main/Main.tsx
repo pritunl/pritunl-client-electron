@@ -205,6 +205,21 @@ class Main {
 			}
 		})
 
+		this.window.webContents.on("context-menu", (
+				evt: electron.Event, params: electron.ContextMenuParams) => {
+
+			if (params.isEditable) {
+				electron.Menu.buildFromTemplate([
+					{role: "undo"},
+					{role: "redo"},
+					{role: "cut"},
+					{role: "copy"},
+					{role: "paste"},
+					{role: "selectAll"},
+				]).popup()
+			}
+		})
+
 		Constants.setMainWindow(this.window)
 
 		this.window.webContents.setUserAgent("pritunl")
