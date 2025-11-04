@@ -337,14 +337,6 @@ func PasswordPrompt(sprfl *Sprofile) (pass string, err error) {
 		pass += part
 	}
 
-	if passModes.Contains("yubikey") {
-		part := terminal.ReadPassword("YubiKey")
-		if part == "" {
-			cobra.CheckErr("sprofile: YubiKey is empty")
-		}
-		pass += part
-	}
-
 	if pass == "" {
 		part := terminal.ReadPassword("Password")
 		if part == "" {
