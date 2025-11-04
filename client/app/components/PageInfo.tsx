@@ -30,10 +30,11 @@ const css = {
 		maxWidth: '320px',
 	} as React.CSSProperties,
 	value: {
-		wordWrap: 'break-word',
+		overflowWrap: 'anywhere',
 	} as React.CSSProperties,
 	item: {
 		marginBottom: '5px',
+		marginRight: '5px',
 	} as React.CSSProperties,
 	bar: {
 		maxWidth: '280px',
