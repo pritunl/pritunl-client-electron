@@ -603,7 +603,7 @@ func (c *Client) authorize(host string, ssoToken string,
 		}
 
 		err = &errortypes.RequestError{
-			errors.Wrap(err, "profile: Server is offline"),
+			errors.New("profile: Server is offline"),
 		}
 		return
 	}
