@@ -30,3 +30,8 @@ func SetShutdown() {
 	Shutdown = true
 	sprofile.Shutdown()
 }
+
+type ConnectionError struct {
+	Host  string
+	Error error
+}
