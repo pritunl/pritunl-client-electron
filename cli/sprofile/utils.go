@@ -278,6 +278,8 @@ func GetAll() (sprfls Sprofiles, err error) {
 		}
 	}
 
+	sprfls.Sort()
+
 	return
 }
 
