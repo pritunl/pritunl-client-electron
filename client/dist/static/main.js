@@ -15396,6 +15396,18 @@ class Main {
                 contextIsolation: false,
             }
         });
+        this.window.webContents.on("context-menu", (evt, params) => {
+            if (params.isEditable) {
+                external_electron_default().Menu.buildFromTemplate([
+                    { role: "undo" },
+                    { role: "redo" },
+                    { role: "cut" },
+                    { role: "copy" },
+                    { role: "paste" },
+                    { role: "selectAll" },
+                ]).popup();
+            }
+        });
         setMainWindow(this.window);
         this.window.webContents.setUserAgent("pritunl");
         this.window.on("close", () => {
