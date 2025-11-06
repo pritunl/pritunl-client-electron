@@ -16,7 +16,7 @@ async function packageApp() {
       name: 'Pritunl',
       platform: 'darwin',
       arch: 'universal',
-      icon: './www/img/pritunl.icns',
+      icon: path.resolve(__dirname, 'www/img/pritunl.icns'),
       darwinDarkModeSupport: true,
       extraResource: [
         '../build/resources/pritunl-service',
@@ -51,7 +51,9 @@ async function packageApp() {
       out: '../build/macos/Applications',
       gatekeeperAssess: false,
       afterCopyExtraResources: [
-        async (buildPath, electronVersion, platform, arch, callback) => {
+        async (params) => {
+          const {buildPath, electronVersion, platform, arch} = params;
+
           console.log(`Packaging app for ${platform}-${arch} ` +
             `using Electron ${electronVersion} in ${buildPath}`);
 
@@ -68,8 +70,6 @@ async function packageApp() {
             [fuses.FuseV1Options.EnableEmbeddedAsarIntegrityValidation]: true,
             [fuses.FuseV1Options.OnlyLoadAppFromAsar]: true,
           });
-
-          callback();
         }
       ]
     });
