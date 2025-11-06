@@ -526,6 +526,170 @@ func Start(sprflId, mode, password string, passwordPrompt bool) (err error) {
 	return
 }
 
+type Callback func(prompts []Prompt, callback func(PromptValues), err error)
+
+type Prompt struct {
+	Key         string
+	Type        int
+	Label       string
+	Placeholder string
+	Value       string
+}
+
+var PromptInput = 1
+var PromptLink = 2
+
+type PromptValues map[string]string
+
+func StartCallback(sprflId, mode string, callback Callback) {
+	sprfl, err := Match(sprflId)
+	if err != nil {
+		callback(nil, nil, err)
+		return
+	}
+
+	if mode == "" {
+		mode = sprfl.LastMode
+		if mode == "" {
+			mode = "ovpn"
+		}
+	}
+
+	switch mode {
+	case "ovpn", "wg":
+		break
+	default:
+		err = errortypes.NotFoundError{
+			errors.New("sprofile: Invalid profile mode"),
+		}
+		callback(nil, nil, err)
+		return
+	}
+
+	prompts := PasswordPrompts(sprfl)
+	if len(prompts) > 0 {
+		callback(prompts, func(values PromptValues) {
+			password := ""
+
+			if values["pin"] != "" {
+				password += values["pin"]
+			}
+			if values["duo"] != "" {
+				password += values["duo"]
+			}
+			if values["onelogin"] != "" {
+				password += values["onelogin"]
+			}
+			if values["okta"] != "" {
+				password += values["okta"]
+			}
+			if values["otp"] != "" {
+				password += values["otp"]
+			}
+			if values["yubikey"] != "" {
+				password += values["yubikey"]
+			}
+			if values["password"] != "" {
+				password += values["password"]
+			}
+
+			startCallback2(sprflId, mode, password, callback)
+		}, nil)
+		return
+	}
+
+	startCallback2(sprflId, mode, "", callback)
+	return
+}
+
+func startCallback2(sprflId, mode, password string, callback Callback) {
+	sprfl, err := Match(sprflId)
+	if err != nil {
+		callback(nil, nil, err)
+		return
+	}
+
+	reqUrl := service.GetAddress() + "/profile"
+
+	authKey, err := service.GetAuthKey()
+	if err != nil {
+		callback(nil, nil, err)
+		return
+	}
+
+	data, err := json.Marshal(&SprofileData{
+		Id:       sprfl.Id,
+		Mode:     mode,
+		Password: password,
+	})
+	if err != nil {
+		err = errortypes.RequestError{
+			errors.Wrap(err, "sprofile: Json marshal error"),
+		}
+		callback(nil, nil, err)
+		return
+	}
+
+	body := bytes.NewBuffer(data)
+
+	req, err := http.NewRequest("POST", reqUrl, body)
+	if err != nil {
+		err = errortypes.RequestError{
+			errors.Wrap(err, "sprofile: Post request failed"),
+		}
+		callback(nil, nil, err)
+		return
+	}
+
+	if runtime.GOOS == "linux" || runtime.GOOS == "darwin" {
+		req.Host = "unix"
+	}
+	req.Header.Set("Auth-Key", authKey)
+	req.Header.Set("User-Agent", "pritunl")
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := service.GetClient().Do(req)
+	if err != nil {
+		err = errortypes.RequestError{
+			errors.Wrap(err, "sprofile: Request failed"),
+		}
+		callback(nil, nil, err)
+		return
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		err = errortypes.RequestError{
+			errors.Wrapf(err, "sprofile: Unknown request error %d",
+				resp.StatusCode),
+		}
+		callback(nil, nil, err)
+		return
+	}
+
+	if sprfl.SsoAuth {
+		for i := 0; i < 50; i++ {
+			prfl, e := profile.Get(sprfl.Id)
+			if e != nil {
+				break
+			}
+
+			if prfl != nil && prfl.SsoUrl != "" {
+				prompts := []Prompt{{
+					Type:  PromptLink,
+					Label: "Single sign-on authentication required:",
+					Value: prfl.SsoUrl,
+				}}
+
+				callback(prompts, nil, nil)
+				break
+			}
+
+			time.Sleep(100 * time.Millisecond)
+		}
+	}
+}
+
 func SetState(sprflId string, state bool) (err error) {
 	sprfl, err := Match(sprflId)
 	if err != nil {
