@@ -1,7 +1,7 @@
-import packager from '@electron/packager';
+import * as packager from '@electron/packager';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import fuses from '@electron/fuses';
+import * as fuses from '@electron/fuses';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -11,7 +11,7 @@ let entitlementsPath = path.resolve(__dirname, '..',
 
 async function packageApp() {
   try {
-    const appPaths = await packager({
+    const appPaths = await packager.packager({
       dir: './',
       name: 'Pritunl',
       platform: 'darwin',
