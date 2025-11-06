@@ -1,6 +1,10 @@
-const packager = require('@electron/packager');
-const path = require("path");
-const fuses = require("@electron/fuses");
+import packager from '@electron/packager';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import fuses from '@electron/fuses';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 let entitlementsPath = path.resolve(__dirname, '..',
   'resources_macos', 'entitlements.plist');
@@ -47,8 +51,7 @@ async function packageApp() {
       out: '../build/macos/Applications',
       gatekeeperAssess: false,
       afterCopyExtraResources: [
-        async (buildPath, electronVersion,
-            platform, arch, callback) => {
+        async (buildPath, electronVersion, platform, arch, callback) => {
           console.log(`Packaging app for ${platform}-${arch} ` +
             `using Electron ${electronVersion} in ${buildPath}`);
 
