@@ -331,6 +331,7 @@ func (c *Client) connectPreAuth() (err error) {
 
 		c.conn.State.Close()
 
+		err = connErrors[len(connErrors)-1].Error
 		return
 	}
 
