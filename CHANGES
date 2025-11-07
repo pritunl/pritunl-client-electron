@@ -1,7 +1,7 @@
 Pritunl Client Changelog
 ========================
 
-<%+ version %>
+<%= version %>
 
 Fix Windows interface crashing
 
