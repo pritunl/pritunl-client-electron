@@ -312,7 +312,7 @@ func (c *Client) connectPreAuth() (err error) {
 		return
 	}
 
-	if len(connErrors) > 0 {
+	if len(connErrors) > 0 && data == nil {
 		if evt != nil {
 			evt.Init()
 		} else {
