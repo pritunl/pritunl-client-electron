@@ -1,22 +1,18 @@
-import * as packager from '@electron/packager';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import * as fuses from '@electron/fuses';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const packager = require('@electron/packager');
+const path = require("path");
+const fuses = require("@electron/fuses");
 
 let entitlementsPath = path.resolve(__dirname, '..',
   'resources_macos', 'entitlements.plist');
 
 async function packageApp() {
   try {
-    const appPaths = await packager.packager({
+    const appPaths = await packager({
       dir: './',
       name: 'Pritunl',
       platform: 'darwin',
       arch: 'universal',
-      icon: path.resolve(__dirname, 'www/img/pritunl.icns'),
+      icon: './www/img/pritunl.icns',
       darwinDarkModeSupport: true,
       extraResource: [
         '../build/resources/pritunl-service',
@@ -51,9 +47,8 @@ async function packageApp() {
       out: '../build/macos/Applications',
       gatekeeperAssess: false,
       afterCopyExtraResources: [
-        async (params) => {
-          const {buildPath, electronVersion, platform, arch} = params;
-
+        async (buildPath, electronVersion,
+            platform, arch, callback) => {
           console.log(`Packaging app for ${platform}-${arch} ` +
             `using Electron ${electronVersion} in ${buildPath}`);
 
@@ -70,6 +65,8 @@ async function packageApp() {
             [fuses.FuseV1Options.EnableEmbeddedAsarIntegrityValidation]: true,
             [fuses.FuseV1Options.OnlyLoadAppFromAsar]: true,
           });
+
+          callback();
         }
       ]
     });
