@@ -1,6 +1,10 @@
 Pritunl Client Changelog
 ========================
 
+<%+ version %>
+
+Fix Windows interface crashing
+
 Version 1.3.4438.95 2025-11-06
 ------------------------------
 
