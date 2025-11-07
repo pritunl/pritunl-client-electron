@@ -9,9 +9,9 @@ PublisherSupportUrl: https://forum.pritunl.com
 Author: Pritunl
 PackageName: Pritunl Client
 PackageUrl: https://client.pritunl.com
-License: Copyright (c) 2015-2024 Pritunl
+License: Copyright (c) 2015-2025 Pritunl
 LicenseUrl: https://github.com/pritunl/pritunl-client-electron/blob/master/LICENSE
-Copyright: Copyright (c) 2015-2024 Pritunl
+Copyright: Copyright (c) 2015-2025 Pritunl
 CopyrightUrl: https://github.com/pritunl/pritunl-client-electron/blob/master/LICENSE
 ShortDescription: Pritunl enterprise VPN client
 Description: |-
