@@ -1,0 +1,134 @@
+targets=(
+    "fedora-43"
+)
+pkgname="pritunl-client-electron"
+pkgver="1.3.4439.70"
+pkgrel="2"
+pkgdesc="Pritunl OpenVPN Electron Client"
+pkgdesclong=(
+    "Free and open source cross platform OpenVPN client"
+)
+maintainer="Pritunl <contact@pritunl.com>"
+arch="amd64"
+license=("custom")
+section="utils"
+priority="optional"
+url="https://github.com/pritunl/pritunl-client-electron"
+rpmopts=(
+    "%global __requires_exclude (libffmpeg|libEGL|libGLESv2|libvk_swiftshader|libvulkan)\\.so"
+    "Provides: config(pritunl-client-electron) = %{version}-%{release}"
+    "AutoProv: no"
+)
+depends:yum=(
+    "GConf2"
+    "libXScrnSaver"
+    "net-tools"
+    "iptables"
+    "openvpn"
+)
+makedepends:yum=(
+    "python3"
+    "GConf2"
+    "unzip"
+    "nodejs"
+    "npm"
+)
+provides=("${pkgname}")
+conflicts=(
+    "${pkgname}"
+    "pritunl-client"
+)
+sources=(
+    "pritunl-client-electron.tar"
+)
+hashsums=(
+    "d05e8e3d56d86a82082bd2811a65e2b9ca778c6d4e099edcaded5b603ccd1fec"
+)
+backup=(
+    "var/log/pritunl-client.log"
+    "var/log/pritunl-client.log.1"
+)
+
+build:yum() {
+    cd "${srcdir}"
+
+    cd service
+    go get
+    go install
+
+    cd ../cli
+    go get
+    go install
+
+    cd ../client
+    npm install
+    ./node_modules/.bin/electron-rebuild
+    ./node_modules/.bin/electron-packager ./ Pritunl --platform=linux --arch=x64 --out=../build/linux
+    chmod +x ../build/linux/Pritunl-linux-x64/libffmpeg.so
+    rm -f ../build/linux/Pritunl-linux-x64/resources/app/node_modules/ajv/scripts/info
+    rm -f ../build/linux/Pritunl-linux-x64/resources/app/node_modules/ajv/scripts/travis-gh-pages
+    rm -f ../build/linux/Pritunl-linux-x64/resources/app/node_modules/ajv/scripts/prepare-tests
+    rm -f ../build/linux/Pritunl-linux-x64/resources/app/node_modules/performance-now/test/scripts/delayed-call.coffee
+    rm -f ../build/linux/Pritunl-linux-x64/resources/app/node_modules/performance-now/test/scripts/delayed-require.coffee
+    rm -f ../build/linux/Pritunl-linux-x64/resources/app/node_modules/performance-now/test/scripts/difference.coffee
+    rm -f ../build/linux/Pritunl-linux-x64/resources/app/node_modules/performance-now/test/scripts/initial-value.coffee
+    rm -f ../build/linux/Pritunl-linux-x64/resources/app/node_modules/sshpk/bin/sshpk-verify
+    rm -f ../build/linux/Pritunl-linux-x64/resources/app/node_modules/sshpk/bin/sshpk-sign
+    rm -f ../build/linux/Pritunl-linux-x64/resources/app/node_modules/sshpk/bin/sshpk-conv
+    rm -f ../build/linux/Pritunl-linux-x64/resources/app/node_modules/mustache/bin/mustache
+    rm -f ../build/linux/Pritunl-linux-x64/resources/app/node_modules/uuid/bin/uuid
+    rm -f ../build/linux/Pritunl-linux-x64/resources/app/node_modules/mkdirp/bin/cmd.js
+}
+
+package:yum() {
+    cd "${srcdir}"
+
+    mkdir -p ${pkgdir}/usr/share/applications
+    cp resources_linux/pritunl-client-electron.desktop ${pkgdir}/usr/share/applications/pritunl-client-electron.desktop
+
+    mkdir -p ${pkgdir}/etc/systemd/system
+    cp resources_linux/pritunl-client.service ${pkgdir}/etc/systemd/system/pritunl-client.service
+
+    mkdir -p ${pkgdir}/usr/bin
+    mkdir -p ${pkgdir}/usr/lib
+    mv build/linux/Pritunl-linux-x64 ${pkgdir}/usr/lib/pritunl_client_electron
+    chmod 755 ${pkgdir}/usr/lib/pritunl_client_electron
+    chmod 4755 ${pkgdir}/usr/lib/pritunl_client_electron/chrome-sandbox
+    ln -s /usr/lib/pritunl_client_electron/Pritunl ${pkgdir}/usr/bin/pritunl-client-electron
+
+    cp /go/bin/service ${pkgdir}/usr/bin/pritunl-client-service
+    cp /go/bin/cli ${pkgdir}/usr/bin/pritunl-client
+
+    mkdir -p ${pkgdir}/usr/share/icons
+    mv resources_linux/icons ${pkgdir}/usr/share/icons/hicolor
+    find ${pkgdir}/usr/share/icons -type d -exec chmod 755 {} \;
+    find ${pkgdir}/usr/share/icons -type f -exec chmod 644 {} \;
+
+    mkdir -p ${pkgdir}/var/log
+    touch ${pkgdir}/var/log/pritunl-client.log
+    touch ${pkgdir}/var/log/pritunl-client.log.1
+}
+
+postinst() {
+    chmod 755 /usr/lib/pritunl_client_electron || true
+    systemctl daemon-reload &> /dev/null || true
+    systemctl restart pritunl-client &> /dev/null || true
+    systemctl enable pritunl-client &> /dev/null || true
+    gtk-update-icon-cache -q -t -f /usr/share/icons/hicolor || true
+    xdg-icon-resource forceupdate --theme hicolor &> /dev/null || true
+    update-desktop-database -q || true
+}
+
+prerm() {
+    systemctl stop pritunl-client-electron &> /dev/null || true
+    systemctl disable pritunl-client-electron &> /dev/null || true
+    systemctl stop pritunl-client &> /dev/null || true
+    systemctl disable pritunl-client &> /dev/null || true
+}
+
+postrm() {
+    systemctl daemon-reload &> /dev/null || true
+    gtk-update-icon-cache -q -t -f /usr/share/icons/hicolor || true
+    xdg-icon-resource forceupdate --theme hicolor &> /dev/null || true
+    update-desktop-database -q || true
+}
