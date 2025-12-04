@@ -944,10 +944,20 @@ export function New(self: Profile): Profile {
 			tlsAuth += curData.substring(sIndex, eIndex + 12) + "\n"
 		}
 
-		sIndex = curData.indexOf("<cert>")
-		eIndex = curData.indexOf("</cert>")
-		if (sIndex >= 0 && eIndex >= 0) {
-			cert = curData.substring(sIndex, eIndex + 7) + "\n"
+		if (data.includes("<cert>") && data.includes("</cert>")) {
+			sIndex = data.indexOf("<cert>")
+			eIndex = data.indexOf("</cert>")
+			if (sIndex >= 0 && eIndex >= 0) {
+				cert = data.substring(sIndex, eIndex + 7) + "\n"
+			}
+		}
+
+		if (!cert) {
+			sIndex = curData.indexOf("<cert>")
+			eIndex = curData.indexOf("</cert>")
+			if (sIndex >= 0 && eIndex >= 0) {
+				cert = curData.substring(sIndex, eIndex + 7) + "\n"
+			}
 		}
 
 		sIndex = curData.indexOf("<key>")
@@ -980,6 +990,8 @@ export function New(self: Profile): Profile {
 				authNonce, "GET", path].join("&")
 			let authSignature = crypto.createHmac("sha512",
 				this.sync_secret).update(authString).digest("base64")
+
+			path += '?ver=2'
 
 			let req = new Request.Request()
 
