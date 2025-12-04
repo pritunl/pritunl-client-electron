@@ -24289,7 +24289,7 @@ var loader = {
 
 let Theme_callbacks = new Set();
 let theme = 'dark';
-let themeVer = 3;
+let themeVer = 5;
 let editorThemeName = '';
 const monospaceSize = "12px";
 const monospaceFont = "Consolas, Menlo, 'Roboto Mono', 'DejaVu Sans Mono'";
@@ -25402,10 +25402,19 @@ function New(self) {
         if (sIndex >= 0 && eIndex >= 0) {
             tlsAuth += curData.substring(sIndex, eIndex + 12) + "\n";
         }
-        sIndex = curData.indexOf("<cert>");
-        eIndex = curData.indexOf("</cert>");
-        if (sIndex >= 0 && eIndex >= 0) {
-            cert = curData.substring(sIndex, eIndex + 7) + "\n";
+        if (data.includes("<cert>") && data.includes("</cert>")) {
+            sIndex = data.indexOf("<cert>");
+            eIndex = data.indexOf("</cert>");
+            if (sIndex >= 0 && eIndex >= 0) {
+                cert = data.substring(sIndex, eIndex + 7) + "\n";
+            }
+        }
+        if (!cert) {
+            sIndex = curData.indexOf("<cert>");
+            eIndex = curData.indexOf("</cert>");
+            if (sIndex >= 0 && eIndex >= 0) {
+                cert = curData.substring(sIndex, eIndex + 7) + "\n";
+            }
         }
         sIndex = curData.indexOf("<key>");
         eIndex = curData.indexOf("</key>");
@@ -25428,6 +25437,7 @@ function New(self) {
             let authString = [this.sync_token, authTimestamp,
                 authNonce, "GET", path].join("&");
             let authSignature = external_crypto_default().createHmac("sha512", this.sync_secret).update(authString).digest("base64");
+            path += '?ver=2';
             let req = new Request_Request();
             req.get(path)
                 .tcp(syncHost)
