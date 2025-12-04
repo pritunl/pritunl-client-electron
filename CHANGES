@@ -1,6 +1,10 @@
 Pritunl Client Changelog
 ========================
 
+<%= version %>
+
+Add support for syncing profile certificates
+
 Version 1.3.4439.70 2025-11-07
 ------------------------------
 
