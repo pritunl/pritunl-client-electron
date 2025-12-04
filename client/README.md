@@ -7,7 +7,7 @@ npm install
 #### locked packages
 
 ```
-./node_modules/.bin/webpack
+npx webpack
 ```
 
 ### development
@@ -18,10 +18,10 @@ sudo ./service
 
 cd client
 sed -i 's|dist/static|dist-dev/static|g' package.json
-./node_modules/.bin/tsc --watch
-./node_modules/.bin/webpack-cli --config webpack.dev.config --progress --color --watch
-./node_modules/.bin/webpack-cli --config webpack-main.dev.config --progress --color --watch
-./node_modules/.bin/electron . --dev-tools
+npx tsc --watch
+npx webpack-cli --config webpack.dev.config --progress --color --watch
+npx webpack-cli --config webpack-main.dev.config --progress --color --watch
+npx electron . --dev-tools
 ```
 
 #### production
