@@ -418,19 +418,31 @@ func (s *Sprofile) syncUpdate(data string) (updated bool, err error) {
 	sIndex = strings.Index(s.OvpnData, "<tls-crypt>")
 	eIndex = strings.Index(s.OvpnData, "</tls-crypt>")
 	if sIndex >= 0 && eIndex >= 0 {
-		tlsCrypt += s.OvpnData[sIndex:eIndex+12] + "\n"
+		tlsCrypt = s.OvpnData[sIndex:eIndex+12] + "\n"
 	}
 
-	sIndex = strings.Index(s.OvpnData, "<cert>")
-	eIndex = strings.Index(s.OvpnData, "</cert>")
-	if sIndex >= 0 && eIndex >= 0 {
-		cert += s.OvpnData[sIndex:eIndex+7] + "\n"
+	if strings.Contains(data, "<cert>") &&
+		strings.Contains(data, "</cert>") {
+
+		sIndex = strings.Index(data, "<cert>")
+		eIndex = strings.Index(data, "</cert>")
+		if sIndex >= 0 && eIndex >= 0 {
+			cert = data[sIndex:eIndex+7] + "\n"
+		}
+	}
+
+	if cert == "" {
+		sIndex = strings.Index(s.OvpnData, "<cert>")
+		eIndex = strings.Index(s.OvpnData, "</cert>")
+		if sIndex >= 0 && eIndex >= 0 {
+			cert = s.OvpnData[sIndex:eIndex+7] + "\n"
+		}
 	}
 
 	sIndex = strings.Index(s.OvpnData, "<key>")
 	eIndex = strings.Index(s.OvpnData, "</key>")
 	if sIndex >= 0 && eIndex >= 0 {
-		key += s.OvpnData[sIndex:eIndex+6] + "\n"
+		key = s.OvpnData[sIndex:eIndex+6] + "\n"
 	}
 
 	s.OvpnData = data + tlsAuth + tlsCrypt + cert + key
@@ -476,6 +488,8 @@ func (s *Sprofile) syncProfile(host string) (updated bool, err error) {
 		"GET",
 		pth,
 	}, "&")
+
+	u += "?ver=2"
 
 	hashFunc := hmac.New(sha512.New, []byte(s.SyncSecret))
 	hashFunc.Write([]byte(authStr))
