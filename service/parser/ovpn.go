@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/dropbox/godropbox/container/set"
 	"github.com/pritunl/pritunl-client-electron/service/constants"
 	"github.com/sirupsen/logrus"
 )
@@ -36,6 +37,7 @@ type Ovpn struct {
 	EnvName           string
 	Dev               string
 	DevType           string
+	DataCiphers       string
 	Remotes           []Remote
 	NoBind            bool
 	PersistTun        bool
@@ -105,7 +107,7 @@ func (o *Ovpn) Export(chown string) string {
 	if o.PersistTun {
 		output += "persist-tun\n"
 	}
-	if o.Cipher != "" {
+	if o.Cipher != "" && o.DataCiphers == "" {
 		output += fmt.Sprintf("cipher %s\n", o.Cipher)
 	}
 	if o.Auth != "" {
@@ -184,9 +186,13 @@ func (o *Ovpn) Export(chown string) string {
 
 	output += "pull-filter ignore \"ping-restart\"\n"
 
-	output += "ignore-unknown-option data-ciphers\n"
-	output += "data-ciphers \"AES-256-GCM:AES-128-GCM:" +
-		"CHACHA20-POLY1305:AES-256-CBC:AES-128-CBC\"\n"
+	if o.DataCiphers != "" {
+		output += fmt.Sprintf("data-ciphers \"%s\"\n", o.DataCiphers)
+	} else {
+		output += "ignore-unknown-option data-ciphers\n"
+		output += "data-ciphers \"AES-256-GCM:AES-128-GCM:" +
+			"CHACHA20-POLY1305:AES-256-CBC:AES-128-CBC\"\n"
+	}
 
 	if o.CaCert != "" {
 		output += fmt.Sprintf("<ca>\n%s</ca>\n", o.CaCert)
@@ -322,6 +328,42 @@ func Import(data string, remotes []Remote,
 				o.DevType = "tap"
 				break
 			}
+			break
+		case "data-ciphers":
+			ciphersSet := set.NewSet()
+			ciphers := []string{}
+			for _, cipher := range strings.Split(lines[1], ":") {
+				switch strings.ToLower(cipher) {
+				case "aes-128-cbc":
+					cipher = "AES-128-CBC"
+				case "aes-256-cbc":
+					cipher = "AES-256-CBC"
+				case "aes-128-gcm":
+					cipher = "AES-128-GCM"
+				case "aes-256-gcm":
+					cipher = "AES-256-GCM"
+				case "chacha20-poly1305":
+					cipher = "CHACHA20-POLY1305"
+				default:
+					continue
+				}
+				if !ciphersSet.Contains(cipher) {
+					ciphersSet.Add(cipher)
+					ciphers = append(ciphers, cipher)
+				}
+			}
+
+			if !ciphersSet.Contains("AES-128-GCM") {
+				ciphers = append(ciphers, "AES-128-GCM")
+			}
+			if !ciphersSet.Contains("AES-256-GCM") {
+				ciphers = append(ciphers, "AES-256-GCM")
+			}
+			if !ciphersSet.Contains("CHACHA20-POLY1305") {
+				ciphers = append(ciphers, "CHACHA20-POLY1305")
+			}
+
+			o.DataCiphers = strings.Join(ciphers, ":")
 			break
 		case "nobind":
 			o.NoBind = true
