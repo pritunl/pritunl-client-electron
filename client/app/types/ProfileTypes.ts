@@ -43,6 +43,7 @@ export interface Profile {
 	disable_reconnect_local?: boolean
 	restrict_client?: boolean
 	remotes_data?: Record<string, RemoteData>
+	hide_ovpn?: boolean
 	dynamic_firewall?: boolean
 	geo_sort?: string
 	force_connect?: boolean
@@ -143,6 +144,7 @@ export interface ProfileData {
 	username?: string
 	password?: string
 	remotes_data?: Record<string, RemoteData>
+	hide_ovpn?: boolean
 	dynamic_firewall?: boolean
 	geo_sort?: string
 	force_connect?: boolean
@@ -442,6 +444,7 @@ export function New(self: Profile): Profile {
 			user: this.user,
 			pre_connect_msg: this.pre_connect_msg,
 			remotes_data: this.remotes_data,
+			hide_ovpn: this.hide_ovpn,
 			dynamic_firewall: this.dynamic_firewall,
 			geo_sort: this.geo_sort,
 			force_connect: this.force_connect,
@@ -480,6 +483,7 @@ export function New(self: Profile): Profile {
 		this.user = data.user
 		this.pre_connect_msg = data.pre_connect_msg
 		this.remotes_data = data.remotes_data
+		this.hide_ovpn = data.hide_ovpn
 		this.dynamic_firewall = data.dynamic_firewall
 		this.geo_sort = data.geo_sort
 		this.force_connect = data.force_connect
@@ -518,6 +522,7 @@ export function New(self: Profile): Profile {
 			user: this.user,
 			pre_connect_msg: this.pre_connect_msg,
 			remotes_data: this.remotes_data,
+			hide_ovpn: this.hide_ovpn,
 			dynamic_firewall: this.dynamic_firewall,
 			geo_sort: this.geo_sort,
 			force_connect: this.force_connect,
@@ -555,6 +560,7 @@ export function New(self: Profile): Profile {
 		this.user = data.user || this.user
 		this.pre_connect_msg = data.pre_connect_msg
 		this.remotes_data = data.remotes_data
+		this.hide_ovpn = data.hide_ovpn
 		this.dynamic_firewall = data.dynamic_firewall
 		this.geo_sort = data.geo_sort
 		this.force_connect = data.force_connect
