@@ -28,6 +28,7 @@ type Sprofile struct {
 	User               string                `json:"user"`
 	PreConnectMsg      string                `json:"pre_connect_msg"`
 	RemotesData        map[string]RemoteData `json:"remotes_data"`
+	HideOvpn           bool                  `json:"hide_ovpn"`
 	DynamicFirewall    bool                  `json:"dynamic_firewall"`
 	GeoSort            string                `json:"geo_sort"`
 	ForceConnect       bool                  `json:"force_connect"`
