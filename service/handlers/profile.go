@@ -28,6 +28,7 @@ type profileData struct {
 	Username           string                      `json:"username"`
 	Password           string                      `json:"password"`
 	RemotesData        map[string]types.RemoteData `json:"remotes_data"`
+	HideOvpn           bool                        `json:"hide_ovpn"`
 	DynamicFirewall    bool                        `json:"dynamic_firewall"`
 	GeoSort            string                      `json:"geo_sort"`
 	ForceConnect       bool                        `json:"force_connect"`
@@ -118,6 +119,7 @@ func profilePost(c *gin.Context) {
 		Username:           data.Username,
 		Password:           data.Password,
 		RemotesData:        data.RemotesData,
+		HideOvpn:           data.HideOvpn,
 		DynamicFirewall:    data.DynamicFirewall,
 		GeoSort:            data.GeoSort,
 		ForceConnect:       data.ForceConnect,
