@@ -265,6 +265,7 @@ export default class ProfileConnect extends React.Component<Props, State> {
 			username: username,
 			password: password,
 			remotes_data: prfl.remotes_data,
+			hide_ovpn: prfl.hide_ovpn,
 			dynamic_firewall: prfl.dynamic_firewall,
 			geo_sort: prfl.geo_sort,
 			force_connect: prfl.force_connect,
@@ -376,6 +377,7 @@ export default class ProfileConnect extends React.Component<Props, State> {
 	render(): JSX.Element {
 		let connected = this.connected()
 		let hasWg = Constants.state.wg && this.props.profile.wg
+		let hideOvpn = this.props.profile.hide_ovpn
 
 		let buttonClass = ""
 		let buttonLabel = ""
@@ -411,7 +413,7 @@ export default class ProfileConnect extends React.Component<Props, State> {
 				className={"bp5-button bp5-intent-success bp5-icon-link" + minimalButton}
 				style={cssButton}
 				type="button"
-				hidden={!hasWg || connected}
+				hidden={!hasWg || connected || (hideOvpn && hasWg)}
 				disabled={this.state.disabled}
 				onClick={(): void => {
 					this.onConnect("ovpn")
@@ -429,7 +431,7 @@ export default class ProfileConnect extends React.Component<Props, State> {
 					this.onConnect("wg")
 				}}
 			>
-				{this.props.minimal ? "WG" : "WireGuard"}
+				{hideOvpn ? "Connect" : (this.props.minimal ? "WG" : "WireGuard")}
 			</button>
 			<Blueprint.Dialog
 				title="Profile Connect"
