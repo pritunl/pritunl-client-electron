@@ -307,6 +307,10 @@ export default class ProfileSettings extends React.Component<Props, State> {
 							value: JSON.stringify(profile.remotes_data),
 						},
 						{
+							label: 'Hide OpenVPN',
+							value: profile.hide_ovpn,
+						},
+						{
 							label: 'Dynamic Firewall',
 							value: profile.dynamic_firewall,
 						},
