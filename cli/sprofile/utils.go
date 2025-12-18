@@ -431,9 +431,13 @@ func Start(sprflId, mode, password string, passwordPrompt bool) (err error) {
 	}
 
 	if mode == "" {
-		mode = sprfl.LastMode
-		if mode == "" {
-			mode = "ovpn"
+		if sprfl.HideOvpn {
+			mode = "wg"
+		} else {
+			mode = sprfl.LastMode
+			if mode == "" {
+				mode = "ovpn"
+			}
 		}
 	}
 
