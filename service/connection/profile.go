@@ -22,6 +22,7 @@ type Profile struct {
 	Username           string                      `json:"username"`
 	Password           string                      `json:"password"`
 	RemotesData        map[string]types.RemoteData `json:"remotes_data"`
+	HideOvpn           bool                        `json:"hide_ovpn"`
 	DynamicFirewall    bool                        `json:"dynamic_firewall"`
 	GeoSort            string                      `json:"geo_sort"`
 	ForceConnect       bool                        `json:"force_connect"`
@@ -113,6 +114,7 @@ func (p *Profile) ImportSystemProfile(sprfl *sprofile.Sprofile) {
 	p.Username = "pritunl"
 	p.Password = sprfl.Password
 	p.RemotesData = sprfl.RemotesData
+	p.HideOvpn = sprfl.HideOvpn
 	p.DynamicFirewall = sprfl.DynamicFirewall
 	p.GeoSort = sprfl.GeoSort
 	p.ForceConnect = sprfl.ForceConnect
