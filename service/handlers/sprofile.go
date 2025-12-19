@@ -24,6 +24,7 @@ type sprofileData struct {
 	User               string                      `json:"user"`
 	PreConnectMsg      string                      `json:"pre_connect_msg"`
 	RemotesData        map[string]types.RemoteData `json:"remotes_data"`
+	HideOvpn           bool                        `json:"hide_ovpn"`
 	DynamicFirewall    bool                        `json:"dynamic_firewall"`
 	GeoSort            string                      `json:"geo_sort"`
 	ForceConnect       bool                        `json:"force_connect"`
@@ -117,6 +118,7 @@ func sprofilePut(c *gin.Context) {
 		User:               data.User,
 		PreConnectMsg:      data.PreConnectMsg,
 		RemotesData:        data.RemotesData,
+		HideOvpn:           data.HideOvpn,
 		DynamicFirewall:    data.DynamicFirewall,
 		GeoSort:            data.GeoSort,
 		ForceConnect:       data.ForceConnect,
