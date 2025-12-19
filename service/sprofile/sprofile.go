@@ -57,6 +57,7 @@ type Sprofile struct {
 	User               string                      `json:"user"`
 	PreConnectMsg      string                      `json:"pre_connect_msg"`
 	RemotesData        map[string]types.RemoteData `json:"remotes_data"`
+	HideOvpn           bool                        `json:"hide_ovpn"`
 	DynamicFirewall    bool                        `json:"dynamic_firewall"`
 	GeoSort            string                      `json:"geo_sort"`
 	ForceConnect       bool                        `json:"force_connect"`
@@ -98,6 +99,7 @@ type SprofileClient struct {
 	User               string                      `json:"user"`
 	PreConnectMsg      string                      `json:"pre_connect_msg"`
 	RemotesData        map[string]types.RemoteData `json:"remotes_data"`
+	HideOvpn           bool                        `json:"hide_ovpn"`
 	DynamicFirewall    bool                        `json:"dynamic_firewall"`
 	GeoSort            string                      `json:"geo_sort"`
 	ForceConnect       bool                        `json:"force_connect"`
@@ -142,6 +144,7 @@ func (s *Sprofile) Client() (sprflc *SprofileClient) {
 		User:               s.User,
 		PreConnectMsg:      s.PreConnectMsg,
 		RemotesData:        s.RemotesData,
+		HideOvpn:           s.HideOvpn,
 		DynamicFirewall:    s.DynamicFirewall,
 		GeoSort:            s.GeoSort,
 		ForceConnect:       s.ForceConnect,
@@ -201,6 +204,7 @@ func (s *Sprofile) Copy() (sprfl *Sprofile) {
 		User:               s.User,
 		PreConnectMsg:      s.PreConnectMsg,
 		RemotesData:        s.RemotesData,
+		HideOvpn:           s.HideOvpn,
 		DynamicFirewall:    s.DynamicFirewall,
 		GeoSort:            s.GeoSort,
 		ForceConnect:       s.ForceConnect,
@@ -383,6 +387,7 @@ func (s *Sprofile) syncUpdate(data string) (updated bool, err error) {
 		s.User = confData.User
 		s.PreConnectMsg = confData.PreConnectMsg
 		s.RemotesData = confData.RemotesData
+		s.HideOvpn = confData.HideOvpn
 		s.DynamicFirewall = confData.DynamicFirewall
 		s.GeoSort = confData.GeoSort
 		s.ForceConnect = confData.ForceConnect
