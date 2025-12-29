@@ -45,19 +45,8 @@ window.onunhandledrejection = (event): void => {
 		return
 	}
 
-	let message = ""
-	let stack = ""
-
-	try {
-		message = event.reason.message
-	} catch {
-		message = event.reason
-	}
-
-	try {
-		stack = event.reason.stack
-	} catch {
-	}
+	let message = event?.reason?.message || event?.reason
+	let stack =  event?.reason?.stack
 
 	try {
 		if (stack && sourceMap) {
