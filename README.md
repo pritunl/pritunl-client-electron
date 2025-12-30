@@ -11,7 +11,7 @@
 is an open source openvpn client. Documentation and more information can be
 found at the home page [client.pritunl.com](https://client.pritunl.com)
 
-## Install From Source (macOS)
+## Install from Source (macOS)
 
 If the Pritunl package is currently installed run the uninstall command
 below. Requires homebrew with git, go and node.
@@ -21,13 +21,13 @@ brew install git go node
 bash <(curl -s https://raw.githubusercontent.com/pritunl/pritunl-client-electron/master/tools/install_macos.sh)
 ```
 
-## Uninstall From Source (macOS)
+## Uninstall from Source (macOS)
 
 ```bash
 bash <(curl -s https://raw.githubusercontent.com/pritunl/pritunl-client-electron/master/tools/uninstall_macos.sh)
 ```
 
-## Install Linux Client on ARM
+## Install Linux Client from Source
 
 ```bash
 sudo dnf -y install git-core wireguard-tools openvpn
