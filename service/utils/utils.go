@@ -185,6 +185,57 @@ func RemoveScutilKey(typ, key string) (err error) {
 	return
 }
 
+func GetPrimaryService() (serviceId string, err error) {
+	cmd := command.Command("/usr/sbin/scutil")
+	cmd.Stdin = strings.NewReader("open\n" +
+		"show State:/Network/Global/IPv4\n" +
+		"quit\n",
+	)
+
+	output, err := cmd.Output()
+	if err != nil {
+		err = &CommandError{
+			errors.Wrap(err, "utils: Failed to exec scutil"),
+		}
+		return
+	}
+
+	for _, line := range strings.Split(string(output), "\n") {
+		if strings.Contains(line, "PrimaryService") {
+			parts := strings.Split(line, ":")
+			if len(parts) >= 2 {
+				serviceId = strings.TrimSpace(parts[len(parts)-1])
+				break
+			}
+		}
+	}
+
+	return
+}
+
+func SetPrimaryServiceDns(serviceId string, domains []string) (err error) {
+	input := fmt.Sprintf("open\n"+
+		"get State:/Network/Service/%s/DNS\n"+
+		"d.add SearchDomains * %s\n"+
+		"set State:/Network/Service/%s/DNS\n"+
+		"set Setup:/Network/Service/%s/DNS\n"+
+		"quit\n",
+		serviceId, strings.Join(domains, " "), serviceId, serviceId)
+
+	cmd := command.Command("/usr/sbin/scutil")
+	cmd.Stdin = strings.NewReader(input)
+
+	err = cmd.Run()
+	if err != nil {
+		err = &CommandError{
+			errors.Wrap(err, "utils: Failed to exec scutil"),
+		}
+		return
+	}
+
+	return
+}
+
 func SetScutilDns(connId string, addresses, domains []string) (err error) {
 	logrus.Info("utils: Configure DNS")
 
@@ -232,6 +283,23 @@ func SetScutilDns(connId string, addresses, domains []string) (err error) {
 			errors.Wrap(err, "utils: Failed to exec scutil"),
 		}
 		return
+	}
+
+	if len(domains) > 0 {
+		primaryServiceId, e := GetPrimaryService()
+		if e != nil {
+			logrus.WithFields(logrus.Fields{
+				"error": e,
+			}).Warning("utils: Failed to get primary service for DNS")
+		} else if primaryServiceId != "" {
+			err = SetPrimaryServiceDns(primaryServiceId, domains)
+			if err != nil {
+				logrus.WithFields(logrus.Fields{
+					"error": err,
+				}).Warning("utils: Failed to set primary service DNS")
+				err = nil
+			}
+		}
 	}
 
 	return
