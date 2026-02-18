@@ -34,14 +34,14 @@
     "react-transition-group": "4.4.5",
     "source-map": "0.7.4",
     "systemjs": "6.15.1",
-    "tar": "6.2.1",
+    "tar": "7.5.9",
     "terser-webpack-plugin": "5.3.14",
     "ws": "8.18.1"
   },
   "devDependencies": {
     "@electron/fuses": "2.0.0",
     "@electron/packager": "18.3.6",
-    "@electron/rebuild": "4.0.1",
+    "@electron/rebuild": "4.0.3",
     "electron": "39.1.1",
     "rcedit": "4.0.1",
     "rimraf": "6.0.1",
