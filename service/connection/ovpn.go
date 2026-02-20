@@ -678,24 +678,32 @@ func (o *Ovpn) writeUp() (pth string, err error) {
 		}
 		break
 	case "linux":
-		resolved := true
-
-		resolvData, _ := ioutil.ReadFile("/etc/resolv.conf")
-		if resolvData != nil {
-			resolvDataStr := string(resolvData)
-			if !strings.Contains(resolvDataStr, "systemd-resolved") &&
-				!strings.Contains(resolvDataStr, "127.0.0.53") {
-
-				resolved = false
+		if IsOvpn27() {
+			if o.conn.Profile.DisableDns {
+				script = blockScript
+			} else {
+				script = resolvedScript27
 			}
-		}
-
-		if o.conn.Profile.DisableDns {
-			script = blockScript
-		} else if resolved {
-			script = resolvedScript
 		} else {
-			script = resolvScript
+			resolved := true
+
+			resolvData, _ := ioutil.ReadFile("/etc/resolv.conf")
+			if resolvData != nil {
+				resolvDataStr := string(resolvData)
+				if !strings.Contains(resolvDataStr, "systemd-resolved") &&
+					!strings.Contains(resolvDataStr, "127.0.0.53") {
+
+					resolved = false
+				}
+			}
+
+			if o.conn.Profile.DisableDns {
+				script = blockScript
+			} else if resolved {
+				script = resolvedScript
+			} else {
+				script = resolvScript
+			}
 		}
 		break
 	default:
@@ -736,24 +744,32 @@ func (o *Ovpn) writeDown() (pth string, err error) {
 		}
 		break
 	case "linux":
-		resolved := true
-
-		resolvData, _ := ioutil.ReadFile("/etc/resolv.conf")
-		if resolvData != nil {
-			resolvDataStr := string(resolvData)
-			if !strings.Contains(resolvDataStr, "systemd-resolved") &&
-				!strings.Contains(resolvDataStr, "127.0.0.53") {
-
-				resolved = false
+		if IsOvpn27() {
+			if o.conn.Profile.DisableDns {
+				script = blockScript
+			} else {
+				script = resolvedScript27
 			}
-		}
-
-		if o.conn.Profile.DisableDns {
-			script = blockScript
-		} else if resolved {
-			script = resolvedScript
 		} else {
-			script = resolvScript
+			resolved := true
+
+			resolvData, _ := ioutil.ReadFile("/etc/resolv.conf")
+			if resolvData != nil {
+				resolvDataStr := string(resolvData)
+				if !strings.Contains(resolvDataStr, "systemd-resolved") &&
+					!strings.Contains(resolvDataStr, "127.0.0.53") {
+
+					resolved = false
+				}
+			}
+
+			if o.conn.Profile.DisableDns {
+				script = blockScript
+			} else if resolved {
+				script = resolvedScript
+			} else {
+				script = resolvScript
+			}
 		}
 		break
 	default:
