@@ -861,6 +861,8 @@ func (w *Wg) applyRouteMetricsLinux(data *WgConf) {
 }
 
 func (w *Wg) applyRouteMetricsWin(data *WgConf) {
+	time.Sleep(300 * time.Millisecond)
+
 	iface := w.conn.Data.Iface
 
 	if data.Routes != nil {
