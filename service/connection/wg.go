@@ -625,6 +625,8 @@ func (w *Wg) confWg(data *WgConf) (err error) {
 	w.conn.Data.WebNoSsl = data.WebNoSsl
 	w.conn.Data.DnsServers = data.DnsServers
 	w.conn.Data.SearchDomains = data.SearchDomains
+	w.conn.Data.Routes = data.Routes
+	w.conn.Data.Routes6 = data.Routes6
 
 	w.serverPubKey = data.PublicKey
 
@@ -644,6 +646,8 @@ func (w *Wg) confWg(data *WgConf) (err error) {
 	if err != nil {
 		return
 	}
+
+	w.applyRouteMetrics(data)
 
 	return
 }
@@ -777,6 +781,80 @@ func (w *Wg) confWgWin() (err error) {
 	}
 
 	return
+}
+
+func (w *Wg) applyRouteMetrics(data *WgConf) {
+	switch runtime.GOOS {
+	case "linux":
+		w.applyRouteMetricsLinux(data)
+		break
+	}
+}
+
+func (w *Wg) applyRouteMetricsLinux(data *WgConf) {
+	time.Sleep(200 * time.Millisecond)
+
+	iface := w.conn.Data.Iface
+
+	if data.Routes != nil {
+		for _, route := range data.Routes {
+			if route.Metric == 0 || route.NetGateway {
+				continue
+			}
+			if route.Network == "0.0.0.0/0" {
+				continue
+			}
+
+			utils.ExecCombinedOutput(
+				"ip", "-4", "route", "del",
+				route.Network, "dev", iface,
+			)
+
+			_, err := utils.ExecCombinedOutputLogged(
+				nil,
+				"ip", "-4", "route", "add",
+				route.Network, "dev", iface,
+				"metric", strconv.Itoa(route.Metric),
+			)
+			if err != nil {
+				logrus.WithFields(w.conn.Fields(logrus.Fields{
+					"network": route.Network,
+					"metric":  route.Metric,
+					"error":   err,
+				})).Warn("connection: Failed to set IPv4 route metric")
+			}
+		}
+	}
+
+	if data.Routes6 != nil {
+		for _, route := range data.Routes6 {
+			if route.Metric == 0 || route.NetGateway {
+				continue
+			}
+			if route.Network == "::/0" {
+				continue
+			}
+
+			utils.ExecCombinedOutput(
+				"ip", "-6", "route", "del",
+				route.Network, "dev", iface,
+			)
+
+			_, err := utils.ExecCombinedOutputLogged(
+				nil,
+				"ip", "-6", "route", "add",
+				route.Network, "dev", iface,
+				"metric", strconv.Itoa(route.Metric),
+			)
+			if err != nil {
+				logrus.WithFields(w.conn.Fields(logrus.Fields{
+					"network": route.Network,
+					"metric":  route.Metric,
+					"error":   err,
+				})).Warn("connection: Failed to set IPv6 route metric")
+			}
+		}
+	}
 }
 
 func (w *Wg) clearWgLinux() {
