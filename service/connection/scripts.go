@@ -750,9 +750,7 @@ fi
 echo "dns-updown: script_type=${script_type} dev=${dev}"
 echo "dns-updown: dns_vars_file=${dns_vars_file:-<not set>}"
 
-# Log all dns_ environment variables for debugging
 echo "dns-updown: --- begin dns environment ---"
-env | grep -E '^dns_' | sort || true
 for var in ${!dns_*}; do
     echo "dns-updown:   ${var}=${!var}"
 done
