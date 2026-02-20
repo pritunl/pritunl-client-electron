@@ -3,6 +3,7 @@ package connection
 import (
 	"fmt"
 	"net"
+	"os/exec"
 	"os/user"
 	"regexp"
 	"runtime"
@@ -342,4 +343,56 @@ func HasAppArmor() bool {
 	}
 
 	return false
+}
+
+func GetOpenvpnVer() (major, minor int, err error) {
+	output, err := exec.Command("openvpn", "--version").Output()
+	if err != nil {
+		if _, ok := err.(*exec.ExitError); ok && len(output) > 0 {
+			err = nil
+		} else {
+			err = &errortypes.ExecError{
+				errors.Wrap(
+					err,
+					"connection: Failed to check openvpn version",
+				),
+			}
+			return
+		}
+	}
+
+	fields := strings.Fields(string(output))
+	if len(fields) < 2 {
+		err = &errortypes.ParseError{
+			errors.New("connection: Failed to parse openvpn version output"),
+		}
+		return
+	}
+
+	verStr := strings.Split(fields[1], "_")[0]
+	parts := strings.Split(verStr, ".")
+	if len(parts) < 2 {
+		err = &errortypes.ParseError{
+			errors.New("connection: Failed to parse openvpn version"),
+		}
+		return
+	}
+
+	major, err = strconv.Atoi(parts[0])
+	if err != nil {
+		err = &errortypes.ParseError{
+			errors.New("connection: Failed to parse openvpn major version"),
+		}
+		return
+	}
+
+	minor, err = strconv.Atoi(parts[1])
+	if err != nil {
+		err = &errortypes.ParseError{
+			errors.New("connection: Failed to parse openvpn minor version"),
+		}
+		return
+	}
+
+	return
 }
