@@ -788,6 +788,9 @@ func (w *Wg) applyRouteMetrics(data *WgConf) {
 	case "linux":
 		w.applyRouteMetricsLinux(data)
 		break
+	case "windows":
+		w.applyRouteMetricsWin(data)
+		break
 	}
 }
 
@@ -845,6 +848,60 @@ func (w *Wg) applyRouteMetricsLinux(data *WgConf) {
 				"ip", "-6", "route", "add",
 				route.Network, "dev", iface,
 				"metric", strconv.Itoa(route.Metric),
+			)
+			if err != nil {
+				logrus.WithFields(w.conn.Fields(logrus.Fields{
+					"network": route.Network,
+					"metric":  route.Metric,
+					"error":   err,
+				})).Warn("connection: Failed to set IPv6 route metric")
+			}
+		}
+	}
+}
+
+func (w *Wg) applyRouteMetricsWin(data *WgConf) {
+	iface := w.conn.Data.Iface
+
+	if data.Routes != nil {
+		for _, route := range data.Routes {
+			if route.Metric == 0 || route.NetGateway {
+				continue
+			}
+			if route.Network == "0.0.0.0/0" {
+				continue
+			}
+
+			_, err := utils.ExecCombinedOutputLogged(
+				nil,
+				"netsh", "interface", "ipv4", "set", "route",
+				route.Network, iface,
+				fmt.Sprintf("metric=%d", route.Metric),
+			)
+			if err != nil {
+				logrus.WithFields(w.conn.Fields(logrus.Fields{
+					"network": route.Network,
+					"metric":  route.Metric,
+					"error":   err,
+				})).Warn("connection: Failed to set IPv4 route metric")
+			}
+		}
+	}
+
+	if data.Routes6 != nil {
+		for _, route := range data.Routes6 {
+			if route.Metric == 0 || route.NetGateway {
+				continue
+			}
+			if route.Network == "::/0" {
+				continue
+			}
+
+			_, err := utils.ExecCombinedOutputLogged(
+				nil,
+				"netsh", "interface", "ipv6", "set", "route",
+				route.Network, iface,
+				fmt.Sprintf("metric=%d", route.Metric),
 			)
 			if err != nil {
 				logrus.WithFields(w.conn.Fields(logrus.Fields{
