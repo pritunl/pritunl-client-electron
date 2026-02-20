@@ -1000,7 +1000,9 @@ func (o *Ovpn) parseLine(line string) {
 		return
 	}
 
-	if strings.Contains(line, "Initialization Sequence Completed") {
+	if strings.Contains(line, "Initialization Sequence Completed") ||
+		strings.Contains(line, "Peer Connection Initiated") {
+
 		o.connected = true
 		o.conn.Data.Status = Connected
 		o.conn.Data.Timestamp = time.Now().Unix() - 3
