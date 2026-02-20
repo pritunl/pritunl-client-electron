@@ -398,3 +398,23 @@ func GetOvpnVer() (major, minor int, err error) {
 
 	return
 }
+
+func IsOvpn27() bool {
+	major, minor, err := GetOvpnVer()
+	if err != nil {
+		logrus.WithFields(logrus.Fields{
+			"error": err,
+		}).Error("connection: Failed to read openvpn version")
+		return false
+	}
+
+	if major == 2 && minor >= 7 {
+		return true
+	}
+
+	if major > 2 {
+		return true
+	}
+
+	return false
+}
