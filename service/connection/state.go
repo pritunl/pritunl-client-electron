@@ -94,7 +94,7 @@ func (s *State) stopWatch() {
 			return
 		}
 
-		if time.Since(s.lastStopCheckTime) > 1*time.Minute {
+		if time.Since(s.lastStopCheckTime) > 3*time.Minute {
 			logrus.WithFields(s.conn.Fields(logrus.Fields{
 				"last_stop_check": s.lastStopCheckTime.Format(
 					"2006-01-02 15:04:05"),
