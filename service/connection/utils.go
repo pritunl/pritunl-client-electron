@@ -14,8 +14,10 @@ import (
 	"time"
 
 	"github.com/dropbox/godropbox/container/set"
+	"github.com/dropbox/godropbox/errors"
 	"github.com/pritunl/pritunl-client-electron/service/command"
 	"github.com/pritunl/pritunl-client-electron/service/config"
+	"github.com/pritunl/pritunl-client-electron/service/errortypes"
 	"github.com/pritunl/pritunl-client-electron/service/tuntap"
 	"github.com/pritunl/pritunl-client-electron/service/utils"
 	"github.com/sirupsen/logrus"
@@ -345,7 +347,7 @@ func HasAppArmor() bool {
 	return false
 }
 
-func GetOpenvpnVer() (major, minor int, err error) {
+func GetOvpnVer() (major, minor int, err error) {
 	output, err := exec.Command("openvpn", "--version").Output()
 	if err != nil {
 		if _, ok := err.(*exec.ExitError); ok && len(output) > 0 {
