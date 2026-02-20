@@ -747,6 +747,17 @@ fi
 
 [ -z "${dns_vars_file}" ] || . "${dns_vars_file}"
 
+echo "dns-updown: script_type=${script_type} dev=${dev}"
+echo "dns-updown: dns_vars_file=${dns_vars_file:-<not set>}"
+
+# Log all dns_ environment variables for debugging
+echo "dns-updown: --- begin dns environment ---"
+env | grep -E '^dns_' | sort || true
+for var in ${!dns_*}; do
+    echo "dns-updown:   ${var}=${!var}"
+done
+echo "dns-updown: --- end dns environment ---"
+
 function do_resolved_servers {
     local sni=""
     local transport_var=dns_server_${n}_transport
@@ -772,6 +783,7 @@ function do_resolved_servers {
         i=$((i+1))
     done
 
+    echo "dns-updown: resolvectl dns ${dev} ${addrs}"
     resolvectl dns "$dev" $addrs
 }
 
@@ -797,16 +809,20 @@ function do_resolved_domains {
         done
     fi
 
+    echo "dns-updown: resolvectl domain ${dev} ${list}"
     resolvectl domain "$dev" $list
 }
 
 function do_resolved_dnssec {
     local dnssec_var=dns_server_${n}_dnssec
     if [ "${!dnssec_var}" = "optional" ]; then
+        echo "dns-updown: resolvectl dnssec ${dev} allow-downgrade"
         resolvectl dnssec "$dev" allow-downgrade
     elif [ "${!dnssec_var}" = "yes" ]; then
+        echo "dns-updown: resolvectl dnssec ${dev} true"
         resolvectl dnssec "$dev" true
     else
+        echo "dns-updown: resolvectl dnssec ${dev} false"
         resolvectl dnssec "$dev" false
     fi
 }
@@ -814,28 +830,46 @@ function do_resolved_dnssec {
 function do_resolved_dnsovertls {
     local transport_var=dns_server_${n}_transport
     if [ "${!transport_var}" = "DoT" ]; then
+        echo "dns-updown: resolvectl dnsovertls ${dev} true"
         resolvectl dnsovertls "$dev" true
     else
+        echo "dns-updown: resolvectl dnsovertls ${dev} false"
         resolvectl dnsovertls "$dev" false
     fi
 }
 
 function do_resolved {
-    [[ "$(readlink /etc/resolv.conf)" =~ systemd ]] || return 1
+    local resolv_link
+    resolv_link="$(readlink /etc/resolv.conf 2>/dev/null)"
+    echo "dns-updown: do_resolved: /etc/resolv.conf symlink target: ${resolv_link:-<not a symlink>}"
+
+    [[ "${resolv_link}" =~ systemd ]] || {
+        echo "dns-updown: do_resolved: skipping, /etc/resolv.conf does not point to systemd-resolved"
+        return 1
+    }
 
     n=1
     while :; do
         local addr_var=dns_server_${n}_address_1
+        local transport_var=dns_server_${n}_transport
+
+        echo "dns-updown: do_resolved: checking server profile ${n}: address=${!addr_var:-<not set>} transport=${!transport_var:-<not set>}"
+
         [ -n "${!addr_var}" ] || {
+            echo "dns-updown: do_resolved: no more server profiles, no compatible profile found (all require DoH or no addresses set)"
             echo "setting DNS failed, no compatible server profile"
             return 1
         }
 
         # Skip server profiles which require DNS-over-HTTPS
-        local transport_var=dns_server_${n}_transport
-        [ -n "${!transport_var}" -a "${!transport_var}" = "DoH" ] || break
+        if [ -n "${!transport_var}" -a "${!transport_var}" = "DoH" ]; then
+            echo "dns-updown: do_resolved: skipping server profile ${n}: requires DoH (not supported by systemd-resolved)"
+            n=$((n+1))
+            continue
+        fi
 
-        n=$((n+1))
+        echo "dns-updown: do_resolved: using server profile ${n}"
+        break
     done
 
     if [ "$script_type" = "dns-up" ]; then
@@ -859,7 +893,10 @@ function only_standard_server_ports {
         [ -n "${!addr_var}" ] || return 0
 
         local port_var=dns_server_${n}_port_${i}
-        [ -z "${!port_var}" -o "${!port_var}" = "53" ] || return 1
+        if [ -n "${!port_var}" -a "${!port_var}" != "53" ]; then
+            echo "dns-updown: only_standard_server_ports: server ${n} address ${i} uses non-standard port ${!port_var}"
+            return 1
+        fi
 
         i=$((i+1))
     done
@@ -869,29 +906,52 @@ function resolv_conf_compat_profile {
     local n=1
     while :; do
         local server_addr_var=dns_server_${n}_address_1
+        local dnssec_var=dns_server_${n}_dnssec
+        local transport_var=dns_server_${n}_transport
+
+        echo "dns-updown: resolv_conf_compat_profile: checking server profile ${n}: address=${!server_addr_var:-<not set>} transport=${!transport_var:-<not set>} dnssec=${!dnssec_var:-<not set>}"
+
         [ -n "${!server_addr_var}" ] || {
+            echo "dns-updown: resolv_conf_compat_profile: no more server profiles, no compatible profile found"
             echo "setting DNS failed, no compatible server profile"
             exit 1
         }
 
         # Skip server profiles which require DNSSEC,
         # secure transport or use a custom port
-        local dnssec_var=dns_server_${n}_dnssec
-        local transport_var=dns_server_${n}_transport
-        [ -z "${!transport_var}" -o "${!transport_var}" = "plain" ] \
-            && [ -z "${!dnssec_var}" -o "${!dnssec_var}" = "no" ] \
-            && only_standard_server_ports && break
+        local skip_reason=""
+        if [ -n "${!transport_var}" -a "${!transport_var}" != "plain" ]; then
+            skip_reason="transport=${!transport_var} (requires plain or unset)"
+        fi
+        if [ -n "${!dnssec_var}" -a "${!dnssec_var}" != "no" ]; then
+            skip_reason="${skip_reason:+${skip_reason}, }dnssec=${!dnssec_var} (requires no or unset)"
+        fi
+        if ! only_standard_server_ports; then
+            skip_reason="${skip_reason:+${skip_reason}, }non-standard ports"
+        fi
 
-        n=$((n+1))
+        if [ -n "${skip_reason}" ]; then
+            echo "dns-updown: resolv_conf_compat_profile: skipping server profile ${n}: ${skip_reason}"
+            n=$((n+1))
+            continue
+        fi
+
+        echo "dns-updown: resolv_conf_compat_profile: using server profile ${n}"
+        break
     done
     return $n
 }
 
 function do_resolvconf {
-    [ -x /sbin/resolvconf ] || return 1
+    echo "dns-updown: do_resolvconf: checking for /sbin/resolvconf"
+    [ -x /sbin/resolvconf ] || {
+        echo "dns-updown: do_resolvconf: skipping, /sbin/resolvconf not found or not executable"
+        return 1
+    }
 
     resolv_conf_compat_profile
     local n=$?
+    echo "dns-updown: do_resolvconf: selected server profile ${n}"
 
     if [ "$script_type" = "dns-up" ]; then
         echo "setting DNS using resolvconf"
@@ -920,10 +980,15 @@ function do_resolvconf {
 
 function do_resolv_conf_file {
     conf=/etc/resolv.conf
-    test -e "$conf" || exit 1
+    echo "dns-updown: do_resolv_conf_file: checking for ${conf}"
+    test -e "$conf" || {
+        echo "dns-updown: do_resolv_conf_file: skipping, ${conf} does not exist"
+        exit 1
+    }
 
     resolv_conf_compat_profile
     local n=$?
+    echo "dns-updown: do_resolv_conf_file: selected server profile ${n}"
 
     if [ "$script_type" = "dns-up" ]; then
         echo "setting DNS using resolv.conf file"
@@ -944,6 +1009,8 @@ function do_resolv_conf_file {
         }
         text="${text}### openvpn ${dev} end ###"
 
+        echo "dns-updown: do_resolv_conf_file: inserting into ${conf}:"
+        echo -e "dns-updown:   ${text}"
         sed -i "1i${text}" "$conf"
     else
         echo "unsetting DNS using resolv.conf file"
@@ -953,9 +1020,11 @@ function do_resolv_conf_file {
     return 0
 }
 
+echo "dns-updown: attempting DNS backends in order: systemd-resolved, resolvconf, resolv.conf file"
 do_resolved || do_resolvconf || do_resolv_conf_file || {
     echo "setting DNS failed, no method succeeded"
     exit 1
 }
+echo "dns-updown: DNS configuration completed successfully"
 `
 )
