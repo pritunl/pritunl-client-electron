@@ -3,6 +3,7 @@ Pritunl Client Changelog
 
 <%= version %>
 
+Add wg route metric support
 Add ovpn dco support
 
 Version 1.3.4466.51 2025-12-04
