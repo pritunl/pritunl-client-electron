@@ -3,6 +3,7 @@ Pritunl Client Changelog
 
 <%= version %>
 
+Add host priority support
 Fix WireGuard privilege escalation
 Fix sso url display in TUI
 
