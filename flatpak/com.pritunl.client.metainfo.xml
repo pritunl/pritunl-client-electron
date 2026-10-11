@@ -52,6 +52,16 @@
     <color type="primary" scheme_preference="dark">#1a1a1a</color>
   </branding>
   <releases>
+    <release version="1.4.4777.90" date="2026-10-11">
+      <url type="details">https://github.com/pritunl/pritunl-client/blob/1.4.4777.90/CHANGES</url>
+      <description>
+        <ul>
+          <li>Add host priority support</li>
+          <li>Fix WireGuard privilege escalation</li>
+          <li>Fix sso url display in TUI</li>
+        </ul>
+      </description>
+    </release>
     <release version="1.4.4752.50" date="2026-09-16">
       <url type="details">https://github.com/pritunl/pritunl-client/blob/1.4.4752.50/CHANGES</url>
       <description>
