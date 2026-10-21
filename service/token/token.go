@@ -12,9 +12,28 @@ type Token struct {
 	ServerPublicKey    string    `json:"-"`
 	ServerBoxPublicKey string    `json:"-"`
 	Token              string    `json:"-"`
+	SignKey            *SignKey  `json:"-"`
 	Timestamp          time.Time `json:"timestamp"`
 	Ttl                int       `json:"ttl"`
 	Valid              bool      `json:"valid"`
+}
+
+func (t *Token) generate() (err error) {
+	token, err := utils.RandStrComplex(16)
+	if err != nil {
+		return
+	}
+
+	signKey, err := NewSignKey()
+	if err != nil {
+		return
+	}
+
+	t.Token = token
+	t.SignKey = signKey
+	t.Timestamp = time.Now()
+
+	return
 }
 
 func (t *Token) Init() (err error) {
@@ -25,13 +44,10 @@ func (t *Token) Init() (err error) {
 
 	t.Valid = false
 
-	token, err := utils.RandStrComplex(16)
+	err = t.generate()
 	if err != nil {
 		return
 	}
-
-	t.Token = token
-	t.Timestamp = time.Now()
 
 	return
 }
@@ -43,13 +59,10 @@ func (t *Token) Reset() (err error) {
 
 	t.Valid = false
 
-	token, err := utils.RandStrComplex(16)
+	err = t.generate()
 	if err != nil {
 		return
 	}
-
-	t.Token = token
-	t.Timestamp = time.Now()
 
 	return
 }
