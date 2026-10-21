@@ -40,8 +40,8 @@ codesign --force --timestamp --options=runtime -s "Developer ID Application: Pri
 # Device Auth
 cd service_macos
 rm -f "Pritunl Device Authentication"
-swiftc -sdk $(xcrun --show-sdk-path --sdk macosx) -target arm64-apple-macos11 -framework CryptoKit -framework LocalAuthentication -framework Security -framework Foundation device_auth.swift -o "Pritunl Device Authentication_arm64"
-swiftc -sdk $(xcrun --show-sdk-path --sdk macosx) -target x86_64-apple-macos11 -framework CryptoKit -framework LocalAuthentication -framework Security -framework Foundation device_auth.swift -o "Pritunl Device Authentication_x86_64"
+swiftc -sdk $(xcrun --show-sdk-path --sdk macosx) -target arm64-apple-macos13 -framework CryptoKit -framework LocalAuthentication -framework Security -framework Foundation device_auth.swift -o "Pritunl Device Authentication_arm64"
+swiftc -sdk $(xcrun --show-sdk-path --sdk macosx) -target x86_64-apple-macos13 -framework CryptoKit -framework LocalAuthentication -framework Security -framework Foundation device_auth.swift -o "Pritunl Device Authentication_x86_64"
 lipo -create -output "Pritunl Device Authentication" "Pritunl Device Authentication_arm64" "Pritunl Device Authentication_x86_64"
 rm -rf Pritunl\ Device\ Authentication_arm64
 rm -rf Pritunl\ Device\ Authentication_x86_64
