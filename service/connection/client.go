@@ -552,6 +552,7 @@ func (c *Client) authorize(host string, ssoToken string,
 	reqBx.Password = c.conn.Profile.Password
 	reqBx.Token = tokn.Token
 	reqBx.Nonce = tokn.Nonce
+	reqBx.TokenPublicKey, reqBx.TokenSignature = tokn.Sign(reqBx.Timestamp)
 	reqBx.SsoToken = ssoToken
 
 	handle := ""
