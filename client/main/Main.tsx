@@ -214,7 +214,8 @@ class Main {
 			icon: path.join(__dirname, "..", "logo.png"),
 			titleBarStyle: titleBarStyle as any,
 			frame: !frameless,
-			transparent: process.platform === "linux" && frameless,
+			transparent: (process.platform === "linux" && frameless &&
+				(Config.transparent_window || process.env.XDG_SESSION_TYPE === "x11")),
 			trafficLightPosition: {
 				x: 14,
 				y: 12,
