@@ -417,12 +417,24 @@ type AuthToken struct {
 	Validated  bool
 	Expiration bool
 	tokn       *token.Token
+	signKey    *token.SignKey
 }
 
 func (t *AuthToken) Reset() {
 	if t.tokn != nil {
 		t.tokn.Reset()
 	}
+}
+
+func (t *AuthToken) Sign(timestamp int64) (publicKey, signature string) {
+	if t.signKey == nil {
+		return
+	}
+
+	publicKey = t.signKey.PublicKey()
+	signature = t.signKey.Sign(t.Token, t.Nonce, timestamp)
+
+	return
 }
 
 func (t *AuthToken) Validate() {
@@ -470,9 +482,10 @@ func (d *Data) GetAuthToken() (authToken *AuthToken, err error) {
 		d.conn.Profile.ServerBoxPublicKey,
 	)
 
-	token := ""
+	tokenStr := ""
 	validated := false
 	expired := false
+	var signKey *token.SignKey
 	if tokn != nil {
 		expired, err = tokn.Update()
 		if err != nil {
@@ -488,17 +501,23 @@ func (d *Data) GetAuthToken() (authToken *AuthToken, err error) {
 			d.conn.State.Close()
 			return
 		} else {
-			token = tokn.Token
+			tokenStr = tokn.Token
 			validated = tokn.Valid
+			signKey = tokn.SignKey
 		}
 	}
 
-	if token == "" {
-		token, err = utils.RandStrComplex(16)
+	if tokenStr == "" {
+		tokenStr, err = utils.RandStrComplex(16)
 		if err != nil {
 			return
 		}
 		validated = false
+
+		signKey, err = token.NewSignKey()
+		if err != nil {
+			return
+		}
 	}
 
 	nonce, err := utils.RandStr(16)
@@ -507,11 +526,12 @@ func (d *Data) GetAuthToken() (authToken *AuthToken, err error) {
 	}
 
 	authToken = &AuthToken{
-		Token:      token,
+		Token:      tokenStr,
 		Nonce:      nonce,
 		Validated:  validated,
 		Expiration: expired,
 		tokn:       tokn,
+		signKey:    signKey,
 	}
 	d.authToken = authToken
 
