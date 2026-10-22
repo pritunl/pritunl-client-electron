@@ -67,6 +67,8 @@ type ReqBox struct {
 	MacAddr        string   `json:"mac_addr"`
 	MacAddrs       []string `json:"mac_addrs"`
 	Token          string   `json:"token"`
+	TokenPublicKey string   `json:"token_public_key"`
+	TokenSignature string   `json:"token_signature"`
 	Nonce          string   `json:"nonce"`
 	Password       string   `json:"password"`
 	Timestamp      int64    `json:"timestamp"`
