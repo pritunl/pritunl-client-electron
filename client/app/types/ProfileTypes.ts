@@ -174,7 +174,11 @@ export function New(self: Profile): Profile {
 		if (this.name) {
 			return this.name
 		}
-		return this.server + " (" + this.user + ")"
+		let name = this.server
+		if (this.server) {
+			name += " (" + this.user + ")"
+		}
+		return name
 	}
 
 	self.formattedNameShort = function(): string {
